@@ -1,0 +1,32 @@
+doctype html
+html
+    head
+        script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js")
+        script(src="https://rawgit.com/alexanderdickson/waitForImages/master/dist/jquery.waitforimages.js")
+        script(src="/player/script.js")
+        link(rel='stylesheet', href='/player/style.css')
+        title #{json.khName} - Episode #{ep} - Kamihime Database - Player
+    body
+        center
+            ul
+                li
+                    a(href='http://thegzm.space', target='_blank') Home
+                li
+                    a(href='http://addbot.thegzm.space', target='_blank') Invite Eros
+                li  
+                    a(href='http://harem-battle.club/kamihime-project/3605-love-scenes-collecting-post94422.html#post94422', target='_blank') Animate Raw Files
+                li(style="float:right;user-select: none;")
+                    a #{json.khName} - Episode #{ep}: #{ep == 2 ? json.khHarem_hentai1 : json.khHarem_hentai2}
+            #footer(style="position:relative;margin-top:50px;margin-bottom:-20px;")
+                a(class="seq") <b>Sequence</b> 
+            #buttons
+                button(class='topbutt' type='button', nav='left') <b><</b>
+                | 
+                button(class='topbutt' type='button', nav='right') <b>></b>
+                h3 You can also navigate with ← and → cursor keys, or click a portion of the image
+            br
+            button(class='invi1' nav='left')
+            |
+            button(class='invi2' nav='right')
+            #animHime(data='-1' style="background-image: url('https://media.discordapp.net/attachments/370648315517337600/385864800942424064/image.png')")
+            include footer/footer.pug

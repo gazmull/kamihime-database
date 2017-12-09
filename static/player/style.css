@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Raleway');
+
+#animHime {
+  z-index: -1;
+  width: 640px;
+  height: 900px;
+  overflow: hidden;
+  position: relative;
+  clip: rect(0px, 640px, 900px, 0px);
+  backface-visibility: hidden;
+  transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  margin-bottom:-100px;
+}
+
+@keyframes play {
+  from {
+    background-position-y: 0px;
+  }
+  to {
+    background-position-y: -14400px;
+  }
+}
+
+
+ul {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  margin:-8px -7px;
+  background-color: #222222;
+}
+
+li {
+  display: inline;
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  border: 1px solid #222222;
+}
+
+
+li a:hover {
+  background-color: #ec7ae3;
+  border: 1px solid #f5bbf2;
+}
+
+li a:active {
+  border: 1px solid #f5bbf2;
+  background-color: #2f3136;
+  color: white;
+}
+
+.invi1 {
+  z-index: 9999;
+  position: fixed;
+  width: 450px;
+  height: 640px;
+  margin-left:-450px;
+  top: 232px;
+  background: transparent;
+  color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.invi2 {
+  z-index: 9999;
+  position: fixed;
+  width: 450px;
+  height: 640px;
+  top: 232px;
+  background: transparent;
+  color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+#buttons {
+  text-align: center;
+  margin-top: 25px;
+  margin-bottom:-160px;
+}
+
+.topbutt, .topbutt:focus {
+  background-color: #ec7ae3;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 200px;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  border: 2px solid #ec7ae3;
+  border-radius: 2px;
+
+  outline: none !important;
+}
+
+.topbutt:hover {
+  background-color: #FFFFFF;
+  border: 2px solid #f5bbf2;
+  color: #2f3136;
+}
+
+.topbutt:active {
+  border: 2px solid #f5bbf2;
+  background-color: #2f3136;
+  color: white;
+}
+
+body {
+  background-color: #2f3136;
+  color: #c9cdd3;
+  font-family: 'Open Sans', sans-serif;
+}
+
+a:link, a:visited {
+  color: #a7aebc;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffffff;
+}

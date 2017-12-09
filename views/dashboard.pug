@@ -1,0 +1,41 @@
+doctype html
+html
+    head
+        title Eros' Backend - Kamihime Database
+        style
+           include css/style.css
+        body
+            h1 Kamihime Database Dashboard
+            h2 <sup>Where we configure our 2D Waifus.</sup>
+            h2 <sup>Session Creator: #{user.request_tagname}</sup>
+            br
+
+            <center>
+                div(class="container")
+                    p
+                        img(class="avatar" src=json.khInfo_avatar width=128 height=128)
+                        br
+                        span(class="iName" value=json.khName) 
+                            strong #{json.khName}
+                        span(class="iID" value=json.khID)
+                            span(style="font-size:13px") ##{json.khID.toUpperCase()}
+                form(method="POST" action="/redirect")
+                    input(type="hidden" name="khName" value=json.khName)
+                    input(type="hidden" name="khID" value=json.khID)
+                    input(type="hidden" name="request_tagname" value=user.request_tagname)
+                    h2 Empty fields to fill (with ♥ iykwim)
+
+                    for key in Object.keys(json)
+                        if(!(json[key] !== null || key.toString() === "khHarem_hentai1File" || key.toString() === "khHarem_hentai2File"))
+                            textarea(class="avWA" name=key placeholder=key cols="40" rows="2")
+                    for key in Object.keys(json)
+                        if((json[key] !== null || key.toString() === "khHarem_hentai1File" || key.toString() === "khHarem_hentai2File"))
+                            p <img src="https://cdn.discordapp.com/emojis/381250720172736523.png" height="24px"/> Nothing to modify below here... why— <b><i>why don't you just click that SUBMIT INFO?!</i></b>
+                            - break
+                    p
+                        input(class="btn" type='submit', value='SUBMIT INFO')
+
+                br
+                br
+                include footer/footer.pug
+            </center>

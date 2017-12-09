@@ -1,0 +1,31 @@
+doctype html
+html
+    head
+        title Eros' Backend - Kamihime Database
+        script.
+            setTimeout(() => this.location.replace(`http://localhost/`), 10000);
+        style
+            include css/style.css
+        body
+            h1 Kamihime Database Dashboard
+            h2 <sup>Successfully saved your inputs into the database. ♥</sup>
+            br
+
+            <center>
+                div(class="container")
+                    p
+                        img(class="avatar" src=ava.khInfo_avatar width=128 height=128)
+                        br
+                        span(class="iName" value=json.khName) 
+                            strong #{json.khName}
+                        span(class="iID" value=json.khID)
+                            span(style="font-size:13px") ##{json.khID.toUpperCase()}
+                   
+                h2 <sub>Your session for this character has been destroyed. <br/> You will be redirected shortly to index page...</sub>
+                p
+                    form(action="http://google.com")
+                        input(type="submit" class="btn"  value="OR HOW ABOUT SOMEWHERE...?")
+                br
+                br
+                include footer/footer.pug
+            </center>
