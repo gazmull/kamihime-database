@@ -15,17 +15,20 @@
     "pug": "^2.0.0-rc.4",
     "sqlite": "^2.8.0"
   },
-
-  "apps": [{
-    "name": "kamihimedb_app",
-    "script": "index.js",
-    "watch": true,
-    "ignore_watch": ["node_modules"],
-    "env": {
-      "NODE_ENV": "development"
-    },
-    "env_production": {
-      "NODE_ENV": "production"
+  "apps": [
+    {
+      "name": "kamihimedb_app",
+      "script": "index.js",
+      "watch": true,
+      "ignore_watch": [
+        "node_modules"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      }
     }
-  }]
+  ]
 }

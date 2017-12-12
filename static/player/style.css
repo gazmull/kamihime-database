@@ -62,7 +62,7 @@ li a:active {
 
 .invi1 {
   z-index: 9999;
-  position: fixed;
+  position: absolute;
   width: 450px;
   height: 640px;
   margin-left:-450px;
@@ -76,7 +76,7 @@ li a:active {
 
 .invi2 {
   z-index: 9999;
-  position: fixed;
+  position: absolute;
   width: 450px;
   height: 640px;
   top: 232px;
@@ -92,6 +92,10 @@ li a:active {
   margin-top: 25px;
   margin-bottom:-160px;
 }
+
+/* fix for mozilla firefox outlines */
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
 
 .topbutt, .topbutt:focus {
   background-color: #ec7ae3;
