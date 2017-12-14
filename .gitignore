@@ -1,4 +1,5 @@
 auth.json
 package-lock.json
+test.js
 .vscode/
 node_modules/

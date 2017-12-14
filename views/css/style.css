@@ -9,6 +9,18 @@
 .avWA::placeholder {
     color: #cdcdcd;
 }
+.toggleForm {
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin:0 auto;
+    font-size: 16px;
+    font-family: 'Open Sans', sans-serif;
+    border-radius: 4px;
+    cursor: pointer;
+}
 .btn {
     background-color: #7289DA;
     border: none;
@@ -16,10 +28,12 @@
     padding: 15px 32px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
+    display: block;
+    margin:0 auto;
     font-size: 16px;
     font-family: 'Open Sans', sans-serif;
     border-radius: 4px;
+    cursor: pointer;
 }
 .avatar {
     border-radius: 50%;
