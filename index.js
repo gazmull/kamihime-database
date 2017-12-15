@@ -75,7 +75,7 @@ server.post('/redirect', async (req, res) => {
                                 'khSkill3':      (typeof info.rare !== 'undefined' && info.rare === 'R') || typeof info.summon_id !== 'undefined' || (t1Souls.indexOf(input.khName) != -1 || t2Souls.indexOf(input.khName) != -1) ? null : jsonExtract.ability(info.abilities[2]),
                                 'khSkill3_text': (typeof info.rare !== 'undefined' && info.rare === 'R') || typeof info.summon_id !== 'undefined' || (t1Souls.indexOf(input.khName) != -1 || t2Souls.indexOf(input.khName) != -1) ? null : jsonExtract.abilityText(info.abilities[2]),
                                 'khSkill_ex1':   (typeof info.rare !== 'undefined' && info.rare === 'R') || typeof info.summon_id !== 'undefined' ? null : jsonExtract.assistAbility(info.assists[0]),
-                                'khSkill_ex2':   (typeof info.rare !== 'undefined' && (info.rare === 'R' || info.rare === 'SR')) || typeof info.summon_id !== 'undefined' || typeof info.job_id !== 'undefined' && (t1Souls.indexOf(input.khName) != -1 || t2Souls.indexOf(input.khName) != -1) ? null : jsonExtract.assistAbility(info.assists[1]),
+                                'khSkill_ex2':   (typeof info.rare !== 'undefined' && (info.rare === 'R' || info.rare === 'SR' || info.rare === 'SSR')) || typeof info.summon_id !== 'undefined' || typeof info.job_id !== 'undefined' && (t1Souls.indexOf(input.khName) != -1 || t2Souls.indexOf(input.khName) != -1) ? null : jsonExtract.assistAbility(info.assists[1]),
                         }
 
                         for(let key in constructor) {
@@ -83,7 +83,6 @@ server.post('/redirect', async (req, res) => {
                                         reqArray.push(` ${key}='${constructor[key]}'`);
                         }
 
-                        console.log(reqArray);
                         if(reqArray.length < 1) throw empty_Query = '|Eros|I will not accept completely NULL request.';  
                         await sql.run(`UPDATE kamihime SET ${reqArray.toString()} WHERE khID='${input.khID}'`);
                         await sql.run(`DELETE FROM sessions WHERE request_tagname='${input.request_tagname}' AND cID='${input.khID}'`);
