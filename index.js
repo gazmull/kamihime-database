@@ -62,12 +62,12 @@ server.post('/redirect', async (req, res) => {
                         const info = JSON.parse(input.jsonCode);
 
                         const constructor = {
-                                'khInfo_text':   info.description,
+                                'khInfo_text':   info.description.replace(/'/g, '\'\''),
                                 'khElement':     typeof info.job_id !== 'undefined'    ? null : jsonExtract.element(info.element_type),
                                 'khType':        typeof info.summon_id !== 'undefined' ? null : typeof info.job_id !== 'undefined' ? jsonExtract.character(info.type) : jsonExtract.character(info.character_type),
                                 'kh_HP':         typeof info.job_id !== 'undefined'    ? null : info.max_hp,
                                 'kh_ATK':        typeof info.job_id !== 'undefined'    ? null : info.max_attack,
-                                'khBurst':       typeof info.summon_id !== 'undefined' ? null : info.burst.name,
+                                'khBurst':       typeof info.summon_id !== 'undefined' ? null : info.burst.name.replace(/'/g, '\'\''),
                                 'khSkill1':      typeof info.summon_id !== 'undefined' ? jsonExtract.eidoPassive(info.effect)     : jsonExtract.ability(info.abilities[0]),
                                 'khSkill1_text': typeof info.summon_id !== 'undefined' ? jsonExtract.eidoPassiveText(info.effect) : jsonExtract.abilityText(info.abilities[0]),
                                 'khSkill2':      typeof info.summon_id !== 'undefined' ? jsonExtract.eidoAttack(info.attack)      : jsonExtract.ability(info.abilities[1]),
@@ -83,6 +83,7 @@ server.post('/redirect', async (req, res) => {
                                         reqArray.push(` ${key}='${constructor[key]}'`);
                         }
 
+                        console.log(reqArray);
                         if(reqArray.length < 1) throw empty_Query = '|Eros|I will not accept completely NULL request.';  
                         await sql.run(`UPDATE kamihime SET ${reqArray.toString()} WHERE khID='${input.khID}'`);
                         await sql.run(`DELETE FROM sessions WHERE request_tagname='${input.request_tagname}' AND cID='${input.khID}'`);
