@@ -119,7 +119,7 @@ module.exports = {
         }
 
         description += value.description;
-        description += ` ${ (value.description.includes('ATK') || value.description.includes('DEF')) && (value.description.includes('↑') || value.description.includes('↓'))
+        description += ` ${ (value.description.includes('ATK') || value.description.includes('DEF')) && (value.description.includes('↑') || value.description.includes('↓')) && percentage !== 30
             ? `(${percentage}%)`
             : `` }`
         return description.replace(/'/g, '\'\'');
