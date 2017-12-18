@@ -1,35 +1,9 @@
 $(function () {
-    const kamihime = {
 
-        intro: '94/76/',
-        scene: 'de/59/',
-        get: '76/89/'
-
-    };
-
-    const eidolon = {
-
-        intro: '9f/51/',
-        scene: 'd7/ad/',
-        get: '9f/51/'
-
-    };
-
-    const soul = {
-
-        intro: '67/01/',
-        scene: 'ec/4d/',
-        get: '3b/26/'
-    };
-
-    const baseURL = {
-
-        scenarios: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/'
-
-    };
-
+    const baseURL = '/scenarios/';
+    const $val_arr = ['a', 'b', 'c1', 'c2', 'c3', 'd'];
     let $val = $('#animHime').attr('data');
-    let $val_arr = ['a', 'b', 'c1', 'c2', 'c3', 'd'];
+
     let $val_new = $val_arr.indexOf($val);
     let $val_animation = "play 1s steps(1) infinite"
 
@@ -109,20 +83,18 @@ $(function () {
     }
 
     function render() {
-        let $img = `${ $.urlParam(0).startsWith('e')
-        ? baseURL.scenarios + eidolon.scene
-        : $.urlParam(0).startsWith('s')
-            ? baseURL.scenarios + soul.scene
-            : baseURL.scenarios + kamihime.scene }${ $.urlParam(2).toString() }/${ $.urlParam(0).slice(1) }-${ $.urlParam(1) == 2 ? 2 : 3 }-2_${ $val_arr[$val_new] }.jpg`;
-        
+        let $img = `${baseURL}${$.urlParam(0)}/${$.urlParam(2)}/${ $.urlParam(0).slice(1) }-${ $.urlParam(1) == 2 ? 2 : 3 }-2_${ $val_arr[$val_new] }.jpg`
         $('body').waitForImages(function () {
             $("#animHime")
             .css({
-                "background-image": `url('${$img}')`
+                "background-image": `url('${$img}')`,
+                "animation": 'play 1s steps(1) infinite',
+                "-webkit-animation": 'play 1s steps(1) infinite',
+                "-moz-animation": 'play 1s steps(1) infinite',
+                "-o-animation": 'play 1s steps(1) infinite',
+                "-ms-animation": 'play 1s steps(1) infinite'
             });
-        });
-
-        $('body').waitForImages(true).done(function() {
+        }).done(function() {
             $("#animHime")
             .css({
                 "animation": $val_animation,
