@@ -1,3 +1,5 @@
+# As of 18/25/2017, Parsing image from Nutaku server is deprecated. [Here is probably why](https://i.imgur.com/HlEQFwI.png)
+---
 # Kamihime Database
 
 Webserver version of Eros' Kamihime Database function (?UPD / ?PEEK)
