@@ -1,4 +1,6 @@
-# As of 18/25/2017, This project's method of parsing image from Nutaku server is deprecated. [Here is probably why](https://i.imgur.com/HlEQFwI.png)
+## As of 18/12/2017, This project's method of parsing image from Nutaku server is deprecated. [Here is probably why](https://i.imgur.com/HlEQFwI.png)
+
+## 18/12/2017: Image retrieval for the Player has been re-routed to self-host
 ---
 # Kamihime Database
 
