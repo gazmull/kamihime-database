@@ -5,7 +5,7 @@ $(function () {
     let $val = $('#animHime').attr('data');
 
     let $val_new = $val_arr.indexOf($val);
-    let $val_animation = "play 1s steps(1) infinite"
+    let $val_animation = 'play 1s steps(1) infinite'
 
     $('button').click(function () {
         let $btnCode = $(this).attr('nav');
@@ -36,20 +36,20 @@ $(function () {
         if ($val_new == 0 || $val_new == -1) return;
         switch ($val_new) {
             case 5:
-                $val_animation = "play 2s steps(16) infinite";
+                $val_animation = 'play 2s steps(16) infinite';
                 $val_new--;
                 break;
             case 4:
             case 3:
-                $val_animation = "play .67s steps(16) infinite";
+                $val_animation = 'play .67s steps(16) infinite';
                 $val_new--;
                 break;
             case 2:
-                $val_animation = "play 1s steps(16) infinite";
+                $val_animation = 'play 1s steps(16) infinite';
                 $val_new--;
                 break;
             case 1:
-                $val_animation = "play 1s steps(1) infinite";
+                $val_animation = 'play 1s steps(1) infinite';
                 $val_new--;
                 break;
         }
@@ -59,24 +59,24 @@ $(function () {
         if ($val_new == 5) return;
         switch ($val_new) {
             case 4:
-                $val_animation = "play 1s steps(1) infinite";
+                $val_animation = 'play 1s steps(1) infinite';
                 $val_new++;
                 break;
             case 3:
-                $val_animation = "play 2s steps(16) infinite";
+                $val_animation = 'play 2s steps(16) infinite';
                 $val_new++;
                 break;
             case 2:
             case 1:
-                $val_animation = "play .67s steps(16) infinite";
+                $val_animation = 'play .67s steps(16) infinite';
                 $val_new++;
                 break;
             case 0:
-                $val_animation = "play 1s steps(16) infinite";
+                $val_animation = 'play 1s steps(16) infinite';
                 $val_new++;
                 break;
             default:
-                $val_animation = "play 2s steps(1) infinite";
+                $val_animation = 'play 2s steps(1) infinite';
                 $val_new++;
                 break;
         }
@@ -84,28 +84,30 @@ $(function () {
 
     function render() {
         let $img = `${baseURL}${$.urlParam(0)}/${$.urlParam(2)}/${ $.urlParam(0).slice(1) }-${ $.urlParam(1) == 2 ? 2 : 3 }-2_${ $val_arr[$val_new] }.jpg`
-        $("#animHime")
+        $('#animHime')
             .css({
-                "background-image": `url('${$img}')`,
-                "animation": 'play 1s steps(1) infinite',
-                "-webkit-animation": 'play 1s steps(1) infinite',
-                "-moz-animation": 'play 1s steps(1) infinite',
-                "-o-animation": 'play 1s steps(1) infinite',
-                "-ms-animation": 'play 1s steps(1) infinite'
+                'visibility': 'hidden',
+                'background-image': `url('${$img}')`,
+                'animation': 'play 1s steps(1) infinite',
+                '-webkit-animation': 'play 1s steps(1) infinite',
+                '-moz-animation': 'play 1s steps(1) infinite',
+                '-o-animation': 'play 1s steps(1) infinite',
+                '-ms-animation': 'play 1s steps(1) infinite'
             });
         $('body').waitForImages(true).done(function() {
-            $("#animHime")
+            $('#animHime')
             .css({
-                "animation": $val_animation,
-                "-webkit-animation": $val_animation,
-                "-moz-animation": $val_animation,
-                "-o-animation": $val_animation,
-                "-ms-animation": $val_animation
+                'visibility': 'visible',
+                'animation': $val_animation,
+                '-webkit-animation': $val_animation,
+                '-moz-animation': $val_animation,
+                '-o-animation': $val_animation,
+                '-ms-animation': $val_animation
             })
-            .attr("data", $val_arr[$val_new]);
-            $(".seq")
+            .attr('data', $val_arr[$val_new]);
+            $('.seq')
             .html(`<b>Sequence: ${$val_arr[$val_new].toUpperCase()}</b>`)
-            .attr("href", $img);
+            .attr('href', $img);
         });
     }
 

@@ -1,6 +1,5 @@
-## As of 18/12/2017, This project's method of parsing image from Nutaku server is deprecated. [Here is probably why](https://i.imgur.com/HlEQFwI.png)
-
 ## 18/12/2017: Image retrieval for the Player has been re-routed to self-host
+## 22/12/2017: Implemented dynamic signature for monitoring latest addition to the database
 ---
 # Kamihime Database
 
@@ -17,3 +16,10 @@ Webserver version of Eros' Kamihime Database function (?UPD / ?PEEK)
   * Or move `snek`'s `index.js` to this repository and rename it as `snek.js`
     * Make sure to `npm i -s image-downloader mkdirp` first!
     * `node snek.js` to boop
+
+# Dependencies
+* [express/body-parser homepage](https://github.com/expressjs)
+* [pug homepage](https://github.com/pugjs/pug)
+* [sqlite homepage](https://github.com/mapbox/node-sqlite3)
+* [canvas homepage](https://github.com/Automattic/node-canvas/wiki)
+* [minor: discord.js](https://github.com/hydrabolt/discord.js)
