@@ -84,8 +84,7 @@ $(function () {
 
     function render() {
         let $img = `${baseURL}${$.urlParam(0)}/${$.urlParam(2)}/${ $.urlParam(0).slice(1) }-${ $.urlParam(1) == 2 ? 2 : 3 }-2_${ $val_arr[$val_new] }.jpg`
-        $('body').waitForImages(function () {
-            $("#animHime")
+        $("#animHime")
             .css({
                 "background-image": `url('${$img}')`,
                 "animation": 'play 1s steps(1) infinite',
@@ -94,7 +93,7 @@ $(function () {
                 "-o-animation": 'play 1s steps(1) infinite',
                 "-ms-animation": 'play 1s steps(1) infinite'
             });
-        }).done(function() {
+        $('body').waitForImages(true).done(function() {
             $("#animHime")
             .css({
                 "animation": $val_animation,
