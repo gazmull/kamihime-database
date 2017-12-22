@@ -16,8 +16,6 @@ module.exports = {
                         throw backEnd_err = '|Eros|Your session is invalid. Please ask for one in my Discord department.';
                 if(req.query.k !== session.sPW)
                         throw backEnd_err = '|Eros|Your session is invalid. Please ask for one in my Discord department.';
-                if(row.khApproved)
-                        throw backEnd_err = '|Eros|This character is approved. Contact the administrator if there is something wrong.';
                 res.render(`dashboard`, { json: row, user: session });
         }
         catch (err) {
