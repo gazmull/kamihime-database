@@ -10,7 +10,9 @@ server.disable('x-powered-by');
 server.use(express.static(__dirname + '/static'));
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
-sql.open('../eros/db/Eros.db');
+sql.open('../eros/db/Eros.db'); //Comment this
+//sql.open('./db/Resources.db'); //Uncomment if snek's files are in the same directory
+//sql.open('../snek/db/Resources.db'); //Uncomment if snek's files are in its own directory
 
 server.get('/', (req, res) => res.send('|Eros|403: Access Denied.'));
 server.get('/dashboard', async (req, res) => require('./routes/dashboard').execute(req, res));

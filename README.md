@@ -17,6 +17,9 @@ Webserver version of Eros' Kamihime Database function (?UPD / ?PEEK)
     * Make sure to `npm i -s image-downloader mkdirp` first!
     * `node snek.js` to boop
 
+# Notice
+* Since `Eros.db` is not in the remote repository, please configure the `sql.open()` in `index.js`.
+
 # Dependencies
 * [express/body-parser homepage](https://github.com/expressjs)
 * [pug homepage](https://github.com/pugjs/pug)
