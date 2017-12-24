@@ -1,0 +1,27 @@
+- for(let i = 0; i < SSRAs.length; i++) 
+    - if(i === 0)
+        .container(id=SSRAs[i].khID name=SSRAs[i].khName style='float:left; text-align: center; margin: 5px 5px; top: 22px; position:relative;')
+            p
+                img(class="avatar" src=SSRAs[i].khInfo_avatar width=128 height=128)
+                br
+                span(class="iName" value=SSRAs[i].khName) 
+                    strong #{SSRAs[i].khName}
+                span(class="iID" value=SSRAs[i].khID)
+                    span(style="font-size:13px") ##{SSRAs[i].khID.toUpperCase()}
+                br
+                span(class='episode')
+                    <a href='http://kamihimedb.thegzm.space/player/#{SSRAs[i].khID}/2/#{SSRAs[i].khHarem_hentai1Resource2}'>Episode 2</a>
+    - else
+        .container(id=SSRAs[i].khID name=SSRAs[i].khName style='float:left; text-align: center; margin: 5px 5px; position:relative;')
+            p
+                img(class="avatar" src=SSRAs[i].khInfo_avatar width=128 height=128)
+                br
+                span(class="iName" value=SSRAs[i].khName) 
+                    strong #{SSRAs[i].khName}
+                span(class="iID" value=SSRAs[i].khID)
+                    span(style="font-size:13px") ##{SSRAs[i].khID.toUpperCase()}
+                br
+                span(class='episode')
+                    <a href='http://kamihimedb.thegzm.space/player/#{SSRAs[i].khID}/2/#{SSRAs[i].khHarem_hentai1Resource2}'>Episode 2</a>
+    - if(i % 6 === 0)
+        <br/>

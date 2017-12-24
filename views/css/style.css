@@ -19,6 +19,7 @@
     font-size: 16px;
     font-family: 'Open Sans', sans-serif;
     border-radius: 4px;
+    padding: 10px;
     cursor: pointer;
 }
 .btn {
@@ -44,14 +45,53 @@
 .container {
     background-color: #ffaabf;
     float: center;
-    width: 180px;
+    width: 200px;
+    height: 250px;
     margin-bottom: 16px;
     padding: 1px 4px;
     border-radius: 3px;
 }
 .iName, .iID {
-    font-size: 16px;
+    font-size: 15px;
     color: #FFFFFF;
+}
+
+/* fix for mozilla firefox outlines */
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
+
+ul {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    margin:-8px -7px;
+    background-color: #222222;
+}
+  
+li {
+    display: block;
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    border: 1px solid #222222;
+}
+
+
+li a:hover {
+    background-color: #ec7ae3;
+    border: 1px solid #f5bbf2;
+}
+
+li a:active {
+    border: 1px solid #f5bbf2;
+    background-color: #2f3136;
+    color: white;
 }
 p {
     clear: left;
@@ -76,5 +116,13 @@ a:link, a:visited {
     text-decoration: none;
 }
 a:hover {
+    color: #ffffff;
+}
+
+.episode a {
+    color: #ff65ae;
+    font-size: 15px;
+}
+.episode a:hover {
     color: #ffffff;
 }

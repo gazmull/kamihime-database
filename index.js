@@ -5,7 +5,7 @@ const sql               = require('sqlite');
 const server            = express();
 
 server.set('view engine', 'pug');
-server.set('views', ['./views', './player/views']);
+server.set('views', './views');
 server.disable('x-powered-by');
 server.use(express.static(__dirname + '/static'));
 server.use(bodyParser.json());
@@ -14,12 +14,13 @@ sql.open('../eros/db/Eros.db'); //Comment this
 //sql.open('./db/Resources.db'); //Uncomment if snek's files are in the same directory
 //sql.open('../snek/db/Resources.db'); //Uncomment if snek's files are in its own directory
 
-server.get('/', (req, res) => res.send('|Eros|403: Access Denied.'));
-server.get('/dashboard', async (req, res) => require('./routes/dashboard').execute(req, res));
-server.get('/latest', async (req, res) => require('./routes/latest').execute(req, res));
-server.get('/player/:id/:ep/:res', async (req, res) => require('./routes/player').execute(req, res));
+server.get('/', (req, res) => require('./routes/browser').execute(req, res));
+server.get('/dashboard', (req, res) => require('./routes/dashboard').execute(req, res));
+server.get('/justmonika', (req, res) => require('./routes/justmonika').execute(req, res));
+server.get('/latest', (req, res) => require('./routes/latest').execute(req, res));
+server.get('/player/:id/:ep/:res', (req, res) => require('./routes/player').execute(req, res));
 
-server.post('/redirect', async (req, res) => require('./routes/redirect').execute(req, res));
+server.post('/redirect', (req, res) => require('./routes/redirect').execute(req, res));
 
 server.all('*', (req, res) => res.send('|Eros|403: Access Denied.'));
 

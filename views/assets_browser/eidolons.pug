@@ -1,0 +1,27 @@
+- for(let i = 0; i < Eidolons.length; i++) 
+    - if(i === 0)
+        .container(id=Eidolons[i].khID name=Eidolons[i].khName style='float:left; text-align: center; margin: 5px 5px; top: 22px; position:relative;')
+            p
+                img(class="avatar" src=Eidolons[i].khInfo_avatar width=128 height=128)
+                br
+                span(class="iName" value=Eidolons[i].khName) 
+                    strong #{Eidolons[i].khName}
+                span(class="iID" value=Eidolons[i].khID)
+                    span(style="font-size:13px") ##{Eidolons[i].khID.toUpperCase()}
+                br
+                span(class='episode')
+                    <a href='http://kamihimedb.thegzm.space/player/#{Eidolons[i].khID}/2/#{Eidolons[i].khHarem_hentai1Resource2}'>Episode 2</a>
+    - else
+        .container(id=Eidolons[i].khID name=Eidolons[i].khName style='float:left; text-align: center; margin: 5px 5px; position:relative;')
+            p
+                img(class="avatar" src=Eidolons[i].khInfo_avatar width=128 height=128)
+                br
+                span(class="iName" value=Eidolons[i].khName) 
+                    strong #{Eidolons[i].khName}
+                span(class="iID" value=Eidolons[i].khID)
+                    span(style="font-size:13px") ##{Eidolons[i].khID.toUpperCase()}
+                br
+                span(class='episode')
+                    <a href='http://kamihimedb.thegzm.space/player/#{Eidolons[i].khID}/2/#{Eidolons[i].khHarem_hentai1Resource2}'>Episode 2</a>
+    - if(i % 6 === 0)
+        <br/>

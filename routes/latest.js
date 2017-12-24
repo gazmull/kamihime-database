@@ -8,12 +8,12 @@ module.exports = {
         try {
             // Aqcuire Latest 'Approved' Kamihime/Eidolon/Soul Limit 3 per Category
             // Some entries were sorted by ROWID instead, because they were added at irregular schedule.
-            const rowSouls    = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSoul IS 1 ORDER BY khID DESC LIMIT 3');
+            const rowSouls    = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSoul IS 1 ORDER BY ROWID DESC LIMIT 3');
             const rowEidolons = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khEidolon IS 1 ORDER BY ROWID DESC LIMIT 3');
-            const rowSSRA     = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 1 ORDER BY khID DESC LIMIT 3');
+            const rowSSRA     = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 1 ORDER BY ROWID DESC LIMIT 3');
             const rowSSR      = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 0 ORDER BY ROWID DESC LIMIT 3');
             const rowSR       = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 0 AND khSoul IS 0 and khEidolon IS 0 ORDER BY ROWID DESC LIMIT 3');
-            const rowR        = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 1 ORDER BY khID DESC LIMIT 3');
+            const rowR        = await sql.all('SELECT khID, khName FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 1 ORDER BY ROWID DESC LIMIT 3');
             const result      = new Map();
             result
                     .set('soul', rowSouls)
