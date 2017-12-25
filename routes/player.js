@@ -22,6 +22,8 @@ module.exports = {
                         throw backEnd_err = '|Eros|Invalid API Request: no such episode found.';
                 else if( !((episode == 2 && row.khHarem_hentai1Resource2 === req.params.res) || (episode == 3 && row.khHarem_hentai2Resource2 === req.params.res)) )
                         throw backEnd_err = '|Eros|Invalid API Request: Resource Directory input does not match within my records.'
+
+                await sql.run(`UPDATE kamihime SET peekedOn=${row.peekedOn + 1} WHERE khID='${row.khID}'`);
                 res.render(`player`, { json: row, ep: episode });
         }
         catch (err) {
