@@ -14,7 +14,7 @@ $(function () {
             $(`#characters > div[class='visible'] > div[name!='${query}']`)
                 .attr('class', 'hiddenInstant')
                 .css({
-                    'position': 'relative',
+                    'position': 'absolute',
                     'z-index': '-1'
                 });
             $(`#characters > div[class='visible'] > div[name*='${query}']`)
