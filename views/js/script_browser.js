@@ -6,14 +6,23 @@ $(function () {
         if (!query) {
             $('#characters > div[class="visible"] > div[class="hiddenInstant"]')
                 .attr('class', 'container visible')
-                .css('position', 'relative');
+                .css({
+                    'position': 'relative',
+                    'z-index': '0'
+                });
         } else {
             $(`#characters > div[class='visible'] > div[name!='${query}']`)
                 .attr('class', 'hiddenInstant')
-                .css('position', 'absolute');
+                .css({
+                    'position': 'relative',
+                    'z-index': '-1'
+                });
             $(`#characters > div[class='visible'] > div[name*='${query}']`)
                 .attr('class', 'container visible')
-                .css('position', 'relative');
+                .css({
+                    'position': 'relative',
+                    'z-index': '1'
+                });
         }
     });
 
