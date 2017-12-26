@@ -1,8 +1,27 @@
 $(function () {
+    $('#searchBar').on('keyup click input', function () {
+        let query = $(this).val();
+        query = query.toLowerCase().replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); });
+    
+        if (!query) {
+            $('#characters > div[class="visible"] > div[class="hiddenInstant"]')
+                .attr('class', 'container visible')
+                .css('position', 'relative');
+        } else {
+            $(`#characters > div[class='visible'] > div[name!='${query}']`)
+                .attr('class', 'hiddenInstant')
+                .css('position', 'absolute');
+            $(`#characters > div[class='visible'] > div[name*='${query}']`)
+                .attr('class', 'container visible')
+                .css('position', 'relative');
+        }
+    });
+
     $('.toggleForm').click(function () {
         let $btnCode = $(this).attr('nav');
         switch ($btnCode) {
             case 'souls':
+                $('#searchBar').val('');
                 $('#souls').attr('class', 'visible');
                 $('#sbtn').css('background-color', '#ff65ae');
                 $('#eidolons').attr('class', 'hidden');
@@ -17,6 +36,7 @@ $(function () {
                 $('#rbtn').css('background-color', '#666f8b');
                 break;
             case 'eidolons':
+                $('#searchBar').val('');
                 $('#souls').attr('class', 'hidden');
                 $('#sbtn').css('background-color', '#666f8b');
                 $('#eidolons').attr('class', 'visible');
@@ -31,6 +51,7 @@ $(function () {
                 $('#rbtn').css('background-color', '#666f8b');
                 break;
             case 'ssras':
+                $('#searchBar').val('');
                 $('#souls').attr('class', 'hidden');
                 $('#sbtn').css('background-color', '#666f8b');
                 $('#eidolons').attr('class', 'hidden');
@@ -45,6 +66,7 @@ $(function () {
                 $('#rbtn').css('background-color', '#666f8b');
             break;
             case 'ssrs':
+                $('#searchBar').val('');
                 $('#souls').attr('class', 'hidden');
                 $('#sbtn').css('background-color', '#666f8b');
                 $('#eidolons').attr('class', 'hidden');
@@ -59,6 +81,7 @@ $(function () {
                 $('#rbtn').css('background-color', '#666f8b');
             break;
             case 'srs':
+                $('#searchBar').val('');
                 $('#souls').attr('class', 'hidden');
                 $('#sbtn').css('background-color', '#666f8b');
                 $('#eidolons').attr('class', 'hidden');
@@ -73,6 +96,7 @@ $(function () {
                 $('#rbtn').css('background-color', '#666f8b');
             break;
             case 'rs':
+                $('#searchBar').val('');
                 $('#souls').attr('class', 'hidden');
                 $('#sbtn').css('background-color', '#666f8b');
                 $('#eidolons').attr('class', 'hidden');

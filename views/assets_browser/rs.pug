@@ -1,27 +1,12 @@
 - for(let i = 0; i < Rs.length; i++) 
-    - if(i === 0)
-        .container(id=Rs[i].khID name=Rs[i].khName style='float:left; text-align: center; margin: 5px 5px; top: 22px; position:relative;')
-            p
-                img(class="avatar" src=Rs[i].khInfo_avatar width=128 height=128)
-                br
-                span(class="iName" value=Rs[i].khName) 
-                    strong #{Rs[i].khName}
-                span(class="iID" value=Rs[i].khID)
-                    span(style="font-size:13px") ##{Rs[i].khID.toUpperCase()}
-                br
-                span(class='episode')
-                    <a href='http://kamihimedb.thegzm.space/player/#{Rs[i].khID}/2/#{Rs[i].khHarem_hentai1Resource2}'>Episode 2</a>
-    - else
-        .container(id=Rs[i].khID name=Rs[i].khName style='float:left; text-align: center; margin: 5px 5px; position:relative;')
-            p
-                img(class="avatar" src=Rs[i].khInfo_avatar width=128 height=128)
-                br
-                span(class="iName" value=Rs[i].khName) 
-                    strong #{Rs[i].khName}
-                span(class="iID" value=Rs[i].khID)
-                    span(style="font-size:13px") ##{Rs[i].khID.toUpperCase()}
-                br
-                span(class='episode')
-                    <a href='http://kamihimedb.thegzm.space/player/#{Rs[i].khID}/2/#{Rs[i].khHarem_hentai1Resource2}'>Episode 2</a>
-    - if(i % 6 === 0)
-        <br/>
+    .container(id=Rs[i].khID name=Rs[i].khName style='display: inline-block; text-align: center; margin: 5px 5px;')
+        p
+            img(class="avatar" src=Rs[i].khInfo_avatar width=128 height=128)
+            br
+            span(class="iName" value=Rs[i].khName) 
+                strong #{Rs[i].khName}
+            span(class="iID" value=Rs[i].khID)
+                span(style="font-size:13px") ##{Rs[i].khID.toUpperCase()}
+            br
+            span(class='episode')
+                <a href='http://kamihimedb.thegzm.space/player/#{Rs[i].khID}/2/#{Rs[i].khHarem_hentai1Resource2}'>Episode 2</a>

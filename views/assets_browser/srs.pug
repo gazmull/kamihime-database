@@ -1,29 +1,13 @@
 - for(let i = 0; i < SRs.length; i++) 
-    - if(i === 0)
-        .container(id=SRs[i].khID name=SRs[i].khName style='float:left; text-align: center; margin: 5px 5px; top: 22px; position:relative;')
-            p
-                img(class="avatar" src=SRs[i].khInfo_avatar width=128 height=128)
-                br
-                span(class="iName" value=SRs[i].khName) 
-                    strong #{SRs[i].khName}
-                span(class="iID" value=SRs[i].khID)
-                    span(style="font-size:13px") ##{SRs[i].khID.toUpperCase()}
-                br
-                span(class='episode')
-                    <a href='http://kamihimedb.thegzm.space/player/#{SRs[i].khID}/2/#{SRs[i].khHarem_hentai1Resource2}'>Episode 2</a><br/>
-                    <a href='http://kamihimedb.thegzm.space/player/#{SRs[i].khID}/3/#{SRs[i].khHarem_hentai2Resource2}'>Episode 3</a>
-    - else
-        .container(id=SRs[i].khID name=SRs[i].khName style='float:left; text-align: center; margin: 5px 5px; position:relative;')
-            p
-                img(class="avatar" src=SRs[i].khInfo_avatar width=128 height=128)
-                br
-                span(class="iName" value=SRs[i].khName) 
-                    strong #{SRs[i].khName}
-                span(class="iID" value=SRs[i].khID)
-                    span(style="font-size:13px") ##{SRs[i].khID.toUpperCase()}
-                br
-                span(class='episode')
-                    <a href='http://kamihimedb.thegzm.space/player/#{SRs[i].khID}/2/#{SRs[i].khHarem_hentai1Resource2}'>Episode 2</a><br/>
-                    <a href='http://kamihimedb.thegzm.space/player/#{SRs[i].khID}/3/#{SRs[i].khHarem_hentai2Resource2}'>Episode 3</a>
-    - if(i % 6 === 0)
-        <br/>
+    .container(id=SRs[i].khID name=SRs[i].khName style='display: inline-block; text-align: center; margin: 5px 5px;')
+        p
+            img(class="avatar" src=SRs[i].khInfo_avatar width=128 height=128)
+            br
+            span(class="iName" value=SRs[i].khName) 
+                strong #{SRs[i].khName}
+            span(class="iID" value=SRs[i].khID)
+                span(style="font-size:13px") ##{SRs[i].khID.toUpperCase()}
+            br
+            span(class='episode')
+                <a href='http://kamihimedb.thegzm.space/player/#{SRs[i].khID}/2/#{SRs[i].khHarem_hentai1Resource2}'>Episode 2</a>
+                <a href='http://kamihimedb.thegzm.space/player/#{SRs[i].khID}/3/#{SRs[i].khHarem_hentai2Resource2}'>Episode 3</a>

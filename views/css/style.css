@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Raleway');
 .avWA {
-    float: center;
-    margin: 5px;
+    margin: auto;
     background-color: #484b51;
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
+    border-color: #ffaabf;
 }
 .avWA::placeholder {
-    color: #cdcdcd;
+    color: #888888;
 }
 .toggleForm {
     border: none;
@@ -45,8 +45,8 @@
 .container {
     background-color: #ffaabf;
     float: center;
-    width: 200px;
-    height: 250px;
+    width: 235px;
+    height: 255px;
     margin-bottom: 16px;
     padding: 1px 4px;
     border-radius: 3px;
@@ -69,8 +69,7 @@ ul {
 }
   
 li {
-    display: block;
-    float: left;
+    display: inline-block;
 }
 
 li a {

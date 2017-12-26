@@ -22,8 +22,13 @@ html
                 transform: translateX(-30%);
                 transition: all 0s 0.25s, opacity 0.25s ease;
             }
+
+            .hiddenInstant {
+                visibility: hidden;
+                opacity: 0;
+                transform: translateX(-30%);
+            }
     body
-        center
             ul
                 li
                     a(href='http://kamihimedb.thegzm.space') Home
@@ -36,34 +41,38 @@ html
                 li(style="float:right;user-select: none;")
                     a Browse Harem Scenes
             br
-            #btn(style='float:left;position:fixed;z-index:9;top: 60px;')
-                button(class='toggleForm' id='sbtn' style='background-color: #ff65ae;' type='button' nav="souls") <b>SOUL</b>
-                | 
-                button(class='toggleForm' id='ebtn' style='background-color: #666f8b;' type='button' nav="eidolons") <b>EIDOLON</b>
-                | 
-                button(class='toggleForm' id='ssrabtn' style='background-color: #666f8b;' type='button' nav="ssras") <b>SSR (AWAKENED)</b>
-                | 
-                button(class='toggleForm' id='ssrbtn' style='background-color: #666f8b;' type='button' nav="ssrs") <b>&nbsp;SSR&nbsp;</b>
-                | 
-                button(class='toggleForm' id='srbtn' style='background-color: #666f8b;' type='button' nav="srs") <b>&nbsp;&nbsp;SR&nbsp;&nbsp;</b>
-                | 
-                button(class='toggleForm' id='rbtn' style='background-color: #666f8b;' type='button' nav="rs") <b>RARE</b>
+            #browseTool(style='float:left;position:fixed;z-index:9;top:60px')
+                #btn(style='position: relative; float: left;')
+                    button(class='toggleForm' id='sbtn' style='background-color: #ff65ae;' type='button' nav="souls") <b>SOUL</b>
+                    | 
+                    button(class='toggleForm' id='ebtn' style='background-color: #666f8b;' type='button' nav="eidolons") <b>EIDOLON</b>
+                    | 
+                    button(class='toggleForm' id='ssrabtn' style='background-color: #666f8b;' type='button' nav="ssras") <b>SSR (AWAKENED)</b>
+                    | 
+                    button(class='toggleForm' id='ssrbtn' style='background-color: #666f8b;' type='button' nav="ssrs") <b>&nbsp;SSR&nbsp;</b>
+                    | 
+                    button(class='toggleForm' id='srbtn' style='background-color: #666f8b;' type='button' nav="srs") <b>&nbsp;&nbsp;SR&nbsp;&nbsp;</b>
+                    | 
+                    button(class='toggleForm' id='rbtn' style='background-color: #666f8b;' type='button' nav="rs") <b>RARE</b>
+                #search(style='position: relative; float: left; margin-left: 5px; margin-top:8px;')
+                    input(type='text' id='searchBar' size='50' class='avWA' placeholder='Search by name...')
             br
-            #souls(class='visible' style='margin-left: 20px; position: absolute;')
-                h2(style='text-align:left') Souls
-                include assets_browser/souls.pug
-            #eidolons(class='hidden' style='margin-left: 20px; position: absolute;')
-                h2(style='text-align:left') Eidolons
-                include assets_browser/eidolons.pug
-            #ssras(class='hidden' style='margin-left: 20px; position: absolute;')
-                h2(style='text-align:left') SSRs (Awakened)
-                include assets_browser/ssras.pug
-            #ssrs(class='hidden' style='margin-left: 20px; position: absolute;')
-                h2(style='text-align:left') SSRs
-                include assets_browser/ssrs.pug
-            #srs(class='hidden' style='margin-left: 20px; position: absolute;')
-                h2(style='text-align:left') SRs
-                include assets_browser/srs.pug
-            #rs(class='hidden' style='margin-left: 20px; position: absolute;')
-                h2(style='text-align:left') Rs
-                include assets_browser/rs.pug
+            #characters(style='margin: auto;')
+                #souls(class='visible' style='position: absolute;')
+                    h2(style='text-align:left') Souls
+                    include assets_browser/souls.pug
+                #eidolons(class='hidden' style='position: absolute;')
+                    h2(style='text-align:left') Eidolons
+                    include assets_browser/eidolons.pug
+                #ssras(class='hidden' style='position: absolute;')
+                    h2(style='text-align:left') SSRs (Awakened)
+                    include assets_browser/ssras.pug
+                #ssrs(class='hidden' style='position: absolute;')
+                    h2(style='text-align:left') SSRs
+                    include assets_browser/ssrs.pug
+                #srs(class='hidden' style='position: absolute;')
+                    h2(style='text-align:left') SRs
+                    include assets_browser/srs.pug
+                #rs(class='hidden' style='position: absolute;')
+                    h2(style='text-align:left') Rs
+                    include assets_browser/rs.pug
