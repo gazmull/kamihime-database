@@ -44,12 +44,11 @@
 }
 .container {
     background-color: #ffaabf;
-    float: center;
+    margin: 2px 2px;
     width: 235px;
     height: 255px;
-    margin-bottom: 16px;
-    padding: 1px 4px;
     border-radius: 3px;
+    text-align: center;
 }
 .iName, .iID {
     font-size: 15px;

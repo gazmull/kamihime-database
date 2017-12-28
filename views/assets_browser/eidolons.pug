@@ -1,5 +1,5 @@
 - for(let i = 0; i < Eidolons.length; i++) 
-    .container(id=Eidolons[i].khID name=Eidolons[i].khName style='display: inline-block; text-align: center; margin: 5px 5px;')
+    .container(id=Eidolons[i].khID name=Eidolons[i].khName style='display: inline-block;')
         p
             img(class="avatar" src=Eidolons[i].khInfo_avatar width=128 height=128)
             br
@@ -9,4 +9,9 @@
                 span(style="font-size:13px") ##{Eidolons[i].khID.toUpperCase()}
             br
             span(class='episode')
+                - if(Eidolons[i].khHarem_introFile)
+                    <a href='#{Eidolons[i].khHarem_introFile}'>Episode 1 (Youtube)</a>
+                - else
+                    <a style='color:grey'>Episode 1</a>
+                br
                 <a href='http://kamihimedb.thegzm.space/player/#{Eidolons[i].khID}/2/#{Eidolons[i].khHarem_hentai1Resource2}'>Episode 2</a>

@@ -11,9 +11,11 @@ $(function () {
         let $btnCode = $(this).attr('nav');
         switch ($btnCode) {
             case 'left':
+                if($val_new < 1) return;
                 nav_left();
                 break;
             case 'right':
+                if ($val_new === 5) return;    
                 nav_right();
                 break;
         }
@@ -24,16 +26,19 @@ $(function () {
         let $charCode = e.keyCode || e.which || e.charCode;
         switch ($charCode) {
             case 37:
+                if($val_new < 1) return;
                 nav_left();
                 break;
             case 39:
+                if ($val_new === 5) return;
                 nav_right();
+                break;
+            default: return;
         }
         render();
     });
 
     function nav_left() {
-        if ($val_new == 0 || $val_new == -1) return;
         switch ($val_new) {
             case 5:
                 $val_animation = 'play 2s steps(16) infinite';
@@ -56,7 +61,6 @@ $(function () {
     }
 
     function nav_right() {
-        if ($val_new == 5) return;
         switch ($val_new) {
             case 4:
                 $val_animation = 'play 1s steps(1) infinite';
@@ -94,6 +98,8 @@ $(function () {
                 '-o-animation': 'play 1s steps(1) infinite',
                 '-ms-animation': 'play 1s steps(1) infinite'
             });
+        $('.seq')
+            .html('<b>Loading...</b>');
         $('body').waitForImages(true).done(function() {
             $('#animHime')
             .css({

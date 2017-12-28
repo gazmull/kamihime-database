@@ -11,6 +11,7 @@ html
         style.
             .visible {
                 visibility: visible;
+                z-index: 0;
                 opacity: 1;
                 transform: translateX(0);
                 transition: all 0.25s ease;
@@ -18,6 +19,7 @@ html
 
             .hidden {
                 visibility: hidden;
+                z-index: -1;
                 opacity: 0;
                 transform: translateX(-30%);
                 transition: all 0s 0.25s, opacity 0.25s ease;
@@ -25,6 +27,7 @@ html
 
             .hiddenInstant {
                 visibility: hidden;
+                z-index: -1;
                 opacity: 0;
                 transform: translateX(-30%);
             }
@@ -37,28 +40,30 @@ html
                 li
                     a(href='http://kamihimedb.thegzm.space/latest/', target='_blank') Latest
                 li  
+                    a(href='http://support.thegzm.space', target='_blank') Support
+                li  
                     a(href='http://harem-battle.club/kamihime-project/3605-love-scenes-collecting-post94422.html#post94422', target='_blank') Animate Raw Files
                 li(style="float:right;user-select: none;")
                     a Browse Harem Scenes
             br
             #browseTool(style='float:left;position:fixed;z-index:9;top:60px')
                 #btn(style='position: relative; float: left;')
-                    button(class='toggleForm' id='sbtn' style='background-color: #ff65ae;' type='button' nav="souls") <b>SOUL</b>
+                    button(class='toggleForm' id='sbtn' style='background-color: #ff65ae;' type='button' nav="#souls") <b>SOUL</b>
                     | 
-                    button(class='toggleForm' id='ebtn' style='background-color: #666f8b;' type='button' nav="eidolons") <b>EIDOLON</b>
+                    button(class='toggleForm' id='ebtn' style='background-color: #666f8b;' type='button' nav="#eidolons") <b>EIDOLON</b>
                     | 
-                    button(class='toggleForm' id='ssrabtn' style='background-color: #666f8b;' type='button' nav="ssras") <b>SSR (AWAKENED)</b>
+                    button(class='toggleForm' id='ssrabtn' style='background-color: #666f8b;' type='button' nav="#ssras") <b>SSR (AWAKENED)</b>
                     | 
-                    button(class='toggleForm' id='ssrbtn' style='background-color: #666f8b;' type='button' nav="ssrs") <b>&nbsp;SSR&nbsp;</b>
+                    button(class='toggleForm' id='ssrbtn' style='background-color: #666f8b;' type='button' nav="#ssrs") <b>&nbsp;SSR&nbsp;</b>
                     | 
-                    button(class='toggleForm' id='srbtn' style='background-color: #666f8b;' type='button' nav="srs") <b>&nbsp;&nbsp;SR&nbsp;&nbsp;</b>
+                    button(class='toggleForm' id='srbtn' style='background-color: #666f8b;' type='button' nav="#srs") <b>&nbsp;&nbsp;SR&nbsp;&nbsp;</b>
                     | 
-                    button(class='toggleForm' id='rbtn' style='background-color: #666f8b;' type='button' nav="rs") <b>RARE</b>
+                    button(class='toggleForm' id='rbtn' style='background-color: #666f8b;' type='button' nav="#rs") <b>RARE</b>
                 #search(style='position: relative; float: left; margin-left: 5px; margin-top:8px;')
-                    input(type='text' id='searchBar' size='50' class='avWA' placeholder='Search by name...')
+                    input(type='text' id='searchBar' size='35' class='avWA' placeholder='Search by name...')
             br
             #characters(style='margin: auto;')
-                #souls(class='visible' style='position: absolute;')
+                #souls(class='hidden' style='position: absolute;')
                     h2(style='text-align:left') Souls
                     include assets_browser/souls.pug
                 #eidolons(class='hidden' style='position: absolute;')
