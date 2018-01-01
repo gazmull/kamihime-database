@@ -1,17 +1,14 @@
 - for(let i = 0; i < Rs.length; i++) 
     .container(id=Rs[i].khID name=Rs[i].khName style='display: inline-block;')
-        p
-            img(class="avatar" src=Rs[i].khInfo_avatar width=128 height=128)
-            br
-            span(class="iName" value=Rs[i].khName) 
-                strong #{Rs[i].khName}
-            span(class="iID" value=Rs[i].khID)
-                span(style="font-size:13px") ##{Rs[i].khID.toUpperCase()}
-            br
-            span(class='episode')
-                - if(Rs[i].khHarem_introFile)
-                    <a href='#{Rs[i].khHarem_introFile}'>Episode 1 (Youtube)</a>
-                - else
-                    <a style='color:grey'>Episode 1</a>
-                br
-                <a href='http://kamihimedb.thegzm.space/player/#{Rs[i].khID}/2/#{Rs[i].khHarem_hentai1Resource2}'>Episode 2</a>
+        img(class="avatar" src=Rs[i].khInfo_avatar)
+        span(class="iName" value=Rs[i].khName) 
+            strong #{Rs[i].khName}
+        br
+        span(class="iID" value=Rs[i].khID)
+            span(style="font-size:13px") ##{Rs[i].khID.toUpperCase()}
+        span(class='episode')
+            - if(Rs[i].khHarem_introFile)
+                <a href='#{Rs[i].khHarem_introFile}'>Episode 1 (Youtube)</a> | 
+            - else
+                <a style='color:grey'>Episode 1</a> | 
+            <a href='http://kamihimedb.thegzm.space/player/#{Rs[i].khID}/2/#{Rs[i].khHarem_hentai1Resource2}'>Episode 2</a>

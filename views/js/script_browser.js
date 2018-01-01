@@ -32,6 +32,9 @@ $(function () {
         $($btnCode).attr('class', 'visible');
         $(`#${$btnID}`).css('background-color', '#ff65ae');
         $(`#characters > div[id!='${$btnCode_sliced}']`).attr('class', 'hidden');
+        $(`#characters > div[id!='${$btnCode_sliced}'] > div[class='container visible']`)
+            .attr('class', 'hiddenInstant')
+            .css('position', 'absolute');
         $(`#btn > button[id!='${$btnID}']`).css('background-color', '#666f8b');
     });
 });

@@ -25,13 +25,12 @@ html
 
             <center>
                 div(class="container")
-                    p
-                        img(class="avatar" src=json.khInfo_avatar width=128 height=128)
-                        br
-                        span(class="iName" value=json.khName) 
-                            strong #{json.khName}
-                        span(class="iID" value=json.khID)
-                            span(style="font-size:13px") ##{json.khID.toUpperCase()}
+                    img(class="avatar" src=json.khInfo_avatar)
+                    span(class="iName" value=json.khName) 
+                        strong #{json.khName}
+                    br
+                    span(class="iID" value=json.khID)
+                        span(style="font-size:13px") ##{json.khID.toUpperCase()}
                 button(class='toggleForm' id='mbtn' style='background-color: #7289DA;' type='button' nav="manual") <b>Manual</b>
                 | 
                 button(class='toggleForm' id='abtn' style='background-color: #666f8b;' type='button' nav="auto") <b>Automated</b>

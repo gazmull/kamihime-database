@@ -13,13 +13,12 @@ html
 
             <center>
                 div(class="container")
-                    p
-                        img(class="avatar" src=ava.khInfo_avatar width=128 height=128)
-                        br
-                        span(class="iName" value=json.khName) 
-                            strong #{json.khName}
-                        span(class="iID" value=json.khID)
-                            span(style="font-size:13px") ##{json.khID.toUpperCase()}
+                    img(class="avatar" src=json.khInfo_avatar)
+                    span(class="iName" value=json.khName) 
+                        strong #{json.khName}
+                    br
+                    span(class="iID" value=json.khID)
+                        span(style="font-size:13px") ##{json.khID.toUpperCase()}
                    
                 h2 <sub>Your session for this character has been destroyed. <br/> You will be redirected shortly to index page...</sub>
                 p
