@@ -26,13 +26,13 @@ module.exports = {
             const file = fs.readFileSync(path.join(__dirname, '..', 'static', 'latest', 'base.png'));
             if (typeof file === 'undefined') throw new Error('Cannot resolve the base file.');
             const image = new Canvas.Image;
-    
+            image.src = file;
+            
             const canvas = new Canvas(image.width, image.height);
             const ctx = canvas.getContext('2d');
             ctx.drawImage(image, 0, 0);
             ctx.font = '11px Arial';
             ctx.fillStyle = 'white';
-            image.src = file;
     
             for (category of result) {
                 switch(category[0]) {
