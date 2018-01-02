@@ -32,6 +32,7 @@ module.exports = {
             ctx.drawImage(image, 0, 0);
             ctx.font = '11px Arial';
             ctx.fillStyle = 'white';
+            image.src = file;
     
             for (category of result) {
                 switch(category[0]) {
