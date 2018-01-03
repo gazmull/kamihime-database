@@ -15,17 +15,17 @@ const t2Souls = [
 module.exports = {
     async execute(req, res) {
         let input = req.body, reqArray = [], empty_Query;
+        const kh = await sql.get(`SELECT * FROM kamihime WHERE khID='${input.khID}'`);
 
         if(input.jsonCode) {
                 try {
                         const info = JSON.parse(input.jsonCode);
-
                         const constructor = {
                                 'khInfo_text':   info.description.replace(/'/g, '\'\''),
                                 'khElement':     typeof info.job_id !== 'undefined'    ? null : jsonExtract.element(info.element_type),
                                 'khType':        typeof info.summon_id !== 'undefined' ? null : typeof info.job_id !== 'undefined' ? jsonExtract.character(info.type) : jsonExtract.character(info.character_type),
-                                'kh_HP':         typeof info.job_id !== 'undefined'    ? null : info.max_hp,
-                                'kh_ATK':        typeof info.job_id !== 'undefined'    ? null : info.max_attack,
+                                'kh_HP':         typeof info.job_id !== 'undefined'    ? null : parseInt(info.max_hp),
+                                'kh_ATK':        typeof info.job_id !== 'undefined'    ? null : parseInt(info.max_attack),
                                 'khBurst':       typeof info.summon_id !== 'undefined' ? null : info.burst.name.replace(/'/g, '\'\''),
                                 'khSkill1':      typeof info.summon_id !== 'undefined' ? jsonExtract.eidoPassive(info.effect)     : jsonExtract.ability(info.abilities[0]),
                                 'khSkill1_text': typeof info.summon_id !== 'undefined' ? jsonExtract.eidoPassiveText(info.effect) : jsonExtract.abilityText(info.abilities[0]),
@@ -38,7 +38,7 @@ module.exports = {
                         }
 
                         for(let key in constructor) {
-                                if(constructor[key] !== null)
+                                if(constructor[key] !== null && constructor[key] !== kh[key])
                                         reqArray.push(` ${key}='${constructor[key]}'`);
                         }
 
@@ -58,9 +58,13 @@ module.exports = {
         }
 
         for(let key in input) {
-                if(input[key] !== null) {
-                        if(key.toString() === 'khID' || key.toString() === 'khName' || key.toString() === 'request_tagname' || input[key] === '') { continue; }
-                        reqArray.push(` ${key}='${input[key]}'`);
+                if(input[key] !== null && input[key] !== kh[key]) {
+                        if(key.toString() === 'khID' || key.toString() === 'khName' || key.toString() === 'request_tagname' || input[key] === '') continue;
+                        else if((key === 'kh_HP' || key === 'kh_ATK') && parseInt(input[key]) === parseInt(kh[key])) continue;
+
+                        isNaN(input[key])
+                                ? reqArray.push(` ${key}='${input[key].replace(/'/g, '\'\'')}'`)
+                                : reqArray.push(` ${key}=${input[key]}`);
                 }
         }
 
