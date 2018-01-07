@@ -1,5 +1,5 @@
 $(function () {
-    $('#souls')
+    $('#peeks')
         .attr('class', 'visible');
 
     $('#searchBar').on('keyup click input', function () {

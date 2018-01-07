@@ -48,7 +48,9 @@ html
             br
             #browseTool(style='float:left;position:fixed;z-index:9;top:60px')
                 #btn(style='position: relative; float: left;')
-                    button(class='toggleForm' id='sbtn' style='background-color: #ff65ae;' type='button' nav="#souls") <b>SOUL</b>
+                    button(class='toggleForm' id='pbtn' style='background-color: #ff65ae;' type='button' nav="#peeks") <b>HOT</b>
+                    | 
+                    button(class='toggleForm' id='sbtn' style='background-color: #666f8b;' type='button' nav="#souls") <b>SOUL</b>
                     | 
                     button(class='toggleForm' id='ebtn' style='background-color: #666f8b;' type='button' nav="#eidolons") <b>EIDOLON</b>
                     | 
@@ -63,6 +65,9 @@ html
                     input(type='text' id='searchBar' size='35' class='avWA' placeholder='Search by name...')
             br
             #characters(style='margin: auto;')
+                #peeks(class='hidden' style='position: absolute;')
+                    h2(style='text-align:left') Most Views
+                    include assets_browser/peeks.pug
                 #souls(class='hidden' style='position: absolute;')
                     h2(style='text-align:left') Souls
                     include assets_browser/souls.pug

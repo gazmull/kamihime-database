@@ -1,0 +1,18 @@
+- for(let i = 0; i < Peeks.length; i++) 
+    .container(id=Peeks[i].khID name=Peeks[i].khName style='display: inline-block;')
+            img(class="avatar" src=Peeks[i].khInfo_avatar)
+            span(class="iName" value=Peeks[i].khName) 
+                strong #{Peeks[i].khName}
+            br
+            span(class="iID" value=Peeks[i].khID)
+                span(style="font-size:13px") ##{Peeks[i].khID.toUpperCase()}
+            span(class='episode')
+                - if(Peeks[i].khHarem_introFile)
+                    <a href='#{Peeks[i].khHarem_introFile}'>Episode 1 (Youtube)</a> | 
+                - else
+                    <a style='color:grey'>Episode 1</a> | 
+                - if(Peeks[i].khHarem_hentai2Resource2)
+                    <a href='http://kamihimedb.thegzm.space/player/#{Peeks[i].khID}/2/#{Peeks[i].khHarem_hentai1Resource2}'>Episode 2</a> | 
+                    <a href='http://kamihimedb.thegzm.space/player/#{Peeks[i].khID}/3/#{Peeks[i].khHarem_hentai2Resource2}'>Episode 3</a>
+                - else
+                    <a href='http://kamihimedb.thegzm.space/player/#{Peeks[i].khID}/2/#{Peeks[i].khHarem_hentai1Resource2}'>Episode 2</a>
