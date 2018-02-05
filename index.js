@@ -7,6 +7,7 @@ const Collection        = require('./utils/Collection');
 
 server.set('view engine', 'pug');
 server.set('views', './views');
+server.set('json spaces', 2);
 server.disable('x-powered-by');
 server.use(express.static(__dirname + '/static'));
 server.use(bodyParser.json());
@@ -17,18 +18,24 @@ sql.open('../eros/db/Eros.db'); //Comment this
 
 const recentVisitors = new Collection();
 
-server.get('/', (req, res) => require('./routes/browser').execute(req, res));
-server.get('/dashboard', (req, res) => require('./routes/dashboard').execute(req, res));
-server.get('/justmonika', (req, res) => require('./routes/justmonika').execute(req, res));
-server.get('/wae', (req, res) => require('./routes/wae').execute(req, res));
-server.get('/latest', (req, res) => require('./routes/latest').execute(req, res));
-server.get('/player/:id/:ep/:res', (req, res) => require('./routes/player').execute(req, res, recentVisitors));
+server
+  .get('/', (req, res) => require('./routes/browser').execute(req, res))
 
-server.post('/redirect', (req, res) => require('./routes/redirect').execute(req, res));
+  .get('/api/search', (req, res) => require('./routes/api/search').execute(req, res))
+  .get('/api/get/:id', (req, res) => require('./routes/api/get').execute(req, res))
 
-server.all('*', (req, res) => res.send('|Eros|403: Access Denied.'));
+  .get('/dashboard', (req, res) => require('./routes/dashboard').execute(req, res))
+  .get('/latest', (req, res) => require('./routes/latest').execute(req, res))
+  .get('/player/:id/:ep/:res', (req, res) => require('./routes/player').execute(req, res, recentVisitors))
 
-server.listen(80);
+  .get('/justmonika', (req, res) => require('./routes/justmonika').execute(req, res))
+  .get('/wae', (req, res) => require('./routes/wae').execute(req, res))
+
+  .post('/redirect', (req, res) => require('./routes/redirect').execute(req, res))
+
+  .all('*', (req, res) => res.send('|Eros|403: Access Denied.'))
+
+  .listen(80);
 console.log('Listening to http://localhost:80');
 setInterval(() => {
   const filterVisitors = recentVisitors.filter(v => Date.now() - v.expiration > 1000 * 60 * 30);
