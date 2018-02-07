@@ -6,8 +6,9 @@ module.exports.execute = async(req, res) => {
   try{
     if(!query.length >= 2) throw { status: 403, message: 'Query must be 2 or more characters.' };
   
+    const col = 'REPLACE(REPLACE(REPLACE(khName, \'(\', \'\'), \')\', \'\'), "\'", \'\')';
     const rows = await sql.all(
-      `SELECT khID, khName FROM kamihime WHERE khName LIKE ? LIMIT 10`,
+      `SELECT khID, khName FROM kamihime WHERE ${col} LIKE ? LIMIT 10`,
       sanitiseQuery(query)
     );
     res
@@ -15,9 +16,14 @@ module.exports.execute = async(req, res) => {
       .json(rows);
   }
   catch (err) {
-    res
-      .status(err.status)
-      .json({ error: err.message });
+    if(!isNaN(err.status))
+      res
+        .status(err.status)
+        .json({ error: err.message });
+    else
+      res
+        .status(500)
+        .json({ error: err.message });
   }
 };
 

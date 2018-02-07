@@ -5,6 +5,8 @@ const sql               = require('sqlite');
 const server            = express();
 const Collection        = require('./utils/Collection');
 
+const { database } = require('./auth.json');
+
 server.set('view engine', 'pug');
 server.set('views', './views');
 server.set('json spaces', 2);
@@ -12,17 +14,15 @@ server.disable('x-powered-by');
 server.use(express.static(__dirname + '/static'));
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
-sql.open('../eros/db/Eros.db'); //Comment this
-//sql.open('./db/Resources.db'); //Uncomment if snek's files are in the same directory
-//sql.open('../snek/db/Resources.db'); //Uncomment if snek's files are in its own directory
+sql.open(database);
 
 const recentVisitors = new Collection();
 
 server
   .get('/', (req, res) => require('./routes/browser').execute(req, res))
 
-  .get('/api/search', (req, res) => require('./routes/api/search').execute(req, res))
-  .get('/api/get/:id', (req, res) => require('./routes/api/get').execute(req, res))
+  .get('/api/get/:id', (req, res) => require('./routes/api/GET/get').execute(req, res))
+  .get('/api/search', (req, res) => require('./routes/api/GET/search').execute(req, res))
 
   .get('/dashboard', (req, res) => require('./routes/dashboard').execute(req, res))
   .get('/latest', (req, res) => require('./routes/latest').execute(req, res))
