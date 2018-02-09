@@ -6,6 +6,7 @@ const server            = express();
 const Collection        = require('./utils/Collection');
 
 const { database, hostAddress } = require('./auth.json');
+const methods = Object.keys(require('./auth.json').rateLimits);
 
 server.set('view engine', 'pug');
 server.set('views', './views');
@@ -18,8 +19,11 @@ sql.open(database);
 
 global.recentVisitors = new Collection();
 global.rateLimits = new Collection();
-rateLimits.set('get', new Collection());
-rateLimits.set('search', new Collection());
+
+for(const method of methods) {
+  rateLimits.set(method, new Collection());
+  console.log(`API: Ratelimiter: Method ${method.toLocaleUpperCase()}'s Collection is set!`);
+}
 
 server
   .get('/', (req, res) => require('./routes/browser').execute(req, res))
@@ -40,7 +44,7 @@ server
   .all('*', (req, res) => res.send('|Eros|403: Access Denied.'))
 
   .listen(80);
-console.log('Listening to http://localhost:80');
+console.log(`Listening to ${hostAddress}:80`);
 setInterval(() => {
   const filterVisitors = recentVisitors.filter(v => Date.now() - v.expiration > 1000 * 60 * 30);
   if(!filterVisitors.size) return;

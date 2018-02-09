@@ -28,10 +28,20 @@ module.exports.execute = async (req, res) => {
     if(!isNaN(err.status))
       res
         .status(err.status)
-        .json({ error: err.message });
+        .json({
+          error: {
+            code: err.status,
+            message: err.message
+          }
+        });
     else
       res
         .status(500)
-        .json({ error: err.message });
+        .json({
+          error: {
+            code: 500,
+            message: err.message
+          }
+        });
   }
 };

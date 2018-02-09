@@ -1,7 +1,7 @@
 auth.json
 package-lock.json
 test.js
-provider/Eros.db
+provider/
 .vscode/
 node_modules/
 static/scenarios/*

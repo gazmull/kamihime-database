@@ -1,10 +1,9 @@
 const sql = require('sqlite');
 
 module.exports.execute = async(req, res) => {
-  const query = decodeURI(req.query.name);
-
   try{
-    if(!query.length >= 2) throw { status: 403, message: 'Query must be 2 or more characters.' };
+    const query = decodeURI(req.query.name);
+    if(Object.values(query).length < 2) throw { status: 403, message: 'Query must be 2 or more characters.' };
   
     const col = 'REPLACE(REPLACE(REPLACE(khName, \'(\', \'\'), \')\', \'\'), "\'", \'\')';
     const rows = await sql.all(
@@ -19,11 +18,21 @@ module.exports.execute = async(req, res) => {
     if(!isNaN(err.status))
       res
         .status(err.status)
-        .json({ error: err.message });
+        .json({
+          error: {
+            code: err.status,
+            message: err.message
+          }
+        });
     else
       res
         .status(500)
-        .json({ error: err.message });
+        .json({
+          error: {
+            code: 500,
+            message: err.message
+          }
+        });
   }
 };
 
