@@ -5,7 +5,7 @@ const sql               = require('sqlite');
 const server            = express();
 const Collection        = require('./utils/Collection');
 
-const { database } = require('./auth.json');
+const { database, hostAddress } = require('./auth.json');
 
 server.set('view engine', 'pug');
 server.set('views', './views');
@@ -16,17 +16,21 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 sql.open(database);
 
-const recentVisitors = new Collection();
+global.recentVisitors = new Collection();
+global.rateLimits = new Collection();
+rateLimits.set('get', new Collection());
+rateLimits.set('search', new Collection());
 
 server
   .get('/', (req, res) => require('./routes/browser').execute(req, res))
 
+  .get(['/api/:method', '/api/:method/*?'], (req, res, next) => require('./routes/api/index').execute(req, res, next))
   .get('/api/get/:id', (req, res) => require('./routes/api/GET/get').execute(req, res))
   .get('/api/search', (req, res) => require('./routes/api/GET/search').execute(req, res))
 
   .get('/dashboard', (req, res) => require('./routes/dashboard').execute(req, res))
   .get('/latest', (req, res) => require('./routes/latest').execute(req, res))
-  .get('/player/:id/:ep/:res', (req, res) => require('./routes/player').execute(req, res, recentVisitors))
+  .get('/player/:id/:ep/:res', (req, res) => require('./routes/player').execute(req, res))
 
   .get('/justmonika', (req, res) => require('./routes/justmonika').execute(req, res))
   .get('/wae', (req, res) => require('./routes/wae').execute(req, res))

@@ -1,5 +1,17 @@
 {
     "database": "./provider/Eros.db",
+    "hostAddress": "127.0.0.1",
     "hookID": "319102712383799296",
-    "hookToken": "FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD"
+    "hookToken": "FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD",
+
+    "rateLimits": {
+        "get": {
+            "max": 3,
+            "cooldown": 5
+        },
+        "search": {
+            "max": 3,
+            "cooldown": 5
+        }
+    }
 }

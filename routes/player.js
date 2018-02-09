@@ -1,7 +1,7 @@
 const sql = require('sqlite');
 
 module.exports = {
-    async execute(req, res, blacklist) {
+    async execute(req, res) {
         let backEnd_err;
         try {
 
@@ -23,15 +23,15 @@ module.exports = {
                 else if( !((episode == 2 && row.khHarem_hentai1Resource2 === req.params.res) || (episode == 3 && row.khHarem_hentai2Resource2 === req.params.res)) )
                         throw backEnd_err = '|Eros|Invalid API Request: Resource Directory input does not match within my records.'
 
-                const visitorFilter = blacklist.filter(r => r.address === req.ip && r.characterID === row.khID && r.ep === episode);
+                const visitorFilter = recentVisitors.filter(r => r.address === req.ip && r.characterID === row.khID && r.ep === episode);
                 let visitor = visitorFilter.first() || null;
 
                 if(!visitor) {
                         const uniqueID = Math.random().toString(36).substr(2, 16);
                         await sql.run(`UPDATE kamihime SET peekedOn=${row.peekedOn + 1} WHERE khID='${row.khID}'`);
-                        blacklist.set(uniqueID, { address: req.ip, expiration: Date.now(), characterID: row.khID, ep: episode});
+                        recentVisitors.set(uniqueID, { address: req.ip, expiration: Date.now(), characterID: row.khID, ep: episode});
 
-                        visitor = blacklist.filter(r => r.address === req.ip && r.characterID === row.khID && r.ep === episode).first();
+                        visitor = recentVisitors.filter(r => r.address === req.ip && r.characterID === row.khID && r.ep === episode).first();
                         console.log(`PeekedOn Ratelimit: [${row.khName} - ${uniqueID}] Added ${visitor.address} on ${new Date(visitor.expiration).toLocaleString()}`);
                 }
                 res.render(`player`, { json: row, ep: episode });
