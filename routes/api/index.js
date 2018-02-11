@@ -44,9 +44,11 @@ module.exports.execute = (req, res, next) => {
 
   try {
     if(!this.validateRequest(req.params.request)) throw { code: 404, message: 'Request method not found.' };
-    if(req.ip.includes(hostAddress)) return file.execute(req, res, next);
     const request = req.params.request;
     const file = require(`./${this.getMethod(request)}/${request}`);
+
+    if(req.ip.includes(hostAddress)) return file.execute(req, res, next);
+
     const requestFilter = rateLimits.get(this.getMethod(request)).get(request);
     const userFilter = requestFilter.filter(r => r.address === req.ip);
     const user = userFilter.first() || null;
