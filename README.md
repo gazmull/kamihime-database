@@ -21,8 +21,8 @@ Website + RESTful (JSON) API for Kamihime Database.
 
 # Notice
 * Please configure `auth.json`. Get its template from `auth.example.json`.
-  * Basically: `database`, `hostAddress`, and `apiURL`
-  * Optional (deprecated): `hookID`, and `hookToken`
+      * Basically: `database`, `hostAddress`, and `apiURL`
+      * Optional (deprecated): `hookID`, and `hookToken`
 
 # Dependencies
 * [express/body-parser/compression homepage](https://github.com/expressjs)
