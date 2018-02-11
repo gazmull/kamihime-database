@@ -1,39 +1,31 @@
-// const sql = require('sqlite');
+const sql = require('sqlite');
 
-// module.exports.execute = async (req, res) => {
-//   const var1 = req.query.var1;
-//   const var2 = req.query.var2;
-//   const type = ['eidolon', 'kamihime', 'soul'];
-//   const rarity = [
-//     'ssra', 'ssr', 'sr', 'r',
-//     'standard', 'elite', 'legendary'
-//   ];
-//   const checkType = (var1, var2) => {
-//     if(type['eidolon'].includes(var1) || type['eidolon'].includes(var2))
-//       return 'eidolon';
-//     else if(type['kamihime'].includes(var1) || type['kamihime'].includes(var2))
-//       return 'kamihime';
-//     else
-//       return 'soul';
-//   };
-//   const checkRarity = (var1, var2) => {
-//     if(checkType == 'eidolon' || checkType == 'kamihime') {
-//         if( checkType == 'kamihime' && (rarity['ssra'].includes(var1) || rarity['ssra'].includes(var2)) )
-//           return 'ssra';
-//         if( rarity['ssr'].includes(var1) || rarity['ssr'].includes(var2) )
-//           return 'ssr';
-//         else if( rarity['sr'].includes(var1) || rarity['sr'].includes(var2) )
-//           return 'sr';
-//         else if( rarity['r'],includes(var1) || rarity['r'].includes(var2) )
-//           return 'r';
-//     }
-//     else {
-//       if( rarity['legendary'].includes(var1) || rarity['legendary'].includes(var2) )
-//           return 'legendary';
-//         else if( rarity['elite'].includes(var1) || rarity['elite'].includes(var2) )
-//           return 'elite';
-//         else if( rarity['standard'],includes(var1) || rarity['standard'].includes(var2) )
-//           return 'standard';
-//     }
-//   };
-// }
+module.exports.execute = async (req, res) => {
+  try {
+    const fields = [
+      'khID', 'khName',
+      'khElement', 'khType',
+      //'khRarity', 'khTier',
+      //'khWeapon1', 'khWeapon2'
+    ];
+
+    const rowSouls    = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSoul IS 1 ORDER BY khID ASC`);
+    const rowEidolons = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khEidolon IS 1 ORDER BY khID ASC`);
+    const rowSSRA     = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 1 ORDER BY khID ASC`);
+    const rowSSR      = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 0 ORDER BY khID ASC`);
+    const rowSR       = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 0 AND khSoul IS 0 and khEidolon IS 0 ORDER BY khID ASC`);
+    const rowR        = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 1 ORDER BY khID ASC`);
+    
+    res
+      .status(200)
+      .json({
+        soul: rowSouls,
+        eidolon: rowEidolons,
+        ssra: rowSSRA,
+        ssr: rowSSR,
+        sr: rowSR,
+        r: rowR
+      });
+  }
+  catch (err) { errorHandler(res, err); }
+}

@@ -4,7 +4,7 @@
 ---
 # Kamihime Database
 
-Webserver version of Eros' Kamihime Database function (?UPD / ?PEEK)
+Website + RESTful (JSON) API for Kamihime Database.
 
 * [Eros Dev](http://erosdev.thegzm.space)
 * [Eros Support](http://support.thegzm.space)
@@ -20,10 +20,12 @@ Webserver version of Eros' Kamihime Database function (?UPD / ?PEEK)
     * `$ node snek.js` to boop
 
 # Notice
-* Since `Eros.db` is not in the remote repository, please configure the `sql.open()` in `auth.json`.
+* Please configure `auth.json`. Get its template from `auth.example.json`.
+  * Basically: `database`, `hostAddress`, and `apiURL`
+  * Optional (deprecated): `hookID`, and `hookToken`
 
 # Dependencies
-* [express/body-parser homepage](https://github.com/expressjs)
+* [express/body-parser/compression homepage](https://github.com/expressjs)
 * [pug homepage](https://github.com/pugjs/pug)
 * [sqlite homepage](https://github.com/mapbox/node-sqlite3)
 * [canvas homepage](https://github.com/Automattic/node-canvas/wiki)

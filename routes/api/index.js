@@ -1,75 +1,82 @@
-const limits = require('../../auth.json').rateLimits;
+const methods = require('../../auth.json').rateLimits;
 const { hostAddress } = require('../../auth.json');
 
 module.exports.execute = (req, res, next) => {
-  const methods = Object.keys(limits);
-
-  this.reInitialise = (method, methodFilter) => this.initialise(method, methodFilter);
-  this.initialise = (method, methodFilter) => {
-    methodFilter.set(req.ip, { address: req.ip, triggers: 1, timestamp: Date.now() });
-
-    const user = methodFilter.get(req.ip);
-    console.log(`${new Date().toLocaleString()}: [I/RI] API: User: ${user.address} | Method: ${method.toUpperCase()} | Triggers: ${user.triggers}`);
+  this.validateRequest = request => {
+    for(const method of rateLimits.keys()) {
+      for(const key of rateLimits.get(method).keys()) {
+        if(key === request) {
+          return true;
+          break;
+        }
+      }
+    }
+    return false;
   };
-  this.update = (method, methodFilter) => {
-    let user = methodFilter.get(req.ip);
-    methodFilter.set(req.ip, { address: req.ip, triggers: user.triggers + 1, timestamp: user.timestamp });
+  this.getMethod = request => {
+    for(const method of rateLimits.keys()) {
+      for(const key of rateLimits.get(method).keys()) {
+        if(key === request) {
+          return method;
+          break;
+        }
+      }
+    }
+  };
+  this.reInitialise = (request, requestFilter) => this.initialise(request, requestFilter);
+  this.initialise = (request, requestFilter) => {
+    requestFilter.set(req.ip, { address: req.ip, triggers: 1, timestamp: Date.now() });
 
-    user = methodFilter.get(req.ip);
-    console.log(`${new Date().toLocaleString()}: [U] API: User: ${user.address} | Method: ${method.toUpperCase()} | Triggers: ${user.triggers}`);
+    const user = requestFilter.get(req.ip);
+    console.log(
+      `${new Date().toLocaleString()}: [I/RI] API: User: ${user.address} | request: ${this.getMethod(request)}/${request} | Triggers: ${user.triggers}`
+    );
+  };
+  this.update = (request, requestFilter) => {
+    let user = requestFilter.get(req.ip);
+    requestFilter.set(req.ip, { address: req.ip, triggers: user.triggers + 1, timestamp: user.timestamp });
+
+    user = requestFilter.get(req.ip);
+    console.log(
+      `${new Date().toLocaleString()}: [U] API: User: ${user.address} | request: ${this.getMethod(request)}/${request} | Triggers: ${user.triggers}`
+    );
   }
 
   try {
-    if(!methods.includes(req.params.method)) throw { status: 404, message: 'Not a valid method.' };
-    if(req.ip.includes(hostAddress)) return next();
-    const method = req.params.method;
-    const methodFilter = rateLimits.get(method);
-    const userFilter = methodFilter.filter(r => r.address === req.ip);
+    if(!this.validateRequest(req.params.request)) throw { code: 404, message: 'Request method not found.' };
+    if(req.ip.includes(hostAddress)) return file.execute(req, res, next);
+    const request = req.params.request;
+    const file = require(`./${this.getMethod(request)}/${request}`);
+    const requestFilter = rateLimits.get(this.getMethod(request)).get(request);
+    const userFilter = requestFilter.filter(r => r.address === req.ip);
     const user = userFilter.first() || null;
 
     if(!user) {
-      this.initialise(method, methodFilter);
-      return next();
+      this.initialise(request, requestFilter);
+      return file.execute(req, res, next);
     }
     else {
-      const max = limits[method].max;
-      const cooldown = limits[method].cooldown * 1000;
+      const requests = methods[this.getMethod(request)];
+      const max = requests[request].max;
+      const cooldown = requests[request].cooldown * 1000;
       const isExpired = Date.now() - user.timestamp >= cooldown;
 
       if(isExpired) {
-        this.reInitialise(method, methodFilter);
-        return next();
+        this.reInitialise(request, requestFilter);
+        return file.execute(req, res, next);
       }
-      else if(user.triggers === limits[method].max && !isExpired)
+      else if(user.triggers === requests[request].max && !isExpired)
         throw {
-          status: 429,
+          code: 429,
           message: [
-            `Maximum requests for this method has been reached (${max}/${cooldown}s).`,
+            `Maximum requests for this request has been reached (${max}/${cooldown / 1000}s).`,
             `Please wait for ${((user.timestamp + cooldown) - Date.now()) / 1000} seconds.`
-          ].join(' ')
+          ].join(' '),
+          remaining: ((user.timestamp + cooldown) - Date.now())
         };
-      this.update(method, methodFilter);
-      next();
+      this.update(request, requestFilter);
+      file.execute(req, res, next);
     }
   }
-  catch (err) {
-    if(!isNaN(err.status))
-      res
-        .status(err.status)
-        .json({
-          error: {
-            code: err.status,
-            message: err.message
-          }
-        });
-    else
-      res
-        .status(500)
-        .json({
-          error: {
-            code: 500,
-            message: err.message
-          }
-        });
-  }
+  catch (err) { errorHandler(res, err); }
 }
