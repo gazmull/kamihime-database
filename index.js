@@ -5,6 +5,7 @@ const pug               = require('pug');
 const sql               = require('sqlite');
 const server            = express();
 const Collection        = require('./utils/Collection');
+const fs                = require('fs');
 
 const { database, hostAddress } = require('./auth.json');
 const methods = require('./auth.json').rateLimits;
@@ -36,21 +37,25 @@ for(const method of Object.keys(methods)) {
   }
 }
 
-server
-  .get('/', (req, res) => require('./routes/browser').execute(req, res))
+const routeDir = fs.readdirSync('./routes/');
 
-  .get(['/api/:request', '/api/:request/*?'], (req, res, next) => require('./routes/api/index').execute(req, res, next))
+for(const route of routeDir) {
+  try {
+    const file = new (require(`./routes/${route}`))();
+    switch(file.method) {
+      case 'get':
+        server.get(file.route, (req, res, next) => file.execute(req, res, next));
+        break;
+      case 'post':
+        server.post(file.route, (req, res, next) => file.execute(req, res, next));
+      default:
+        console.log('Cannot include this method.');
+    }
+  }
+  catch (err) { console.log(err); }
+}
 
-  .get('/dashboard', (req, res) => require('./routes/dashboard').execute(req, res))
-  .get('/latest', (req, res) => require('./routes/latest').execute(req, res))
-  .get('/player/:id/:ep/:res', (req, res) => require('./routes/player').execute(req, res))
-
-  .get('/justmonika', (req, res) => require('./routes/justmonika').execute(req, res))
-  .get('/wae', (req, res) => require('./routes/wae').execute(req, res))
-
-  .post('/redirect', (req, res) => require('./routes/redirect').execute(req, res))
-
-  .all('*', (req, res) => res.send('|Eros|403: Access Denied.'))
+server.all('*', (req, res) => res.send('403: Access Denied.'))
 
   .listen(80);
 console.log(`Listening to ${hostAddress}:80`);
