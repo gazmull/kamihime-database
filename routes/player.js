@@ -36,7 +36,7 @@ class Player {
         recentVisitors.set(uniqueID, { address: req.ip, expiration: Date.now(), characterID: row.khID, ep: episode});
 
         visitor = recentVisitors.filter(r => r.address === req.ip && r.characterID === row.khID && r.ep === episode).first();
-        console.log(`PeekedOn Ratelimit: [${row.khName} - ${uniqueID}] Added ${visitor.address} on ${new Date(visitor.expiration).toLocaleString()}`);
+        console.log(`${new Date().toLocaleString()}: [A] Peek: [${row.khName} - ${uniqueID}] Added ${visitor.address}`);
       }
       res.render(`player`, { json: row, ep: episode });
     }

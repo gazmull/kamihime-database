@@ -48,8 +48,9 @@ for(const route of routeDir) {
         break;
       case 'post':
         server.post(file.route, (req, res, next) => file.execute(req, res, next));
+        break;
       default:
-        console.log('Cannot include this method.');
+        console.log('Cannot include this method: %s (route: %s)', file.method, file.id);
     }
   }
   catch (err) { console.log(err); }

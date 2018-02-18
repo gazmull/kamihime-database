@@ -3,29 +3,49 @@ const sql = require('sqlite');
 class ListRequest {
   async execute(req, res) {
     try {
-      const fields = [
-        'khID', 'khName',
-        'khElement', 'khType',
-        //'khRarity', 'khTier',
-        //'khWeapon1', 'khWeapon2'
-      ];
+      const fields = {
+        soul: [
+          'khID', 'khName','khInfo_avatar',
+          'khType',
+          'khTier',
+          'peekedOn',
+          'khHarem_intro', 'khHarem_introResource1', 'khHarem_introFile',
+          'khHarem_hentai1', 'khHarem_hentai1Resource1', 'khHarem_hentai1Resource2'
+        ],
+        eidolon: [
+          'khID', 'khName','khInfo_avatar',
+          'khElement',
+          'khRarity',
+          'peekedOn',
+          'khHarem_intro', 'khHarem_introResource1', 'khHarem_introFile',
+          'khHarem_hentai1', 'khHarem_hentai1Resource1', 'khHarem_hentai1Resource2'
+        ],
+        kamihime: [
+          'khID', 'khName','khInfo_avatar',
+          'khElement', 'khType',
+          'khRarity',
+          'peekedOn',
+          'khHarem_intro', 'khHarem_introResource1', 'khHarem_introFile',
+          'khHarem_hentai1', 'khHarem_hentai1Resource1', 'khHarem_hentai1Resource2',
+          'khHarem_hentai2', 'khHarem_hentai2Resource2', 'khHarem_hentai2Resource2'
+        ]
+      };
 
-      const rowSouls    = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSoul IS 1 ORDER BY khID ASC`);
-      const rowEidolons = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khEidolon IS 1 ORDER BY khID ASC`);
-      const rowSSRA     = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 1 ORDER BY khID ASC`);
-      const rowSSR      = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 0 ORDER BY khID ASC`);
-      const rowSR       = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 0 AND khSoul IS 0 and khEidolon IS 0 ORDER BY khID ASC`);
-      const rowR        = await sql.all(`SELECT ${fields} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 1 ORDER BY khID ASC`);
+      const rowLegendary = await sql.all(`SELECT ${fields.soul} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khTier='Legendary' ORDER BY khName ASC`);
+      const rowElite     = await sql.all(`SELECT ${fields.soul} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khTier='Elite' ORDER BY khName ASC`);
+      const rowStandard  = await sql.all(`SELECT ${fields.soul} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khTier='Standard' ORDER BY khName ASC`);
+      const rowEidolons  = await sql.all(`SELECT ${fields.eidolon} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khEidolon IS 1 ORDER BY khName ASC`);
+      const rowSSRA      = await sql.all(`SELECT ${fields.kamihime} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khEidolon IS 0 AND khRarity='SSRA' ORDER BY khName ASC`);
+      const rowSSR       = await sql.all(`SELECT ${fields.kamihime} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khEidolon IS 0 AND khRarity='SSR' ORDER BY khName ASC`);
+      const rowSR        = await sql.all(`SELECT ${fields.kamihime} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khEidolon IS 0 AND khRarity='SR' ORDER BY khName ASC`);
+      const rowR         = await sql.all(`SELECT ${fields.kamihime} FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khEidolon IS 0 AND khRarity='R' ORDER BY khName ASC`);
       
       res
         .status(200)
         .json({
-          soul: rowSouls,
+          soul: rowLegendary.concat(rowElite, rowStandard),
           eidolon: rowEidolons,
-          ssra: rowSSRA,
-          ssr: rowSSR,
-          sr: rowSR,
-          r: rowR
+          kamihime: rowSSRA.concat(rowSSR, rowSR, rowR),
         });
     }
     catch (err) { errorHandler(res, err); }
