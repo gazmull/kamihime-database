@@ -1,6 +1,7 @@
 {
     "database": "./provider/Eros.db",
     "hostAddress": "http://127.0.0.1",
+    "rootURL": "http://localhost",
     "apiURL": "http://127.0.0.1/api/",
     "hookID": "319102712383799296",
     "hookToken": "FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD",

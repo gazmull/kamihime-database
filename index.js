@@ -42,24 +42,21 @@ const routeDir = fs.readdirSync('./routes/');
 for(const route of routeDir) {
   try {
     const file = new (require(`./routes/${route}`))();
-    switch(file.method) {
-      case 'get':
-        server.get(file.route, (req, res, next) => file.execute(req, res, next));
-        break;
-      case 'post':
-        server.post(file.route, (req, res, next) => file.execute(req, res, next));
-        break;
-      default:
-        console.log('Cannot include this method: %s (route: %s)', file.method, file.id);
+    if(!file.method) {
+      console.log('Missing Method: Route %s was not included.', route);
+      continue;
     }
+
+    server[file.method](file.route, (req, res, next) => file.execute(req, res, next));
   }
   catch (err) { console.log(err); }
 }
 
-server.all('*', (req, res) => res.send('403: Access Denied.'))
-
+server
+  .all('*', (req, res) => errorHandler(res, { code: 403, message: 'Forbidden.' }) )
   .listen(80);
 console.log(`Listening to ${hostAddress}:80`);
+
 setInterval(() => {
   cleanVisitors();
   cleanRateLimits();

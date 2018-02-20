@@ -1,4 +1,5 @@
-const sql = require('sqlite');
+const { get } = require('snekfetch');
+const apiURL = require('../auth.json');
 
 class Dashboard {
   constructor() {
@@ -8,26 +9,24 @@ class Dashboard {
   }
 
   async execute(req, res, next) {
-    let backEnd_err;
+    const query = req.query;
     try {
-      if(Object.keys(req.query).length === 0)
-        return res.send('|Eros|Invalid API request: empty query.');
-      // localhost/dashboard?id={khID}&ses={sID}&k={sPW}
-      const row  =  await sql.get(`SELECT * FROM kamihime WHERE khID='${req.query.id}'`);
-      const session = await sql.get(`SELECT * FROM sessions WHERE sID='${req.query.ses}'`);
+      if(Object.keys(query).length === 0)
+        throw { code: 404, message: 'Missing queries.' };
 
-      if(!row)
-        throw backEnd_err = '|Eros|Character ID is invalid. Are trying to guess?';
+      // localhost/dashboard?character={khID}&id={sID}&k={sPW}
+      const data  =  await get(`${apiURL}id/${query.character}`);
+      const character = data.body;
+      const session = await sql.get('SELECT * FROM sessions WHERE sID = ?', query.id);
+
       if(!session)
-        throw backEnd_err = '|Eros|Your session is invalid. Please ask for one in my Discord department.';
-      if(req.query.k !== session.sPW)
-        throw backEnd_err = '|Eros|Your session is invalid. Please ask for one in my Discord department.';
-      res.render(`dashboard`, { json: row, user: session });
+        throw { code: 404, message: 'Session not found.' };
+      else if(query.k !== session.sPW)
+        throw { code: 403, message: 'Session key doesn\'t match within my records.' };
+
+      res.render('dashboard', { json: row, user: session });
     }
-    catch (err) {
-      if(backEnd_err)
-        res.send(err.toString().replace(/'/g, ''));
-    }
+    catch (err) { errorHandler(res, err); }
   }
 }
 

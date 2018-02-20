@@ -1,4 +1,7 @@
-const sql = require('sqlite');
+const { get } = require('snekfetch');
+const Collection = require('../utils/Collection');
+
+const { apiURL, rootURL } = require('../auth.json');
 
 class Browser {
   constructor() {
@@ -9,26 +12,46 @@ class Browser {
 
   async execute(req, res, next) {
     try {
-      const rowSoul    = await sql.all('SELECT khID, khName, khInfo_avatar, khHarem_introFile, khHarem_hentai1, khHarem_hentai1Resource2 FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSoul IS 1 ORDER BY khName ASC');
-      const rowEidolon = await sql.all('SELECT khID, khName, khInfo_avatar, khHarem_introFile, khHarem_hentai1, khHarem_hentai1Resource2 FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khEidolon IS 1 ORDER BY khName ASC');
-      const rowSSRA    = await sql.all('SELECT khID, khName, khInfo_avatar, khHarem_introFile, khHarem_hentai1, khHarem_hentai1Resource2 FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 1 ORDER BY khName ASC');
-      const rowSSR     = await sql.all('SELECT khID, khName, khInfo_avatar, khHarem_introFile, khHarem_hentai1, khHarem_hentai1Resource2, khHarem_hentai2, khHarem_hentai2Resource2 FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 1 AND khRare IS 0 ORDER BY khName ASC');
-      const rowSR      = await sql.all('SELECT khID, khName, khInfo_avatar, khHarem_introFile, khHarem_hentai1, khHarem_hentai1Resource2, khHarem_hentai2, khHarem_hentai2Resource2 FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 0 AND khSoul IS 0 and khEidolon IS 0 ORDER BY khName ASC');
-      const rowR       = await sql.all('SELECT khID, khName, khInfo_avatar, khHarem_introFile, khHarem_hentai1, khHarem_hentai1Resource2 FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 AND khSSR IS 0 AND khRare IS 1 ORDER BY khName ASC');
-      const rowPeek    = await sql.all('SELECT khID, khName, khInfo_avatar, khHarem_introFile, khHarem_hentai1, khHarem_hentai1Resource2, khHarem_hentai2, khHarem_hentai2Resource2 FROM kamihime WHERE khHarem_hentai1Resource2 IS NOT NULL AND khApproved IS 1 ORDER BY peekedOn DESC LIMIT 30');
+      const data = await get(`${apiURL}list`);
+      const list = data.body;
+      const kamihime = this.toCollection(list.kamihime);
+      const ssra = kamihime.filter(k => k.khRarity === 'SSRA');
+      const ssr = kamihime.filter(k => k.khRarity === 'SSR');
+      const sr = kamihime.filter(k => k.khRarity === 'SR');
+      const r = kamihime.filter(k => k.khRarity === 'R');
+      const peeks = kamihime.sort((a, b) => b.peekedOn - a.peekedOn);
 
       res.render('browser', {
-        Souls: rowSoul,
-        Eidolons: rowEidolon,
-        SSRAs: rowSSRA,
-        SSRs: rowSSR,
-        SRs: rowSR,
-        Rs: rowR,
-        Peeks: rowPeek
+        Souls: list.soul,
+        Eidolons: list.eidolon,
+        SSRAs: this.toArray(ssra),
+        SSRs: this.toArray(ssr),
+        SRs: this.toArray(sr),
+        Rs: this.toArray(r),
+        Peeks: this.toArray(peeks).slice(0, 50),
+        rootURL
       });
-    } catch (err) {
-      res.send(err);
     }
+    catch (err) {
+      errorHandler(res, { code: 500, message: err });
+      if(err.stack) console.log(err.stack);
+    }
+  }
+
+  toCollection(result) {
+    const collection = new Collection();
+    for (let i = 0; i < result.length; i++)
+      collection.set(result[i].khID, result[i]);
+
+    return collection;
+  }
+
+  toArray(result) {
+    const array = [];
+    for (const [k, v] of result) // eslint-disable-line no-unused-vars
+      array.push(v);
+
+    return array;
   }
 }
 
