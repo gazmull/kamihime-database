@@ -1,7 +1,15 @@
-auth.json
+#NPM
 package-lock.json
+node_modules/
+
+#Yarn
+yarn.lock
+
+#VSC
+.vscode/
+
+#Private Credentials
+auth.js
 test.js
 provider/
-.vscode/
-node_modules/
 static/scenarios/*

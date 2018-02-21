@@ -3,7 +3,7 @@ const Canvas = require('canvas');
 const fs = require('fs');
 const path = require('path');
 
-const { apiURL } = require('../auth.json');
+const { api } = require('../auth');
 
 class Latest {
   constructor() {
@@ -11,20 +11,20 @@ class Latest {
     this.method = 'get';
     this.route = ['/latest'];
   }
-  
-  async execute(req, res, next) {
+
+  async execute(req, res) { // eslint-disable-line no-unused-vars
     try {
-      const rawData = await snekfetch.get(`${apiURL}latest`);
+      const rawData = await snekfetch.get(`${api.url}latest`);
       let result = rawData.body;
       const caseError = result.error || null;
 
-      if(caseError) throw { code: caseError.code, message: caseError.message };
+      if (caseError) throw { code: caseError.code, message: caseError.message };
 
       const file = fs.readFileSync(path.join(__dirname, '..', 'static', 'latest', 'base.png'));
       if (typeof file === 'undefined') throw { code: 500, message: 'Base image file is missing.' };
       const image = new Canvas.Image;
       image.src = file;
-      
+
       const canvas = new Canvas(image.width, image.height);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(image, 0, 0);
@@ -38,7 +38,7 @@ class Latest {
         sr: result.sr,
         r: result.r
       };
-      
+
       const positions = {
         soul: { x: 14, y: 63 },
         eidolon: { x: 174, y: 63 },
@@ -47,7 +47,7 @@ class Latest {
         r: { x: 174, y: 118 }
       };
 
-      for (const category of Object.keys(result)) {
+      for (const category of Object.keys(result))
         ctx.fillText(
           result[category]
             .map(c => c.khName)
@@ -55,12 +55,12 @@ class Latest {
           positions[category].x,
           positions[category].y
         );
-      }
 
       res.setHeader('Content-Type', 'image/png');
       canvas.pngStream().pipe(res);
+    } catch (err) {
+      errorHandler(res, err); // eslint-disable-line no-undef
     }
-    catch (err) { errorHandler(res, err); }
   }
 }
 

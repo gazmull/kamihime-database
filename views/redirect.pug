@@ -3,7 +3,7 @@ html
     head
         title Eros' Backend - Kamihime Database
         script.
-            setTimeout(() => this.location.replace(`http://google.com/`), 10000);
+            setTimeout(() => this.location.replace('/'), 10000);
         style
             include css/style.css
         body
@@ -13,12 +13,12 @@ html
 
             <center>
                 div(class="container")
-                    img(class="avatar" src=json.khInfo_avatar)
-                    span(class="iName" value=json.khName) 
-                        strong #{json.khName}
+                    img(class="avatar" src=avatar)
+                    span(class="iName" value=name) 
+                        strong #{name}
                     br
-                    span(class="iID" value=json.khID)
-                        span(style="font-size:13px") ##{json.khID.toUpperCase()}
+                    span(class="iID" value=id)
+                        span(style="font-size:13px") ##{id.toUpperCase()}
                    
                 h2 <sub>Your session for this character has been destroyed. <br/> You will be redirected shortly to index page...</sub>
                 p

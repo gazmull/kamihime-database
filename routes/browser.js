@@ -1,7 +1,7 @@
 const { get } = require('snekfetch');
 const Collection = require('../utils/Collection');
 
-const { apiURL, rootURL } = require('../auth.json');
+const { api } = require('../auth');
 
 class Browser {
   constructor() {
@@ -10,9 +10,9 @@ class Browser {
     this.route = ['/', '/browser'];
   }
 
-  async execute(req, res, next) {
+  async execute(req, res, next) { // eslint-disable-line no-unused-vars
     try {
-      const data = await get(`${apiURL}list`);
+      const data = await get(`${api.url}list`);
       const list = data.body;
       const kamihime = this.toCollection(list.kamihime);
       const ssra = kamihime.filter(k => k.khRarity === 'SSRA');
@@ -28,13 +28,11 @@ class Browser {
         SSRs: this.toArray(ssr),
         SRs: this.toArray(sr),
         Rs: this.toArray(r),
-        Peeks: this.toArray(peeks).slice(0, 50),
-        rootURL
+        Peeks: this.toArray(peeks).slice(0, 50)
       });
-    }
-    catch (err) {
-      errorHandler(res, { code: 500, message: err });
-      if(err.stack) console.log(err.stack);
+    } catch (err) {
+      errorHandler(res, { code: 500, message: err.message }); // eslint-disable-line no-undef
+      if (err.stack) console.log(err.stack);
     }
   }
 
