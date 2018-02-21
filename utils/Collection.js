@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /**
  * A Map with additional utility methods. This is used throughout discord.js rather than Arrays for anything that has
  * an ID, for significantly improved performance and ease-of-use.
@@ -27,12 +29,14 @@ class Collection extends Map {
   set(key, val) {
     this._array = null;
     this._keyArray = null;
+
     return super.set(key, val);
   }
 
   delete(key) {
     this._array = null;
     this._keyArray = null;
+
     return super.delete(key);
   }
 
@@ -44,6 +48,7 @@ class Collection extends Map {
    */
   array() {
     if (!this._array || this._array.length !== this.size) this._array = Array.from(this.values());
+
     return this._array;
   }
 
@@ -55,6 +60,7 @@ class Collection extends Map {
    */
   keyArray() {
     if (!this._keyArray || this._keyArray.length !== this.size) this._keyArray = Array.from(this.keys());
+
     return this._keyArray;
   }
 
@@ -71,6 +77,7 @@ class Collection extends Map {
     const arr = new Array(amount);
     const iter = this.values();
     for (let i = 0; i < amount; i++) arr[i] = iter.next().value;
+
     return arr;
   }
 
@@ -87,6 +94,7 @@ class Collection extends Map {
     const arr = new Array(amount);
     const iter = this.keys();
     for (let i = 0; i < amount; i++) arr[i] = iter.next().value;
+
     return arr;
   }
 
@@ -102,6 +110,7 @@ class Collection extends Map {
     if (typeof amount === 'undefined') return arr[arr.length - 1];
     if (amount < 0) return this.first(amount * -1);
     if (!amount) return [];
+
     return arr.slice(-amount);
   }
 
@@ -117,6 +126,7 @@ class Collection extends Map {
     if (typeof amount === 'undefined') return arr[arr.length - 1];
     if (amount < 0) return this.firstKey(amount * -1);
     if (!amount) return [];
+
     return arr.slice(-amount);
   }
 
@@ -133,6 +143,7 @@ class Collection extends Map {
     const rand = new Array(amount);
     arr = arr.slice();
     for (let i = 0; i < amount; i++) rand[i] = arr.splice(Math.floor(Math.random() * arr.length), 1)[0];
+
     return rand;
   }
 
@@ -149,6 +160,7 @@ class Collection extends Map {
     const rand = new Array(amount);
     arr = arr.slice();
     for (let i = 0; i < amount; i++) rand[i] = arr.splice(Math.floor(Math.random() * arr.length), 1)[0];
+
     return rand;
   }
 
@@ -165,9 +177,9 @@ class Collection extends Map {
     if (typeof prop !== 'string') throw new TypeError('Key must be a string.');
     if (typeof value === 'undefined') throw new Error('Value must be specified.');
     const results = [];
-    for (const item of this.values()) {
+    for (const item of this.values())
       if (item[prop] === value) results.push(item);
-    }
+
     return results;
   }
 
@@ -189,18 +201,17 @@ class Collection extends Map {
   find(propOrFn, value) {
     if (typeof propOrFn === 'string') {
       if (typeof value === 'undefined') throw new Error('Value must be specified.');
-      for (const item of this.values()) {
+      for (const item of this.values())
         if (item[propOrFn] === value) return item;
-      }
+
       return null;
     } else if (typeof propOrFn === 'function') {
-      for (const [key, val] of this) {
+      for (const [key, val] of this)
         if (propOrFn(val, key, this)) return val;
-      }
+
       return null;
-    } else {
-      throw new Error('First argument must be a property string or a function.');
     }
+    throw new Error('First argument must be a property string or a function.');
   }
 
   /* eslint-disable max-len */
@@ -220,18 +231,17 @@ class Collection extends Map {
   findKey(propOrFn, value) {
     if (typeof propOrFn === 'string') {
       if (typeof value === 'undefined') throw new Error('Value must be specified.');
-      for (const [key, val] of this) {
+      for (const [key, val] of this)
         if (val[propOrFn] === value) return key;
-      }
+
       return null;
     } else if (typeof propOrFn === 'function') {
-      for (const [key, val] of this) {
+      for (const [key, val] of this)
         if (propOrFn(val, key, this)) return key;
-      }
+
       return null;
-    } else {
-      throw new Error('First argument must be a property string or a function.');
     }
+    throw new Error('First argument must be a property string or a function.');
   }
 
   /**
@@ -266,9 +276,9 @@ class Collection extends Map {
   filter(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     const results = new Collection();
-    for (const [key, val] of this) {
+    for (const [key, val] of this)
       if (fn(val, key, this)) results.set(key, val);
-    }
+
     return results;
   }
 
@@ -282,9 +292,9 @@ class Collection extends Map {
   filterArray(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     const results = [];
-    for (const [key, val] of this) {
+    for (const [key, val] of this)
       if (fn(val, key, this)) results.push(val);
-    }
+
     return results;
   }
 
@@ -300,6 +310,7 @@ class Collection extends Map {
     const arr = new Array(this.size);
     let i = 0;
     for (const [key, val] of this) arr[i++] = fn(val, key, this);
+
     return arr;
   }
 
@@ -312,9 +323,9 @@ class Collection extends Map {
    */
   some(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
-    for (const [key, val] of this) {
+    for (const [key, val] of this)
       if (fn(val, key, this)) return true;
-    }
+
     return false;
   }
 
@@ -327,9 +338,9 @@ class Collection extends Map {
    */
   every(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
-    for (const [key, val] of this) {
+    for (const [key, val] of this)
       if (!fn(val, key, this)) return false;
-    }
+
     return true;
   }
 
@@ -357,6 +368,7 @@ class Collection extends Map {
         accumulator = fn(accumulator, val, key, this);
       }
     }
+
     return accumulator;
   }
 
@@ -377,9 +389,9 @@ class Collection extends Map {
    */
   concat(...collections) {
     const newColl = this.clone();
-    for (const coll of collections) {
+    for (const coll of collections)
       for (const [key, val] of coll) newColl.set(key, val);
-    }
+
     return newColl;
   }
 
@@ -389,9 +401,9 @@ class Collection extends Map {
    */
   deleteAll() {
     const returns = [];
-    for (const item of this.values()) {
+    for (const item of this.values())
       if (item.delete) returns.push(item.delete());
-    }
+
     return returns;
   }
 
@@ -406,8 +418,10 @@ class Collection extends Map {
     if (!collection) return false;
     if (this === collection) return true;
     if (this.size !== collection.size) return false;
+
     return !this.find((value, key) => {
       const testVal = collection.get(key);
+
       return testVal !== value || (testVal === undefined && !collection.has(key));
     });
   }
@@ -420,7 +434,7 @@ class Collection extends Map {
    * according to the string conversion of each element.
    * @returns {Collection}
    */
-  sort(compareFunction = (x, y) => +(x > y) || +(x === y) - 1) {
+  sort(compareFunction = (x, y) => Number(x > y) || Number(x === y) - 1) {
     return new Collection(Array.from(this.entries()).sort((a, b) => compareFunction(a[1], b[1], a[0], b[0])));
   }
 }

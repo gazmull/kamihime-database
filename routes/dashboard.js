@@ -1,26 +1,53 @@
 const sql = require('sqlite');
+const { get } = require('snekfetch');
 
-module.exports = {
-    async execute(req, res) {
-        let backEnd_err;
-        try {
-                if(Object.keys(req.query).length === 0)
-                        return res.send('|Eros|Invalid API request: empty query.');
-                // localhost/dashboard?id={khID}&ses={sID}&k={sPW}
-                const row  =  await sql.get(`SELECT * FROM kamihime WHERE khID='${req.query.id}'`);
-                const session = await sql.get(`SELECT * FROM sessions WHERE sID='${req.query.ses}'`);
+const { api } = require('../auth');
 
-                if(!row)
-                        throw backEnd_err = '|Eros|Character ID is invalid. Are trying to guess?';
-                if(!session)
-                        throw backEnd_err = '|Eros|Your session is invalid. Please ask for one in my Discord department.';
-                if(req.query.k !== session.sPW)
-                        throw backEnd_err = '|Eros|Your session is invalid. Please ask for one in my Discord department.';
-                res.render(`dashboard`, { json: row, user: session });
-        }
-        catch (err) {
-                if(backEnd_err)
-                        res.send(err.toString().replace(/'/g, ''));
-        }
+class Dashboard {
+  constructor() {
+    this.id = 'dashboard';
+    this.method = 'get';
+    this.route = ['/dashboard'];
+  }
+
+  async execute(req, res) {
+    const query = req.query;
+    try {
+      if (Object.keys(query).length === 0)
+        throw { code: 404, message: 'Missing queries.' };
+
+      // localhost/dashboard?character={khID}&id={sID}&k={sPW}
+      const data = await get(`${api.url}id/${query.character}`);
+      const character = data.body;
+      const session = await sql.get('SELECT * FROM sessions WHERE sID = ?', query.id);
+
+      if (!session)
+        throw { code: 404, message: 'Session not found.' };
+      else if (query.k !== session.sPW)
+        throw { code: 403, message: 'Session key doesn\'t match within my records.' };
+
+      const characterInfo = {
+        id: character.khID || null,
+        name: character.khName || null,
+        avatar: character.khInfo_avatar || null,
+        rarity: character.khRarity || null,
+        tier: character.khTier || null,
+        element: character.khElement || null,
+        type: character.khType || null,
+        engrishName: character.khEngrishName || null,
+        harem_intro: character.khHarem_intro || null,
+        harem_introResource1: character.khHarem_introResource1 || null,
+        harem_introFile: character.khHarem_introFile || null,
+        harem_hentai1: character.khHarem_hentai1 || null,
+        harem_hentai1Resource1: character.khHarem_hentai1Resource1 || null,
+        harem_hentai1Resource2: character.khHarem_hentai1Resource2 || null,
+        harem_hentai2Resource2: character.khHarem_hentai2Resource2 || null
+      };
+      res.render('dashboard', { characterInfo, user: session });
+    } catch (err) {
+      errorHandler(res, err); // eslint-disable-line no-undef
     }
-};
+  }
+}
+
+module.exports = Dashboard;

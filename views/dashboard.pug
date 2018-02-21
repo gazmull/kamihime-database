@@ -1,81 +1,53 @@
 doctype html
 html
-    head
-        title Eros' Backend - Kamihime Database
-        script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js")
-        style
-            include css/style.css
-        style.
-            .visible {
-                visibility: visible;
-                opacity: 1;
-                transition: opacity 0.3s linear;
-            }
+  head
+    title Eros' Backend - Kamihime Database
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js")
+    style
+      include css/style.css
+    style.
+      .visible {
+          visibility: visible;
+          opacity: 1;
+          transition: opacity 0.3s linear;
+      }
 
-            .hidden {
-                visibility: hidden;
-                opacity: 0;
-                transition: visibility 0s 0.3s, opacity 0.3s linear;
-            }
-        body(style="min-width: 1280px; float:center;")
-            h1 Kamihime Database Dashboard
-            h2 <sup>Where we configure our 2D Waifus.</sup>
-            h2 <sup>Session Creator: #{user.request_tagname}</sup>
-            br
+      .hidden {
+          visibility: hidden;
+          opacity: 0;
+          transition: visibility 0s 0.3s, opacity 0.3s linear;
+      }
+    body(style="min-width: 1280px; float:center;")
+      h1 Kamihime Database Dashboard
+      h2 <sup>Where we configure our 2D Waifus.</sup>
+      h2 <sup>Session Creator: #{user.user}</sup>
+      br
 
-            <center>
-                div(class="container")
-                    img(class="avatar" src=json.khInfo_avatar)
-                    span(class="iName" value=json.khName) 
-                        strong #{json.khName}
-                    br
-                    span(class="iID" value=json.khID)
-                        span(style="font-size:13px") ##{json.khID.toUpperCase()}
-                button(class='toggleForm' id='mbtn' style='background-color: #7289DA;' type='button' nav="manual") <b>Manual</b>
-                | 
-                button(class='toggleForm' id='abtn' style='background-color: #666f8b;' type='button' nav="auto") <b>Automated</b>
-                div(style="position: relative;")
-                    div(id="manual" class="visible" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;")
-                        form(method="POST" action="/redirect")
-                            input(type="hidden" name="khName" value=json.khName)
-                            input(type="hidden" name="khID" value=json.khID)
-                            input(type="hidden" name="request_tagname" value=user.request_tagname)
-                            h2 Empty fields to fill (with ♥ iykwim)
+      <center>
+        div(class="container")
+          img(class="avatar" src=characterInfo.avatar)
+          span(class="iName" value=characterInfo.name) 
+            strong #{characterInfo.name}
+          br
+          span(class="iID" value=characterInfo.id)
+            span(style="font-size:13px") ##{characterInfo.id.toUpperCase()}
+        div(style="position: relative;")
+          div(id="manual" class="visible" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;")
+            form(method="POST" action="/redirect")
+              input(type="hidden" name="id" value=characterInfo.id)
+              input(type="hidden" name="user" value=user.user)
+              h2 Empty fields to fill (with ♥ iykwim)
 
-                            for key in Object.keys(json)
-                                if (!(key.toString() === "khHarem_hentai1File" || key.toString() === "khHarem_hentai2File" || key.toString() === "peekedOn" || key.toString() === "khLoli" || key.toString() === "khApproved" || key.toString() === "khID" || key.toString() === "khName" || key.toString() === "khSoul" || key.toString() === "khEidolon" || key.toString() === "khRare" || key.toString() === "khSSR"))
-                                    textarea(class="avWA" name=key placeholder=key cols="40" rows="2") #{json[key]}
-                            for key in Object.keys(json)
-                                if (!(key.toString() === "khHarem_hentai1File" || key.toString() === "khHarem_hentai2File" || key.toString() === "peekedOn" || key.toString() === "khLoli" || key.toString() === "khApproved" || key.toString() === "khID" || key.toString() === "khName" || key.toString() === "khSoul" || key.toString() === "khEidolon" || key.toString() === "khRare" || key.toString() === "khSSR"))
-                                    p <img src="https://cdn.discordapp.com/emojis/381250720172736523.png" height="24px"/> Nothing to modify below here... why— <b><i>why don't you just click that SUBMIT INFO?!</i></b>
-                                    - break
-                            p
-                                input(class="btn" type='submit', value='SUBMIT INFO')
-                    div(id="auto" class="hidden" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;")
-                        form(method="POST" action="/redirect")
-                            input(type="hidden" name="khName" value=json.khName)
-                            input(type="hidden" name="khID" value=json.khID)
-                            input(type="hidden" name="request_tagname" value=user.request_tagname)
-                            h2 Paste Character Info From JSON/Character File
-                            textarea(class='avWA' name="jsonCode" placeholder='Code here' cols="60" rows="8")
-                            p
-                                input(class="btn" type='submit', value='SUBMIT INFO')
-                            h2 Disclaimer
-                            p.
-                                First and foremost, this only parses character information, not harem episodes.
-                                <br>With myself figuring out everything for you, I do not guarantee accurate information that I will parse and push into the database.
-                                <br>If there is a mistake on the information generated, please do correct it by requesting another session for this character.
-                            h2 Obtaining JSON/Character File, Steps On
-                            p(style="text-align: justify; margin-left: 0 auto; width: 47%; position: relative;").
-                                1. Open Developer Tool (F12 while on browser) and filter source by character ID: <b><a href="/jsonsteps/step1.png" target="_blank">Image</a></b>
-                                <br>2. Click onto a dialog (recommended Gacha shop) that directs to the profile and it should trigger the developer tool.
-                                <br>3. Once the file named after the character ID, either copy link or open it in new tab: <b><a href="/jsonsteps/step2.png" target="_blank">Image</a></b>
-                                <br>4. Once the new tab appears with the file's contents, copy the <b>whole</b> content.
-                                <br>5. Paste the code in the textbox provided above, and I will figure out the rest myself.
-                br
-                br
-                div(style="position:relative; margin-top:580px; left: 0; right: 0;")
-                    include footer/footer.pug
-                script
-                    include js/script.js
-            </center>
+              for key in Object.keys(characterInfo)
+                if(key === 'id')
+                  - continue;
+                textarea(class="avWA" name=key placeholder=key cols="40" rows="2") #{characterInfo[key]}
+              p
+                input(class="btn" type='submit', value='SUBMIT INFO')
+        br
+        br
+        div(style="position:relative; margin-top:580px; left: 0; right: 0;")
+            include constants/footer.pug
+        script
+            include js/script.js
+      </center>
