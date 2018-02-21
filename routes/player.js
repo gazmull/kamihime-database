@@ -20,7 +20,7 @@ class Player {
       // localhost/player/{khID}/{ep}/{resource2}
       const data = await get(`${api.url}id/${params.id}`);
       const character = data.body;
-      const episode = params.ep;
+      const episode = Number(params.ep);
       const resource = params.res;
       const isEidolon = character.khID.charAt(0) === 'e';
       const isSoul = character.khID.charAt(0) === 's';
