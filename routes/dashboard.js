@@ -41,6 +41,8 @@ class Dashboard {
         harem_hentai1: character.khHarem_hentai1 || null,
         harem_hentai1Resource1: character.khHarem_hentai1Resource1 || null,
         harem_hentai1Resource2: character.khHarem_hentai1Resource2 || null,
+        harem_hentai2: character.khHarem_hentai2 || null,
+        harem_hentai2Resource1: character.khHarem_hentai2Resource1 || null,
         harem_hentai2Resource2: character.khHarem_hentai2Resource2 || null
       };
       res.render('dashboard', { characterInfo, user: session });
