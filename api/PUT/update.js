@@ -29,7 +29,8 @@ class UpdateRequest {
         khHarem_hentai1: data.harem_hentai1 || null,
         khHarem_hentai1Resource1: data.harem_hentai1Resource1 || null,
         khHarem_hentai1Resource2: data.harem_hentai1Resource2 || null,
-        khHarem_hentai2Resource1: data.harem_hentai1Resource1 || null,
+        khHarem_hentai2: data.harem_hentai2 || null,
+        khHarem_hentai2Resource1: data.harem_hentai2Resource1 || null,
         khHarem_hentai2Resource2: data.harem_hentai2Resource2 || null
       };
       const array = [];
