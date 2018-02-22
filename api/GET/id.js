@@ -3,8 +3,8 @@ const sql = require('sqlite');
 class IdRequest {
   async execute(req, res) {
     const id = req.params[0];
-    const validID = ['s', 'k', 'e'];
-    const checkID = id && id.length === 5 &&
+    const validID = ['s', 'k', 'e', 'w', 'x'];
+    const checkID = id &&
       validID.includes(id.charAt(0)) &&
       !isNaN(id.slice(1));
 
