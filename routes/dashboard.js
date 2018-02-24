@@ -29,6 +29,7 @@ class Dashboard {
       const characterInfo = {
         id: character.khID || null,
         name: character.khName || null,
+        eidolon: character.khEidolon || null,
         avatar: character.khInfo_avatar || null,
         rarity: character.khRarity || null,
         tier: character.khTier || null,

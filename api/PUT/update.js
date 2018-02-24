@@ -17,6 +17,7 @@ class UpdateRequest {
 
       const info = {
         khName: data.name || null,
+        khEidolon: data.eidolon || null,
         khInfo_avatar: data.avatar || null,
         khRarity: data.rarity || null,
         khTier: data.tier || null,

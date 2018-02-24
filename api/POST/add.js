@@ -19,6 +19,7 @@ class AddRequest {
         khID: data.id || null,
         khName: data.name || null,
         khLoli: data.loli || null,
+        khEidolon: data.eidolon || null,
         khInfo_avatar: data.avatar || null,
         khRarity: data.rarity || null,
         khTier: data.tier || null,

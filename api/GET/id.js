@@ -17,7 +17,7 @@ class IdRequest {
         'khLoli', 'peekedOn',
         'khHarem_intro', 'khHarem_introResource1', 'khHarem_introFile',
         'khHarem_hentai1', 'khHarem_hentai1Resource1', 'khHarem_hentai1Resource2',
-        'khHarem_hentai2', 'khHarem_hentai2Resource2', 'khHarem_hentai2Resource2'
+        'khHarem_hentai2', 'khHarem_hentai2Resource1', 'khHarem_hentai2Resource2'
       ];
       const row = await sql.get(`SELECT ${fields} FROM kamihime WHERE khID = ?`, id);
       if (!row) throw { code: 404, message: 'Character not found.' };
