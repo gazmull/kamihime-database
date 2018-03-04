@@ -3,24 +3,24 @@ module.exports = {
   element: value => {
     let element;
     switch (value) {
-    case 0:
-      element = 'Fire';
-      break;
-    case 1:
-      element = 'Water';
-      break;
-    case 2:
-      element = 'Wind';
-      break;
-    case 3:
-      element = 'Thunder';
-      break;
-    case 4:
-      element = 'Dark';
-      break;
-    case 5:
-      element = 'Light';
-      break;
+      case 0:
+        element = 'Fire';
+        break;
+      case 1:
+        element = 'Water';
+        break;
+      case 2:
+        element = 'Wind';
+        break;
+      case 3:
+        element = 'Thunder';
+        break;
+      case 4:
+        element = 'Dark';
+        break;
+      case 5:
+        element = 'Light';
+        break;
     }
 
     return element;
@@ -29,19 +29,19 @@ module.exports = {
   character: value => {
     let type;
     switch (value) {
-    case 'special':
-      type = 'Tricky';
-      break;
-    case 'attack':
-      type = 'Offense';
-      break;
-    case 'heal':
-      type = 'Healer';
-      break;
-    default: {
-      type = value.charAt(0).toUpperCase();
-      type += value.slice(1);
-    }
+      case 'special':
+        type = 'Tricky';
+        break;
+      case 'attack':
+        type = 'Offense';
+        break;
+      case 'heal':
+        type = 'Healer';
+        break;
+      default: {
+        type = value.charAt(0).toUpperCase();
+        type += value.slice(1);
+      }
     }
 
     return type;
@@ -68,22 +68,22 @@ module.exports = {
     let description = '';
     const descArr = [];
     switch (value.type) {
-    case 25:
-    case 33:
-    case 50:
-    case 15:
-    case 53:
-      type = 'Frame A';
-      break;
-    case 44:
-    case 31:
-      type = 'Frame B';
-      break;
-    case 45:
-    case 49:
-      type = 'Frame A/B/C/D | **Conflict!**';
-      break;
-    default: type = '';
+      case 25:
+      case 33:
+      case 50:
+      case 15:
+      case 53:
+        type = 'Frame A';
+        break;
+      case 44:
+      case 31:
+        type = 'Frame B';
+        break;
+      case 45:
+      case 49:
+        type = 'Frame A/B/C/D | **Conflict!**';
+        break;
+      default: type = '';
     }
     for (let i = 0; i < value.description.length; i++) {
       if (typeof descArr !== 'undefined' && descArr.indexOf('/') > -1) break;
