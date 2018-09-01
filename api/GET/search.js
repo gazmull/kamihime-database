@@ -22,7 +22,7 @@ class SearchRequest {
   sanitiseQuery(query) {
     query = `${query.replace(/'/g, '\'\'')}`;
 
-    return query.length > 4 ? `%${query}%` : `${query}%`;
+    return query.length >= 4 ? `%${query}%` : `${query}%`;
   }
 }
 
