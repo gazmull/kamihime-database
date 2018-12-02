@@ -1,0 +1,6 @@
+{
+  "compress": true,
+  "ecma": 8,
+  "keep_classnames": false,
+  "keep_fnames": false
+}
