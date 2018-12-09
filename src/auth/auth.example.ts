@@ -1,15 +1,19 @@
 import { Api, WebHook } from 'auth';
 import { Config as Database } from 'knex';
-import { resolve } from 'path';
 
 /**
  * The database configuration to use for the server. (Sessions and Kamihime)
  */
 export const database: Database = {
-  client: 'sqlite3',
-  connection: { filename: resolve(__dirname, '../../provider/Eros.db') },
-  acquireConnectionTimeout: 10000,
-  useNullAsDefault: true
+  client: 'mysql2',
+  connection: {
+    host : '127.0.0.1',
+    user : 'root',
+    password : 'uvweve',
+    database : 'kamihimedb'
+  },
+  pool: { min: 0, max: 15 },
+  acquireConnectionTimeout: 10000
 };
 
 /**

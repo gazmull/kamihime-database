@@ -1,40 +1,124 @@
 doctype html
 
-mixin name
-  a #{character.name}#{character.name.slice(-1) === 's' ? '\'' : '\'s'} Episodes
+- const { id, name } = character;
 
+include functions/info.pug
 
 html
-
   head
-    link(rel = 'stylesheet' href = '/info/style.css')
-    title Kamihime Player - Episodes
+    meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
+    script(src='/lib/jquery.min.js')
+    script(src='/lib/bootstrap.min.js')
+    script(src='/lib/js.cookie.min.js')
+    link(rel='stylesheet', href='/lib/bootstrap.min.css')
 
+    script(src='/constants/script.js')
+    script(src='/info/script.js')
+    link(rel='stylesheet', href='/info/style.css')
+    title Kamihime Player - Info
   body
     ul
       include constants/navigation.pug
       li(style='float: right; user-select: none;')
         +name
     include constants/lb.pug
-    #episodes
-      - const { name, intro, harem1, harem2 } = character;
-      - const episodes = [intro, harem1, harem2];
 
-      - for (let i = 1; i <= episodes.length; ++i)
-        - const episode = episodes[i - 1];
+    div(class='container-fluid px-0')
+      div(class='row')
 
-        - if (!episode.title) continue;
+        <!-- Menu -->
+        div(class='col-1 px-0')
+          nav(class='navbar navbar-light navbar-expand-sm px-0 flex-row flex-nowrap float-left')
+            div(id='nav' class='nav')
+              a(class='nav-item nav-link', href='#info', data-toggle='collapse', data-target='#info') Info
+              a(class='nav-item nav-link', href='#episodes', data-toggle='collapse', data-target='#episodes') Episodes
+            div(class='nav-switch nav-switch-hide')
+        <!-- Menu End -->
 
-        h2 Episode #{i}: #{episode.title}
-        .buttons
+        div(class='col-12 px-0')
+          div(id='content', class='row')
+            - let key = 49;
 
-          - if (episode.resource)
-            strong <a href = "/player/#{name}/story/#{episode.resource}">Story</a>
+            div(id='info', class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
+              div(class='content-wrapper hidden-browser')
+                h1 #{wiki.name === 'Eros' ? 'You came to look for my stats? :)' : 'Info'}
 
-          - if (episode.resource2)
-            | | <strong><a href = "/player/#{name}/scenario/#{episode.resource2}">Scenario</a></strong>
-            | | <strong><a href = "/player/#{name}/legacy/#{episode.resource2}">Scenario (Legacy)</a></strong>
-        blockquote
-          p #{episode.summary}
-    #model
-      img(src = `/scenarios/0000/misc/${model}`)
+                - if (wiki.description)
+                  p <i>#{wiki.description}</i>
+
+                table(class='table table-borderless')
+                  +stats
+                
+                h3 Character Kit
+                table(class='table table-borderless')
+                  thead
+                    tr
+                      th(scope='col') Type
+                      th(scope='col') Description
+                      th(scope='col') Restrictions
+                  tbody
+                    +kit(0, wiki.burstName, wiki.burstDesc || burstDescParse(), burstUpgradeParse())
+                    +kit(0, wiki.summonAtk, wiki.summonAtkDes, null, wiki.summonCd)
+                    +kit(1, wiki.ability1Name, wiki.ability1Desc, abilityDescParse(wiki.ability1PowerupDesc, 1), wiki.ability1Cd, wiki.ability1Dur)
+                    +kit(1, wiki.ability2Name, wiki.ability2Desc, abilityDescParse(wiki.ability2PowerupDesc, 2), wiki.ability2Cd, wiki.ability2Dur)
+                    +kit(1, wiki.ability3Name, wiki.ability3Desc, abilityDescParse(wiki.ability3PowerupDesc, 3), wiki.ability3Cd, wiki.ability3Dur)
+                    -
+                      const concatEffects = [
+                        wiki.eidolonEffectDes0, wiki.eidolonEffectDes1,
+                        wiki.eidolonEffectDes2, wiki.eidolonEffectDes3, wiki.eidolonEffectDes4
+                      ]
+                      .map((el, i, arr) => {
+                        if (i == 0) return `${'☆'.repeat(4)} | ${el}`;
+                        return `${'★'.repeat(i)}${'☆'.repeat(arr.length - (i + 1))} | ${el}`;
+                      })
+                      .join('\n');
+                    +kit(1, wiki.eidolonEffect, concatEffects)
+                    +kit(2, wiki.assistName, wiki.assistDesc, wiki.rarity === 'SSR+' ? abilityDescParse(wiki.assistPowerupDesc, 4) : null)
+                    +kit(2, wiki.assist1Name, wiki.assist1Desc)
+                    +kit(2, wiki.assist2Name, wiki.assist2Desc)
+
+            div(id='episodes', class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
+              div(class='content-wrapper hidden-browser')
+                h1 #{wiki.name === 'Eros' ? 'Wha— wait, what are you doing?!' : 'Episodes'}
+                -
+                  const episodes = [
+                    character.harem1Title,
+                    character.harem2Title,
+                    character.harem3Title
+                  ];
+                  const resources = [
+                    { res1: character.harem1Resource1 },
+                    { res1: character.harem2Resource1, res2: character.harem2Resource2 },
+                    { res1: character.harem3Resource1, res2: character.harem3Resource2 }
+                  ];
+
+                table(class='table table-borderless')
+                  thead
+                      tr
+                        th(scope='col') #
+                        th(scope='col') Title
+                        th(scope='col') Links
+                  tbody
+                    - for (let i = 1; i <= episodes.length; ++i)
+                      -
+                        let episode = episodes[i - 1];
+                        const res = resources[i - 1];
+
+                        if (!episode && (res.res1 || res.res2)) episode = 'Untitled';
+                        else if (!episode && !(res.res1 || res.res2)) continue;
+
+                      tr
+                        td(scope='row') #{i}
+                        td
+                          h5 #{episode}
+                        td(class='name')
+
+                          - if (res.res1)
+                            b <a href = "/player/#{id}/#{i}/story">Story</a> 
+
+                          - if (res.res2)
+                            | | <b><a href = "/player/#{id}/#{i}/scenario">Scenario</a></b>
+                            | | <b><a href = "/player/#{id}/#{i}/legacy">Scenario (Legacy)</a></b>
+
+    div(id='model', class='d-none d-lg-block', style=`background-image: url("/img/wiki/${character.main}")`)
+    div(id='thumbnail', class='d-none d-md-block d-lg-none', style=`background-image: url("/img/wiki/${character.preview}")`)

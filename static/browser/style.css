@@ -1,68 +1,4 @@
-
-/* Menu */
-
-.navbar {
-  position: fixed;
-  top: 35%;
-  z-index: 1080;
-}
-
-@media (max-height: 640px) { .navbar { top: 33%; } }
-
-
-.nav {
-  max-width: 130px;
-  opacity: 0.8;
-  overflow: hidden;
-  transition: all 0.5s ease-in-out;
-  white-space: nowrap;
-  width: 130px;
-}
-
-.nav-hidden {
-  opacity: 0.3;
-  width: 0;
-}
-
-.nav-item { width: 100%; }
-
-.nav-link {
-  background-color: #777;
-  border-left: 0px solid #777;
-  color: #fff;
-  font-weight: 400;
-  transition: all 1s ease, font-weight 0.05s linear, border-left 0.3s ease;
-}
-
-.nav-link:hover {
-  border-left: 2px solid #ff00ae;
-  color: #ff00ae;
-  font-weight: bold;
-  opacity: 1;
-  transition: all 0.3s ease, font-weight 0.05s linear;
-}
-
-.nav .active {
-  border-left: 2px solid #ff00ae;
-  color: #ff00ae;
-  font-weight: bold;
-}
-
-.nav-switch {
-  border-bottom: 15px solid transparent;
-  border-left: 20px solid #ff00ae;
-  border-top: 15px solid transparent;
-  cursor: pointer;
-  height: 100px;
-  opacity: 1;
-  transition: all 0.5s ease-in-out;
-}
-
-.nav-switch-hide {
-  border-left-color: white;
-  height: 250px;
-  opacity: 0.8;
-}
+@import url('/constants/style.css');
 
 #search-bar {
   position: relative;
@@ -101,11 +37,14 @@
   top: 0;
   right: 0;
 }
+
 .feed {
   background-color: #555;
   border-bottom: 2px solid transparent;
-  border-left: 5px solid #ff00ae31;
+  border-left: 2px solid #ff00ae31;
   border-top: 2px solid transparent;
+  border-top-left-radius: 1%;
+  border-bottom-left-radius: 1%;
   width: 100%;
   overflow-y: auto;
   max-height: 50vh;
@@ -143,42 +82,6 @@
 
 .content { background-color: transparent; }
 
-.visible-browser {
-  opacity: 1;
-  transform: translateX(0);
-  transition: all 0.25s ease;
-  visibility: visible;
-  z-index: 0;
-}
-
-.hidden-browser {
-  opacity: 0;
-  transform: translateX(-50%);
-  transition: all 0.35s ease;
-  visibility: hidden;
-  z-index: -1;
-}
-
-.hiddenInstant-browser {
-  opacity: 0;
-  transform: translateX(-50%);
-  visibility: hidden;
-  z-index: -1;
-}
-
-.name a:link, .name a:visited {
-  color: #e7039f;
-  font-size: 15px;
-  font-weight: bold;
-  text-decoration: none;
-  transition: font-size 0.1s linear, color 0.3s ease-out;
-}
-
-.name a:hover {
-  color: #fff;
-  font-size: 15.5px;
-}
-
 .kh-list-wrapper { z-index: 1; }
 .kh-list {
   list-style-position: outside;
@@ -188,3 +91,5 @@
   float: left;
   clear: left;
 }
+
+.nav-switch-hide { height: 250px; }

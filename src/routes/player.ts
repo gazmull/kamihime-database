@@ -16,7 +16,7 @@ class PlayerRoute extends Route {
     super({
       id: 'player',
       method: 'get',
-      route: ['/player/:id/:ep/:type/:resource']
+      route: ['/player/:id/:ep/:type']
     });
   }
 
@@ -44,7 +44,7 @@ class PlayerRoute extends Route {
       };
       const selected = episodes[type + ep];
 
-      if (!(template || selected || (id.charAt(0) === 'k' && ep === 3)))
+      if (!template || !selected || !(id.charAt(0) === 'k' && ep === 3))
         throw { code: 422, message: 'Invalid episode or player type.' };
 
       let fields = ['id', 'name'];

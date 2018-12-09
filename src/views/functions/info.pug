@@ -1,0 +1,154 @@
+mixin name
+  a #{name}#{name.slice(-1) === 's' ? '\'' : '\'s'} Info
+
+mixin stats
+  thead
+    tr
+      th(scope='col') Name
+      th(scope='col') #{wiki.rarity ? 'Rarity' : 'Tier'}
+      - if (wiki.type)
+        th(scope='col') Type
+      - if (wiki.element)
+        th(scope='col') Element
+      - if (wiki.favouriteWeapon)
+        th(scope='col') Favourite Weapon
+      - if (wiki.hpMin)
+        th(scope='col') HP | ATK | TTL
+
+  tbody
+    tr
+      td(class='name') <a href='https://kamihime-project.wikia.com/w/#{wiki.name}' target='_blank'>#{wiki.name}</a>
+      td #{wiki.rarity ? wiki.rarity : wiki.tier}
+      - if (wiki.type)
+        td #{wiki.type}
+      - if (wiki.element)
+        td #{wiki.element}
+      - if (wiki.favouriteWeapon)
+        td #{wiki.favouriteWeapon}
+      - if (wiki.hpMin)
+        td #{wiki.hpMax} | #{wiki.atkMax} | #{parseInt(wiki.atkMax) + parseInt(wiki.hpMax)}
+
+mixin kit(type, name, desc, upDesc, cd, dur)
+  - if (name)
+    tr
+      td
+        sup
+          case type
+            when 0
+              | #{wiki.type ? 'BURST' : 'SUMMON'}
+            when 1
+              | #{wiki.type ? 'ABILITY' : 'EFFECT'}
+            when 2
+              | ASSIST
+      td
+        case type
+          when 0
+            div(class='kit-name kit-name-bst') #{name}
+          when 1
+            div(class='kit-name kit-name-abl') #{name}
+          when 2
+            div(class='kit-name kit-name-ex') #{name}
+        p
+          - if (desc)
+            | #{desc.replace(/'/g, '')}
+          - if (upDesc)
+            br
+            |   !{upDesc}
+      - if (cd)
+        td
+            span <b>Cooldown</b>: #{cd}
+            - if (dur)
+              br
+              span <b>Duration</b>: #{dur}
+
+-
+  // -- From Eros Struct... too lazy to rewrite for pug version lul
+  const burstDescParse = () => {
+    switch (wiki.rarity) {
+      default:
+        return `${wiki.element} DMG (5.5x Burst DMG)`;
+      case 'SSR':
+        return `${wiki.element} DMG (4.5x Burst DMG)`;
+      case 'SR':
+        return `${wiki.element} DMG (3x Burst DMG)`;
+      case 'R':
+        return `${wiki.element} DMG (2x Burst DMG)`;
+    }
+  };
+  const burstUpgradeParse = () => {
+    return (
+      wiki.rarity === 'SSR+'
+        ? null
+        : wiki.rarity === 'SSR'
+          ? ` <b>★ [LB ★★★☆]</b>: ${wiki.burstPowerupDesc ? wiki.burstPowerupDesc : 'Increases to 5x Burst DMG'}`
+          : wiki.rarity === 'SR'
+            ? ` <b>★ [LB ★★★☆]</b>: ${wiki.burstPowerupDesc ? wiki.burstPowerupDesc : 'Increases to 3.5x Burst DMG'}`
+            : wiki.rarity === 'R'
+              ? ` <b>★ [LB ★★☆]</b>: ${wiki.burstPowerupDesc ? wiki.burstPowerupDesc : 'Increases to 2.5x Burst DMG'}`
+              : null
+    );
+  };
+  const abilityDescParse = (desc, ability) => {
+    if (wiki.tier)
+      switch (wiki.tier) {
+        default:
+          return null;
+        case 'Standard':
+          switch (ability) {
+            default:
+              return null;
+            case 2:
+              return ' <b>★ [LV 5]</b>';
+          }
+        case 'Elite':
+        case 'Legendary':
+          switch (ability) {
+            default:
+              return null;
+            case 2:
+              return ' <b>★ [LV 5]</b>';
+            case 3:
+              return ' <b>★ [LV 15]</b>';
+          }
+      }
+
+    if (wiki.rarity)
+      switch (wiki.rarity) {
+        default:
+          switch (ability) {
+            default:
+              return ` <b>★ [LV 65]</b>: ${desc}`;
+            case 2:
+              return ` <b>★ [LV 75]</b>: ${desc}`;
+            case 3:
+              return ` <b>★ [LV 45]</b>: ${desc}`;
+            case 4:
+              return ` <b>★ [LV 55]</b>: ${desc}`;
+          }
+        case 'SSR':
+          switch (ability) {
+            default:
+              return ` <b>★ [LV 55]</b>: ${desc}`;
+            case 2:
+              return ` <b>★ [LV 75]</b>: ${desc}`;
+            case 3:
+              return ' <b>★ [LV 45]</b>';
+          }
+        case 'SR':
+          switch (ability) {
+            default:
+              return ` <b>★ [LV 45]</b>: ${desc}`;
+            case 2:
+              return ` <b>★ [LV 65]</b>: ${desc}`;
+            case 3:
+              return ' <b>★ [LV 35]</b>';
+          }
+        case 'R':
+          switch (ability) {
+            default:
+              return ` <b>★ [LV 45]</b>: ${desc}`;
+            case 2:
+              return ' <b>★ [LV 25]</b>';
+          }
+      }
+  };

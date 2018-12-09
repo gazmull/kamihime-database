@@ -98,6 +98,7 @@ export default class Server {
       }
 
       file.server = this;
+      file.client = client;
 
       server[file.method](file.route, (req: Request, res: Response, next: NextFunction) => file.exec(req, res, next));
     }
@@ -172,7 +173,7 @@ export default class Server {
 
   protected async _cleanSessions(): Promise<boolean> {
     try {
-      const EXPIRED: string = 'sAge <= datetime(\'now\', \'-30 minutes\')';
+      const EXPIRED: string = 'sAge <= DATE_SUB(NOW(), INTERVAL \'30:00\' MINUTE_SECOND)';
       const sessions: any[] = await this.util.db.select('sID').from('sessions').whereRaw(EXPIRED);
 
       if (sessions.length) {

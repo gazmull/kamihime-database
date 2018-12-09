@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Server from './Server';
+import Client from './Client';
 
 export default class Route {
   constructor(options?: Options) {
@@ -10,12 +11,15 @@ export default class Route {
     this.route = options.route;
 
     this.server = null;
+
+    this.client = null;
   }
 
   id: string;
   method: string;
   route: string[];
   server: Server;
+  client: Client;
 
   exec(req: Request, res: Response, next?: NextFunction): void {
     throw new Error('You cannot invoke this base class method.');

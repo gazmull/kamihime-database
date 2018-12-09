@@ -84,7 +84,7 @@ class PostSessionRequest extends Api {
         .insert({
           sID: uniqueID,
           sPW: uniqueKey,
-          sAge: 'datetime(\'now\')',
+          sAge: 'now()',
           cID: id,
           user
         });

@@ -371,7 +371,7 @@ export default class Client {
         if (el.tier && info.tier !== el.tier)
           Object.assign(updateFields, { tier: el.tier });
 
-        if (el.element && !el.tier && info.element !== el.element)
+        if (el.element && !el.tier && info.element !== 'Varies' && info.element !== el.element)
           Object.assign(updateFields, { element: el.element.includes(';') ? 'Varies' : el.element });
 
         if (el.type && info.type !== el.type)

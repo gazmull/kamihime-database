@@ -3,7 +3,6 @@ package-lock.json
 node_modules/
 
 # Yarn
-yarn.lock
 yarn-error.log
 
 # VSC

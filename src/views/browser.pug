@@ -9,9 +9,9 @@ html
     script(src='/lib/sweetalert.min.js')
     link(rel='stylesheet', href='/lib/bootstrap.min.css')
 
+    script(src='/constants/script.js')
     script(src='/browser/script.js')
     link(rel='stylesheet', href='/browser/style.css')
-    link(rel='stylesheet', href='/constants/style.css')
     title Kamihime Database - Browser
   body
     div(class='container-fluid px-0')
@@ -71,9 +71,9 @@ html
               each _, k in latest
                 - let chars = latest[k];
 
-                - if (k === 'ssr+') k = 'ssra'
+                - if (k === 'ssr+') k = 'ssra';
 
-                - k = k.toUpperCase()
+                - k = k.toUpperCase();
                 ul(class='feed-list')
                   | <a href='#' class='text-light' data-toggle='collapse' data-target='##{k.toLowerCase()}' title='Filter to #{k}'>#{k}</a>
                   each c in chars

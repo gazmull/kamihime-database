@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gazmull/kamihime-database.svg?branch=2.0.0)](https://travis-ci.org/gazmull/kamihime-database)
+[![Build Status](https://travis-ci.org/gazmull/kamihime-database.svg?branch=master)](https://travis-ci.org/gazmull/kamihime-database)
 # Kamihime Database
 
 Website + REST (JSON) API for Kamihime Database
