@@ -8,7 +8,7 @@ class SearchRequest {
 
       const col = 'REPLACE(REPLACE(REPLACE(khName, \'(\', \'\'), \')\', \'\'), "\'", \'\')';
       const rows = await sql.all(
-        `SELECT khID, khName FROM kamihime WHERE ${col} LIKE ? LIMIT 10`,
+        `SELECT khID, khName FROM kamihime WHERE ${col} LIKE ? ORDER BY khName ASC LIMIT 10`,
         this.sanitiseQuery(query)
       );
       res
@@ -20,13 +20,9 @@ class SearchRequest {
   }
 
   sanitiseQuery(query) {
-    if (query.length > 4)
-      return `%${query
-        .replace(/'/g, '\'\'')
-        .replace(/[aeiou]/gi, '_')
-      }%`;
+    query = `${query.replace(/'/g, '\'\'')}`;
 
-    return `${query.replace(/'/g, '\'\'')}%`;
+    return query.length >= 4 ? `%${query}%` : `${query}%`;
   }
 }
 

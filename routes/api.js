@@ -48,7 +48,7 @@ class API {
       this.update(req, requestFilter);
       file.execute(req, res, next);
     } catch (err) {
-      errorHandler(res, err); // eslint-disable-line no-undef
+      errorHandler(res, err);
     }
   }
 

@@ -29,6 +29,7 @@ class Dashboard {
       const characterInfo = {
         id: character.khID || null,
         name: character.khName || null,
+        eidolon: character.khEidolon || null,
         avatar: character.khInfo_avatar || null,
         rarity: character.khRarity || null,
         tier: character.khTier || null,
@@ -41,6 +42,8 @@ class Dashboard {
         harem_hentai1: character.khHarem_hentai1 || null,
         harem_hentai1Resource1: character.khHarem_hentai1Resource1 || null,
         harem_hentai1Resource2: character.khHarem_hentai1Resource2 || null,
+        harem_hentai2: character.khHarem_hentai2 || null,
+        harem_hentai2Resource1: character.khHarem_hentai2Resource1 || null,
         harem_hentai2Resource2: character.khHarem_hentai2Resource2 || null
       };
       res.render('dashboard', { characterInfo, user: session });

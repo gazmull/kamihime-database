@@ -87,7 +87,7 @@ $(function() {
   }
 
   function render() {
-    const $img = `${baseURL}${$.urlParam(0)}/${$.urlParam(2)}/${$.urlParam(0).slice(1)}-${$.urlParam(1) === 2 ? 2 : 3}-2_${$val_arr[$val_new]}.jpg`;
+    const $img = `${baseURL}${$.urlParam(0)}/${$.urlParam(2)}/${$.urlParam(0).slice(1)}-${Number($.urlParam(1)) === 2 ? 2 : 3}-2_${$val_arr[$val_new]}.jpg`;
     $('#animHime')
       .css({
         visibility: 'hidden',

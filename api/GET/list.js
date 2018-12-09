@@ -8,7 +8,7 @@ class ListRequest {
           'khID', 'khName', 'khInfo_avatar',
           'khType',
           'khTier',
-          'peekedOn',
+          'peekedOn', 'khLoli',
           'khHarem_intro', 'khHarem_introResource1', 'khHarem_introFile',
           'khHarem_hentai1', 'khHarem_hentai1Resource1', 'khHarem_hentai1Resource2'
         ],
@@ -16,7 +16,7 @@ class ListRequest {
           'khID', 'khName', 'khInfo_avatar',
           'khElement',
           'khRarity',
-          'peekedOn',
+          'peekedOn', 'khLoli',
           'khHarem_intro', 'khHarem_introResource1', 'khHarem_introFile',
           'khHarem_hentai1', 'khHarem_hentai1Resource1', 'khHarem_hentai1Resource2'
         ],
@@ -24,10 +24,10 @@ class ListRequest {
           'khID', 'khName', 'khInfo_avatar',
           'khElement', 'khType',
           'khRarity',
-          'peekedOn',
+          'peekedOn', 'khLoli',
           'khHarem_intro', 'khHarem_introResource1', 'khHarem_introFile',
           'khHarem_hentai1', 'khHarem_hentai1Resource1', 'khHarem_hentai1Resource2',
-          'khHarem_hentai2', 'khHarem_hentai2Resource2', 'khHarem_hentai2Resource2'
+          'khHarem_hentai2', 'khHarem_hentai2Resource1', 'khHarem_hentai2Resource2'
         ]
       };
 
