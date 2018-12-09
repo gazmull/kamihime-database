@@ -1,0 +1,32 @@
+doctype html
+
+html
+
+  head
+    script.
+      const script = !{JSON.stringify(script)};
+      const res = "#{res}";
+      const msc = "#{msc}";
+    script(src = '/lib/jquery.min.js')
+    script(src = '/lib/howler.core.min.js')
+    script(src = '/player/script/story.js')
+    link(rel = 'stylesheet' href = '/player/style.css')
+    title Kamihime Player
+
+  body
+    ul
+      include ../constants/navigation.pug
+      li(style="float: right; user-select: none;")
+        a Story Mode
+    center
+      include ../constants/buttons.pug
+
+      #panel(style = 'width: 640px;')
+        button(class = 'invi' nav = 'left' style = 'margin-left: -320px; width: 320px;')
+        |
+        button(class = 'invi' nav = 'right' style = 'width: 320px;')
+        #image
+        #dialog
+          #text
+            .characterName
+            .characterTalk

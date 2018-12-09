@@ -1,15 +1,6 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-const fields = [
-  'id', 'name',
-  'avatar',
-  'loli', 'peeks',
-  'haremIntroTitle', 'haremIntroResource1',
-  'haremHentai1Title', 'haremHentai1Resource1', 'haremHentai1Resource2',
-  'haremHentai2Title', 'haremHentai2Resource1', 'haremHentai2Resource2'
-];
-
 export = GetIdRequest;
 class GetIdRequest extends Api {
   constructor() {
@@ -28,14 +19,13 @@ class GetIdRequest extends Api {
     try {
       if (!checkId) throw { code: 403, message: 'Invalid id.' };
 
-      const [ character ] = await this.server.util.db('kamihime').select(fields)
-        .where('id', id).limit(1);
+      const character = this.server.kamihimeCache.find(el => el.id === id.toLowerCase());
 
       if (!character) throw { code: 404, message: 'Character not found.' };
 
       res
         .status(200)
         .json(character);
-    } catch (err) { this.server.util.handleError(res, err); }
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 }

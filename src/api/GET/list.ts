@@ -4,33 +4,37 @@ import Api from '../../struct/Api';
 
 const fields = {
   soul: [
-    'id', 'name', 'avatar',
+    'id', 'name',
+    'avatar', 'main', 'preview',
     'type',
     'tier',
     'peeks', 'loli',
-    'haremIntroTitle', 'haremIntroResource1',
-    'haremHentai1Title', 'haremHentai1Resource1', 'haremHentai1Resource2'
+    'harem1Title', 'harem1Resource1',
+    'harem2Title', 'harem2Resource1', 'harem2Resource2'
   ],
   eidolon: [
-    'id', 'name', 'avatar',
+    'id', 'name',
+    'avatar', 'main', 'preview',
     'element',
     'rarity',
     'peeks', 'loli',
-    'haremIntroTitle', 'haremIntroResource1',
-    'haremHentai1Title', 'haremHentai1Resource1', 'haremHentai1Resource2'
+    'harem1Title', 'harem1Resource1',
+    'harem2Title', 'harem2Resource1', 'harem2Resource2'
   ],
   kamihime: [
-    'id', 'name', 'avatar',
+    'id', 'name',
+    'avatar', 'main', 'preview',
     'element', 'type',
     'rarity',
     'peeks', 'loli',
-    'haremIntroTitle', 'haremIntroResource1',
-    'haremHentai1Title', 'haremHentai1Resource1', 'haremHentai1Resource2',
-    'haremHentai2Title', 'haremHentai2Resource1', 'haremHentai2Resource2'
+    'harem1Title', 'harem1Resource1',
+    'harem2Title', 'harem2Resource1', 'harem2Resource2',
+    'harem3Title', 'harem3Resource1', 'harem3Resource2'
   ],
   weapon: [
-    'id', 'name', 'avatar',
-    'element', 'rarity'
+    'id', 'name',
+    'avatar', 'main',
+    'element', 'rarity', 'type'
   ]
 };
 const concat: (c: string, v: any) => string = (c, v) => `${c} = ${isNaN(v) ? `'${v}'` : v}`;
@@ -99,6 +103,6 @@ class GetListRequest extends Api {
       res
         .status(200)
         .json(query);
-    } catch (err) { this.server.util.handleError(res, err); }
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 }

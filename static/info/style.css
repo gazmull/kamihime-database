@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Raleway');
+
+ul {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  margin: -8px -7px;
+  background-color: #222222;
+  position: fixed;
+  width: 100%;
+  z-index: 9;
+}
+
+li {
+  display: inline-block;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  border: 1px solid #222222;
+}
+
+li a:hover {
+  background-color: #ec7ae3;
+  border: 1px solid #f5bbf2;
+}
+
+li a:active {
+  border: 1px solid #f5bbf2;
+  background-color: #2f3136;
+  color: white;
+}
+
+body {
+  background-color: #2f3136;
+  color: #a7aebc;
+  font-family: 'Open Sans', sans-serif;
+}
+
+p {
+  color: rgb(255, 212, 212);
+}
+
+h1,
+h2 {
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+}
+
+h1 {
+  color: #ffaabf;
+}
+
+h2 {
+  color: #ffffff;
+  text-align: left;
+}
+
+.buttons {
+  display: block;
+  text-indent: 10px;
+  font-size: 20px;
+}
+
+.buttons a:link,
+.buttons a:active,
+.buttons a:visited {
+  color: #fa64e1;
+  text-decoration: none;
+}
+
+.buttons a:hover {
+  color: white;
+}
+
+#model {
+  position: absolute;
+  z-index: -1;
+  top: 52px;
+  right: 0;
+  opacity: 0.2;
+  mask-image:
+    radial-gradient(circle at center 35%, black 50%, transparent 78%);
+  -webkit-mask-image:
+    radial-gradient(circle at center 35%, black 50%, transparent 78%);
+  -moz-mask-image:
+    radial-gradient(circle at center 35%, black 50%, transparent 78%);
+}

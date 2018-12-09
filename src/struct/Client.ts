@@ -5,16 +5,23 @@ import { WebhookClient, Message } from 'discord.js';
 import * as logger from '../util/console';
 import * as Wikia from 'nodemw';
 import Server from './Server';
+import fetch from 'node-fetch';
+import { createWriteStream } from 'fs-extra';
+import { resolve } from 'path';
 
 let getImageInfo: (...args: any[]) => any = null;
 let getArticle: (...args: any[]) => string = null;
 let khTimeout = null;
 
 // Max calls and cooldown for scraping for each class (startKamihimeDatabase())
-const COOLDOWN = 1000 * 60 * 20;
-const API_MAX_CALLS = 100;
+const COOLDOWN = 1000 * 60 * 60;
+const API_MAX_CALLS = 50;
+
+const IMAGES_PATH = resolve(__dirname, '../../static/img/wiki') + '/';
 
 const slicedEntries = el => `+ ${el}`.slice(0, 68) + (el.length > 68 ? '...' : '');
+const clean = url => url.split('/').slice(0, 8).join('/');
+const escape = (name: string) => name.replace(/'/g, '\'\'');
 
 export default class Client {
   constructor(server: Server) {
@@ -31,7 +38,7 @@ export default class Client {
       webHookSend: (message: string) => new WebhookClient(this.server.auth.hook.id, this.server.auth.hook.token).send(message)
     };
 
-    this.fields = ['id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'preview'];
+    this.fields = ['id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'main', 'preview'];
   }
 
   server: Server;
@@ -77,12 +84,6 @@ export default class Client {
 
   /**
    * Adds items into the kamihime database.
-   *
-   * ---
-   *
-   * [1] Adds new weapons/eidolons
-   *
-   * [2] Inserts any missing values (e.g. avatar)
    * @param idPrefix The prefix of item type to refresh.
    */
   protected async _add(idPrefix: string): Promise<any> {
@@ -118,53 +119,106 @@ export default class Client {
 
       if (!result.length) return this.util.logger.status(`Kamihime Database: ${id}: Nothing to add!`);
 
-      let fromIndex = rows.length ? parseInt(rows.shift().id.slice(1)) + 1 : -1;
+      let fromIndex = rows.length ? parseInt(rows[0].id.slice(1)) + 1 : -1;
       const itemsAdded = [];
       let currentCalls = 0;
 
       for (const el of result) {
-        if (currentCalls === API_MAX_CALLS) {
-          this.util.logger.warn(`Max calls to Wiki API for ${id} has been reached`);
+        const checkCall: () => boolean = () => {
+          if (currentCalls === API_MAX_CALLS) {
+            this.util.logger.warn(`Max calls to Wiki API for ${id} has been reached`);
 
-          break;
-        }
+            return true;
+          }
+
+          return false;
+        };
 
         const newId: string = `${idPrefix}${++fromIndex}`;
 
         // -- Portrait
 
-        let portraitName: string = idPrefix === 'x'
-          ? el.name.replace(/ +/g, '')
-          : el.name.replace(/ +/g, '_');
-        portraitName = `File:${portraitName}Portrait${fileNameSuffix}`;
+        const portraitName = `File:${el.name} Portrait${fileNameSuffix}`;
         let avatar = await getImageInfo(portraitName);
 
-        if (avatar && avatar.url) avatar = avatar.url.split('/').slice(0, 8).join('/');
+        if (avatar && avatar.url) {
+          avatar = await fetch(clean(avatar.url));
+          avatar = await avatar.buffer();
+          const path = `portrait/${el.name} Portrait${fileNameSuffix}`;
+
+          const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
+
+          stream.write(avatar, err => {
+            if (err) this.util.logger.error(err.message);
+          });
+          stream.end();
+
+          avatar = path;
+        }
         else avatar = null;
 
         // -- Close
 
-        let previewName =  el.name.replace(/ +/g, '_');
-        previewName = `File:${previewName}${idPrefix !== 'w' ? 'Close' : ''}.png`;
-        let preview = await getImageInfo(previewName);
+        let preview = null;
+        if (idPrefix !== 'w') {
+          const previewName = `File:${el.name} Close.png`;
+          preview = await getImageInfo(previewName);
 
-        if (preview && preview.url) preview = preview.url.split('/').slice(0, 8).join('/');
-        else preview = null;
+          if (preview && preview.url) {
+            preview = await fetch(clean(preview.url));
+            preview = await preview.buffer();
+            const path = `close/${el.name} Close.png`;
+
+            const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
+
+            stream.write(preview, err => {
+              if (err) this.util.logger.error(err.message);
+            });
+            stream.end();
+
+            preview = path;
+          }
+          else preview = null;
+        }
+
+        // -- Main
+
+        const mainName = `File:${el.name}.png`;
+        let main = await getImageInfo(mainName);
+
+        if (main && main.url) {
+          main = await fetch(clean(main.url));
+          main = await main.buffer();
+          const path = `main/${el.name}.png`;
+
+          const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
+
+          stream.write(main, err => {
+            if (err) this.util.logger.error(err.message);
+          });
+          stream.end();
+
+          main = path;
+        }
+        else main = null;
 
         await this.server.util.db('kamihime')
         .insert({
           id: newId,
-          name: el.name,
+          name: clean(el.name),
           rarity: el.rarity,
           element: el.element,
           type: el.type,
           avatar,
           preview,
+          main,
           peeks: 0
         });
 
         itemsAdded.push(el.name);
         currentCalls++;
+
+        if (checkCall()) break;
       }
 
       const length = itemsAdded.length;
@@ -191,7 +245,7 @@ export default class Client {
     try {
       let query: QueryBuilder = this.server.util.db('kamihime').select(this.fields)
         .whereRaw(`id LIKE '${idPrefix}%'`);
-      query = idPrefix === 'e' ? query.andWhereRaw('id LIKE \'x%\'') : query;
+      query = idPrefix === 'e' ? query.orWhereRaw('id LIKE \'x%\'') : query;
 
       const rows: any[] = await query;
 
@@ -199,12 +253,10 @@ export default class Client {
       let fileNameSuffix: string = null;
 
       switch (idPrefix) {
-        case 'x':
         case 'e':
         case 's':
         case 'k':
           id = {
-            x: 'Eidolon',
             e: 'Eidolon',
             s: 'Soul',
             k: 'Kamihime'
@@ -229,26 +281,37 @@ export default class Client {
         const info = rows.find(r => r.name === el.name);
 
         if (!info) continue;
-        if (currentCalls === API_MAX_CALLS) {
-          this.util.logger.warn(`Max calls to Wiki API for ${id} has been reached`);
+        const checkCall: () => boolean = () => {
+          if (currentCalls === API_MAX_CALLS) {
+            this.util.logger.warn(`Max calls to Wiki API for ${id} has been reached`);
 
-          break;
-        }
+            return true;
+          }
+
+          return false;
+        };
 
         const updateFields = {};
-        const updateLength = () => Object.keys(updateFields).length;
 
         // -- Portrait
 
         if (!info.avatar) {
-          let name: string = ['x', 'e', 's', 'k'].includes(idPrefix)
-            ? el.name.replace(/ +/g, '')
-            : el.name.replace(/ +/g, '_');
-          name = `File:${name}Portrait${fileNameSuffix}`;
+          const name = `File:${el.name} Portrait${fileNameSuffix}`;
           let avatar = await getImageInfo(name);
 
           if (avatar && avatar.url) {
-            avatar = avatar.url.split('/').slice(0, 8).join('/');
+            avatar = await fetch(clean(avatar.url));
+            avatar = await avatar.buffer();
+            const path = `portrait/${el.name} Portrait${fileNameSuffix}`;
+
+            const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
+
+            stream.write(avatar, err => {
+              if (err) this.util.logger.error(err.message);
+            });
+            stream.end();
+
+            avatar = path;
 
             Object.assign(updateFields, { avatar });
           }
@@ -256,17 +319,49 @@ export default class Client {
 
         // -- Close
 
-        if (!info.preview) {
-          let name = idPrefix === 's'
-            ? el.name.replace(/ +/g, '')
-            : el.name.replace(/ +/g, '_');
-          name = `File:${name}${idPrefix !== 'w' ? 'Close' : ''}.png`;
+        if (!info.preview && idPrefix !== 'w') {
+          const name = `File:${el.name} Close.png`;
           let preview = await getImageInfo(name);
 
           if (preview && preview.url) {
-            preview = preview.url.split('/').slice(0, 8).join('/');
+            preview = await fetch(clean(preview.url));
+            preview = await preview.buffer();
+            const path = `close/${el.name} Close.png`;
+
+            const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
+
+            stream.write(preview, err => {
+              if (err) this.util.logger.error(err.message);
+            });
+            stream.end();
+
+            preview = path;
 
             Object.assign(updateFields, { preview });
+          }
+        }
+
+        // -- Main
+
+        if (!info.main) {
+          const name = `File:${el.name}.png`;
+          let main = await getImageInfo(name);
+
+          if (main && main.url) {
+            main = await fetch(clean(main.url));
+            main = await main.buffer();
+            const path = `main/${el.name}.png`;
+
+            const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
+
+            stream.write(main, err => {
+              if (err) this.util.logger.error(err.message);
+            });
+            stream.end();
+
+            main = path;
+
+            Object.assign(updateFields, { main });
           }
         }
 
@@ -282,14 +377,20 @@ export default class Client {
         if (el.type && info.type !== el.type)
           Object.assign(updateFields, { type: el.type });
 
-        if (!updateLength()) continue;
+        if (!Object.keys(updateFields).length) continue;
+
+        const nRarityRegex = / \(N\)/;
+        const testedRarity = nRarityRegex.test(el.name);
+        const shouldIncludeLowerRarity = testedRarity ? `name = '${escape(el.name)}' OR name = '${escape(el.name).replace(nRarityRegex, '')}'` : `name = '${escape(el.name)}'`;
 
         await this.server.util.db('kamihime')
           .update(updateFields)
-          .where('name', el.name);
+          .whereRaw(shouldIncludeLowerRarity);
 
         itemsUpdated.push(`${el.name}: ${Object.keys(updateFields).join(', ')}`);
         currentCalls++;
+
+        if (checkCall()) break;
       }
 
       const length = itemsUpdated.length;

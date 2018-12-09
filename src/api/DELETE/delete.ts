@@ -16,7 +16,7 @@ class DeleteRequest extends Api {
 
     try {
       await this._hasData(data);
-      const { user, id, name, avatar } = data;
+      const { user, id, name } = data;
       const character = await this.server.util.db('kamihime').select('id').where('id', id);
 
       if (!character) throw { code: 404, message: 'Character not found.' };
@@ -30,7 +30,7 @@ class DeleteRequest extends Api {
 
       res
         .status(200)
-        .json({ id, name, avatar });
-    } catch (err) { this.server.util.handleError(res, err); }
+        .json({ id, name });
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 }

@@ -1,10 +1,11 @@
 import { Api as ApiAuth, WebHook } from 'auth';
 import { Collection, WebhookClient, Message } from 'discord.js';
+// @ts-ignore
 import { database, hostAddress, rootURL, api, hook } from '../auth/auth';
 import { Express, Request, Response, NextFunction } from 'express';
-import { handleError, ApiError } from '../util/handleError';
+import { handleApiError, handleSiteError, ErrorHandlerObject } from '../util/handleError';
 import { resolve } from 'path';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as knex from 'knex';
 import * as logger from '../util/console';
 import Api from './Api';
@@ -29,7 +30,8 @@ export default class Server {
     this.util = {
       collection: (...args) => new Collection(args),
       db: knex(database),
-      handleError,
+      handleApiError,
+      handleSiteError,
       logger: {
         status: (message: string) => logger.status(`Server: ${message}`),
         error: (message: string) => logger.error(`Server: ${message}`),
@@ -52,7 +54,7 @@ export default class Server {
   util: Util;
   api: Collection<string, Collection<string, Api>>;
   rateLimits: Collection<string, Collection<string, Collection<string, any>>>;
-  recentVisitors: Collection<string, any>;
+  recentVisitors: Collection<string, Collection<string, number>>;
   kamihimeCache: any[];
 
   init(server: Express, client: Client): this {
@@ -101,7 +103,7 @@ export default class Server {
     }
 
     server
-      .all('*', (_, res) => handleError(res, { code: 403, message: 'Forbidden.' }))
+      .all('*', (_, res) => res.render('invalids/403'))
       .listen(80);
 
     this.util.logger.status(`Listening to ${hostAddress}:80`);
@@ -139,14 +141,14 @@ export default class Server {
   }
 
   protected async _cleanRateLimits(): Promise<boolean> {
-    const methods: string[] = this.api.keyArray();
+    const methods = this.api;
 
-    for (const method of methods) {
-      const requests: string[] = this.api.get(method).keyArray();
+    for (const method of methods.keys()) {
+      const requests = methods.get(method);
 
-      for (const request of requests) {
+      for (const request of requests.keys()) {
         const users = this.rateLimits.get(method).get(request).filter(u => {
-          const requestInstance = this.api.get(method).get(request);
+          const requestInstance = methods.get(method).get(request);
           const timeLapsed: number = Date.now() - u.timestamp;
           const cooldown: number = requestInstance.cooldown * 1000;
 
@@ -186,18 +188,25 @@ export default class Server {
   }
 
   protected async _cleanVisitors(): Promise<boolean> {
-    const visitors = this.recentVisitors.filter(v => {
-      const timeLapsed: number = Date.now() - v.expiration;
+    const resources = this.recentVisitors;
+    let cleaned: number = 0;
 
-      return timeLapsed > GENERAL_COOLDOWN;
-    });
+    for (const resource of resources.keys()) {
+      const log = resources.get(resource);
+      const visitors = log.filter(u => {
+        const timeLapsed: number = Date.now() - u;
 
-    if (!visitors.size) return;
+        return timeLapsed > GENERAL_COOLDOWN;
+      });
 
-    for (const visitor of visitors.keys())
-      this.recentVisitors.delete(visitor);
+      for (const visitor of visitors.keys())
+        log.delete(visitor);
 
-    this.util.logger.status(`Player visitors cleanup finished. Cleaned: ${visitors.size}`);
+      cleaned += visitors.size;
+    }
+
+    if (cleaned)
+      this.util.logger.status(`Player visitors cleanup finished. Cleaned: ${cleaned}`);
 
     return true;
   }
@@ -220,7 +229,8 @@ interface Logger {
 interface Util {
   collection: () => Collection<any, any>;
   db: knex;
-  handleError: (res: Response, err: ApiError) => void;
+  handleApiError: (res: Response, err: ErrorHandlerObject) => void;
+  handleSiteError: (res: Response, err: ErrorHandlerObject) => void;
   logger: Logger;
   webHookSend: (message: string) => Promise<Message | Message[]>;
 }

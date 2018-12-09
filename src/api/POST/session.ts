@@ -101,6 +101,6 @@ class PostSessionRequest extends Api {
       res
         .status(200)
         .json(newSession);
-    } catch (err) { this.server.util.handleError(res, err); }
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 }

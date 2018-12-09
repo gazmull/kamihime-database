@@ -1,0 +1,40 @@
+doctype html
+
+mixin name
+  a #{character.name}#{character.name.slice(-1) === 's' ? '\'' : '\'s'} Episodes
+
+
+html
+
+  head
+    link(rel = 'stylesheet' href = '/info/style.css')
+    title Kamihime Player - Episodes
+
+  body
+    ul
+      include constants/navigation.pug
+      li(style='float: right; user-select: none;')
+        +name
+    include constants/lb.pug
+    #episodes
+      - const { name, intro, harem1, harem2 } = character;
+      - const episodes = [intro, harem1, harem2];
+
+      - for (let i = 1; i <= episodes.length; ++i)
+        - const episode = episodes[i - 1];
+
+        - if (!episode.title) continue;
+
+        h2 Episode #{i}: #{episode.title}
+        .buttons
+
+          - if (episode.resource)
+            strong <a href = "/player/#{name}/story/#{episode.resource}">Story</a>
+
+          - if (episode.resource2)
+            | | <strong><a href = "/player/#{name}/scenario/#{episode.resource2}">Scenario</a></strong>
+            | | <strong><a href = "/player/#{name}/legacy/#{episode.resource2}">Scenario (Legacy)</a></strong>
+        blockquote
+          p #{episode.summary}
+    #model
+      img(src = `/scenarios/0000/misc/${model}`)

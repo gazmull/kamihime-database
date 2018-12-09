@@ -72,6 +72,6 @@ class GetSearchRequest extends Api {
       res
         .status(200)
         .json(results);
-    } catch (err) { this.server.util.handleError(res, err); }
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 }

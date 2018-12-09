@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Raleway');
+
+.animate {
+  z-index: -1;
+  overflow: hidden;
+  backface-visibility: hidden;
+  transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+}
+
+@keyframes play {
+  from {
+    background-position-y: 0px;
+  }
+  to {
+    background-position-y: -14400px;
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  margin:-8px -7px;
+  background-color: #222222;
+  position: fixed;
+  width: 100%;
+  z-index: 9;
+}
+
+li {
+  display: inline-block;
+}
+
+li a, li a:link, li a:visited {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  border: 1px solid #222222;
+}
+
+
+li a:hover {
+  background-color: #ec7ae3;
+  border: 1px solid #f5bbf2;
+}
+
+li a:active {
+  border: 1px solid #f5bbf2;
+  background-color: #2f3136;
+  color: white;
+}
+
+.invi {
+  z-index: 9999;
+  position: absolute;
+  height: 640px;
+  top: 0;
+  background: transparent;
+  color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+#buttons {
+  position: relative;
+  text-align: center;
+}
+
+#panel {
+  position: relative;
+  height: 640px;
+}
+
+#image {
+  height: 640px;
+}
+
+#dialog {
+  height: 190px;
+  background-color: rgb(255, 183, 183);
+  color: rgb(190, 50, 74);
+  opacity: 0.75;
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+#text {
+  word-wrap: break-word;
+  padding: 5px 5px;
+}
+
+.characterName {
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.characterTalk {
+  font-size: 22px;
+}
+
+/* fix for mozilla firefox outlines */
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
+
+.topbutt, .topbutt:focus {
+  background-color: #ec7ae3;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 200px;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  border: 2px solid #ec7ae3;
+  border-radius: 2px;
+
+  outline: none !important;
+}
+
+.topbutt:hover {
+  background-color: #FFFFFF;
+  border: 2px solid #f5bbf2;
+  color: #2f3136;
+}
+
+.topbutt:active {
+  border: 2px solid #f5bbf2;
+  background-color: #2f3136;
+  color: white;
+}
+
+body {
+  background-color: #2f3136;
+  color: #a7aebc;
+  font-family: 'Open Sans', sans-serif;
+}
+
+a:link, a:visited {
+  color: #a7aebc;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffffff;
+}

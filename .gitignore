@@ -14,5 +14,7 @@ src/auth/auth.ts
 test.js
 build/
 provider/
+static/img/wiki
 static/scenarios/
+static/scripts/
 test/

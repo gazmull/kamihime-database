@@ -55,7 +55,7 @@ class ApiRoute extends Route {
       this._update(req, requests);
 
       requestClass.exec(req, res, next);
-    } catch (err) { this.server.util.handleError(res, err); }
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 
   protected _getMethod(req: Request): string {

@@ -1,0 +1,89 @@
+/* Sweet Alert */
+
+.swal-overlay { background-color: #ff00ae36; }
+.swal-modal { background-color: #777; }
+
+.swal-title {
+  margin: 0px;
+  font-size: 16px;
+  margin-bottom: 28px;
+  color: #fff;
+}
+
+.swal-text {
+  background-color: #555;
+  padding: 17px;
+  border: 1px solid #ff00ae;
+  display: block;
+  margin: 22px;
+  text-align: center;
+  color: #fff;
+}
+
+.swal-footer {
+  background-color: #777;
+  margin-top: 32px;
+  border-top: 1px solid #E9EEF1;
+  overflow: hidden;
+}
+
+.swal-button {
+  padding: 7px 19px;
+  border-radius: 5px;
+  background-color: #555 !important;
+  font-size: 12px;
+  border: 1px solid #ff00ae;
+}
+
+/* Global */
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Raleway');
+h1, h2 {
+  font-family: 'Raleway', sans-serif;
+  text-align: center;
+}
+
+h1 { color: #ffaabf; }
+
+h2 {
+  color: #fff;
+  text-align: left;
+}
+
+body {
+  /* width: calc(100vw - 34px); */
+  background-color: #2e242b;
+  color: #fff;
+  height: 100%;
+}
+
+.row { margin: 0 !important; }
+
+#thumbnail {
+  -moz-mask-image: radial-gradient(circle at center center, black 50%, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at center center, black 50%, transparent 78%);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border-bottom-left-radius: 30%;
+  border-bottom-right-radius: 30%;
+  height: 640px;
+  mask-image: radial-gradient(circle at center center, black 50%, transparent 78%);
+  opacity: 0.5;
+  position: fixed;
+  right: 16.666667%; /* Corresponds to feed containers (latest, hot) */
+  top: 0;
+  width: 960px;
+  z-index: 0;
+}
+
+/* fix for mozilla firefox outlines */
+
+:focus { outline: none; }
+::-moz-focus-inner { border: 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: #777; }
+::-webkit-scrollbar-thumb { background: #c40086; }
+::-webkit-scrollbar-thumb:hover { background: #fff; }

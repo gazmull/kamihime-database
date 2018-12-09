@@ -27,26 +27,25 @@ class PutUpdateRequest extends Api {
         user,
         id,
         name,
-        avatar,
-        haremIntroTitle,
-        haremIntroResource1,
-        haremHentai1Title,
-        haremHentai1Resource1,
-        haremHentai1Resource2,
-        haremHentai2Title,
-        haremHentai2Resource1,
-        haremHentai2Resource2
+        harem1Title,
+        harem1Resource1,
+        harem2Title,
+        harem2Resource1,
+        harem2Resource2,
+        harem3Title,
+        harem3Resource1,
+        harem3Resource2
       } = data;
       data = this._filter({
         name,
-        haremIntroTitle,
-        haremIntroResource1,
-        haremHentai1Title,
-        haremHentai1Resource1,
-        haremHentai1Resource2,
-        haremHentai2Title,
-        haremHentai2Resource1,
-        haremHentai2Resource2
+        harem1Title,
+        harem1Resource1,
+        harem2Title,
+        harem2Resource1,
+        harem2Resource2,
+        harem3Title,
+        harem3Resource1,
+        harem3Resource2
       }, el => el);
 
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
@@ -71,9 +70,11 @@ class PutUpdateRequest extends Api {
 
       this.server.util.logger.status(`[U] API: Character: ${name} (${id}) | By: ${user}`);
 
+      const avatar = this.server.kamihimeCache.find(el => el.id === id).avatar;
+
       res
         .status(200)
         .json({ name, id, avatar });
-    } catch (err) { this.server.util.handleError(res, err); }
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 }

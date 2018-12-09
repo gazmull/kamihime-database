@@ -14,7 +14,7 @@ class PostAddRequest extends Api {
   async exec(req: Request, res: Response): Promise<void> {
     let data = req.body;
     try {
-      await this._hasData(data, 'avatar');
+      await this._hasData(data);
 
       const [ character ] = await this.server.util.db('kamihime').select('id')
         .where('id', data.id)
@@ -27,25 +27,25 @@ class PostAddRequest extends Api {
         id,
         name,
         loli = 0,
-        haremIntroTitle,
-        haremIntroResource1,
-        haremHentai1Title,
-        haremHentai1Resource1,
-        haremHentai1Resource2,
-        haremHentai2Title,
-        haremHentai2Resource1,
-        haremHentai2Resource2
+        harem1Title,
+        harem1Resource1,
+        harem2Title,
+        harem2Resource1,
+        harem2Resource2,
+        harem3Title,
+        harem3Resource1,
+        harem3Resource2
       } = data;
       data = this._filter({
         name,
-        haremIntroTitle,
-        haremIntroResource1,
-        haremHentai1Title,
-        haremHentai1Resource1,
-        haremHentai1Resource2,
-        haremHentai2Title,
-        haremHentai2Resource1,
-        haremHentai2Resource2
+        harem1Title,
+        harem1Resource1,
+        harem2Title,
+        harem2Resource1,
+        harem2Resource2,
+        harem3Title,
+        harem3Resource1,
+        harem3Resource2
       }, el => el);
 
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
@@ -70,6 +70,6 @@ class PostAddRequest extends Api {
       res
         .status(201)
         .json({ name, id });
-    } catch (err) { this.server.util.handleError(res, err); }
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 }

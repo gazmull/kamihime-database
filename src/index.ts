@@ -12,7 +12,7 @@ const server = express();
 server
   .disable('x-powered-by')
   .set('view engine', 'pug')
-  .set('views', './views')
+  .set('views', resolve(__dirname, './views'))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use(compression({ filter: req => !req.headers['x-no-compression'] }))

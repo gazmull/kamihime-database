@@ -16,7 +16,7 @@ class PutApproveRequest extends Api {
 
     try {
       await this._hasData(data);
-      const { user, id, name, avatar } = data;
+      const { user, id, name } = data;
       const fields: string[] = ['id', 'approved'];
       const [ character ] = await this.server.util.db('kamihime').select(fields)
         .where('id', id)
@@ -42,7 +42,7 @@ class PutApproveRequest extends Api {
 
       res
         .status(200)
-        .json({ name, id, approved: approveToggle, avatar });
-    } catch (err) { this.server.util.handleError(res, err); }
+        .json({ name, id, approved: approveToggle });
+    } catch (err) { this.server.util.handleApiError(res, err); }
   }
 }

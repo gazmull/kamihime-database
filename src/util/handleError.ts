@@ -1,8 +1,8 @@
 import { Response } from 'express';
 
-export interface ApiError {
+export interface ErrorHandlerObject {
   code: number;
-  message: string;
+  message?: string|string[];
   stack?: string;
 }
 
@@ -11,7 +11,8 @@ export interface ApiError {
  * @param res The Response interface
  * @param err The Error interface
  */
-export const handleError: (res: Response, err: ApiError) => void = (res, err) => {
+export const handleApiError: (res: Response, err: ErrorHandlerObject) => void = (res, err) => {
+  if (Array.isArray(err.message)) err.message = err.message.join('\n');
   if (isNaN(err.code))
     res
       .status(500)
@@ -20,6 +21,22 @@ export const handleError: (res: Response, err: ApiError) => void = (res, err) =>
     res
       .status(err.code)
       .json({ error: err });
+
+  if (err.stack) console.log(err.stack);
+};
+
+/**
+ * [Site Exclusive]: Handles the response to error
+ * @param res The Response interface
+ * @param err The Error interface
+ */
+export const handleSiteError: (res: Response, err: ErrorHandlerObject) => void = (res, err) => {
+  if (Array.isArray(err.message)) err.message = err.message.join('<br>');
+  if (isNaN(err.code)) res.render('invalids/500');
+  else res.render('invalids/' + err.code, { message: err.message }, err => {
+    if (err)
+      res.render('invalids/500');
+  });
 
   if (err.stack) console.log(err.stack);
 };
