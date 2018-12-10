@@ -14,6 +14,7 @@ html
 
     script(src='/constants/script.js')
     script(src='/info/script.js')
+    link(rel='stylesheet', href='/constants/style.css')
     link(rel='stylesheet', href='/info/style.css')
     title Kamihime Player - Info
   body
@@ -41,45 +42,48 @@ html
 
             div(id='info', class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
               div(class='content-wrapper hidden-browser')
-                h1 #{wiki.name === 'Eros' ? 'You came to look for my stats? :)' : 'Info'}
+                - if (!wiki)
+                  h1 #{character.name} - Cannot Retrieve Wiki Information
+                - else
+                  h1 #{wiki.name === 'Eros' ? 'You came to look for my stats? :)' : 'Info'}
 
-                - if (wiki.description)
-                  p <i>#{wiki.description}</i>
+                  - if (wiki.description)
+                    p <i>#{wiki.description}</i>
 
-                table(class='table table-borderless')
-                  +stats
-                
-                h3 Character Kit
-                table(class='table table-borderless')
-                  thead
-                    tr
-                      th(scope='col') Type
-                      th(scope='col') Description
-                      th(scope='col') Restrictions
-                  tbody
-                    +kit(0, wiki.burstName, wiki.burstDesc || burstDescParse(), burstUpgradeParse())
-                    +kit(0, wiki.summonAtk, wiki.summonAtkDes, null, wiki.summonCd)
-                    +kit(1, wiki.ability1Name, wiki.ability1Desc, abilityDescParse(wiki.ability1PowerupDesc, 1), wiki.ability1Cd, wiki.ability1Dur)
-                    +kit(1, wiki.ability2Name, wiki.ability2Desc, abilityDescParse(wiki.ability2PowerupDesc, 2), wiki.ability2Cd, wiki.ability2Dur)
-                    +kit(1, wiki.ability3Name, wiki.ability3Desc, abilityDescParse(wiki.ability3PowerupDesc, 3), wiki.ability3Cd, wiki.ability3Dur)
-                    -
-                      const concatEffects = [
-                        wiki.eidolonEffectDes0, wiki.eidolonEffectDes1,
-                        wiki.eidolonEffectDes2, wiki.eidolonEffectDes3, wiki.eidolonEffectDes4
-                      ]
-                      .map((el, i, arr) => {
-                        if (i == 0) return `${'☆'.repeat(4)} | ${el}`;
-                        return `${'★'.repeat(i)}${'☆'.repeat(arr.length - (i + 1))} | ${el}`;
-                      })
-                      .join('\n');
-                    +kit(1, wiki.eidolonEffect, concatEffects)
-                    +kit(2, wiki.assistName, wiki.assistDesc, wiki.rarity === 'SSR+' ? abilityDescParse(wiki.assistPowerupDesc, 4) : null)
-                    +kit(2, wiki.assist1Name, wiki.assist1Desc)
-                    +kit(2, wiki.assist2Name, wiki.assist2Desc)
+                  table(class='table table-borderless')
+                    +stats
+
+                  h3 Character Kit
+                  table(class='table table-borderless')
+                    thead
+                      tr
+                        th(scope='col') Type
+                        th(scope='col') Description
+                        th(scope='col') Restrictions
+                    tbody
+                      +kit(0, wiki.burstName, wiki.burstDesc || burstDescParse(), burstUpgradeParse())
+                      +kit(0, wiki.summonAtk, wiki.summonAtkDes, null, wiki.summonCd)
+                      +kit(1, wiki.ability1Name, wiki.ability1Desc, abilityDescParse(wiki.ability1PowerupDesc, 1), wiki.ability1Cd, wiki.ability1Dur)
+                      +kit(1, wiki.ability2Name, wiki.ability2Desc, abilityDescParse(wiki.ability2PowerupDesc, 2), wiki.ability2Cd, wiki.ability2Dur)
+                      +kit(1, wiki.ability3Name, wiki.ability3Desc, abilityDescParse(wiki.ability3PowerupDesc, 3), wiki.ability3Cd, wiki.ability3Dur)
+                      -
+                        const concatEffects = [
+                          wiki.eidolonEffectDes0, wiki.eidolonEffectDes1,
+                          wiki.eidolonEffectDes2, wiki.eidolonEffectDes3, wiki.eidolonEffectDes4
+                        ]
+                        .map((el, i, arr) => {
+                          if (i == 0) return `${'☆'.repeat(4)} | ${el}`;
+                          return `${'★'.repeat(i)}${'☆'.repeat(arr.length - (i + 1))} | ${el}`;
+                        })
+                        .join('\n');
+                      +kit(1, wiki.eidolonEffect, concatEffects)
+                      +kit(2, wiki.assistName, wiki.assistDesc, wiki.rarity === 'SSR+' ? abilityDescParse(wiki.assistPowerupDesc, 4) : null)
+                      +kit(2, wiki.assist1Name, wiki.assist1Desc)
+                      +kit(2, wiki.assist2Name, wiki.assist2Desc)
 
             div(id='episodes', class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
               div(class='content-wrapper hidden-browser')
-                h1 #{wiki.name === 'Eros' ? 'Wha— wait, what are you doing?!' : 'Episodes'}
+                h1 #{character.name === 'Eros' ? 'Wha— wait, what are you doing?!' : 'Episodes'}
                 -
                   const episodes = [
                     character.harem1Title,

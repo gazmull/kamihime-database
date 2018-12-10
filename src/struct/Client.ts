@@ -93,7 +93,7 @@ export default class Client {
       const whereState = idPrefix === 'x' ? 'id LIKE \'x%\' or id LIKE \'e%\'' : `id LIKE '${idPrefix}%'`;
       const rows: any[] = await this.server.util.db('kamihime').select(this.fields)
         .whereRaw(whereState)
-        .orderByRaw('CAST(substr(id, 2) AS INTEGER) DESC');
+        .orderByRaw('CAST(substr(id, 2) AS DECIMAL) DESC');
       const existing = rows.map(el => el.name);
 
       let id: string = null;

@@ -30,7 +30,7 @@ class InfoRoute extends Route {
 
       const character = this.server.kamihimeCache.find(el => el.id === id);
 
-      if (!character) throw { code: 404 };
+      if (!character) throw { code: 422 };
       if (image) {
         const requested = character[image];
 
@@ -54,9 +54,11 @@ class InfoRoute extends Route {
 
         return img.pipe(res);
       }
-      if (!_wiki) return res.render('info', { character });
+      if (_wiki === 'false') return res.render('info', { character });
 
-      const wiki = await this._parseArticle(character.name);
+      const wiki = await this._parseArticle(character.name).catch(() => {
+        throw { message: 'Cannot resolve connection to the Wikia API' };
+      });
 
       res.render('info', { character, wiki });
     } catch (err) { this.server.util.handleSiteError(res, err); }
