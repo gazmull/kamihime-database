@@ -7,9 +7,9 @@
   "scripts": {
     "test": "npm run lint && npm run compile && npm run finalize",
     "compile": "tsc -p .",
-    "lint": "tslint -p .",
+    "lint": "tslint -c .tslint.js -p .",
     "lint-fix": "npm run lint -- --fix",
-    "finalize": "node finalize.js",
+    "finalize": "node tools/finalize.js",
     "serve": "npm run test && node .",
     "pm2-serve": "npm run test && pm2 start .pm2.yml --env production"
   },
@@ -55,12 +55,10 @@
     "@types/mysql2": "types/npm-mysql2",
     "@types/node": "^10.12.10",
     "@types/node-fetch": "^2.1.4",
-    "@types/popper.js": "^1.11.0",
     "@types/pug": "^2.0.4",
     "@types/serve-favicon": "^2.2.30",
-    "@types/sweetalert": "^2.0.4",
     "tslint": "^5.11.0",
-    "tslint-config-typings": "^0.3.1",
+    "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.1.6",
     "uglifyjs-folder": "^1.5.1"
   }

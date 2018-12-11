@@ -5,9 +5,6 @@ node_modules/
 # Yarn
 yarn-error.log
 
-# VSC
-.vscode/
-
 # Private Credentials
 src/auth/auth.ts
 test.js

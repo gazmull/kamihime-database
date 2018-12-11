@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import Server from './Server';
+import { NextFunction, Request, Response } from 'express';
 import Client from './Client';
+import Server from './Server';
 
 export default class Route {
-  constructor(options?: Options) {
+  constructor (options?: IOptions) {
     this.id = options.id;
 
     this.method = options.method;
@@ -15,18 +15,18 @@ export default class Route {
     this.client = null;
   }
 
-  id: string;
-  method: string;
-  route: string[];
-  server: Server;
-  client: Client;
+  public id: string;
+  public method: string;
+  public route: string[];
+  public server: Server;
+  public client: Client;
 
-  exec(req: Request, res: Response, next?: NextFunction): void {
+  public exec (req: Request, res: Response, next?: NextFunction): void {
     throw new Error('You cannot invoke this base class method.');
   }
 }
 
-interface Options {
+interface IOptions {
   id: string;
   method: string;
   route: string[];

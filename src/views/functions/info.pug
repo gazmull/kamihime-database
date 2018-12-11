@@ -100,10 +100,10 @@ mixin kit(type, name, desc, upDesc, cd, dur)
             |   !{upDesc}
       - if (cd)
         td
-            span <b>Cooldown</b>: #{cd}
+            <b>Cooldown</b>: #{cd}
             - if (dur)
               br
-              span <b>Duration</b>: #{dur}
+              <b>Duration</b>: #{dur}
 
 -
   // -- From Eros Struct... too lazy to rewrite for pug version lul

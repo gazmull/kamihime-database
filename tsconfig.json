@@ -1,17 +1,18 @@
 {
-  "allowJs": true,
   "compilerOptions": {
+    "baseUrl": "./",
+    "forceConsistentCasingInFileNames": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es2018",
-    "outDir": "build/proto",
-    "rootDir": "src",
-    "baseUrl": "./",
-    "paths": {
-      "*": ["typings/*"]
-    },
-    "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
+    "outDir": "build/proto",
+    "paths": {
+      "*": [
+        "typings/*"
+      ]
+    },
     "removeComments": true,
-  }
+    "rootDir": "src",
+    "target": "es2018"
+  },
 }

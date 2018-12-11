@@ -1,21 +1,20 @@
+import { Canvas, Image } from 'canvas';
 import { Response } from 'express';
-import Route from '../struct/Route';
-import fetch from 'node-fetch';
 import * as fs from 'fs-extra';
+import fetch from 'node-fetch';
 import * as path from 'path';
-import { Image, Canvas } from 'canvas';
-
+import Route from '../struct/Route';
 
 export default class LatestRoute extends Route {
-  constructor() {
+  constructor () {
     super({
       id: 'latest',
       method: 'get',
-      route: ['/latest']
+      route: [ '/latest' ]
     });
   }
 
-  async exec(_, res: Response) {
+  public async exec (_, res: Response) {
     try {
       const data = await fetch(this.server.auth.api.url + 'latest');
       let result = await data.json();
@@ -24,7 +23,7 @@ export default class LatestRoute extends Route {
 
       const base = path.resolve(__dirname, '../../static/img/latest.png');
       const file = await fs.readFile(base);
-      const image = new Image;
+      const image = new Image();
       image.src = file;
 
       const canvas = new Canvas(image.width, image.height);
@@ -34,19 +33,34 @@ export default class LatestRoute extends Route {
       ctx.fillStyle = 'white';
 
       result = {
-        soul: result.soul,
         eidolon: result.eidolon,
-        ssr: result['ssr+'].concat(result.ssr),
+        r: result.r,
+        soul: result.soul,
         sr: result.sr,
-        r: result.r
+        ssr: result['ssr+'].concat(result.ssr)
       };
 
       const positions = {
-        soul: { x: 14, y: 63 },
-        eidolon: { x: 174, y: 63 },
-        ssr: { x: 334, y: 63 },
-        sr: { x: 14, y: 118 },
-        r: { x: 174, y: 118 }
+        eidolon: {
+          x: 174,
+          y: 63
+        },
+        r: {
+          x: 174,
+          y: 118
+        },
+        soul: {
+          x: 14,
+          y: 63
+        },
+        sr: {
+          x: 14,
+          y: 118
+        },
+        ssr: {
+          x: 334,
+          y: 63
+        }
       };
 
       for (const category of Object.keys(result))

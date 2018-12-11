@@ -68,7 +68,7 @@ html
                         th(scope='col') Restrictions
                     tbody
                       +kit(0, wiki.burstName, wiki.burstDesc || burstDescParse(), burstUpgradeParse())
-                      +kit(0, wiki.summonAtk, wiki.summonAtkDes, null, wiki.summonCd)
+                      +kit(0, wiki.summonAtk, wiki.summonAtkDes, null, wiki.summonCd, wiki.summonEffectDur)
                       +kit(1, wiki.ability1Name, wiki.ability1Desc, abilityDescParse(wiki.ability1PowerupDesc, 1), wiki.ability1Cd, wiki.ability1Dur)
                       +kit(1, wiki.ability2Name, wiki.ability2Desc, abilityDescParse(wiki.ability2PowerupDesc, 2), wiki.ability2Cd, wiki.ability2Dur)
                       +kit(1, wiki.ability3Name, wiki.ability3Desc, abilityDescParse(wiki.ability3PowerupDesc, 3), wiki.ability3Cd, wiki.ability3Dur)

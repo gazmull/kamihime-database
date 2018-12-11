@@ -1,25 +1,31 @@
-import { Api, WebHook } from 'auth';
+import { Api, Host, WebHook } from 'auth';
 import { Config as Database } from 'knex';
 
 /**
- * The database configuration to use for the server. (Sessions and Kamihime)
+ * The database configuration to use for the server (Sessions and Kamihime)
  */
 export const database: Database = {
+  acquireConnectionTimeout: 10000,
   client: 'mysql2',
   connection: {
-    host : '127.0.0.1',
-    user : 'root',
-    password : 'uvweve',
-    database : 'kamihimedb'
+    database: 'kamihimedb',
+    host: '127.0.0.1',
+    password: 'uvweve',
+    user: 'root'
   },
-  pool: { min: 0, max: 15 },
-  acquireConnectionTimeout: 10000
+  pool: {
+    max: 15,
+    min: 0
+  }
 };
 
 /**
- * The machine's external IP Address.
+ * The host configuration to use for the server
  */
-export const hostAddress: string = '127.0.0.1';
+export const host: Host = {
+  address: '127.0.0.1',
+  port: 80
+};
 
 /**
  * The server's root URL
@@ -30,8 +36,8 @@ export const rootURL: string = 'http://localhost/';
  * Configuration for this server's API
  */
 export const api: Api = {
-  url: 'http://localhost/api/',
-  token: 'null'
+  token: 'null',
+  url: 'http://localhost/api/'
 };
 
 /**

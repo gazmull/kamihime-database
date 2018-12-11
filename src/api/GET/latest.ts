@@ -1,18 +1,18 @@
 import { Response } from 'express';
 import Api from '../../struct/Api';
 
-const fields = ['id', 'name'];
+const fields = [ 'id', 'name' ];
 
 export default class GetLatestRequest extends Api {
-  constructor() {
+  constructor () {
     super({
-      method: 'GET',
       cooldown: 5,
-      max: 1
+      max: 1,
+      method: 'GET'
     });
   }
 
-  async exec(_, res: Response): Promise<void> {
+  public async exec (_, res: Response): Promise<void> {
     try {
       const soul: any[] = await this.server.util.db('kamihime').select(fields)
         .whereRaw('harem2Resource2 IS NOT NULL AND id LIKE \'s%\' AND approved=1')

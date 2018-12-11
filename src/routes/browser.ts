@@ -1,17 +1,17 @@
 import { Response } from 'express';
-import Route from '../struct/Route';
 import fetch from 'node-fetch';
+import Route from '../struct/Route';
 
 export default class BrowserRoute extends Route {
-  constructor() {
+  constructor () {
     super({
       id: 'browser',
       method: 'get',
-      route: ['/']
+      route: [ '/' ]
     });
   }
 
-  async exec(_, res: Response): Promise<void> {
+  public async exec (_, res: Response): Promise<void> {
     const endPoint = this.server.auth.rootURL + 'api/';
 
     try {

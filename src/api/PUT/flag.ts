@@ -2,21 +2,21 @@ import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
 export default class PutFlagRequest extends Api {
-  constructor() {
+  constructor () {
     super({
-      method: 'PUT',
       cooldown: 5,
-      max: 1
+      max: 1,
+      method: 'PUT'
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     const data = req.body;
 
     try {
       await this._hasData(data);
       const { user, id, name } = data;
-      const fields: string[] = ['id', 'loli'];
+      const fields: string[] = [ 'id', 'loli' ];
       const [ character ] = await this.server.util.db('kamihime').select(fields)
         .where('id', id)
         .limit(1);

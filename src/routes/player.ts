@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import Route from '../struct/Route';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import Route from '../struct/Route';
 
 const COOLDOWN = 1000 * 60 * 3;
 const MAX_VISITS = 3;
@@ -11,16 +11,17 @@ const BG_IMAGE = SCENARIOS + 'bgimage/';
 const FG_IMAGE = SCENARIOS + 'fgimage/';
 
 export default class PlayerRoute extends Route {
-  constructor() {
+  constructor () {
     super({
       id: 'player',
       method: 'get',
-      route: ['/player/:id/:ep/:type']
+      route: [ '/player/:id/:ep/:type' ]
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
-    const { id = null, ep = null, type = null } = req.params;
+  public async exec (req: Request, res: Response): Promise<void> {
+    const { id = null, type = null } = req.params;
+    const ep = parseInt(req.params.ep);
 
     try {
       if (!(id || ep || type )) throw { code: 422, message: 'Incomplete query was given.' };
@@ -33,29 +34,32 @@ export default class PlayerRoute extends Route {
             ? 'player/legacy'
             : null;
       const episodes = {
+        legacy2: 'harem2Resource2',
+        legacy3: 'harem3Resource2',
+        scenario2: 'harem2Resource2',
+        scenario3: 'harem3Resource2',
         story1: 'harem1Resource1',
         story2: 'harem2Resource1',
-        scenario2: 'harem2Resource2',
-        legacy2: 'harem2Resource2',
-        story3: 'harem3Resource1',
-        scenario3: 'harem3Resource2',
-        legacy3: 'harem3Resource2'
+        story3: 'harem3Resource1'
       };
       const selected = episodes[type + ep];
 
-      if (!(template || selected || id.charAt(0) === 'k' && ep === 3))
+      if (!template || !selected)
         throw { code: 422, message: 'Invalid episode or player type.' };
 
-      let fields = ['id', 'name'];
-      fields = fields.concat([selected, `harem${ep}Title`]);
+      let fields = [ 'id', 'name', 'rarity' ];
+      fields = fields.concat([ selected, `harem${ep}Title` ]);
 
       const [ character ] = await this.server.util.db('kamihime').select(fields)
         .where('id', id);
       const resource = character[selected];
 
+      if (ep === 3 && (id.charAt(0) !== 'k' || [ 'SSR+', 'R' ].includes(character.rarity)))
+        throw { code: 422, message: 'Invalid episode for this character.' };
+
       if (!character) throw { code: 404 };
       if (!resource)
-        throw { code: 404, message: ['Episode Resource is empty.', 'Please contact the maintainer!'] };
+        throw { code: 404, message: [ 'Episode Resource is empty.', 'Please contact the administrator!' ] };
 
       const script = await this._find('script.json', id, resource);
 
@@ -64,7 +68,13 @@ export default class PlayerRoute extends Route {
       const files = await this._find('files.rsc', id, resource);
 
       if (!files)
-        throw { code: 404, message: ['Episode Resource is unexpectedly empty.', 'Please contact the maintainer!'] };
+        throw {
+          code: 404,
+          message: [
+          'Episode Resource is unexpectedly empty.',
+          'Please contact the administrator!'
+        ]
+      };
 
       let folder = resource.slice(-4);
       const fLen = folder.length / 2;
@@ -90,7 +100,7 @@ export default class PlayerRoute extends Route {
    * @param id The character ID
    * @param res The Resource ID for given template
    */
-  protected async _find(name: string, id: string, res: string): Promise<any> {
+  protected async _find (name: string, id: string, res: string): Promise<any> {
     const filePath = path.resolve(__dirname, '../../static/scenarios', id, res, name);
 
     try {
@@ -100,7 +110,7 @@ export default class PlayerRoute extends Route {
     } catch { return false; }
   }
 
-  protected _checkRegistered(req: Request, resource: string): boolean {
+  protected _checkRegistered (req: Request, resource: string): boolean {
     const _resource = this.server.recentVisitors.get(resource);
     if (!_resource) return false;
 
@@ -110,7 +120,7 @@ export default class PlayerRoute extends Route {
     return true;
   }
 
-  protected async _rateLimit(req: Request, character: any, resource: string): Promise<void> {
+  protected async _rateLimit (req: Request, character: any, resource: string): Promise<void> {
     const visitorVisits = this.server.recentVisitors.filter((log, _resource) => {
       const logged = log.get(req.ip);
       if (!logged) return false;

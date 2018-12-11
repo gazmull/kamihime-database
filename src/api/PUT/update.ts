@@ -2,20 +2,20 @@ import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
 export default class PutUpdateRequest extends Api {
-  constructor() {
+  constructor () {
     super({
-      method: 'PUT',
       cooldown: 5,
-      max: 1
+      max: 1,
+      method: 'PUT'
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     let data = req.body;
 
     try {
       await this._hasData(data);
-      const fields: string[] = ['id', 'loli'];
+      const fields: string[] = [ 'id', 'loli' ];
       const [ character ] = await this.server.util.db('kamihime').select(fields)
         .where('id', data.id)
         .limit(1);
@@ -23,28 +23,28 @@ export default class PutUpdateRequest extends Api {
       if (!character) throw { code: 404, message: 'Character not found.' };
 
       const {
-        user,
+        harem1Resource1,
+        harem1Title,
+        harem2Resource1,
+        harem2Resource2,
+        harem2Title,
+        harem3Resource1,
+        harem3Resource2,
+        harem3Title,
         id,
         name,
-        harem1Title,
-        harem1Resource1,
-        harem2Title,
-        harem2Resource1,
-        harem2Resource2,
-        harem3Title,
-        harem3Resource1,
-        harem3Resource2
+        user,
       } = data;
       data = this._filter({
-        name,
-        harem1Title,
         harem1Resource1,
-        harem2Title,
+        harem1Title,
         harem2Resource1,
         harem2Resource2,
-        harem3Title,
+        harem2Title,
         harem3Resource1,
-        harem3Resource2
+        harem3Resource2,
+        harem3Title,
+        name
       }, el => el);
 
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };

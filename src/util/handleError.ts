@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-export interface ErrorHandlerObject {
+export interface IErrorHandlerObject {
   code: number;
   message?: string|string[];
   stack?: string;
@@ -11,8 +11,8 @@ export interface ErrorHandlerObject {
  * @param res The Response interface
  * @param err The Error interface
  */
-export const handleApiError: (res: Response, err: ErrorHandlerObject) => void = (res, err) => {
-  if (err.stack) console.log(err.stack);
+export const handleApiError: (res: Response, err: IErrorHandlerObject) => void = (res, err) => {
+  if (err.stack) console.log(err.stack); // tslint:disable-line:no-console
 
   if (Array.isArray(err.message)) err.message = err.message.join('\n');
   if (isNaN(err.code))
@@ -30,8 +30,8 @@ export const handleApiError: (res: Response, err: ErrorHandlerObject) => void = 
  * @param res The Response interface
  * @param err The Error interface
  */
-export const handleSiteError: (res: Response, err: ErrorHandlerObject) => void = (res, err) => {
-  if (err.stack) console.log(err.stack);
+export const handleSiteError: (res: Response, err: IErrorHandlerObject) => void = (res, err) => {
+  if (err.stack) console.log(err.stack); // tslint:disable-line:no-console
 
   if (Array.isArray(err.message)) err.message = err.message.join('\n');
   if (isNaN(err.code)) res.render('invalids/500', { message: err.message });

@@ -27,21 +27,21 @@ const sessionPass: string[] = [
 ];
 
 export default class PostSessionRequest extends Api {
-  constructor() {
+  constructor () {
     super({
-      method: 'POST',
       cooldown: 5,
-      max: 1
+      max: 1,
+      method: 'POST'
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     const data = req.body;
 
     try {
       await this._hasData(data);
       const { user, id, name } = data;
-      const characterFields: string[] = ['id', 'name'];
+      const characterFields: string[] = [ 'id', 'name' ];
       const [ character ] = await this.server.util.db('kamihime').select(characterFields)
         .where('id', id)
         .limit(1);
@@ -57,10 +57,10 @@ export default class PostSessionRequest extends Api {
         res
           .status(202)
           .json({
-            code: 202,
-            message: 'Already existing session.',
             characterId: session.characterId,
+            code: 202,
             id: session.id,
+            message: 'Already existing session.',
             password: session.password
           });
 
@@ -81,10 +81,10 @@ export default class PostSessionRequest extends Api {
 
       await this.server.util.db('sessions')
         .insert({
+          characterId: id,
+          created: 'now()',
           id: uniqueID,
           password: uniqueKey,
-          created: 'now()',
-          characterId: id,
           userTag: user
         });
 

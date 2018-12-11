@@ -2,15 +2,15 @@ import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
 export default class PostAddRequest extends Api {
-  constructor() {
+  constructor () {
     super({
-      method: 'POST',
       cooldown: 5,
-      max: 1
+      max: 1,
+      method: 'POST'
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     let data = req.body;
     try {
       await this._hasData(data);
@@ -22,29 +22,29 @@ export default class PostAddRequest extends Api {
       if (character) throw { code: 403, message: 'Character already exists.' };
 
       const {
-        user,
-        id,
-        name,
-        loli = 0,
-        harem1Title,
         harem1Resource1,
-        harem2Title,
+        harem1Title,
         harem2Resource1,
         harem2Resource2,
-        harem3Title,
+        harem2Title,
         harem3Resource1,
-        harem3Resource2
+        harem3Resource2,
+        harem3Title,
+        id,
+        loli = 0,
+        name,
+        user,
       } = data;
       data = this._filter({
-        name,
-        harem1Title,
         harem1Resource1,
-        harem2Title,
+        harem1Title,
         harem2Resource1,
         harem2Resource2,
-        harem3Title,
+        harem2Title,
         harem3Resource1,
-        harem3Resource2
+        harem3Resource2,
+        harem3Title,
+        name
       }, el => el);
 
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };

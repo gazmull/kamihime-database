@@ -1,0 +1,30 @@
+# Global
+* text=auto
+
+# Docs/Misc
+.gitattributes text
+.gitignore text
+*.lock text
+*.md text
+*.yml text
+LICENSE text
+
+# Graphics
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.png binary
+
+# Audio
+*.mp3 binary
+
+# Source Code
+*.css text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.pug text eol=lf
+*.sql text eol=lf
+*.ts text eol=lf
+
+# Linguist
+static/lib/* linguist-vendored

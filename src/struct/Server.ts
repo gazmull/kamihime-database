@@ -1,40 +1,40 @@
-import { Api as ApiAuth, WebHook } from 'auth';
-import { Collection, WebhookClient, Message } from 'discord.js';
-// @ts-ignore
-import { database, hostAddress, rootURL, api, hook } from '../auth/auth';
-import { Express, Request, Response, NextFunction } from 'express';
-import { handleApiError, handleSiteError, ErrorHandlerObject } from '../util/handleError';
-import { resolve } from 'path';
+import { Api as ApiAuth, Host, WebHook } from 'auth';
+import { Collection, Message, WebhookClient } from 'discord.js';
+import { Express, NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
 import * as knex from 'knex';
+import fetch from 'node-fetch';
+import { resolve } from 'path';
+// @ts-ignore
+import { api, database, hook, host, rootURL } from '../auth/auth';
 import * as logger from '../util/console';
+import { handleApiError, handleSiteError, IErrorHandlerObject } from '../util/handleError';
 import Api from './Api';
 import Client from './Client';
-import fetch from 'node-fetch';
 import Route from './Route';
 
 const GENERAL_COOLDOWN: number = 1000 * 60 * 3;
 
 export default class Server {
-  constructor() {
+  constructor () {
     this.client = null;
 
     this.auth = {
-      database,
-      hostAddress,
-      rootURL,
       api,
-      hook
+      database,
+      hook,
+      host,
+      rootURL
     };
 
     this.util = {
-      collection: (...args) => new Collection(args),
-      db: knex(database),
       handleApiError,
       handleSiteError,
+      collection: (...args) => new Collection(args),
+      db: knex(database),
       logger: {
-        status: (message: string) => logger.status(`Server: ${message}`),
         error: (message: string) => logger.error(`Server: ${message}`),
+        status: (message: string) => logger.status(`Server: ${message}`),
         warn: (message: string) => logger.warn(`Server: ${message}`)
       },
       webHookSend: (message: string) => new WebhookClient(hook.id, hook.token).send(message)
@@ -49,15 +49,15 @@ export default class Server {
     this.kamihimeCache = [];
   }
 
-  client: Client;
-  auth: Auth;
-  util: Util;
-  api: Collection<string, Collection<string, Api>>;
-  rateLimits: Collection<string, Collection<string, Collection<string, any>>>;
-  recentVisitors: Collection<string, Collection<string, number>>;
-  kamihimeCache: any[];
+  public client: Client;
+  public auth: IAuth;
+  public util: IUtil;
+  public api: Collection<string, Collection<string, Api>>;
+  public rateLimits: Collection<string, Collection<string, Collection<string, any>>>;
+  public recentVisitors: Collection<string, Collection<string, number>>;
+  public kamihimeCache: any[];
 
-  init(server: Express, client: Client): this {
+  public init (server: Express, client: Client): this {
     this.client = client;
 
     // Api
@@ -105,9 +105,9 @@ export default class Server {
 
     server
       .all('*', (_, res) => res.render('invalids/403'))
-      .listen(80);
+      .listen(host.port);
 
-    this.util.logger.status(`Listening to ${hostAddress}:80`);
+    this.util.logger.status(`Listening to ${host.address}:80`);
 
     return this;
   }
@@ -116,8 +116,8 @@ export default class Server {
    * Calls cleaner functions every time specified from GENERAL_COOLDOWN
    * @param forced Whether the call is forced or not [can be forced thru server API (api/refresh)]
    */
-  startCleaners(forced: boolean = false): this {
-    Promise.all([this._cleanRateLimits(), this._cleanSessions(), this._cleanVisitors()])
+  public startCleaners (forced: boolean = false): this {
+    Promise.all([ this._cleanRateLimits(), this._cleanSessions(), this._cleanVisitors() ])
       .then(() => this.util.logger.status('Cleanup Rotation Occurred.'))
       .catch(this.util.logger.error);
 
@@ -127,7 +127,7 @@ export default class Server {
     return this;
   }
 
-  startKamihimeCache(): this {
+  public startKamihimeCache (): this {
     fetch(`${this.auth.rootURL}api/list`)
       .then(res => res.json())
       .then(cache => {
@@ -141,7 +141,7 @@ export default class Server {
     return this;
   }
 
-  protected async _cleanRateLimits(): Promise<boolean> {
+  protected async _cleanRateLimits (): Promise<boolean> {
     const methods = this.api;
 
     for (const method of methods.keys()) {
@@ -159,9 +159,9 @@ export default class Server {
         if (!users.size) continue;
 
         for (const user of users.keys()) {
-          const users = this.rateLimits.get(method).get(request);
+          const _users = this.rateLimits.get(method).get(request);
 
-          users.delete(user);
+          _users.delete(user);
         }
 
         this.util.logger.status(`API users cleanup finished (Req: ${method}->${request}). Cleaned: ${users.size}`);
@@ -171,7 +171,7 @@ export default class Server {
     return true;
   }
 
-  protected async _cleanSessions(): Promise<boolean> {
+  protected async _cleanSessions (): Promise<boolean> {
     try {
       const EXPIRED: string = 'created <= DATE_SUB(NOW(), INTERVAL \'30:00\' MINUTE_SECOND)';
       const sessions: any[] = await this.util.db('sessions').select('id')
@@ -189,7 +189,7 @@ export default class Server {
     }
   }
 
-  protected async _cleanVisitors(): Promise<boolean> {
+  protected async _cleanVisitors (): Promise<boolean> {
     const resources = this.recentVisitors;
     let cleaned: number = 0;
 
@@ -214,25 +214,25 @@ export default class Server {
   }
 }
 
-interface Auth {
+interface IAuth {
   database: knex.Config;
-  hostAddress: string;
+  host: Host;
   rootURL: string;
   api: ApiAuth;
   hook: WebHook;
 }
 
-interface Logger {
+interface ILogger {
   status: (message: string) => void;
   error: (message: string) => void;
   warn: (message: string) => void;
 }
 
-interface Util {
+interface IUtil {
   collection: () => Collection<any, any>;
   db: knex;
-  handleApiError: (res: Response, err: ErrorHandlerObject) => void;
-  handleSiteError: (res: Response, err: ErrorHandlerObject) => void;
-  logger: Logger;
+  handleApiError: (res: Response, err: IErrorHandlerObject) => void;
+  handleSiteError: (res: Response, err: IErrorHandlerObject) => void;
+  logger: ILogger;
   webHookSend: (message: string) => Promise<Message | Message[]>;
 }

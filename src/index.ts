@@ -1,11 +1,11 @@
-import { error } from './util/console';
-import { resolve } from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as express from 'express';
+import { resolve } from 'path';
 import * as favicon from 'serve-favicon';
 import Client from './struct/Client';
 import Server from './struct/Server';
+import { error } from './util/console';
 
 const server = express();
 

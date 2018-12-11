@@ -2,15 +2,15 @@ import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
 export default class DeleteRequest extends Api {
-  constructor() {
+  constructor () {
     super({
-      method: 'DELETE',
       cooldown: 5,
-      max: 1
+      max: 1,
+      method: 'DELETE'
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     const data = req.body;
 
     try {

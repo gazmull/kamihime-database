@@ -77,16 +77,17 @@ $(() => {
 
   const target = $('#pop-target');
   const pop = $('#pop');
-  new Popper(target, pop, { placement: 'top' });
+  const _help = new Popper(target, pop, { placement: 'top' });
 
   target
     .on('mouseenter', () => pop.css('visibility', 'visible'))
     .on('mouseleave', () => pop.css('visibility', 'hidden'));
 });
 
-function showHelp() {
+function showHelp () {
   swal({
-    title: 'Keyboard Shortcuts',
+    closeOnEsc: false,
+    icon: 'info',
     text: [
       'ESC: Hide/Show Navigation',
       '1 - 7: Select category (e.g. 1 is for \'All\')',
@@ -95,21 +96,20 @@ function showHelp() {
       '- Feeds ("Latest" and "Hot 10" Sidebars on the right) are also accessible for navigation.',
       '- You can click the white bar beside navigation bar to hide/show it.'
     ].join('\n'),
-    icon: 'info',
-    closeOnEsc: false
+    title: 'Keyboard Shortcuts'
   });
 }
 
-function showLatest() {
+function showLatest () {
   swal({
     content: {
-      element: 'img',
       attributes: {
-        src: '/latest',
         alt: 'Latest Image',
+        src: '/latest',
         style: 'width: 100%;'
-      }
+      },
+      element: 'img'
     },
     text: 'http://kamihimedb.thegzm.space/latest'
-  })
+  });
 }

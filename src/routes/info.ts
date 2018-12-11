@@ -1,23 +1,23 @@
 import { Request, Response } from 'express';
-import Route from '../struct/Route';
 import { createReadStream } from 'fs-extra';
+import * as parseInfo from 'infobox-parser';
 import { resolve } from 'path';
 import { promisify } from 'util';
-import * as parseInfo from 'infobox-parser';
+import Route from '../struct/Route';
 
 const IMAGES_PATH = resolve(__dirname, '../../static/img/wiki') + '/';
 let getArticle: (...args: any[]) => Promise<string> = null;
 
 export default class InfoRoute extends Route {
-  constructor() {
+  constructor () {
     super({
       id: 'info',
       method: 'get',
-      route: ['/info/:id']
+      route: [ '/info/:id' ]
     });
   }
 
-  async exec(req: Request, res: Response): Promise<any> {
+  public async exec (req: Request, res: Response): Promise<any> {
     if (!getArticle)
       getArticle = promisify(this.client.wikiaClient.getArticle.bind(this.client.wikiaClient));
 
@@ -67,7 +67,7 @@ export default class InfoRoute extends Route {
    * Parses infobox as JSON.
    * @param item The article to parse
    */
-  protected async _parseArticle(item) {
+  protected async _parseArticle (item) {
     const raw: string = await getArticle(item);
     const sanitisedData = (data: string) => {
       if (!data) throw { code: 404, message: `API returned no item named ${item} found.` };
@@ -99,7 +99,7 @@ export default class InfoRoute extends Route {
         .replace(/ {2}/g, ' ')
         .replace(/\n+/g, '')
         .replace(/(\*{2,})/g, e => `\n${' '.repeat(e.length + 2)}- `)
-        .replace(/'{3}(.+)'{3}/g, '<b>$1</b>');
+        .replace(/'{3}(.*?)'{3}/g, '<b>$1</b>');
 
       const [ , ...result ] = slicedData.split('*');
 

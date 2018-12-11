@@ -2,17 +2,17 @@ import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
 export default class GetIdRequest extends Api {
-  constructor() {
+  constructor () {
     super({
-      method: 'GET',
       cooldown: 5,
-      max: 3
+      max: 3,
+      method: 'GET'
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     const id: any = req.params[0];
-    const validId: Array<string> = ['s', 'k', 'e', 'w', 'x'];
+    const validId: string[] = [ 's', 'k', 'e', 'w', 'x' ];
     const checkId: boolean = id && validId.includes(id.charAt(0)) && !isNaN(id.slice(1));
 
     try {

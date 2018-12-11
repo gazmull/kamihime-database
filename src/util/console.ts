@@ -2,6 +2,8 @@ const myTime: () => string = () => {
   return new Date().toLocaleString();
 };
 
+/* tslint:disable:no-console */
+
 export const status = (message: string) => {
   const FgGreen: string = '\x1b[32m%s\x1b[0m';
 
@@ -20,3 +22,5 @@ export const warn = (message: string) => {
 
     return console.log(FgYellow, `${myTime()}: ${message}`);
 };
+
+/* tslint:enable:no-console */
