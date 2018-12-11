@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-export = GetIdRequest;
-class GetIdRequest extends Api {
+export default class GetIdRequest extends Api {
   constructor() {
     super({
       method: 'GET',

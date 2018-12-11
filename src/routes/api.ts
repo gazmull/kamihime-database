@@ -3,8 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import Api from '../struct/Api';
 import Route from '../struct/Route';
 
-export = ApiRoute;
-class ApiRoute extends Route {
+export default class ApiRoute extends Route {
   constructor() {
     super({
       id: 'api',

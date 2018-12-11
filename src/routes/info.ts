@@ -8,8 +8,7 @@ import * as parseInfo from 'infobox-parser';
 const IMAGES_PATH = resolve(__dirname, '../../static/img/wiki') + '/';
 let getArticle: (...args: any[]) => Promise<string> = null;
 
-export = InfoRoute;
-class InfoRoute extends Route {
+export default class InfoRoute extends Route {
   constructor() {
     super({
       id: 'info',
@@ -56,11 +55,9 @@ class InfoRoute extends Route {
       }
       if (_wiki === 'false') return res.render('info', { character });
 
-      const wiki = await this._parseArticle(character.name).catch(() => {
-        throw { message: 'Cannot resolve connection to the Wikia API' };
-      });
-
-      res.render('info', { character, wiki });
+      this._parseArticle(character.name)
+      .then(wiki => res.render('info', { character, wiki }))
+      .catch(() => res.render('info', { character }));
     } catch (err) { this.server.util.handleSiteError(res, err); }
   }
 
@@ -71,8 +68,8 @@ class InfoRoute extends Route {
    * @param item The article to parse
    */
   protected async _parseArticle(item) {
-    const rawData = await getArticle(item);
-    const sanitisedData = data => {
+    const raw: string = await getArticle(item);
+    const sanitisedData = (data: string) => {
       if (!data) throw { code: 404, message: `API returned no item named ${item} found.` };
       const slicedData = data.indexOf('==') === -1
         ? data
@@ -84,11 +81,38 @@ class InfoRoute extends Route {
         .replace(/(?:\{{2})(?:[^{}].*?)(?:\}{2})/g, '')
         .replace(/(?:\[{2}[\w#]+\|)(.*?)(?:\]{2})/g, '$1')
         .replace(/(?:\[{2})(?:[\w\s]+\(\w+\)\|)?([^:]*?)(?:\]{2})/g, '$1')
-        .replace(/(?:\[{2}).*?(?:\]{2})/g, '');
+        .replace(/(?:\[{2}).*?(?:\]{2})/g, '')
+        .replace(/ {2}/g, ' ');
+    };
+    const getNotes = (data: string) => {
+      const header = '== Notes ==';
+
+      if (!data.includes(header)) return null;
+
+      let slicedData = data.slice(data.indexOf(header) + 11);
+      slicedData = slicedData.slice(0, slicedData.indexOf('=='));
+
+      slicedData = slicedData
+        .replace(/(?:\{{2})(?:[^{}].*?)(?:\}{2})/g, '')
+        .replace(/(?:\[{2})(?:[\w\s]+\(\w+\)\|)?([^:]*?)(?:\]{2})/g, '$1')
+        .replace(/(?:\[{2}).*?(?:\]{2})/g, '')
+        .replace(/ {2}/g, ' ')
+        .replace(/\n+/g, '')
+        .replace(/(\*{2,})/g, e => `\n${' '.repeat(e.length + 2)}- `)
+        .replace(/'{3}(.+)'{3}/g, '<b>$1</b>');
+
+      const [ , ...result ] = slicedData.split('*');
+
+      return result;
     };
 
-    const { general: info } = parseInfo(sanitisedData(rawData));
+    const { general: info } = parseInfo(sanitisedData(raw));
     info.name = info.name.replace(/(?:\[)(.+)(?:\])/g, '($1)');
+
+    const notes = getNotes(raw);
+
+    if (notes)
+      info.notes = notes;
 
     return info;
   }

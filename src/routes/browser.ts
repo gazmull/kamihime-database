@@ -2,8 +2,7 @@ import { Response } from 'express';
 import Route from '../struct/Route';
 import fetch from 'node-fetch';
 
-export = BrowserRoute;
-class BrowserRoute extends Route {
+export default class BrowserRoute extends Route {
   constructor() {
     super({
       id: 'browser',

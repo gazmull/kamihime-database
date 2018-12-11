@@ -2,6 +2,8 @@ mixin name
   a #{name}#{name.slice(-1) === 's' ? '\'' : '\'s'} Info
 
 mixin stats
+  - const wikiURL = 'https://kamihime-project.wikia.com/w/';
+
   thead
     tr
       th(scope='col') Name
@@ -10,23 +12,65 @@ mixin stats
         th(scope='col') Type
       - if (wiki.element)
         th(scope='col') Element
-      - if (wiki.favouriteWeapon)
-        th(scope='col') Favourite Weapon
       - if (wiki.hpMin)
         th(scope='col') HP | ATK | TTL
 
   tbody
     tr
-      td(class='name') <a href='https://kamihime-project.wikia.com/w/#{wiki.name}' target='_blank'>#{wiki.name}</a>
+      td(class='name') <a href="#{wikiURL}#{wiki.name}"" target='_blank'>#{wiki.name}</a>
       td #{wiki.rarity ? wiki.rarity : wiki.tier}
       - if (wiki.type)
         td #{wiki.type}
       - if (wiki.element)
         td #{wiki.element}
-      - if (wiki.favouriteWeapon)
-        td #{wiki.favouriteWeapon}
       - if (wiki.hpMin)
         td #{wiki.hpMax} | #{wiki.atkMax} | #{parseInt(wiki.atkMax) + parseInt(wiki.hpMax)}
+
+  thead
+    tr
+      - if (wiki.favouriteWeapon)
+        th(scope='col') Favourite Weapon
+      - if (wiki.weapon1)
+        th(scope='col') Can Wield
+      - if (wiki.masterBonus)
+        th(scope='col') Master Bonus
+      - if (wiki.releaseWeapon)
+        th(scope='col') Release Weapon
+      - if (wiki.obtained)
+        th(scope='col') Obtainable From
+      - if (wiki.soul1 || wiki.soulP)
+        th(scope='col') Requires
+
+  tbody
+    tr
+      - if (wiki.favouriteWeapon)
+        td #{wiki.favouriteWeapon}
+      - if (wiki.weapon1)
+        td !{`<b>${wiki.weapon1}</b>${wiki.weapon2 ? ` and <b>${wiki.weapon2}</b>` : ''}`}
+      - if (wiki.masterBonus)
+        td #{wiki.masterBonus}
+      - if (wiki.releaseWeapon)
+        td(class='name') <a href="#{wikiURL}#{wiki.releaseWeapon}" target='__blank'>#{wiki.releaseWeapon}</a>
+      - if (wiki.obtained)
+        - wiki.obtained = wiki.obtained.replace(/\n/g, '<br>');
+
+        td(class='name')
+          - if (wiki.obtained.includes('Awaken'))
+            - const n = wiki.name.split(' ')[0];
+            | Awaken 
+            a(href=wikiURL + n, target='__blank') #{n}
+          - else
+            | !{wiki.obtained}
+      - if (wiki.soul1 || wiki.soulP)
+        td(class='name')
+          a(href=wikiURL + wiki.soul1, target='__blank') #{wiki.soul1}
+          - if (wiki.soul2)
+            br
+            a(href=wikiURL + wiki.soul2, target='__blank') #{wiki.soul2}
+          - if (wiki.soulP)
+            - if(wiki.soul1)
+              br
+            | #{wiki.soulP}
 
 mixin kit(type, name, desc, upDesc, cd, dur)
   - if (name)

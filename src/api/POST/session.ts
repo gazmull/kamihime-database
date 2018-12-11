@@ -26,8 +26,7 @@ const sessionPass: string[] = [
   'Bulok Gameclub'
 ];
 
-export = PostSessionRequest;
-class PostSessionRequest extends Api {
+export default class PostSessionRequest extends Api {
   constructor() {
     super({
       method: 'POST',
@@ -50,8 +49,8 @@ class PostSessionRequest extends Api {
       if (!character) throw { code: 404, message: 'Character not found.' };
 
       const [ session ] = await this.server.util.db('sessions').select()
-        .where('user', user)
-        .andWhere('cID', id)
+        .where('userTag', user)
+        .andWhere('characterId', id)
         .limit(1);
 
       if (session) {
@@ -60,16 +59,16 @@ class PostSessionRequest extends Api {
           .json({
             code: 202,
             message: 'Already existing session.',
-            cID: session.cID,
-            sID: session.sID,
-            sPW: session.sPW
+            characterId: session.characterId,
+            id: session.id,
+            password: session.password
           });
 
         return;
       }
 
-      const sessions: any[] = await this.server.util.db('sessions').select('count(cID)')
-          .where('user', user);
+      const sessions: any[] = await this.server.util.db('sessions').select('count(characterId)')
+          .where('userTag', user);
 
       if (sessions.length > 3)
         throw { code: 429, message: `Too many sessions active. [${sessions.length} sessions active]` };
@@ -82,16 +81,16 @@ class PostSessionRequest extends Api {
 
       await this.server.util.db('sessions')
         .insert({
-          sID: uniqueID,
-          sPW: uniqueKey,
-          sAge: 'now()',
-          cID: id,
-          user
+          id: uniqueID,
+          password: uniqueKey,
+          created: 'now()',
+          characterId: id,
+          userTag: user
         });
 
       const [ newSession ] = await this.server.util.db('sessions').select()
         .where('user', user)
-        .andWhere('cID', id)
+        .andWhere('characterId', id)
         .limit(1);
 
       await this.server.util.webHookSend(`${user}'s session for ${character.name} (${character.id}) has been created.`);

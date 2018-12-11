@@ -1,6 +1,5 @@
 ul {
   background-color: #222;
-  margin: -8px -7px;
   margin: 0 !important;
   max-height: 55px;
   overflow: hidden;
@@ -10,9 +9,7 @@ ul {
   z-index: 9;
 }
 
-li {
-  display: inline-block;
-}
+li { display: inline-block; }
 
 li a {
   border: 1px solid #222 !important;
@@ -54,9 +51,7 @@ p { white-space: pre-wrap; }
   z-index: -1;
 }
 
-#thumbnail {
-  z-index: -1;
-}
+#thumbnail { z-index: -1; }
 
 .navbar { top: 50.2%; }
 
@@ -65,7 +60,10 @@ p { white-space: pre-wrap; }
 
 .nav-switch-hide { height: 100px; }
 
-.table { background-color: #7c2962d0; }
+.table {
+  background-color: #7c2962;
+  opacity: 0.8;
+}
 
 .kit-name {
   font-weight: bolder;

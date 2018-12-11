@@ -50,6 +50,12 @@ html
                   - if (wiki.description)
                     p <i>#{wiki.description}</i>
 
+                  - if (wiki.notes)
+                    h3 Notes
+                    p
+                      each note in wiki.notes
+                        |   - !{note}<br>
+
                   table(class='table table-borderless')
                     +stats
 

@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import Route from '../struct/Route';
 import fetch from 'node-fetch';
 
-export = RedirectRoute;
-class RedirectRoute extends Route {
+export default class RedirectRoute extends Route {
   constructor() {
     super({
       id: 'redirect',

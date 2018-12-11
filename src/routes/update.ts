@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Route from '../struct/Route';
 
-export = DashboardRoute;
-class DashboardRoute extends Route {
+export default class DashboardRoute extends Route {
   constructor() {
     super({
       id: 'update',

@@ -58,8 +58,7 @@ const queries = {
   loli: 'loli = 1', 'no-loli': 'loli = 0'
 };
 
-export = GetListRequest;
-class GetListRequest extends Api {
+export default class GetListRequest extends Api {
   constructor() {
     super({
       method: 'GET',

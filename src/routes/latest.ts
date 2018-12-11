@@ -6,8 +6,7 @@ import * as path from 'path';
 import { Image, Canvas } from 'canvas';
 
 
-export = LatestRoute;
-class LatestRoute extends Route {
+export default class LatestRoute extends Route {
   constructor() {
     super({
       id: 'latest',

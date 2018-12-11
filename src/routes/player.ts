@@ -10,8 +10,7 @@ const SCENARIOS = 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/';
 const BG_IMAGE = SCENARIOS + 'bgimage/';
 const FG_IMAGE = SCENARIOS + 'fgimage/';
 
-export = PlayerRoute;
-class PlayerRoute extends Route {
+export default class PlayerRoute extends Route {
   constructor() {
     super({
       id: 'player',

@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-export = PostAddRequest;
-class PostAddRequest extends Api {
+export default class PostAddRequest extends Api {
   constructor() {
     super({
       method: 'POST',

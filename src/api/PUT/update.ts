@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-export = PutUpdateRequest;
-class PutUpdateRequest extends Api {
+export default class PutUpdateRequest extends Api {
   constructor() {
     super({
       method: 'PUT',
@@ -52,8 +51,8 @@ class PutUpdateRequest extends Api {
 
       await this.server.util.db('kamhime').update(data)
         .where('id', id);
-      await this.server.util.db('kamihime')
-        .where({ user, cID: id })
+      await this.server.util.db('sessions')
+        .where({ userTag: user, characterId: id })
         .del();
 
       if (this.server.auth.hook)

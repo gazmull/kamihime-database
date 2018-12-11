@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import * as fuzzy from 'fuzzy';
 import Api from '../../struct/Api';
 
-export = GetSearchRequest;
-class GetSearchRequest extends Api {
+export default class GetSearchRequest extends Api {
   constructor() {
     super({
       method: 'GET',

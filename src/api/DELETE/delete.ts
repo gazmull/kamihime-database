@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-export = DeleteRequest;
-class DeleteRequest extends Api {
+export default class DeleteRequest extends Api {
   constructor() {
     super({
       method: 'DELETE',

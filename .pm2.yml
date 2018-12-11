@@ -1,13 +1,17 @@
 apps:
   - name: kamihime-db
     script: build/index.js
-    watch: false
+    watch: true
     ignore_watch:
+      - .git
       - build/proto
+      - build/views
       - node_modules
       - provider
       - src
       - static
+      - test
+      - typings
     env:
       NODE_ENV: development
     env_production:

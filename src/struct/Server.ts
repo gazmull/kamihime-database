@@ -74,7 +74,7 @@ export default class Server {
       requests = requests.map(el => el.slice(0, el.indexOf('.js')));
 
       for (const request of requests) {
-        const file: Api = new (require(resolve(API_METHOD_REQUESTS_DIR, request)))();
+        const file: Api = new (require(resolve(API_METHOD_REQUESTS_DIR, request)).default)();
         file.server = this;
 
         this.api.get(method).set(request, file);
@@ -89,7 +89,7 @@ export default class Server {
     const routeDir: string[] = fs.readdirSync(ROUTES_DIR);
 
     for (const route of routeDir) {
-      const file: Route = new (require(`${ROUTES_DIR}/${route}`))(this);
+      const file: Route = new (require(`${ROUTES_DIR}/${route}`).default)(this);
 
       if (!file.method) {
         this.util.logger.error(`Missing Method: Route ${route} was not included`);
@@ -173,8 +173,9 @@ export default class Server {
 
   protected async _cleanSessions(): Promise<boolean> {
     try {
-      const EXPIRED: string = 'sAge <= DATE_SUB(NOW(), INTERVAL \'30:00\' MINUTE_SECOND)';
-      const sessions: any[] = await this.util.db.select('sID').from('sessions').whereRaw(EXPIRED);
+      const EXPIRED: string = 'created <= DATE_SUB(NOW(), INTERVAL \'30:00\' MINUTE_SECOND)';
+      const sessions: any[] = await this.util.db('sessions').select('id')
+        .whereRaw(EXPIRED);
 
       if (sessions.length) {
         await this.util.db('sessions').whereRaw(EXPIRED).delete();

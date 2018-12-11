@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-export = PutApproveRequest;
-class PutApproveRequest extends Api {
+export default class PutApproveRequest extends Api {
   constructor() {
     super({
       method: 'PUT',
