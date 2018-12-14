@@ -8,6 +8,7 @@ const MAX_VISITS = 3;
 
 const SCENARIOS = 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/';
 const BG_IMAGE = SCENARIOS + 'bgimage/';
+const BGM = SCENARIOS + 'bgm/';
 const FG_IMAGE = SCENARIOS + 'fgimage/';
 
 export default class PlayerRoute extends Route {
@@ -47,7 +48,7 @@ export default class PlayerRoute extends Route {
       if (!template || !selected)
         throw { code: 422, message: 'Invalid episode or player type.' };
 
-      let fields = [ 'id', 'name', 'rarity' ];
+      let fields = [ 'id', 'name', 'rarity', 'peeks' ];
       fields = fields.concat([ selected, `harem${ep}Title` ]);
 
       const [ character ] = await this.server.util.db('kamihime').select(fields)
@@ -61,32 +62,39 @@ export default class PlayerRoute extends Route {
       if (!resource)
         throw { code: 404, message: [ 'Episode Resource is empty.', 'Please contact the administrator!' ] };
 
-      const script = await this._find('script.json', id, resource);
+      await this._rateLimit(req, character, resource);
 
-      if (!(template || character || script)) throw { code: 404 };
+      const { scenario } = await this._find('script.json', id, resource);
 
-      const files = await this._find('files.rsc', id, resource);
+      if (!(template || character || scenario)) throw { code: 404 };
 
-      if (!files)
-        throw {
-          code: 404,
-          message: [
-          'Episode Resource is unexpectedly empty.',
-          'Please contact the administrator!'
-        ]
-      };
+      let files: string[] = null;
+
+      if (type !== 'story') {
+        files = await this._find('files.rsc', id, resource);
+
+        if (!files)
+          throw {
+            code: 404,
+            message: [
+            'Episode Resource is unexpectedly empty.',
+            'Please contact the administrator!'
+          ]
+        };
+      }
 
       let folder = resource.slice(-4);
       const fLen = folder.length / 2;
-      folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}}/`;
+      folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
       const data = {
-        files,
-        script,
-        SCENARIOS: SCENARIOS + folder
+        SCENARIOS: SCENARIOS + folder + `${resource}/`,
+        script: scenario
       };
 
       if (type === 'story')
-        Object.assign(data, { BG_IMAGE, FG_IMAGE });
+        Object.assign(data, { BG_IMAGE, BGM, FG_IMAGE });
+      else
+        Object.assign(data, { files });
 
       res.render(template, data);
     } catch (err) { this.server.util.handleSiteError(res, err); }
@@ -106,8 +114,11 @@ export default class PlayerRoute extends Route {
     try {
       const file = await fs.readFile(filePath);
 
+      if (name === 'files.rsc')
+        return file.toString().split(',');
+
       return JSON.parse(file.toString());
-    } catch { return false; }
+    } catch (err) { return false; }
   }
 
   protected _checkRegistered (req: Request, resource: string): boolean {
@@ -120,7 +131,7 @@ export default class PlayerRoute extends Route {
     return true;
   }
 
-  protected async _rateLimit (req: Request, character: any, resource: string): Promise<void> {
+  protected async _rateLimit (req: Request, character: any, resource: string): Promise<true> {
     const visitorVisits = this.server.recentVisitors.filter((log, _resource) => {
       const logged = log.get(req.ip);
       if (!logged) return false;
@@ -136,9 +147,17 @@ export default class PlayerRoute extends Route {
     if (!currentRegistered) {
       await this.server.util.db('kamihime').update('peeks', ++character.peeks)
         .where('id', character.id);
-      this.server.recentVisitors.get(resource).set(req.ip, Date.now());
+
+      const resourceLog = () => this.server.recentVisitors.get(resource);
+
+      if (!resourceLog())
+        this.server.recentVisitors.set(resource, this.server.util.collection());
+
+      resourceLog().set(req.ip, Date.now());
 
       this.server.util.logger.status(`[A] Peek: ${req.ip} visited ${character.name}`);
     }
+
+    return true;
   }
 }

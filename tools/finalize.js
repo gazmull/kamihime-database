@@ -15,6 +15,7 @@ const log = (message, obj) => console.log('finalize: ' + message, obj || '');
   if (stderr) throw err;
 
   log('Uglified build/proto successfully.');
+
   return true;
 })()
 
@@ -25,6 +26,7 @@ const log = (message, obj) => console.log('finalize: ' + message, obj || '');
   await fs.remove(proto);
 
   log('Removed build/proto sucessfully.');
+
   return true;
 })
 
@@ -36,6 +38,7 @@ const log = (message, obj) => console.log('finalize: ' + message, obj || '');
   await fs.copy(src, build);
 
   log('Copied views to build successfully.');
+
   return true;
 })
 

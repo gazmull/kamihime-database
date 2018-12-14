@@ -85,31 +85,29 @@ $(() => {
 });
 
 function showHelp () {
-  swal({
-    closeOnEsc: false,
-    icon: 'info',
-    text: [
-      'ESC: Hide/Show Navigation',
-      '1 - 7: Select category (e.g. 1 is for \'All\')',
-      '\n',
+  sweet({
+    allowEscapeKey: false,
+    html: [
+      '<ol style="list-style: none; padding: 0;">',
+      '<li>ESC: Hide/Show Navigation</li>',
+      '<li>1 - 7: Select category (e.g. 1 is for \'All\')</li>',
+      '</ol><br><br>',
       'Additional Help:',
-      '- Feeds ("Latest" and "Hot 10" Sidebars on the right) are also accessible for navigation.',
-      '- You can click the white bar beside navigation bar to hide/show it.'
-    ].join('\n'),
-    title: 'Keyboard Shortcuts'
+      '<ol>',
+      '<li>Feeds ("Latest" and "Hot 10" Sidebars on the right) are also accessible for navigation.</li>',
+      '<li>You can click the white bar beside navigation bar to hide/show it.</li>',
+      '</ol>'
+    ].join(''),
+    titleText: 'Keyboard Shortcuts',
+    type: 'info'
   });
 }
 
 function showLatest () {
-  swal({
-    content: {
-      attributes: {
-        alt: 'Latest Image',
-        src: '/latest',
-        style: 'width: 100%;'
-      },
-      element: 'img'
-    },
-    text: 'http://kamihimedb.thegzm.space/latest'
+  sweet({
+    html: '<a href="/latest" class="text-light" target="_blank">http://kamihimedb.thegzm.space/latest</a>',
+    imageAlt: 'Latest Image',
+    imageUrl: '/latest',
+    imageWidth: '100%'
   });
 }

@@ -9,6 +9,8 @@ const RULES = {
   'member-ordering': [ true, {
     order: [ 'constructor', 'instance-field', 'instance-method', 'static-field', 'static-method' ]
   } ],
+  'newline-before-return': true,
+  'no-angle-bracket-type-assertion': false,
   'no-duplicate-variable': true,
   'no-eval': true,
   'no-trailing-whitespace': true,
@@ -37,21 +39,21 @@ const RULES = {
   whitespace: [ true, 'check-branch', 'check-decl', 'check-operator', 'check-separator', 'check-type' ]
 };
 
-exports.extends = [
+module.exports = {
+  extends: [
     'tslint:recommended',
     'tslint-eslint-rules'
-  ];
-
-exports.jsRules = RULES;
-
-exports.rules = {
-  ...RULES,
-  'no-internal-module': true,
-  'typedef-whitespace': [ true, {
-    'call-signature': 'nospace',
-    'index-signature': 'nospace',
-    parameter: 'nospace',
-    'property-declaration': 'nospace',
-    'variable-declaration': 'nospace'
-  } ],
+  ],
+  jsRules: RULES,
+  rules: {
+    ...RULES,
+    'no-internal-module': true,
+    'typedef-whitespace': [ true, {
+      'call-signature': 'nospace',
+      'index-signature': 'nospace',
+      parameter: 'nospace',
+      'property-declaration': 'nospace',
+      'variable-declaration': 'nospace'
+    } ],
+  }
 };

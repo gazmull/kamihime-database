@@ -1,13 +1,12 @@
-/* eslint-disable no-undef, no-use-before-define, no-invalid-this */
-
 $(() => {
   const images = files.filter(i => i.endsWith('.jpg'));
-  const audio = files.filter(i => i.endsWith('.mp3') && !i.startsWith('bgm'));
+  const audios = files.filter(i => i.endsWith('.mp3'));
+  const bgm = files.find(i => i.startsWith('bgm_h'));
 
   const audioPool = {};
   const talkVal = parseInt($('#text').attr('data'));
   const maxScriptLength = script.length - 1;
-  let animation = 'play 1s steps(1) infinite';
+  let animation = 'none';
   let lastImage;
   let lastAudio;
   let sequenceIDX = 0;
@@ -16,42 +15,94 @@ $(() => {
   const newSeq = () => script[sequenceIDX];
   const maxSequenceTalk = () => newSeq().talk.length - 1;
 
-  for (const image of images)
-    $('<div/>', {
-      id: image,
-      class: 'animate'
-    })
-      .css({
-        'background-image': `url("${res}/${image}")`,
-        position: 'absolute',
-        visibility: 'hidden',
-        top: '-130px',
-        width: '640px',
-        height: '900px'
-      })
-      .appendTo('#image');
+  function loadAsset (src, name, type) {
+    const deferred = $.Deferred();
+    const isBGM = type === 'bgm';
+    const asset = type === 'img'
+      ? new Image()
+      : new Howl({
+        loop: isBGM ? true : false,
+        onload: () => deferred.resolve({ obj: asset, src, name, type }),
+        onloaderror: (...err) => deferred.reject(err),
+        preload: true,
+        src: [ src ],
+        volume: isBGM ? 0.10 : 0.50
+      });
 
-  for (const aud of audio)
-    Object.assign(audioPool, {
-      [aud]: new Howl({
-        src: [`${res}/${aud}`],
-        preload: true
-      })
-    });
+    if (type === 'img') {
+      asset.onload = () => deferred.resolve({ src, name, type });
+      asset.onerror = () => deferred.reject(new Error('URL does not return OK status: ' + src));
+      asset.src = src;
+    }
 
-  const bgm = files
-    .filter(i => i.startsWith('bgm_h'))
-    .map(i => `${res}/${i}`);
+    return deferred.promise();
+  }
 
-  new Howl({
-    src: bgm,
-    preload: true,
-    autoplay: true,
-    loop: true,
-    volume: 0.50
+  const _assets = [];
+
+  sweet({
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    animation: false,
+    customClass: 'animated zoomIn',
+    showConfirmButton: false,
+    titleText: 'Resolving assets...'
   });
 
-  render();
+  Array.prototype.push.apply(
+    _assets,
+    images.map(image => loadAsset(SCENARIOS + image, image, 'img'))
+    .concat(
+      audios.map(audio => loadAsset(SCENARIOS + audio, audio, 'snd')),
+      [ loadAsset(SCENARIOS + bgm, bgm, 'bgm') ]
+    )
+  );
+
+  $.when.apply(null, _assets)
+    .done((...assets) => {
+      for (const asset of assets)
+        switch (asset.type) {
+          case 'img': {
+            $('<div/>', {
+              class: 'animate',
+              id: asset.name
+            })
+              .css({
+                'background-image': `url("${asset.src}")`,
+                height: '900px',
+                position: 'absolute',
+                top: '-130px',
+                visibility: 'hidden',
+                width: '640px'
+              })
+              .appendTo('#image');
+            break;
+          }
+          default: {
+            Object.assign(audioPool, { [asset.name]: asset.obj });
+            break;
+          }
+        }
+
+      setTimeout(() => {
+        sweet({
+          text: 'Click OK to proceed.',
+          titleText: 'Assets loaded!'
+        }).then(() => {
+          $('#panel').addClass('animated faster fadeIn');
+          audioPool[bgm].play();
+          render();
+        });
+      }, 1000);
+    })
+    .fail(err => {
+      console.log(err); // tslint:disable-line:no-console
+      sweet({
+        html: 'An error occurred while loading the assets. <sub>(See console)</sub>',
+        titleText: 'Failed to resolve assets',
+        type: 'error'
+      });
+    });
 
   $('button').click(({ currentTarget: $this }) => {
     const code = $($this).attr('nav');
@@ -85,7 +136,7 @@ $(() => {
     render();
   });
 
-  function navLeft() {
+  function navLeft () {
     if (sequenceIDX === 0 && talkIDX === 0) return;
     if (talkIDX === 0) {
       sequenceIDX--;
@@ -95,7 +146,7 @@ $(() => {
       $('#text').attr('data', --talkIDX);
   }
 
-  function navRight() {
+  function navRight () {
     if (sequenceIDX === maxScriptLength && talkIDX === maxSequenceTalk())
       return window.history.back();
     if (talkIDX === maxSequenceTalk()) {
@@ -106,10 +157,10 @@ $(() => {
       $('#text').attr('data', ++talkIDX);
   }
 
-  function render() {
+  function render () {
     const n = {
-      img: newSeq().sequence,
       chara: newSeq().talk[talkIDX].chara,
+      img: newSeq().sequence,
       voice: audioPool[newSeq().talk[talkIDX].voice],
       words: newSeq().talk[talkIDX].words
     };
@@ -119,14 +170,13 @@ $(() => {
 
     const currentIMG = `#image > div[id='${n.img}']`;
     const hidden = {
+      '-moz-animation': 'none',
+      '-ms-animation': 'none',
+      '-o-animation': 'none',
+      '-webkit-animation': 'none',
+      animation: 'none',
       position: 'absolute',
-      visibility: 'hidden',
-      'background-position-y': '0px',
-      animation: 'play 1s steps(1) infinite',
-      '-webkit-animation': 'play 1s steps(1) infinite',
-      '-moz-animation': 'play 1s steps(1) infinite',
-      '-o-animation': 'play 1s steps(1) infinite',
-      '-ms-animation': 'play 1s steps(1) infinite'
+      visibility: 'hidden'
     };
 
     if (lastImage && lastImage !== n.img)
@@ -145,13 +195,13 @@ $(() => {
       if (n.img === 'pink_s.jpg' && isC3) {
         $(currentIMG)
           .css({
-            position: 'relative',
-            visibility: 'visible',
-            animation: 'fade 1s',
-            '-webkit-animation': 'fade 1s',
             '-moz-animation': 'fade 1s',
+            '-ms-animation': 'fade 1s',
             '-o-animation': 'fade 1s',
-            '-ms-animation': 'fade 1s'
+            '-webkit-animation': 'fade 1s',
+            animation: 'fade 1s',
+            position: 'relative',
+            visibility: 'visible'
           });
 
         setTimeout(() => {
@@ -165,13 +215,13 @@ $(() => {
       } else
         $(currentIMG)
           .css({
-            position: 'relative',
-            visibility: 'visible',
-            animation: animation, // eslint-disable-line object-shorthand
-            '-webkit-animation': animation,
             '-moz-animation': animation,
+            '-ms-animation': animation,
             '-o-animation': animation,
-            '-ms-animation': animation
+            '-webkit-animation': animation,
+            animation: animation, // tslint:disable-line:object-literal-shorthand
+            position: 'relative',
+            visibility: 'visible'
           });
     }
 

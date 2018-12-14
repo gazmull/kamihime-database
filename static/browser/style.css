@@ -32,7 +32,7 @@
 
 #feed-wrapper {
   position: fixed;
-  top: 0;
+  top: 0.5vh;
   right: 0;
 }
 
@@ -41,10 +41,10 @@
   border-bottom: 2px solid transparent;
   border-left: 2px solid #ff00ae31;
   border-top: 2px solid transparent;
-  border-top-left-radius: 1%;
-  border-bottom-left-radius: 1%;
+  border-top-left-radius: 5%;
+  border-bottom-left-radius: 5%;
   overflow-y: auto;
-  max-height: 50vh;
+  max-height: 48.5vh;
   margin: 0.5vh 0;
 }
 
@@ -63,6 +63,7 @@
   font-size: 14px;
   transition: all 0.1s ease;
 }
+
 .feed-list a.text-light:hover {
   animation: wee 2s linear infinite alternate;
   font-size: 16px;
@@ -79,10 +80,12 @@
 .content { background-color: transparent; }
 
 .kh-list-wrapper { z-index: 1; }
+
 .kh-list {
   list-style-position: outside;
   list-style-type: none;
 }
+
 .kh-list li {
   float: left;
   clear: left;

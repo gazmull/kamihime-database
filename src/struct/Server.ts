@@ -205,6 +205,9 @@ export default class Server {
         log.delete(visitor);
 
       cleaned += visitors.size;
+
+      if (!log.size)
+        resources.delete(resource);
     }
 
     if (cleaned)

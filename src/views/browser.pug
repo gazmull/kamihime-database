@@ -6,7 +6,8 @@ html
     script(src='/lib/bootstrap.min.js')
     script(src='/lib/popper.min.js')
     script(src='/lib/js.cookie.min.js')
-    script(src='/lib/sweetalert.min.js')
+    script(src='/lib/sweetalert2.min.js')
+    link(rel='stylesheet', href='/lib/sweetalert2.css')
     link(rel='stylesheet', href='/lib/bootstrap.min.css')
 
     script(src='/constants/script.js')
@@ -82,7 +83,7 @@ html
                       != `<a href="/info/${c.id}">${c.name}</a>`
           div(class='row')        
             div(class='feed col-12')
-              h6 Hot 10
+              h6 Top 10
               ul(class='feed-list')
                 each c in hot
                   li(name=c.name, character-id=c.id, class='name')

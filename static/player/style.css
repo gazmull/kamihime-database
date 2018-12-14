@@ -39,7 +39,6 @@ ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  margin:-8px -7px;
   background-color: #222222;
   position: fixed;
   width: 100%;
@@ -72,7 +71,7 @@ li a:active {
 }
 
 .invi {
-  z-index: 9999;
+  z-index: 1050;
   position: absolute;
   height: 640px;
   top: 0;
@@ -90,6 +89,7 @@ li a:active {
 
 #panel {
   position: relative;
+  opacity: 0;
   height: 640px;
 }
 
