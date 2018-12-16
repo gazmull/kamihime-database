@@ -1,36 +1,3 @@
-ul {
-  background-color: #222;
-  margin: 0 !important;
-  max-height: 55px;
-  overflow: hidden;
-  padding: 0;
-  position: fixed;
-  width: 100%;
-  z-index: 9;
-}
-
-li { display: inline-block; }
-
-li a {
-  border: 1px solid #222 !important;
-  color: white !important;
-  display: block;
-  padding: 14px 16px;
-  text-align: center;
-  text-decoration: none !important;
-}
-
-li a:hover {
-  background-color: #ff00ae !important;
-  border: 1px solid #f5bbf2 !important;
-}
-
-li a:active {
-  background-color: #2f3136 !important;
-  border: 1px solid #f5bbf2 !important;
-  color: white !important;
-}
-
 p { white-space: pre-wrap; }
 
 #model {

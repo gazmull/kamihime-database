@@ -1,4 +1,4 @@
-import { Api as ApiAuth, Host, WebHook } from 'auth';
+import { Api as ApiAuth, GrantDefaults, GrantProvider, Host, WebHook } from 'auth';
 import { Collection, Message, WebhookClient } from 'discord.js';
 import { Express, NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
@@ -6,7 +6,7 @@ import * as knex from 'knex';
 import fetch from 'node-fetch';
 import { resolve } from 'path';
 // @ts-ignore
-import { api, database, hook, host, rootURL } from '../auth/auth';
+import { api, database, grant, hook, host, rootURL } from '../auth/auth';
 import * as logger from '../util/console';
 import { handleApiError, handleSiteError, IErrorHandlerObject } from '../util/handleError';
 import Api from './Api';
@@ -22,6 +22,7 @@ export default class Server {
     this.auth = {
       api,
       database,
+      grant,
       hook,
       host,
       rootURL
@@ -220,9 +221,15 @@ export default class Server {
 interface IAuth {
   database: knex.Config;
   host: Host;
+  grant: IGrant;
   rootURL: string;
   api: ApiAuth;
   hook: WebHook;
+}
+
+interface IGrant {
+  defaults: GrantDefaults;
+  discord: GrantProvider;
 }
 
 interface ILogger {

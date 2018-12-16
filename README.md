@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.org/gazmull/kamihime-database.svg?branch=master)](https://travis-ci.org/gazmull/kamihime-database)
+[![Build Status](https://travis-ci.org/gazmull/kamihime-database.svg?branch=master-gentle)](https://travis-ci.org/gazmull/kamihime-database)
 # Kamihime Database
+> `master-gentle` branch: Branch that will be submitted as my [webdev](https://github.com/gazmull/webdev) final exam. This is also the superior version of `master` branch at the moment.
 
 Website + REST (JSON) API for Kamihime Database
 <br> Written in TypeScript, transpiled to Uglified CommonJS (NodeJS)
@@ -16,11 +17,6 @@ Website + REST (JSON) API for Kamihime Database
 ## Requirements
 - [Node](https://nodejs.org) 10 and above
 - [Webhook](https://support.discordapp.com/hc/en-us/articles/228383668); See [Notice](#Notice) for config setup
-- [Scenario Files from 'snek'](https://github.com/gazmull/kh-snek)
-  - Move the generated folders (`kh-snek/static`) to this repository's static
-    - Example: `$ mv kh-snek/static/scenarios kamihime-database/static/`
-  - Or, configure `snek`'s `auth.ts` to extract downloaded contents to `kamihime-database/static/scenarios/`
-  - `node .` to boop
 
 ## Notice
 - Please configure `auth.ts`. Get its template from `auth.example.ts`.

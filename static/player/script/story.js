@@ -1,3 +1,5 @@
+const audioPool = {};
+
 $(() => {
   const audios = script
     .filter(i => i.voice)
@@ -15,13 +17,16 @@ $(() => {
     .map(i => i.expression)
     .filter((v, i, arr) => arr.indexOf(v) === i);
 
-  const audioPool = {};
   const maxScriptLength = script.length - 1;
   let lastScriptIDX = -1;
   let currentScriptIDX = 0;
 
   const lastScript = () => script[lastScriptIDX];
   const currentScript = () => script[currentScriptIDX];
+  const audioSettings = Cookies.getJSON('audio');
+  const visualSettings = Cookies.getJSON('visual');
+
+  Howler.volume((audioSettings.glo || 1.0));
 
   function loadAsset (src, name, type) {
     const deferred = $.Deferred();
@@ -35,7 +40,7 @@ $(() => {
         onloaderror: (...err) => deferred.reject(err),
         preload: true,
         src: [ src ],
-        volume: isBGM ? 0.10 : 0.50
+        volume: isBGM ? (audioSettings.bgm || 0.10) : (audioSettings.snd || 0.50)
       });
 
     if (isImage) {
@@ -211,9 +216,9 @@ $(() => {
         currentIMG.css({ visibility: 'visible' });
     }
 
-    $('.characterName')
+    $('#characterName')
       .html(current.chara);
-    $('.characterTalk')
+    $('#characterTalk')
       .html(current.words);
 
     if (last.expression)

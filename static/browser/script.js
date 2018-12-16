@@ -4,13 +4,14 @@ $(() => {
     Cookies.set('menu', 'true');
 
     const alertMsg = `
-    <div class="alert alert-dismissible alert-warning" style="z-index: 1337">
+    <div class="alert alert-dismissible alert-warning fade show" style="z-index: 1337">
       <a href="#" class="close" data-dismiss="alert">&times;</a>
-      <b>Heads up!</b> This site uses cookies to save your browsing settings.
+      <h4 class='alert-heading'>Heads up!</h4>
+      <p>This site uses cookies to save your browsing settings.</p>
     </div>`;
 
     $('.container-fluid').prepend(alertMsg);
-    $('#pop').css('visibility', 'visible');
+    $('[data-toggle="tooltip"]').tooltip('show');
   }
 
   if (Cookies.get('menu') === 'false') {
@@ -74,19 +75,10 @@ $(() => {
           });
     })
     .on('mouseleave', () => $('#thumbnail').css('visibility', 'hidden'));
-
-  const target = $('#pop-target');
-  const pop = $('#pop');
-  const _help = new Popper(target, pop, { placement: 'top' });
-
-  target
-    .on('mouseenter', () => pop.css('visibility', 'visible'))
-    .on('mouseleave', () => pop.css('visibility', 'hidden'));
 });
 
 function showHelp () {
   sweet({
-    allowEscapeKey: false,
     html: [
       '<ol style="list-style: none; padding: 0;">',
       '<li>ESC: Hide/Show Navigation</li>',

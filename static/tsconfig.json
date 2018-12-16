@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "rootDir": "./",
+    "outDir": "../build/proto"
+  },
+  "exclude": [
+    "lib/**/*.js"
+  ]
+}

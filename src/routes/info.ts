@@ -1,11 +1,8 @@
 import { Request, Response } from 'express';
-import { createReadStream } from 'fs-extra';
 import * as parseInfo from 'infobox-parser';
-import { resolve } from 'path';
 import { promisify } from 'util';
 import Route from '../struct/Route';
 
-const IMAGES_PATH = resolve(__dirname, '../../static/img/wiki') + '/';
 let getArticle: (...args: any[]) => Promise<string> = null;
 
 export default class InfoRoute extends Route {
@@ -22,7 +19,6 @@ export default class InfoRoute extends Route {
       getArticle = promisify(this.client.wikiaClient.getArticle.bind(this.client.wikiaClient));
 
     const { id = null } = req.params;
-    const { image = false, wiki: _wiki = true } = req.query;
 
     try {
       if (!id) throw { code: 403, message: 'ID is empty.' };
@@ -30,34 +26,23 @@ export default class InfoRoute extends Route {
       const character = this.server.kamihimeCache.find(el => el.id === id);
 
       if (!character) throw { code: 422 };
-      if (image) {
-        const requested = character[image];
 
-        if (!requested)
-          throw {
-            code: 404,
-            message: [
-              'Cannot retrieve image.',
-              'Value must be main, preview, or avatar'
-            ]
-          };
+      const requested = { character, wiki: null, user: {} };
+      if (req.cookies.slug) {
+        const [ user ] = await this.server.util.db('users').select([ 'settings', 'username' ])
+          .where('slug', req.cookies.slug)
+          .limit(1);
 
-        const img = createReadStream(IMAGES_PATH + requested);
-
-        img.on('error', err => {
-          this.server.util.logger.error(err);
-
-          throw { message: 'There was a problem streaming the image.' };
-        });
-        res.setHeader('Content-Type', 'image/png');
-
-        return img.pipe(res);
+        Object.assign(requested, { user });
       }
-      if (_wiki === 'false') return res.render('info', { character });
 
       this._parseArticle(character.name)
-      .then(wiki => res.render('info', { character, wiki }))
-      .catch(() => res.render('info', { character }));
+      .then(wiki => {
+        Object.assign(requested, { wiki });
+
+        return res.render('info', requested);
+      })
+      .catch(() => res.render('info', requested));
     } catch (err) { this.server.util.handleSiteError(res, err); }
   }
 

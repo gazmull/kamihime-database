@@ -1,10 +1,14 @@
 $(() => {
-  sweet = swal.mixin({
-    allowEscapeKey: false,
-    backdrop: '#ff00ae2f',
-    background: '#7c2962',
-    buttonsStyling: false
-  });
+  if (typeof $().modal !== 'undefined')
+    $('[data-toggle="tooltip"]').tooltip();
+
+  if (typeof swal !== 'undefined')
+    sweet = swal.mixin({
+      allowEscapeKey: false,
+      backdrop: '#ff00ae2f',
+      background: '#7c2962',
+      buttonsStyling: false
+    });
 
   $('.nav-switch').on('click', ({ currentTarget: $this }) => {
     const nav = $('#nav');

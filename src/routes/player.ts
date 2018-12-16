@@ -86,17 +86,26 @@ export default class PlayerRoute extends Route {
       let folder = resource.slice(-4);
       const fLen = folder.length / 2;
       folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
-      const data = {
+      const requested = {
         SCENARIOS: SCENARIOS + folder + `${resource}/`,
-        script: scenario
+        script: scenario,
+        user: {}
       };
 
       if (type === 'story')
-        Object.assign(data, { BG_IMAGE, BGM, FG_IMAGE });
+        Object.assign(requested, { BG_IMAGE, BGM, FG_IMAGE });
       else
-        Object.assign(data, { files });
+        Object.assign(requested, { files });
 
-      res.render(template, data);
+      if (req.cookies.slug) {
+        const [ user ] = await this.server.util.db('users').select([ 'settings', 'username' ])
+          .where('slug', req.cookies.slug)
+          .limit(1);
+
+        Object.assign(requested, { user });
+      }
+
+      res.render(template, requested);
     } catch (err) { this.server.util.handleSiteError(res, err); }
   }
 

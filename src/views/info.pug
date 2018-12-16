@@ -10,33 +10,38 @@ html
     script(src='/lib/jquery.min.js')
     script(src='/lib/bootstrap.min.js')
     script(src='/lib/js.cookie.min.js')
-    script(src='/lib/sweetalert2.min.js')
-    link(rel='stylesheet', href='/lib/sweetalert2.css')
     link(rel='stylesheet', href='/lib/bootstrap.min.css')
-
     script(src='/constants/script.js')
     script(src='/info/script.js')
     link(rel='stylesheet', href='/constants/style.css')
     link(rel='stylesheet', href='/info/style.css')
-    title Kamihime Player - Info
+    - if (user)
+      script.
+        const userCredentials = !{JSON.stringify(user)};
+    title Kamihime Database - Info
   body
-    ul
+    ul(class='top-nav')
       include constants/navigation.pug
+      - if (user.username)
+        li
+          a(href='/logout') Log out (#{user.username})
+      - else
+        li
+          a(href='/login') Log in
       li(style='float: right; user-select: none;')
         +name
-    include constants/lb.pug
+
+    <!-- Menu -->
+    div(class='col-1 px-0')
+      nav(class='navbar navbar-light navbar-expand-sm px-0 flex-row flex-nowrap float-left')
+        div(id='nav' class='nav')
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#info') Info
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#episodes') Episodes
+        div(class='nav-switch nav-switch-hide')
+    <!-- Menu End -->
 
     div(class='container-fluid px-0')
       div(class='row')
-
-        <!-- Menu -->
-        div(class='col-1 px-0')
-          nav(class='navbar navbar-light navbar-expand-sm px-0 flex-row flex-nowrap float-left')
-            div(id='nav' class='nav')
-              a(class='nav-item nav-link', href='#info', data-toggle='collapse', data-target='#info') Info
-              a(class='nav-item nav-link', href='#episodes', data-toggle='collapse', data-target='#episodes') Episodes
-            div(class='nav-switch nav-switch-hide')
-        <!-- Menu End -->
 
         div(class='col-12 px-0')
           div(id='content', class='row')
@@ -58,7 +63,18 @@ html
                       each note in wiki.notes
                         |   - !{note}<br>
 
-                  table(class='table table-borderless')
+                  -
+                    const COLORS = {
+                      Legendary: '#ffbf50',
+                      Elite: '#e5e5e5',
+                      Standard: '#b4632c',
+                      'SSR+': '#8a57ff',
+                      SSR: '#ffbf50',
+                      SR: '#e5e5e5',
+                      R: '#b4632c',
+                      N: '#918f8f'
+                    };
+                  table(class='table table-borderless' style='border-top: 5px solid ' + COLORS[wiki.rarity || wiki.tier])
                     +stats
 
                   h3 Character Kit

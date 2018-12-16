@@ -24,3 +24,16 @@ export interface WebHook {
   id: string;
   token: string;
 }
+
+export interface GrantDefaults {
+  host: 'localhost:80';
+  protocol: 'http' | 'https';
+  state?: boolean;
+}
+
+export interface GrantProvider {
+  callback: string;
+  key: string;
+  secret: string;
+  scope: string[];
+}

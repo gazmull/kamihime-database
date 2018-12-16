@@ -6,17 +6,16 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
     link(rel='stylesheet', href='/constants/style.css')
     link(rel='stylesheet', href='/info/style.css')
-    title Kamihime Player - Error
+    title Kamihime Database - Error
 
   body
-    ul
+    ul(class='top-nav')
       include ../constants/navigation.pug
       li(style="float: right; user-select: none;")
         a Error: 500
-    include ../constants/lb.pug
     center
       br
-      img(src = '/img/S.png' alt = 'Sorry...')
+      img(src='/img/S.png', alt='Sorry...')
       - if (message)
         h1 #{message}
       - else
