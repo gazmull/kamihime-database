@@ -7,7 +7,7 @@ export default class BrowserRoute extends Route {
     super({
       id: 'browser',
       method: 'get',
-      route: [ '/' ]
+      route: [ '/' ],
     });
   }
 
@@ -15,7 +15,7 @@ export default class BrowserRoute extends Route {
     const endPoint = this.server.auth.rootURL + 'api/';
 
     try {
-      let data = await fetch(endPoint + 'list/approved');
+      let data = await fetch(endPoint + 'list/approved', { headers: { Accept: 'application/json' } });
       let characters: any[] = await data.json();
       let hot = characters.slice();
       hot = hot.sort((a, b) => b.peeks - a.peeks).slice(0, 10);
@@ -23,17 +23,36 @@ export default class BrowserRoute extends Route {
         .filter(el => el.harem1Resource1)
         .map(el => ({ id: el.id, name: el.name, rarity: el.rarity }));
 
-      data = await fetch(endPoint + 'latest');
+      data = await fetch(endPoint + 'latest', { headers: { Accept: 'application/json' } });
       const latest = await data.json();
 
       const requested = { characters, latest, hot, user: {} };
 
-      if (req.cookies.slug) {
-        const [ user ] = await this.server.util.db('users').select([ 'settings', 'username' ])
-          .where('slug', req.cookies.slug)
+      if (req.cookies.userId) {
+        const [ user ] = await this.server.util.db('users').select([ 'settings', 'username', 'lastLogin' ])
+          .where('userId', req.cookies.userId)
           .limit(1);
 
-        Object.assign(requested, { user });
+        if (user) {
+          const eligible = (Date.now() - new Date(user.lastLogin).getTime()) > 18e5;
+
+          if (eligible)
+            await this.server.util.db.raw(
+              'UPDATE users SET lastLogin = now() WHERE userId = ?',
+              [ req.cookies.userId ],
+            );
+
+          Object.assign(requested, { user });
+        }
+
+        const settings = JSON.parse(user.settings);
+
+        res
+          .cookie('lastNav', settings.lastNav)
+          .cookie('info-lastNav', settings['info-lastNav'])
+          .cookie('menu', settings.menu)
+          .cookie('audio', JSON.stringify(settings.audio))
+          .cookie('visual', JSON.stringify(settings.visual));
       }
 
       res.render('browser', requested);

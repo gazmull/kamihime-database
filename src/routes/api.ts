@@ -8,7 +8,7 @@ export default class ApiRoute extends Route {
     super({
       id: 'api',
       method: 'all',
-      route: [ '/api/:request', '/api/:request/*?' ]
+      route: [ '/api/:request', '/api/:request/*?' ],
     });
   }
 
@@ -47,8 +47,8 @@ export default class ApiRoute extends Route {
           code: 429,
           message: [
             `Maximum requests for this request has been reached (${maxRequests}/${cooldown / 1000}s).`,
-            `Please wait for ${remaining / 1000} seconds.`
-          ]
+            `Please wait for ${remaining / 1000} seconds.`,
+          ],
         };
       }
       this._update(req, requests);
@@ -74,7 +74,7 @@ export default class ApiRoute extends Route {
 
     const user = requests.get(req.ip);
     this.server.util.logger.status(
-      `[I/RI] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`
+      `[I/RI] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
   }
 
@@ -85,7 +85,7 @@ export default class ApiRoute extends Route {
 
     user = requests.get(req.ip);
     this.server.util.logger.status(
-      `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`
+      `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
   }
 

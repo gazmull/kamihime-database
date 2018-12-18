@@ -6,7 +6,7 @@ export default class GetIdRequest extends Api {
     super({
       cooldown: 5,
       max: 3,
-      method: 'GET'
+      method: 'GET',
     });
   }
 

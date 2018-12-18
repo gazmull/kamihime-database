@@ -23,7 +23,7 @@ const sessionPass: string[] = [
   ':OOOOOOOOOOOOOOOOOOOO',
   'xD vs XD vs xd, which one?',
   'ENGRISH MOTHERFUCKER DO YOU SPEAK IT?',
-  'Bulok Gameclub'
+  'Bulok Gameclub',
 ];
 
 export default class PostSessionRequest extends Api {
@@ -31,7 +31,7 @@ export default class PostSessionRequest extends Api {
     super({
       cooldown: 5,
       max: 1,
-      method: 'POST'
+      method: 'POST',
     });
   }
 
@@ -61,7 +61,7 @@ export default class PostSessionRequest extends Api {
             code: 202,
             id: session.id,
             message: 'Already existing session.',
-            password: session.password
+            password: session.password,
           });
 
         return;
@@ -76,7 +76,7 @@ export default class PostSessionRequest extends Api {
       const uniqueID: string = Math.random().toString(36).substr(2, 16);
       const uniqueKey: string = Buffer.from(
         sessionPass[Math.floor(Math.random() * sessionPass.length)]
-          .slice(Math.floor(Math.random() * 3), -2)
+          .slice(Math.floor(Math.random() * 3), -2),
       ).toString('base64');
 
       await this.server.util.db('sessions')
@@ -85,7 +85,7 @@ export default class PostSessionRequest extends Api {
           created: 'now()',
           id: uniqueID,
           password: uniqueKey,
-          userTag: user
+          userTag: user,
         });
 
       const [ newSession ] = await this.server.util.db('sessions').select()

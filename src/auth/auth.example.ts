@@ -1,4 +1,4 @@
-import { Api, GrantDefaults, GrantProvider, Host, WebHook } from 'auth';
+import { Api, GrantProvider, Host, WebHook } from 'auth';
 import { Config as Database } from 'knex';
 
 /**
@@ -11,12 +11,12 @@ export const database: Database = {
     database: 'kamihimedb',
     host: '127.0.0.1',
     password: 'uvweve',
-    user: 'root'
+    user: 'root',
   },
   pool: {
-    max: 15,
-    min: 0
-  }
+    max: 30,
+    min: 0,
+  },
 };
 
 /**
@@ -24,8 +24,16 @@ export const database: Database = {
  */
 export const host: Host = {
   address: '127.0.0.1',
-  port: 80
+  port: 80,
 };
+
+/**
+ * Users to exclude from being throttled while browsing characters.
+ * Recommended for lead testers.
+ */
+export const exempt: string[] = [
+  '319102712383799296',
+];
 
 /**
  * The server's root URL
@@ -37,7 +45,7 @@ export const rootURL: string = 'http://localhost/';
  */
 export const api: Api = {
   token: 'null',
-  url: 'http://localhost/api/'
+  url: 'http://localhost/api/',
 };
 
 /**
@@ -45,33 +53,20 @@ export const api: Api = {
  */
 export const hook: WebHook = {
   id: '319102712383799296',
-  token: 'FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD'
+  token: 'FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD',
 };
 
 /**
  * Secret to use for express-cookieParser
  */
-export const session: string = 'your cookie secret';
+export const cookieSecret: string = 'your cookie secret';
 
 /**
- * Default configuration for Grant
+ * Discord provider OAuth2 Grant configuration
  */
-const grantDefaults: GrantDefaults = {
-    host: 'localhost:80',
-    protocol: 'http'
-};
-
-/**
- * Discord provider configuration for Grant
- */
-const discord: GrantProvider = {
+export const discord: GrantProvider = {
   callback: 'connect',
   key: 'blah',
   scope: [ 'identify' ],
-  secret: 'buh'
-};
-
-export const grant = {
-  discord,
-  defaults: grantDefaults
+  secret: 'buh',
 };

@@ -10,13 +10,13 @@ export default class LatestRoute extends Route {
     super({
       id: 'latest',
       method: 'get',
-      route: [ '/latest' ]
+      route: [ '/latest' ],
     });
   }
 
   public async exec (_, res: Response) {
     try {
-      const data = await fetch(this.server.auth.api.url + 'latest');
+      const data = await fetch(this.server.auth.api.url + 'latest', { headers: { Accept: 'application/json' } });
       let result = await data.json();
 
       if (result.error) throw result.error;
@@ -37,30 +37,30 @@ export default class LatestRoute extends Route {
         r: result.r,
         soul: result.soul,
         sr: result.sr,
-        ssr: result['ssr+'].concat(result.ssr)
+        ssr: result['ssr+'].concat(result.ssr),
       };
 
       const positions = {
         eidolon: {
           x: 174,
-          y: 63
+          y: 63,
         },
         r: {
           x: 174,
-          y: 118
+          y: 118,
         },
         soul: {
           x: 14,
-          y: 63
+          y: 63,
         },
         sr: {
           x: 14,
-          y: 118
+          y: 118,
         },
         ssr: {
           x: 334,
-          y: 63
-        }
+          y: 63,
+        },
       };
 
       for (const category of Object.keys(result))
@@ -69,7 +69,7 @@ export default class LatestRoute extends Route {
             .map(c => c.name)
             .join('\n'),
           positions[category].x,
-          positions[category].y
+          positions[category].y,
         );
 
       res.setHeader('Content-Type', 'image/png');

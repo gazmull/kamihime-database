@@ -1,4 +1,4 @@
-import { Api as ApiAuth, GrantDefaults, GrantProvider, Host, WebHook } from 'auth';
+import { Api as ApiAuth, GrantProvider, Host, WebHook } from 'auth';
 import { Collection, Message, WebhookClient } from 'discord.js';
 import { Express, NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
@@ -6,7 +6,7 @@ import * as knex from 'knex';
 import fetch from 'node-fetch';
 import { resolve } from 'path';
 // @ts-ignore
-import { api, database, grant, hook, host, rootURL } from '../auth/auth';
+import { api, database, discord, exempt, hook, host, rootURL } from '../auth/auth';
 import * as logger from '../util/console';
 import { handleApiError, handleSiteError, IErrorHandlerObject } from '../util/handleError';
 import Api from './Api';
@@ -22,10 +22,11 @@ export default class Server {
     this.auth = {
       api,
       database,
-      grant,
+      discord,
+      exempt,
       hook,
       host,
-      rootURL
+      rootURL,
     };
 
     this.util = {
@@ -36,9 +37,9 @@ export default class Server {
       logger: {
         error: (message: string) => logger.error(`Server: ${message}`),
         status: (message: string) => logger.status(`Server: ${message}`),
-        warn: (message: string) => logger.warn(`Server: ${message}`)
+        warn: (message: string) => logger.warn(`Server: ${message}`),
       },
-      webHookSend: (message: string) => new WebhookClient(hook.id, hook.token).send(message)
+      webHookSend: (message: string) => new WebhookClient(hook.id, hook.token).send(message),
     };
 
     this.api = new Collection();
@@ -86,6 +87,14 @@ export default class Server {
     }
 
     // Routes
+
+    server.get('*', (req, res, next) => {
+      if (!req.cookies.verified && !(req.xhr || req.headers.accept.includes('application/json')))
+        return res.render('invalids/disclaimer');
+
+      next();
+    });
+
     const ROUTES_DIR: string = resolve(__dirname, '../routes');
     const routeDir: string[] = fs.readdirSync(ROUTES_DIR);
 
@@ -118,7 +127,7 @@ export default class Server {
    * @param forced Whether the call is forced or not [can be forced thru server API (api/refresh)]
    */
   public startCleaners (forced: boolean = false): this {
-    Promise.all([ this._cleanRateLimits(), this._cleanSessions(), this._cleanVisitors() ])
+    Promise.all([ this._cleanRateLimits(), this._cleanSessions(), this._cleanUsers(), this._cleanVisitors() ])
       .then(() => this.util.logger.status('Cleanup Rotation Occurred.'))
       .catch(this.util.logger.error);
 
@@ -129,7 +138,7 @@ export default class Server {
   }
 
   public startKamihimeCache (): this {
-    fetch(`${this.auth.rootURL}api/list`)
+    fetch(`${this.auth.rootURL}api/list`, { headers: { Accept: 'application/json' } })
       .then(res => res.json())
       .then(cache => {
         this.kamihimeCache = cache;
@@ -174,7 +183,7 @@ export default class Server {
 
   protected async _cleanSessions (): Promise<boolean> {
     try {
-      const EXPIRED: string = 'created <= DATE_SUB(NOW(), INTERVAL \'30:00\' MINUTE_SECOND)';
+      const EXPIRED: string = 'created <= DATE_SUB(NOW(), INTERVAL 30 MINUTE)';
       const sessions: any[] = await this.util.db('sessions').select('id')
         .whereRaw(EXPIRED);
 
@@ -182,6 +191,24 @@ export default class Server {
         await this.util.db('sessions').whereRaw(EXPIRED).delete();
 
         this.util.logger.status('Existing Sessions cleanup finished.');
+
+        return true;
+      }
+    } catch (err) {
+      this.util.logger.error(err);
+    }
+  }
+
+  protected async _cleanUsers (): Promise<boolean> {
+    try {
+      const EXPIRED: string = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 14 DAY)';
+      const users: any[] = await this.util.db('users').select('userId')
+        .whereRaw(EXPIRED);
+
+      if (users.length) {
+        await this.util.db('users').whereRaw(EXPIRED).delete();
+
+        this.util.logger.status('Existing Inactive Users cleanup finished.');
 
         return true;
       }
@@ -219,22 +246,18 @@ export default class Server {
 }
 
 interface IAuth {
-  database: knex.Config;
-  host: Host;
-  grant: IGrant;
-  rootURL: string;
   api: ApiAuth;
-  hook: WebHook;
-}
-
-interface IGrant {
-  defaults: GrantDefaults;
+  database: knex.Config;
   discord: GrantProvider;
+  exempt: string[];
+  hook: WebHook;
+  host: Host;
+  rootURL: string;
 }
 
 interface ILogger {
-  status: (message: string) => void;
   error: (message: string) => void;
+  status: (message: string) => void;
   warn: (message: string) => void;
 }
 

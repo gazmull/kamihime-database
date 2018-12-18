@@ -9,15 +9,16 @@
     "test": "npm run lint && npm run compile",
     "compile": "tsc -p .",
     "lint": "npm run lint-src && npm run lint-static",
+    "lint-fix": "npm run lint-src-fix && npm run lint-static-fix",
     "lint-src": "tslint -c .tslint.js -p .",
-    "lint-src-fix": "npm run lint -- --fix",
+    "lint-src-fix": "npm run lint-src -- --fix",
     "lint-static": "tslint -c .tslint.js -p static/tsconfig.json",
     "lint-static-fix": "npm run lint-static -- --fix",
     "finalize": "node tools/finalize",
     "scenarios": "node build/util/scenarios",
     "scenarios-v": "npm run scenarios -- --verbose",
-    "serve": "npm run test && node .",
-    "pm2-serve": "npm run test && pm2 start .pm2.yml --env production"
+    "serve": "npm run build && node .",
+    "pm2-serve": "npm run build && pm2 start .pm2.yml --env production"
   },
   "engine": {
     "node": ">=10"
@@ -34,7 +35,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "canvas": "^2.1.0",
+    "canvas": "^2.2.0",
     "compression": "^1.7.3",
     "cookie-parser": "^1.4.3",
     "discord.js": "github:discordjs/discord.js",

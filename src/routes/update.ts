@@ -6,7 +6,7 @@ export default class DashboardRoute extends Route {
     super({
       id: 'update',
       method: 'get',
-      route: [ '/update' ]
+      route: [ '/update' ],
     });
   }
 
@@ -39,7 +39,7 @@ export default class DashboardRoute extends Route {
         harem3Resource2: character.harem3Resource2,
         harem3Title: character.harem3Title,
         id: character.id,
-        name: character.name
+        name: character.name,
       };
 
       if (character.tier)

@@ -7,7 +7,7 @@ export default class RedirectRoute extends Route {
     super({
       id: 'redirect',
       method: 'post',
-      route: [ '/redirect' ]
+      route: [ '/redirect' ],
     });
   }
 
@@ -18,7 +18,8 @@ export default class RedirectRoute extends Route {
       const form = await fetch(this.server.auth.rootURL + 'api/update', {
         body: JSON.stringify(data),
         compress: true,
-        method: 'POST'
+        headers: { Accept: 'application/json' },
+        method: 'POST',
       });
       const { id, name, avatar } = await form.json();
 

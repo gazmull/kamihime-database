@@ -1,5 +1,3 @@
-const audioPool = {};
-
 $(() => {
   const audios = script
     .filter(i => i.voice)
@@ -26,7 +24,7 @@ $(() => {
   const audioSettings = Cookies.getJSON('audio');
   const visualSettings = Cookies.getJSON('visual');
 
-  Howler.volume((audioSettings.glo || 1.0));
+  Howler.volume(audioSettings.glo !== undefined ? audioSettings.glo : 1.0);
 
   function loadAsset (src, name, type) {
     const deferred = $.Deferred();
@@ -40,7 +38,9 @@ $(() => {
         onloaderror: (...err) => deferred.reject(err),
         preload: true,
         src: [ src ],
-        volume: isBGM ? (audioSettings.bgm || 0.10) : (audioSettings.snd || 0.50)
+        volume: isBGM
+          ? (audioSettings.bgm !== undefined ? audioSettings.bgm : 0.10)
+          : (audioSettings.snd !== undefined ? audioSettings.snd : 0.50),
       });
 
     if (isImage) {
@@ -60,7 +60,7 @@ $(() => {
     animation: false,
     customClass: 'animated zoomIn',
     showConfirmButton: false,
-    titleText: 'Resolving assets...'
+    titleText: 'Resolving assets...',
   });
 
   Array.prototype.push.apply(
@@ -69,8 +69,8 @@ $(() => {
     .concat(
       bgs.map(bg => loadAsset(BG_IMAGE + bg, bg, 'bg')),
       audios.map(audio => loadAsset(SCENARIOS + `sound/${audio}`, audio, 'snd')),
-      bgms.map(bgm => loadAsset(BGM + bgm, bgm, 'bgm'))
-    )
+      bgms.map(bgm => loadAsset(BGM + bgm, bgm, 'bgm')),
+    ),
   );
 
   $.when.apply(null, _assets)
@@ -82,12 +82,8 @@ $(() => {
             $('<div/>', { id: asset.name })
               .css({
                 'background-image': `url(${asset.src})`,
-                height: '640px',
-                position: 'absolute',
-                top: 0,
                 visibility: 'hidden',
-                width: '640px',
-                'z-index': asset.type === 'img' ? -1 : -2
+                'z-index': asset.type === 'img' ? -1 : -2,
               })
               .appendTo('#image');
             break;
@@ -101,7 +97,7 @@ $(() => {
       setTimeout(() => {
         sweet({
           text: 'Click OK to proceed.',
-          titleText: 'Assets loaded!'
+          titleText: 'Assets loaded!',
         }).then(() => {
           $('#panel').addClass('animated faster fadeIn');
           render();
@@ -113,7 +109,7 @@ $(() => {
       sweet({
         html: 'An error occurred while loading the assets. <sub>(See console)</sub>',
         titleText: 'Failed to resolve assets',
-        type: 'error'
+        type: 'error',
       });
     });
 
@@ -169,14 +165,14 @@ $(() => {
         bgm: audioPool[lastScript().bgm] || null,
         chara: lastScript().chara || null,
         expression: lastScript().expression || null,
-        voice: audioPool[lastScript().voice] || null
+        voice: audioPool[lastScript().voice] || null,
       }
       : {
         bg: null,
         bgm: null,
         chara: null,
         expression: null,
-        voice: null
+        voice: null,
       };
 
     const current = {
@@ -185,16 +181,16 @@ $(() => {
       chara: currentScript().chara,
       expression: currentScript().expression || null,
       voice: audioPool[currentScript().voice] || null,
-      words: currentScript().words
+      words: currentScript().words,
     };
 
     const shown = {
       position: 'relative',
-      visibility: 'visible'
+      visibility: 'visible',
     };
     const hidden = {
       position: 'absolute',
-      visibility: 'hidden'
+      visibility: 'hidden',
     };
     const lastIMG = $(`#image > div[id='${last.bg}']`);
     const currentIMG = $(`#image > div[id='${current.bg}']`);

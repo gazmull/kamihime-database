@@ -7,7 +7,7 @@ export default class GetSearchRequest extends Api {
     super({
       cooldown: 5,
       max: 3,
-      method: 'GET'
+      method: 'GET',
     });
   }
 
@@ -45,8 +45,8 @@ export default class GetSearchRequest extends Api {
           code: 403,
           message: [
             'Invalid item class from [soul,eidolon,kamihime,weapon].',
-            'Perhaps you are confusing this with `type` parameter?'
-          ]
+            'Perhaps you are confusing this with `type` parameter?',
+          ],
         };
 
       let results = !isNaN(accurate) && accurate

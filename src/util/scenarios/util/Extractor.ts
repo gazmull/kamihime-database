@@ -56,7 +56,7 @@ export default class Extractor {
     if (this.errors.length)
       await fs.outputFile(
         process.cwd() + '/scenarios-error.log',
-        this.errors.join('\r\n').replace(/\n/g, '\n')
+        this.errors.join('\r\n').replace(/\n/g, '\n'),
       );
 
     if (this.blacklist.length)
@@ -68,9 +68,9 @@ export default class Extractor {
       this.errors.length
         ? [
           'I have detected some errors during the process.',
-          `Error log can be found at ${process.cwd()}\\scenarios-error.log`
+          `Error log can be found at ${process.cwd()}\\scenarios-error.log`,
         ].join('\n')
-        : ''
+        : '',
     ].join('\n'));
 
     return true;
@@ -93,7 +93,7 @@ export default class Extractor {
         const files: string[] = [];
         this.filesFound += links.length;
 
-        if (this.verbose) status(`Extracting ${resourceDirectory} assets...`);
+        if (this.verbose) warn(`Extracting ${resourceDirectory} assets...`);
 
         for (const link of links) {
           if (!link) continue;
@@ -147,7 +147,7 @@ export default class Extractor {
         if (!folder)
           throw new Error([
             'Cannot resolve resource parent folder.',
-            'Looks like wrong resource directory for this character.'
+            'Looks like wrong resource directory for this character.',
           ].join(' '));
 
         const fLen = folder.length / 2;
@@ -168,7 +168,7 @@ export default class Extractor {
             id,
             resource,
             script,
-            type
+            type,
           });
         else {
           const mainData = script
@@ -180,7 +180,7 @@ export default class Extractor {
             id,
             resource,
             type,
-            script: json
+            script: json,
           });
         }
 
@@ -198,7 +198,7 @@ export default class Extractor {
 
   private async _doStory (
     { id, resource, script, type }:
-    { id: string, resource: string, script: string, type: IOptions['codes']['type'] }
+    { id: string, resource: string, script: string, type: IOptions['codes']['type'] },
   ): Promise<boolean> {
     const chara = {};
     let lines = [];
@@ -282,7 +282,7 @@ export default class Extractor {
             this.links[id][resource].push(
               attribute.storage.startsWith('h_get')
                 ? `${this.base.URL.SCENARIOS}${type.get}${resource}/sound/${attribute.storage}`
-                : `${this.base.URL.SCENARIOS}${type.intro}${resource}/sound/${attribute.storage}`
+                : `${this.base.URL.SCENARIOS}${type.intro}${resource}/sound/${attribute.storage}`,
             );
             lines.push({ voice: attribute.storage });
             break;
@@ -346,7 +346,7 @@ export default class Extractor {
     await fs.outputJSON(
       this.base.DESTINATION + `/${id}/${resource}/script.json`,
       { scenario: lines },
-      { spaces: 2 }
+      { spaces: 2 },
     );
 
     return true;
@@ -354,7 +354,7 @@ export default class Extractor {
 
   private async _doScenario (
     { id, resource, script, type }:
-    { id: string, resource: string, script: IScenarioSequence[], type: IOptions['codes']['type'] }
+    { id: string, resource: string, script: IScenarioSequence[], type: IOptions['codes']['type'] },
   ): Promise<boolean> {
     const lines = [];
 
@@ -366,7 +366,7 @@ export default class Extractor {
 
       if (entry.bgm) {
         this.links[id][resource].push(
-          `${this.base.URL.SCENARIOS}${type.scene}${resource}/${entry.bgm}`
+          `${this.base.URL.SCENARIOS}${type.scene}${resource}/${entry.bgm}`,
         );
 
         Object.assign(entryData, { bgm: entry.bgm });
@@ -374,7 +374,7 @@ export default class Extractor {
 
       if (entry.film) {
         this.links[id][resource].push(
-          `${this.base.URL.SCENARIOS}${type.scene}${resource}/${entry.film}`
+          `${this.base.URL.SCENARIOS}${type.scene}${resource}/${entry.film}`,
         );
 
         const fps = Number(entry.fps);
@@ -382,7 +382,7 @@ export default class Extractor {
         Object.assign(entryData, {
           seconds: fps === 1 || fps === 16 ? 1 : fps === 24 ? '0.67' : 2,
           sequence: entry.film,
-          steps: fps === 1 ? 1 : 16
+          steps: fps === 1 ? 1 : 16,
         });
       }
 
@@ -393,7 +393,7 @@ export default class Extractor {
 
         if (line.hasOwnProperty('voice')) {
           this.links[id][resource].push(
-            `${this.base.URL.SCENARIOS}${type.scene}${resource}/${line.voice}`
+            `${this.base.URL.SCENARIOS}${type.scene}${resource}/${line.voice}`,
           );
 
           if (line.voice.length)
@@ -425,7 +425,7 @@ export default class Extractor {
     await fs.outputJSON(
       this.base.DESTINATION + `/${id}/${resource}/script.json`,
       { scenario: lines },
-      { spaces: 2 }
+      { spaces: 2 },
     );
 
     return true;
@@ -459,13 +459,13 @@ interface IOptions {
       get: string;
       intro: string;
       scene: string;
-    }
+    },
   };
 }
 
 interface ILinks {
   [key: string]: {
-    [key: string]: string[]
+    [key: string]: string[],
   };
 }
 

@@ -18,17 +18,11 @@ html
   body
     ul(class='top-nav')
       include ../constants/navigation.pug
-      - if (user.username)
-        li
-          a(href='/logout') Log out (#{user.username})
-      - else
-        li
-          a(href='/login') Log in
-      li(style="float: right; user-select: none;")
+      include ../constants/member2.pug
+      li(style='float: right; user-select: none;')
         a Legacy Mode
-    center
-      #panel()
-        button(class='invi', nav='left', style='margin-left: -450px; width: 450px;')
-        |
-        button(class='invi', nav='right', style='width: 450px;')
-        #image()
+    div(id='panel', style='max-width: 900px; max-height: 640px;')
+      button(class='invi leftNav', nav='left')
+      |
+      button(class='invi rightNav', nav='right')
+      div(id='image')

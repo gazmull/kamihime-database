@@ -3,9 +3,8 @@ doctype html
 html
 
   head
-    - if (user)
-      script.
-        const userCredentials = !{JSON.stringify(user)};
+    meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
+    include ../constants/userSettings.pug
     script.
       const script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user.username || 'Master'))};
       const SCENARIOS = "#{SCENARIOS}";
@@ -29,22 +28,16 @@ html
   body
     ul(class='top-nav')
       include ../constants/navigation.pug
-      - if (user.username)
-        li
-          a(href='/logout') Log out (#{user.username})
-      - else
-        li
-          a(href='/login') Log in
-      li(style="float: right; user-select: none;")
+      include ../constants/member2.pug
+      li(style='float: right; user-select: none;')
         a Story Mode
     include ../constants/player_sideNavigation.pug
-    center
-      #panel(style='width: 640px;')
-        button(class='invi', nav='left', style='margin-left: -320px; width: 320px;')
-        |
-        button(class='invi', nav='right', style='width: 320px;')
-        #image
-        #dialog
-          #text
-            #characterName
-            #characterTalk
+    div(id='panel')
+      button(class='invi leftNav', nav='left')
+      |
+      button(class='invi rightNav', nav='right')
+      div(id='image')
+      div(id='dialog')
+        div(id='text')
+          div(id='characterName')
+          div(id='characterTalk')

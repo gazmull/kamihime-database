@@ -10,7 +10,7 @@ const fields = {
     'rarity',
     'peeks', 'loli',
     'harem1Title', 'harem1Resource1',
-    'harem2Title', 'harem2Resource1', 'harem2Resource2'
+    'harem2Title', 'harem2Resource1', 'harem2Resource2',
   ],
   kamihime: [
     'id', 'name',
@@ -20,7 +20,7 @@ const fields = {
     'peeks', 'loli',
     'harem1Title', 'harem1Resource1',
     'harem2Title', 'harem2Resource1', 'harem2Resource2',
-    'harem3Title', 'harem3Resource1', 'harem3Resource2'
+    'harem3Title', 'harem3Resource1', 'harem3Resource2',
   ],
   soul: [
     'id', 'name',
@@ -29,13 +29,13 @@ const fields = {
     'tier',
     'peeks', 'loli',
     'harem1Title', 'harem1Resource1',
-    'harem2Title', 'harem2Resource1', 'harem2Resource2'
+    'harem2Title', 'harem2Resource1', 'harem2Resource2',
   ],
   weapon: [
     'id', 'name',
     'avatar', 'main',
-    'element', 'rarity', 'type'
-  ]
+    'element', 'rarity', 'type',
+  ],
 };
 const concat = (k: string, v: any) => `${k} = ${isNaN(v) ? `'${v}'` : v}`;
 const c = {
@@ -43,7 +43,7 @@ const c = {
   id: v => `id LIKE '${v}%'`,
   rarity: v => concat('rarity', v),
   tier: v => concat('tier', v),
-  type: v => concat('type', v)
+  type: v => concat('type', v),
 };
 
 /* tslint:disable:object-literal-sort-keys */
@@ -59,7 +59,7 @@ const queries = {
   light: c.element('Light'), dark: c.element('Dark'), wind: c.element('Wind'), thunder: c.element('Thunder'),
     water: c.element('Water'), fire: c.element('Fire'), phantom: c.element('Phantom'),
   approved: 'approved = 1',
-  loli: 'loli = 1', 'no-loli': 'loli = 0'
+  loli: 'loli = 1', 'no-loli': 'loli = 0',
 };
 
 /* tslint:enable:object-literal-sort-keys */
@@ -69,7 +69,7 @@ export default class GetListRequest extends Api {
     super({
       cooldown: 5,
       max: 1,
-      method: 'GET'
+      method: 'GET',
     });
   }
 
@@ -83,7 +83,7 @@ export default class GetListRequest extends Api {
       if (length && !validPrimaries.includes(tags[0]))
         throw {
           code: 403,
-          message: 'Invalid first parameter. It must be one of the following: ' + validPrimaries.join(', ')
+          message: 'Invalid first parameter. It must be one of the following: ' + validPrimaries.join(', '),
         };
 
       validPrimaries.splice(validPrimaries.indexOf('approved'), 2);
@@ -91,7 +91,7 @@ export default class GetListRequest extends Api {
       if (tags.filter(el => validPrimaries.includes(el)).length > 1)
         throw {
           code: 403,
-          message: 'You may only select one primary variable.'
+          message: 'You may only select one primary variable.',
         };
 
       let query: QueryBuilder = this.server.util.db('kamihime').select(tags[0] ? fields[tags[0]] : '*')

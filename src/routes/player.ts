@@ -16,7 +16,7 @@ export default class PlayerRoute extends Route {
     super({
       id: 'player',
       method: 'get',
-      route: [ '/player/:id/:ep/:type' ]
+      route: [ '/player/:id/:ep/:type' ],
     });
   }
 
@@ -41,7 +41,7 @@ export default class PlayerRoute extends Route {
         scenario3: 'harem3Resource2',
         story1: 'harem1Resource1',
         story2: 'harem2Resource1',
-        story3: 'harem3Resource1'
+        story3: 'harem3Resource1',
       };
       const selected = episodes[type + ep];
 
@@ -78,8 +78,8 @@ export default class PlayerRoute extends Route {
             code: 404,
             message: [
             'Episode Resource is unexpectedly empty.',
-            'Please contact the administrator!'
-          ]
+            'Please contact the administrator!',
+          ],
         };
       }
 
@@ -89,7 +89,7 @@ export default class PlayerRoute extends Route {
       const requested = {
         SCENARIOS: SCENARIOS + folder + `${resource}/`,
         script: scenario,
-        user: {}
+        user: {},
       };
 
       if (type === 'story')
@@ -97,12 +97,13 @@ export default class PlayerRoute extends Route {
       else
         Object.assign(requested, { files });
 
-      if (req.cookies.slug) {
+      if (req.cookies.userId) {
         const [ user ] = await this.server.util.db('users').select([ 'settings', 'username' ])
-          .where('slug', req.cookies.slug)
+          .where('userId', req.cookies.userId)
           .limit(1);
 
-        Object.assign(requested, { user });
+        if (user)
+          Object.assign(requested, { user });
       }
 
       res.render(template, requested);

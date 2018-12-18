@@ -1,5 +1,3 @@
-const audioPool = {};
-
 $(() => {
   const images = files.filter(i => i.endsWith('.jpg'));
   const audios = files.filter(i => i.endsWith('.mp3'));
@@ -18,7 +16,7 @@ $(() => {
   const audioSettings = Cookies.getJSON('audio');
   const visualSettings = Cookies.getJSON('visual');
 
-  Howler.volume((audioSettings.glo || 1.0));
+  Howler.volume(audioSettings.glo !== undefined ? audioSettings.glo : 1.0);
 
   function loadAsset (src, name, type) {
     const deferred = $.Deferred();
@@ -31,7 +29,9 @@ $(() => {
         onloaderror: (...err) => deferred.reject(err),
         preload: true,
         src: [ src ],
-        volume: isBGM ? (audioSettings.bgm || 0.10) : (audioSettings.snd || 0.50)
+        volume: isBGM
+          ? (audioSettings.bgm !== undefined ? audioSettings.bgm : 0.10)
+          : (audioSettings.snd !== undefined ? audioSettings.snd : 0.50),
       });
 
     if (type === 'img') {
@@ -51,7 +51,7 @@ $(() => {
     animation: false,
     customClass: 'animated zoomIn',
     showConfirmButton: false,
-    titleText: 'Resolving assets...'
+    titleText: 'Resolving assets...',
   });
 
   Array.prototype.push.apply(
@@ -59,8 +59,8 @@ $(() => {
     images.map(image => loadAsset(SCENARIOS + image, image, 'img'))
     .concat(
       audios.map(audio => loadAsset(SCENARIOS + audio, audio, 'snd')),
-      [ loadAsset(SCENARIOS + bgm, bgm, 'bgm') ]
-    )
+      [ loadAsset(SCENARIOS + bgm, bgm, 'bgm') ],
+    ),
   );
 
   $.when.apply(null, _assets)
@@ -70,15 +70,17 @@ $(() => {
           case 'img': {
             $('<div/>', {
               class: 'animate',
-              id: asset.name
+              id: asset.name,
             })
               .css({
                 'background-image': `url("${asset.src}")`,
+                display: 'none',
                 height: '900px',
-                position: 'absolute',
+                position: 'relative',
+                right: '-130px',
                 top: '-130px',
-                visibility: 'hidden',
-                width: '640px'
+                width: '640px',
+                'z-index': -1,
               })
               .appendTo('#image');
             break;
@@ -92,7 +94,7 @@ $(() => {
       setTimeout(() => {
         sweet({
           text: 'Click OK to proceed.',
-          titleText: 'Assets loaded!'
+          titleText: 'Assets loaded!',
         }).then(() => {
           $('#panel').addClass('animated faster fadeIn');
           audioPool[bgm].play();
@@ -105,7 +107,7 @@ $(() => {
       sweet({
         html: 'An error occurred while loading the assets. <sub>(See console)</sub>',
         titleText: 'Failed to resolve assets',
-        type: 'error'
+        type: 'error',
       });
     });
 
@@ -167,7 +169,7 @@ $(() => {
       chara: newSeq().talk[talkIDX].chara,
       img: newSeq().sequence,
       voice: audioPool[newSeq().talk[talkIDX].voice],
-      words: newSeq().talk[talkIDX].words
+      words: newSeq().talk[talkIDX].words,
     };
 
     $('#panel')
@@ -180,8 +182,7 @@ $(() => {
       '-o-animation': 'none',
       '-webkit-animation': 'none',
       animation: 'none',
-      position: 'absolute',
-      visibility: 'hidden'
+      display: 'none',
     };
 
     if (lastImage && lastImage !== n.img)
@@ -205,8 +206,7 @@ $(() => {
             '-o-animation': 'fade 1s',
             '-webkit-animation': 'fade 1s',
             animation: 'fade 1s',
-            position: 'relative',
-            visibility: 'visible'
+            display: 'block',
           });
 
         setTimeout(() => {
@@ -225,8 +225,7 @@ $(() => {
             '-o-animation': animation,
             '-webkit-animation': animation,
             animation: animation, // tslint:disable-line:object-literal-shorthand
-            position: 'relative',
-            visibility: 'visible'
+            display: 'block',
           });
     }
 

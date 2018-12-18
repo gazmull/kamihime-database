@@ -1,6 +1,6 @@
 /**
- * @property url The API endpoint
  * @property token The token to pass to the API
+ * @property url The API endpoint
  */
 export interface Api {
   token: string;
@@ -25,15 +25,15 @@ export interface WebHook {
   token: string;
 }
 
-export interface GrantDefaults {
-  host: 'localhost:80';
-  protocol: 'http' | 'https';
-  state?: boolean;
-}
-
+/**
+ * @property callback Path to redirect (rootURL/[callback path])
+ * @property key Client ID
+ * @property scope Scopes of authorization
+ * @property secret Client Secret/Token
+ */
 export interface GrantProvider {
   callback: string;
   key: string;
-  secret: string;
   scope: string[];
+  secret: string;
 }

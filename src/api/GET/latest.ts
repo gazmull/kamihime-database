@@ -8,7 +8,7 @@ export default class GetLatestRequest extends Api {
     super({
       cooldown: 5,
       max: 1,
-      method: 'GET'
+      method: 'GET',
     });
   }
 

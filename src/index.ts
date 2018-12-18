@@ -4,7 +4,8 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import { resolve } from 'path';
 import * as favicon from 'serve-favicon';
-import { session as secret } from './auth/auth';
+// @ts-ignore
+import { cookieSecret } from './auth/auth';
 import Client from './struct/Client';
 import Server from './struct/Server';
 import { error } from './util/console';
@@ -18,7 +19,7 @@ server
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use(compression({ filter: req => !req.headers['x-no-compression'] }))
-  .use(cookieParser(secret))
+  .use(cookieParser(cookieSecret))
   .use(favicon(resolve(__dirname, '../static/favicon.ico')))
   .use(express.static(resolve(__dirname, '../static')));
 

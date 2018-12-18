@@ -6,7 +6,7 @@ export default class DeleteRequest extends Api {
     super({
       cooldown: 5,
       max: 1,
-      method: 'DELETE'
+      method: 'DELETE',
     });
   }
 

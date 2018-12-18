@@ -10,7 +10,7 @@ export default class InfoRoute extends Route {
     super({
       id: 'info',
       method: 'get',
-      route: [ '/info/:id' ]
+      route: [ '/info/:id' ],
     });
   }
 
@@ -28,12 +28,14 @@ export default class InfoRoute extends Route {
       if (!character) throw { code: 422 };
 
       const requested = { character, wiki: null, user: {} };
-      if (req.cookies.slug) {
+
+      if (req.cookies.userId) {
         const [ user ] = await this.server.util.db('users').select([ 'settings', 'username' ])
-          .where('slug', req.cookies.slug)
+          .where('userId', req.cookies.userId)
           .limit(1);
 
-        Object.assign(requested, { user });
+        if (user)
+          Object.assign(requested, { user });
       }
 
       this._parseArticle(character.name)

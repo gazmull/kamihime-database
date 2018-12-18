@@ -158,7 +158,6 @@ input[type=range]::-ms-thumb {
 .top-nav {
   background-color: #222;
   margin: 0 !important;
-  margin-bottom: 20px !important;
   max-height: 55px;
   overflow: hidden;
   padding: 0;

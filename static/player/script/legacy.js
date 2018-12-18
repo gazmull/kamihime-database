@@ -27,7 +27,7 @@ $(() => {
     animation: false,
     customClass: 'animated zoomIn',
     showConfirmButton: false,
-    titleText: 'Resolving images...'
+    titleText: 'Resolving images...',
   });
 
   Array.prototype.push.apply(_images, images.map(image => loadImage(SCENARIOS + image, image)));
@@ -37,15 +37,17 @@ $(() => {
       for (const img of imgs)
         $('<div/>', {
           class: 'animate',
-          id: img.name
+          id: img.name,
         })
           .css({
             'background-image': `url("${img.src}")`,
+            display: 'none',
             height: '900px',
-            position: 'absolute',
+            position: 'relative',
+            right: '-130px',
             top: '-130px',
-            visibility: 'hidden',
-            width: '640px'
+            width: '640px',
+            'z-index': -1,
           })
           .appendTo('#image');
 
@@ -64,7 +66,7 @@ $(() => {
       sweet({
         html: 'An error occurred while loading the images. <sub>(See console)</sub>',
         titleText: 'Failed to resolve images',
-        type: 'error'
+        type: 'error',
       });
     });
 
@@ -127,8 +129,7 @@ $(() => {
       '-o-animation': 'none',
       '-webkit-animation': 'none',
       animation: 'none',
-      position: 'absolute',
-      visibility: 'hidden'
+      display: 'none',
     };
 
     if (lastImage && lastImage !== img)
@@ -142,8 +143,7 @@ $(() => {
         '-o-animation': animation,
         '-webkit-animation': animation,
         animation: animation, // tslint:disable-line:object-literal-shorthand
-        position: 'relative',
-        visibility: 'visible'
+        display: 'block',
       });
 
     lastImage = img;

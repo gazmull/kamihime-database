@@ -27,7 +27,7 @@ const RULES = {
   'space-before-function-paren': [ true, 'always' ],
   'ter-arrow-spacing': [ true ],
   'ter-func-call-spacing': [ false ],
-  'trailing-comma': false,
+  'trailing-comma': [ true, { multiline: 'always', singleline: 'never' } ],
   'triple-equals': [ true, 'allow-null-check' ],
   'variable-name': [
     true,

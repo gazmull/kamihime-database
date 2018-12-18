@@ -6,27 +6,24 @@ export default class LogoutRoute extends Route {
     super({
       id: 'logout',
       method: 'get',
-      route: [ '/logout' ]
+      route: [ '/logout' ],
     });
   }
 
   public async exec (req: Request, res: Response): Promise<void> {
     try {
-      const id = req.query.id ? 'userId' : 'slug';
-      const val = req.query.id ? req.query.id : req.cookies.slug;
-      const [ match ] = await this.server.util.db('users').select(id)
-        .where(id, val)
+      if (!req.cookies.userId) throw { code: 403 };
+
+      const val = req.query.id ? req.query.id : req.cookies.userId;
+      const [ match ] = await this.server.util.db('users').select('userId')
+        .where('userId', val)
         .limit(1);
 
       if (!match) throw { code: 403 };
 
-      await this.server.util.db('users').where(id, val)
-        .delete();
+      res.clearCookie('userId');
 
-      if (req.cookies.slug)
-        res.clearCookie('slug');
-
-      res.redirect('/');
+      res.redirect(req.headers.referer || '/');
     } catch (err) { this.server.util.handleSiteError(res, err); }
   }
 }

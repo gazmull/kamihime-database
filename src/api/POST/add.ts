@@ -6,7 +6,7 @@ export default class PostAddRequest extends Api {
     super({
       cooldown: 5,
       max: 1,
-      method: 'POST'
+      method: 'POST',
     });
   }
 
@@ -44,7 +44,7 @@ export default class PostAddRequest extends Api {
         harem3Resource1,
         harem3Resource2,
         harem3Title,
-        name
+        name,
       }, el => el);
 
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
@@ -61,7 +61,7 @@ export default class PostAddRequest extends Api {
 
             return `${key}=${value}`;
           }),
-          '```'
+          '```',
         ].join('\n'));
 
       this.server.util.logger.status(`[ADD] API: Character: ${name} (${id}) | By: ${user}`);

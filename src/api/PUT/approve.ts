@@ -6,7 +6,7 @@ export default class PutApproveRequest extends Api {
     super({
       cooldown: 5,
       max: 1,
-      method: 'PUT'
+      method: 'PUT',
     });
   }
 
@@ -34,7 +34,7 @@ export default class PutApproveRequest extends Api {
           user,
           approveToggle ? 'approved' : 'disapproved',
           name,
-          `(${id}).`
+          `(${id}).`,
         ].join(' '));
 
       this.server.util.logger.status(`[A/D] API: Character: ${name} (${id}) | By: ${user}`);

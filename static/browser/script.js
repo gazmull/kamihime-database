@@ -71,7 +71,7 @@ $(() => {
         $('#thumbnail')
           .css({
             'background-image': `url('/img/wiki/close/${name} Close.png')`,
-            visibility: 'visible'
+            visibility: 'visible',
           });
     })
     .on('mouseleave', () => $('#thumbnail').css('visibility', 'hidden'));
@@ -88,10 +88,10 @@ function showHelp () {
       '<ol>',
       '<li>Feeds ("Latest" and "Hot 10" Sidebars on the right) are also accessible for navigation.</li>',
       '<li>You can click the white bar beside navigation bar to hide/show it.</li>',
-      '</ol>'
+      '</ol>',
     ].join(''),
     titleText: 'Keyboard Shortcuts',
-    type: 'info'
+    type: 'info',
   });
 }
 
@@ -100,6 +100,6 @@ function showLatest () {
     html: '<a href="/latest" class="text-light" target="_blank">http://kamihimedb.thegzm.space/latest</a>',
     imageAlt: 'Latest Image',
     imageUrl: '/latest',
-    imageWidth: '100%'
+    imageWidth: '100%',
   });
 }

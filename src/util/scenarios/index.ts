@@ -17,7 +17,7 @@ export default async function start () {
       'id',
       'harem1Resource1',
       'harem2Resource1', 'harem2Resource2',
-      'harem3Resource1', 'harem3Resource2'
+      'harem3Resource1', 'harem3Resource2',
     ])
     .where('approved', 1);
 
@@ -29,26 +29,26 @@ export default async function start () {
           BG_IMAGE: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/bgimage/',
           BGM: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/bgm/',
           FG_IMAGE: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/fgimage/',
-          SCENARIOS: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/'
-        }
+          SCENARIOS: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/',
+        },
       },
       codes: {
         e: { // -- Eidolon
           get: '9f/51/',
           intro: '9f/51/',
-          scene: 'd7/ad/'
+          scene: 'd7/ad/',
         },
         k: { // -- Kamihime
           get: '76/89/',
           intro: '94/76/',
-          scene: 'de/59/'
+          scene: 'de/59/',
         },
         s: { // -- Soul
           get: '3b/26/',
           intro: '67/01/',
-          scene: 'ec/4d/'
-        }
-      }
+          scene: 'ec/4d/',
+        },
+      },
     }).exec();
   } catch (err) {
     error(err.stack);

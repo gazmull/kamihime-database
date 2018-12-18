@@ -33,10 +33,10 @@ export default class Client {
       logger: {
         error: (message: string) => logger.error(`Client: ${message}`),
         status: (message: string) => logger.status(`Client: ${message}`),
-        warn: (message: string) => logger.warn(`Client: ${message}`)
+        warn: (message: string) => logger.warn(`Client: ${message}`),
       },
       webHookSend: (message: string) => new WebhookClient(this.server.auth.hook.id, this.server.auth.hook.token)
-        .send(message)
+        .send(message),
     };
 
     this.fields = [ 'id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'main', 'preview' ];
@@ -52,7 +52,7 @@ export default class Client {
       debug: false,
       path: '',
       protocol: 'https',
-      server: 'kamihime-project.wikia.com'
+      server: 'kamihime-project.wikia.com',
     });
 
     getImageInfo = promisify(this.wikiaClient.getImageInfo.bind(this.wikiaClient));
@@ -213,7 +213,7 @@ export default class Client {
           name: clean(el.name),
           peeks: 0,
           rarity: el.rarity,
-          type: el.type
+          type: el.type,
         });
 
         itemsAdded.push(el.name);
@@ -229,7 +229,7 @@ export default class Client {
         `\`\`\`diff`,
         itemsAdded.slice(0, 30).map(slicedEntries).join('\n'),
         length > 30 ? `- And ${length - 30} more... (See console logs)` : '',
-        '```'
+        '```',
       ].join('\n'));
 
       return this.util.logger.status(`Kamihime Database: ${id}: Added ${length}: ${itemsAdded.join(', ')}`);
@@ -260,7 +260,7 @@ export default class Client {
           id = {
             e: 'Eidolon',
             k: 'Kamihime',
-            s: 'Soul'
+            s: 'Soul',
           }[idPrefix];
           fileNameSuffix = '.png';
           break;
@@ -405,7 +405,7 @@ export default class Client {
         `\`\`\`diff`,
         itemsUpdated.slice(0, 30).map(slicedEntries).join('\n'),
         length > 30 ? `- And ${length - 30} more... (See console logs)` : '',
-        '```'
+        '```',
       ].join('\n'));
 
       return this.util.logger.status(`Kamihime Database: ${id}: Updated ${length}: ${itemsUpdated.join(', ')}`);

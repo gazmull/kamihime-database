@@ -1,4 +1,6 @@
 $(() => {
+  saveSettings(true);
+
   if (typeof $().modal !== 'undefined')
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -7,7 +9,7 @@ $(() => {
       allowEscapeKey: false,
       backdrop: '#ff00ae2f',
       background: '#7c2962',
-      buttonsStyling: false
+      buttonsStyling: false,
     });
 
   $('.nav-switch').on('click', ({ currentTarget: $this }) => {
@@ -44,3 +46,39 @@ $(() => {
 
     return toggle(code);
   });
+
+function showLoginWarning () {
+  sweet({
+    html: [
+      'While you are able to save your settings, accounts that are inactive for 14 days will be deleted.',
+      '<br><br>Click OK to continue to log in.',
+    ].join(''),
+    titleText: 'Login Warning',
+  })
+  .then(res => {
+    if (res.value)
+      location.replace('/login');
+  });
+}
+
+async function saveSettings (key, obj, db = false) {
+  const isBool = typeof key === 'boolean';
+
+  if (!isBool)
+    Cookies.set(key, typeof obj === 'string' ? obj : { ...obj });
+
+  const shouldSave = isBool ? key : db;
+
+  if (shouldSave && typeof userSettings !== 'undefined') {
+    const res = await fetch('/api/@me?save=yes', {
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!res.ok) throw new Error(res.statusText);
+
+    return res.json();
+  }
+
+  return true;
+}
