@@ -117,7 +117,7 @@ export default class Server {
       .all('*', (_, res) => res.render('invalids/403'))
       .listen(host.port);
 
-    this.util.logger.status(`Listening to ${host.address}:80`);
+    this.util.logger.status(`Listening to ${host.address}:${host.port}`);
 
     return this;
   }
