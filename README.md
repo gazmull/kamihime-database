@@ -5,13 +5,12 @@
 Website + REST (JSON) API for Kamihime Database
 <br> Written in TypeScript, transpiled to Uglified CommonJS (NodeJS)
 
-- [Eros Dev](http://erosdev.thegzm.space)
+- [BETA Site](http://kamihimedb.thegzm.space:8080)
 - [Eros Support](http://support.thegzm.space)
 - [Add Eros Instead?](http://addbot.thegzm.space)
-- [Browse Harem Scenes](http://kamihimedb.thegzm.space)
 
 ## <u>**Implementation**</u> Phase Warning
-> This is currently a non-testing-work-in-progress branch. It may work, but there are missing [planned] features.
+> It may work, but there are missing [planned] features.
   <br> If you found something that can be contributed to the code, please don't hesitate to slam that PR/Issue button!
 
 ## Requirements
@@ -21,21 +20,22 @@ Website + REST (JSON) API for Kamihime Database
 ## Notice
 - Please configure `auth.ts`. Get its template from `auth.example.ts`.
   - Can be found at `src/auth` folder
-  - Basically: `database`, `hostAddress`, `rootURL`, `api.url`, `hook.id`, and `hook.token`
 
 ## Testing / Production Procedures
 1. Read [Requirements](#Requirements) and [Notice](#Notice)
-2. Execute `$ npm install` or `$ yarn`
+2. Execute `$ npm install` or `$ yarn` (Before this, make sure you have [**Build Tools** (**Windows**)](https://github.com/felixrieseberg/windows-build-tools) | [**Build Tools** (**Linux**)](https://superuser.com/questions/352000/whats-a-good-way-to-install-build-essentials-all-common-useful-commands-on))
     - You have to build the src too: `$ npm install --only=dev` or `$ yarn --production=false`
-3. Execute `$ npm run serve`
-  <br> `$ npm run pm2-serve` for PM2 preference / production stage
+3. Run `$ npm run scenarios` to generate episode resources
+    - Or `$ npm run scenarios-v` to run with verbose logging
+4. Execute `$ npm run serve`
+    - `$ npm run pm2-serve` for PM2 preference / production stage
 
 ## Contributing
 - Looking for feedbacks, so feel free to file an issue or a pull request!
 - For code-related:
   - Fork this repository, clone to your machine, and follow the project's development configuration [e.g. TSLint]
     - `npm install --only=dev` or `yarn --production=false` to install
-  - Run `npm test` or `yarn test` to verify if your build is passing
+  - Run `npm run build` or `yarn run build` to verify if your build is passing
     - Failing build will be rejected at default
 
 ## License
