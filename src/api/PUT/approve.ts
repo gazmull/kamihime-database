@@ -17,7 +17,7 @@ export default class PutApproveRequest extends Api {
       await this._hasData(data);
       const { user, id, name } = data;
       const fields: string[] = [ 'id', 'approved' ];
-      const [ character ] = await this.server.util.db('kamihime').select(fields)
+      const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
         .where('id', id)
         .limit(1);
 
@@ -25,23 +25,23 @@ export default class PutApproveRequest extends Api {
 
       const approveToggle: number = character.approved ? 0 : 1;
 
-      await this.server.util.db('kamihime')
+      await this.util.db('kamihime')
         .update('approved', approveToggle)
         .where('id', id);
 
-      if (this.server.auth.hook)
-        await this.server.util.webHookSend([
+      if (this.client.auth.discord.dbReportChannel)
+        await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
           user,
           approveToggle ? 'approved' : 'disapproved',
           name,
           `(${id}).`,
         ].join(' '));
 
-      this.server.util.logger.status(`[A/D] API: Character: ${name} (${id}) | By: ${user}`);
+      this.util.logger.status(`[A/D] API: Character: ${name} (${id}) | By: ${user}`);
 
       res
         .status(200)
         .json({ name, id, approved: approveToggle });
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

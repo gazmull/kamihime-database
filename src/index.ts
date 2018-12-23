@@ -16,8 +16,8 @@ server
   .disable('x-powered-by')
   .set('view engine', 'pug')
   .set('views', resolve(__dirname, './views'))
-  .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
+  .use(bodyParser.json())
   .use(compression({ filter: req => !req.headers['x-no-compression'] }))
   .use(cookieParser(cookieSecret))
   .use(favicon(resolve(__dirname, '../static/favicon.ico')))
@@ -33,6 +33,7 @@ serverStruct
 
 client
   .init()
+  .startDiscordClient()
   .startKamihimeDatabase();
 
 process.on('unhandledRejection', err => error(`Uncaught Promise Error: \n${err.stack || err}`));

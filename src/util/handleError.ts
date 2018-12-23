@@ -1,11 +1,5 @@
 import { Response } from 'express';
 
-export interface IErrorHandlerObject {
-  code: number;
-  message?: string|string[];
-  stack?: string;
-}
-
 /**
  * [API Exclusive]: Handles the response to error
  * @param res The Response interface

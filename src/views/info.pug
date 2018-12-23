@@ -14,6 +14,7 @@ html
     script(src='/lib/sweetalert2.min.js')
     link(rel='stylesheet', href='/lib/sweetalert2.css')
     link(rel='stylesheet', href='/lib/bootstrap.min.css')
+    link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
     script(src='/constants/script.js')
     script(src='/info/script.js')
     link(rel='stylesheet', href='/constants/style.css')
@@ -45,6 +46,16 @@ html
 
             div(id='info', class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
               div(class='content-wrapper hidden-browser')
+                table(class='table table-borderless d-none d-sm-block col-sm-12 col-md-5')
+                  thead
+                    tr
+                      th(class='name')
+                        i(class='fa fa-pencil-square-o text-light')
+                        a(data-toggle='tooltip', data-placement='bottom', title='Redirects you to edit the info at Wikia.', href=`https://kamihime-project.wikia.com/w/${character.name}?action=edit`)  Edit on Wikia
+                      th(class='name')
+                        i(class='fa fa-exclamation-triangle text-light')
+                        a(data-toggle='tooltip', data-placement='bottom', title='Reports errors on the info to the Wikia Discord.', href='javascript:void(0);', onclick=`showReport('${character.id}');`)  Report Error(s)
+
                 - if (!wiki)
                   h1 #{character.name} - Cannot Retrieve Wiki Information
                 - else
@@ -70,11 +81,11 @@ html
                       R: '#b4632c',
                       N: '#918f8f'
                     };
-                  table(class='table table-borderless' style='border-top: 5px solid ' + COLORS[wiki.rarity || wiki.tier])
+                  table(class='table table-borderless info-table' style='border-top: 5px solid ' + COLORS[wiki.rarity || wiki.tier])
                     +stats
 
                   h3 Character Kit
-                  table(class='table table-borderless')
+                  table(class='table table-borderless info-table')
                     thead
                       tr
                         th(scope='col') Type
@@ -103,6 +114,12 @@ html
 
             div(id='episodes', class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
               div(class='content-wrapper hidden-browser')
+                table(class='table table-borderless d-none d-sm-block col-sm-12 col-md-5')
+                  thead
+                    tr
+                      th(class='name')
+                        i(class='fa fa-pencil-square-o text-light')
+                        a(data-toggle='tooltip', data-placement='bottom', title='Reports errors on the episodes to the KamihimeDB Discord', href='javascript:void(0);', onclick=`showReport('${character.id}', 1);`)  Report Error(s)
                 h1 #{character.name === 'Eros' ? 'Wha— wait, what are you doing?!' : 'Episodes'}
                 -
                   const episodes = [
@@ -116,12 +133,12 @@ html
                     { res1: character.harem3Resource1, res2: character.harem3Resource2 }
                   ];
 
-                table(class='table table-borderless')
+                table(class='table table-borderless info-table')
                   thead
-                      tr
-                        th(scope='col') #
-                        th(scope='col') Title
-                        th(scope='col') Links
+                    tr
+                      th(scope='col') #
+                      th(scope='col') Title
+                      th(scope='col') Links
                   tbody
                     - for (let i = 1; i <= episodes.length; ++i)
                       -

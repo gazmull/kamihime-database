@@ -34,6 +34,7 @@
 /* Latest/Hot */
 
 #feed-wrapper {
+  max-height: 100vh;
   position: fixed;
   top: 0.5vh;
   right: 0;
@@ -47,7 +48,7 @@
   border-top-left-radius: 5%;
   border-bottom-left-radius: 5%;
   overflow-y: auto;
-  max-height: 48.5vh;
+  max-height: 33vh;
   margin: 0.5vh 0;
 }
 

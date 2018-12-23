@@ -6,7 +6,7 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
     include ../constants/userSettings.pug
     script.
-      const script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user.username || 'Master'))};
+      let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user.username || 'Master'))};
       const SCENARIOS = "#{SCENARIOS}";
       const BG_IMAGE = "#{BG_IMAGE}";
       const BGM = "#{BGM}";

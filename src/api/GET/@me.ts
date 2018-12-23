@@ -15,7 +15,8 @@ export default class AtMeRoute extends Api {
     try {
       if (!req.cookies.userId) throw { code: 403 };
 
-      const [ user ] = await this.server.util.db('users').select([ 'userId', 'username', 'refreshToken', 'expiration' ])
+      const [ user ]: IUser[] = await this.util.db('users')
+        .select([ 'userId', 'username', 'refreshToken', 'expiration' ])
         .where('userId', req.cookies.userId)
         .limit(1);
 
@@ -54,7 +55,7 @@ export default class AtMeRoute extends Api {
         const newUser = await _user.json();
         username = newUser.username;
 
-        await this.server.util.db.raw([
+        await this.util.db.raw([
           'UPDATE users SET',
           'expiration=date_add(now(), interval 7 DAY),',
           `username='${user}'`,
@@ -82,12 +83,12 @@ export default class AtMeRoute extends Api {
       });
 
       if (req.query.save)
-        await this.server.util.db('users').where('userId', user.userId)
+        await this.util.db('users').where('userId', user.userId)
           .update({ settings });
 
       res
         .json({ settings, username })
         .status(200);
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

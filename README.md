@@ -4,6 +4,7 @@
 
 Website + REST (JSON) API for Kamihime Database
 <br> Written in TypeScript, transpiled to Uglified CommonJS (NodeJS)
+<br> Character statistics are provided by [Kamihime Project Wikia (Nutaku)](https://kamihime-project.wikia.com)
 
 - [BETA Site](http://kamihimedb.thegzm.space:8080)
 - [Eros Support](http://support.thegzm.space)
@@ -15,11 +16,11 @@ Website + REST (JSON) API for Kamihime Database
 
 ## Requirements
 - [Node](https://nodejs.org) 10 and above
-- [Webhook](https://support.discordapp.com/hc/en-us/articles/228383668); See [Notice](#Notice) for config setup
 
 ## Notice
 - Please configure `auth.ts`. Get its template from `auth.example.ts`.
   - Can be found at `src/auth` folder
+- The `db.sql` file will not be updated for every new character release. It only serves as a starting kit for running the website.
 
 ## Testing / Production Procedures
 1. Read [Requirements](#Requirements) and [Notice](#Notice)

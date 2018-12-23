@@ -1,9 +1,11 @@
+import { Collection } from 'discord.js';
 import { NextFunction, Request, Response } from 'express';
+import { handleApiError, handleSiteError } from '../util/handleError';
 import Client from './Client';
 import Server from './Server';
 
 export default class Route {
-  constructor (options?: IOptions) {
+  constructor (options?: IRouteOptions) {
     this.id = options.id;
 
     this.method = options.method;
@@ -13,6 +15,12 @@ export default class Route {
     this.server = null;
 
     this.client = null;
+
+    this.util = {
+      handleApiError,
+      handleSiteError,
+      collection: () => new Collection(),
+    };
   }
 
   public id: string;
@@ -20,14 +28,9 @@ export default class Route {
   public route: string[];
   public server: Server;
   public client: Client;
+  public util: IUtil;
 
   public exec (req: Request, res: Response, next?: NextFunction): void {
     throw new Error('You cannot invoke this base class method.');
   }
-}
-
-interface IOptions {
-  id: string;
-  method: string;
-  route: string[];
 }

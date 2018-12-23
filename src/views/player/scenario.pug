@@ -5,7 +5,7 @@ html
   head
     include ../constants/userSettings.pug
     script.
-      const script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user.username || 'Master'))};
+      let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user.username || 'Master'))};
       const files = !{JSON.stringify(files)};
       const SCENARIOS = "#{SCENARIOS}";
     script(src='/lib/jquery.min.js')

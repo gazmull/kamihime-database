@@ -74,6 +74,6 @@ export default class GetSearchRequest extends Api {
       res
         .status(200)
         .json(results);
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

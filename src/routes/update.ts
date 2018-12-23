@@ -17,14 +17,14 @@ export default class DashboardRoute extends Route {
       if (!(cId || sId || key)) throw { code: 403, message: 'Incomplete query.' };
 
       const character = this.server.kamihimeCache.find(el => el.id === cId);
-      const [ session ] = await this.server.util.db('sessions').select([ 'sID', 'sPW', 'sAge' ])
+      const [ session ]: ISession[] = await this.util.db('sessions').select([ 'sID', 'sPW', 'sAge' ])
         .where('sID', sId);
 
       if (!session) throw { code: 404, message: 'Session not found.' };
-      if (key !== session.sPW)
+      if (key !== session.password)
         throw { code: 403, message: 'Session key does not match with the session ID.' };
 
-      const expired = (Date.now() - new Date(session.sAge).getTime()) >= 1000 * 60 * 30;
+      const expired = (Date.now() - new Date(session.created).getTime()) >= 1000 * 60 * 30;
 
       if (expired) throw { code: 403, message: 'Session expired.' };
 
@@ -52,6 +52,6 @@ export default class DashboardRoute extends Route {
         Object.assign(info, { type: character.type });
 
       res.render('update', { info, user: session });
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

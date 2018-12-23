@@ -24,6 +24,6 @@ export default class RedirectRoute extends Route {
       const { id, name, avatar } = await form.json();
 
       res.render('redirect', { id, name, avatar });
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

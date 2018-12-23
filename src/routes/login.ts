@@ -29,6 +29,6 @@ export default class LoginRoute extends Route {
           '&scope=identify',
           '&state=' + slug,
         ].join(''));
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

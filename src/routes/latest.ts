@@ -74,6 +74,6 @@ export default class LatestRoute extends Route {
 
       res.setHeader('Content-Type', 'image/png');
       canvas.pngStream({ compressionLevel: 3, filters: canvas.PNG_FILTER_NONE }).pipe(res);
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

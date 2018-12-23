@@ -18,13 +18,13 @@ export default class GetIdRequest extends Api {
     try {
       if (!checkId) throw { code: 403, message: 'Invalid id.' };
 
-      const character = this.server.kamihimeCache.find(el => el.id === id.toLowerCase());
+      const character: IKamihime = this.server.kamihimeCache.find(el => el.id === id.toLowerCase());
 
       if (!character) throw { code: 404, message: 'Character not found.' };
 
       res
         .status(200)
         .json(character);
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

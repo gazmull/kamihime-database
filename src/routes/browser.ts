@@ -15,21 +15,17 @@ export default class BrowserRoute extends Route {
     const endPoint = this.server.auth.rootURL + 'api/';
 
     try {
-      let data = await fetch(endPoint + 'list/approved', { headers: { Accept: 'application/json' } });
-      let characters: any[] = await data.json();
-      let hot = characters.slice();
+      let hot: IKamihime[] = this.server.kamihimeCache.slice();
       hot = hot.sort((a, b) => b.peeks - a.peeks).slice(0, 10);
-      characters = characters
-        .filter(el => el.harem1Resource1)
-        .map(el => ({ id: el.id, name: el.name, rarity: el.rarity }));
+      const characters = this.server.kamihimeCache.map(el => ({ id: el.id, name: el.name, rarity: el.rarity }));
 
-      data = await fetch(endPoint + 'latest', { headers: { Accept: 'application/json' } });
+      const data = await fetch(endPoint + 'latest', { headers: { Accept: 'application/json' } });
       const latest = await data.json();
 
-      const requested = { characters, latest, hot, user: {} };
+      const requested = { characters, latest, hot, user: {}, status: null };
 
       if (req.cookies.userId) {
-        const [ user ] = await this.server.util.db('users').select([ 'settings', 'username', 'lastLogin' ])
+        const [ user ]: IUser[] = await this.util.db('users').select([ 'settings', 'username', 'lastLogin' ])
           .where('userId', req.cookies.userId)
           .limit(1);
 
@@ -37,7 +33,7 @@ export default class BrowserRoute extends Route {
           const eligible = (Date.now() - new Date(user.lastLogin).getTime()) > 18e5;
 
           if (eligible)
-            await this.server.util.db.raw(
+            await this.util.db.raw(
               'UPDATE users SET lastLogin = now() WHERE userId = ?',
               [ req.cookies.userId ],
             );
@@ -55,7 +51,14 @@ export default class BrowserRoute extends Route {
           .cookie('visual', JSON.stringify(settings.visual));
       }
 
+      const [ status ]: IStatus[] = await this.util.db('status').select('message')
+        .orderBy('date', 'desc')
+        .limit(1);
+
+      if (status)
+        Object.assign(requested, { status: status.message });
+
       res.render('browser', requested);
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

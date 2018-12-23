@@ -17,15 +17,6 @@ export interface Host {
 }
 
 /**
- * @property id The Discord channel ID
- * @property token The Discord channel's webhook token
- */
-export interface WebHook {
-  id: string;
-  token: string;
-}
-
-/**
  * @property callback Path to redirect (rootURL/[callback path])
  * @property key Client ID
  * @property scope Scopes of authorization
@@ -36,4 +27,17 @@ export interface GrantProvider {
   key: string;
   scope: string[];
   secret: string;
+}
+
+/**
+ * @property channel The channel where to read announcement messages
+ * @property dbReportChannel The channel where to send KamihimeDB reports
+ * @property token The client token
+ * @property wikiReportChannel The channel where to send Wiki reports
+ */
+export interface DiscordClient {
+  channel: string;
+  dbReportChannel: string;
+  token: string;
+  wikiReportChannel: string;
 }

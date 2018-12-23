@@ -15,7 +15,7 @@ export default class PostAddRequest extends Api {
     try {
       await this._hasData(data);
 
-      const [ character ] = await this.server.util.db('kamihime').select('id')
+      const [ character ]: IKamihime[] = await this.util.db('kamihime').select('id')
         .where('id', data.id)
         .limit(1);
 
@@ -50,10 +50,10 @@ export default class PostAddRequest extends Api {
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
 
       Object.assign(data, { loli, peeks: 0 });
-      await this.server.util.db('kamihime').insert(data);
+      await this.util.db('kamihime').insert(data);
 
-      if (this.server.auth.hook)
-        await this.server.util.webHookSend([
+      if (this.client.auth.discord.dbReportChannel)
+        await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
           `${user} added: \`\`\`py`,
           Object.entries(data).map(el => {
             const key = Object.keys(el)[0];
@@ -64,11 +64,11 @@ export default class PostAddRequest extends Api {
           '```',
         ].join('\n'));
 
-      this.server.util.logger.status(`[ADD] API: Character: ${name} (${id}) | By: ${user}`);
+      this.util.logger.status(`[ADD] API: Character: ${name} (${id}) | By: ${user}`);
 
       res
         .status(201)
         .json({ name, id });
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

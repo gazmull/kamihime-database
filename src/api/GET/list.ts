@@ -94,7 +94,7 @@ export default class GetListRequest extends Api {
           message: 'You may only select one primary variable.',
         };
 
-      let query: QueryBuilder = this.server.util.db('kamihime').select(tags[0] ? fields[tags[0]] : '*')
+      let query: QueryBuilder = this.util.db('kamihime').select(tags[0] ? fields[tags[0]] : '*')
         .orderBy('name', 'asc');
 
       if (length) {
@@ -108,6 +108,6 @@ export default class GetListRequest extends Api {
       res
         .status(200)
         .json(query);
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

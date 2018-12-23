@@ -15,7 +15,7 @@ export default class LogoutRoute extends Route {
       if (!req.cookies.userId) throw { code: 403 };
 
       const val = req.query.id ? req.query.id : req.cookies.userId;
-      const [ match ] = await this.server.util.db('users').select('userId')
+      const [ match ]: IUser[] = await this.util.db('users').select('userId')
         .where('userId', val)
         .limit(1);
 
@@ -24,6 +24,6 @@ export default class LogoutRoute extends Route {
       res.clearCookie('userId');
 
       res.redirect(req.headers.referer || '/');
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

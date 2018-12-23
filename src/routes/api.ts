@@ -20,7 +20,11 @@ export default class ApiRoute extends Route {
       const request: string  = req.params.request;
       const requestClass: Api = this.server.api.get(this._getMethod(req)).get(request);
 
-      if (req.ip.includes(this.server.auth.host.address)) return requestClass.exec(req, res, next);
+      if (
+        req.ip.includes(this.server.auth.host.address) ||
+        (req.cookies.userId && this.server.auth.exempt.includes(req.cookies.userId))
+      )
+        return requestClass.exec(req, res, next);
 
       const requests = this.server.rateLimits.get(this._getMethod(req)).get(request);
       const user = requests.find(r => r.address === req.ip);
@@ -54,7 +58,7 @@ export default class ApiRoute extends Route {
       this._update(req, requests);
 
       requestClass.exec(req, res, next);
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 
   protected _getMethod (req: Request): string {
@@ -73,7 +77,7 @@ export default class ApiRoute extends Route {
     requests.set(req.ip, { address: req.ip, triggers: 1, timestamp: Date.now() });
 
     const user = requests.get(req.ip);
-    this.server.util.logger.status(
+    this.util.logger.status(
       `[I/RI] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
   }
@@ -84,7 +88,7 @@ export default class ApiRoute extends Route {
     requests.set(req.ip, { address: req.ip, triggers: user.triggers + 1, timestamp: user.timestamp });
 
     user = requests.get(req.ip);
-    this.server.util.logger.status(
+    this.util.logger.status(
       `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
   }

@@ -1,14 +1,12 @@
-import { Api as ApiAuth, GrantProvider, Host, WebHook } from 'auth';
-import { Collection, Message, WebhookClient } from 'discord.js';
+import { Collection } from 'discord.js';
 import { Express, NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
 import * as knex from 'knex';
 import fetch from 'node-fetch';
 import { resolve } from 'path';
 // @ts-ignore
-import { api, database, discord, exempt, hook, host, rootURL } from '../auth/auth';
+import { api, database, discord, exempt, host, rootURL } from '../auth/auth';
 import * as logger from '../util/console';
-import { handleApiError, handleSiteError, IErrorHandlerObject } from '../util/handleError';
 import Api from './Api';
 import Client from './Client';
 import Route from './Route';
@@ -24,22 +22,17 @@ export default class Server {
       database,
       discord,
       exempt,
-      hook,
       host,
       rootURL,
     };
 
     this.util = {
-      handleApiError,
-      handleSiteError,
-      collection: (...args) => new Collection(args),
       db: knex(database),
       logger: {
-        error: (message: string) => logger.error(`Server: ${message}`),
-        status: (message: string) => logger.status(`Server: ${message}`),
-        warn: (message: string) => logger.warn(`Server: ${message}`),
+        error: message => logger.error(message),
+        status: (message: string) => logger.status(message),
+        warn: (message: string) => logger.warn(message),
       },
-      webHookSend: (message: string) => new WebhookClient(hook.id, hook.token).send(message),
     };
 
     this.api = new Collection();
@@ -78,6 +71,8 @@ export default class Server {
       for (const request of requests) {
         const file: Api = new (require(resolve(API_METHOD_REQUESTS_DIR, request)).default)();
         file.server = this;
+        file.client = client;
+        Object.assign(file.util, {  ...this.client.util });
 
         this.api.get(method).set(request, file);
         this.rateLimits.get(method).set(request, new Collection());
@@ -109,6 +104,7 @@ export default class Server {
 
       file.server = this;
       file.client = client;
+      Object.assign(file.util, {  ...this.client.util });
 
       server[file.method](file.route, (req: Request, res: Response, next: NextFunction) => file.exec(req, res, next));
     }
@@ -127,7 +123,13 @@ export default class Server {
    * @param forced Whether the call is forced or not [can be forced thru server API (api/refresh)]
    */
   public startCleaners (forced: boolean = false): this {
-    Promise.all([ this._cleanRateLimits(), this._cleanSessions(), this._cleanUsers(), this._cleanVisitors() ])
+    Promise.all([
+      this._cleanRateLimits(),
+      this._cleanReports(),
+      this._cleanSessions(),
+      this._cleanUsers(),
+      this._cleanVisitors(),
+    ])
       .then(() => this.util.logger.status('Cleanup Rotation Occurred.'))
       .catch(this.util.logger.error);
 
@@ -181,10 +183,28 @@ export default class Server {
     return true;
   }
 
+  protected async _cleanReports (): Promise<boolean> {
+    try {
+      const expired = 'DATE_ADD(date, INTERVAL IF(userId LIKE \'%:%\', 24, 3) HOUR) < NOW()';
+      const reports: IReport[] = await this.util.db('reports').select('userId')
+        .whereRaw(expired);
+
+      if (reports.length) {
+        await this.util.db('reports').whereRaw(expired).delete();
+
+        this.util.logger.status('Existing Reports cleanup finished.');
+
+        return true;
+      }
+    } catch (err) {
+      this.util.logger.error(err);
+    }
+  }
+
   protected async _cleanSessions (): Promise<boolean> {
     try {
       const EXPIRED: string = 'created <= DATE_SUB(NOW(), INTERVAL 30 MINUTE)';
-      const sessions: any[] = await this.util.db('sessions').select('id')
+      const sessions: ISession[] = await this.util.db('sessions').select('id')
         .whereRaw(EXPIRED);
 
       if (sessions.length) {
@@ -202,7 +222,7 @@ export default class Server {
   protected async _cleanUsers (): Promise<boolean> {
     try {
       const EXPIRED: string = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 14 DAY)';
-      const users: any[] = await this.util.db('users').select('userId')
+      const users: IUser[] = await this.util.db('users').select('userId')
         .whereRaw(EXPIRED);
 
       if (users.length) {
@@ -243,29 +263,4 @@ export default class Server {
 
     return true;
   }
-}
-
-interface IAuth {
-  api: ApiAuth;
-  database: knex.Config;
-  discord: GrantProvider;
-  exempt: string[];
-  hook: WebHook;
-  host: Host;
-  rootURL: string;
-}
-
-interface ILogger {
-  error: (message: string) => void;
-  status: (message: string) => void;
-  warn: (message: string) => void;
-}
-
-interface IUtil {
-  collection: () => Collection<any, any>;
-  db: knex;
-  handleApiError: (res: Response, err: IErrorHandlerObject) => void;
-  handleSiteError: (res: Response, err: IErrorHandlerObject) => void;
-  logger: ILogger;
-  webHookSend: (message: string) => Promise<Message | Message[]>;
 }

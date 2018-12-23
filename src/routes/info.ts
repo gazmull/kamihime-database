@@ -23,14 +23,14 @@ export default class InfoRoute extends Route {
     try {
       if (!id) throw { code: 403, message: 'ID is empty.' };
 
-      const character = this.server.kamihimeCache.find(el => el.id === id);
+      const character: IKamihime = this.server.kamihimeCache.find(el => el.id === id);
 
       if (!character) throw { code: 422 };
 
       const requested = { character, wiki: null, user: {} };
 
       if (req.cookies.userId) {
-        const [ user ] = await this.server.util.db('users').select([ 'settings', 'username' ])
+        const [ user ]: IUser[] = await this.util.db('users').select([ 'settings', 'username' ])
           .where('userId', req.cookies.userId)
           .limit(1);
 
@@ -45,7 +45,7 @@ export default class InfoRoute extends Route {
         return res.render('info', requested);
       })
       .catch(() => res.render('info', requested));
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 
   // -- Util

@@ -1556,7 +1556,7 @@ body.swal2-no-backdrop .swal2-shown.swal2-bottom-right {
   width: 2em;
   height: 2em;
   border-radius: 2em;
-  background: #3085d6;
+  background: #990069;
   color: #fff;
   line-height: 2em;
   text-align: center;
@@ -1572,22 +1572,22 @@ body.swal2-no-backdrop .swal2-shown.swal2-bottom-right {
 }
 
 .swal2-progresssteps .swal2-progresscircle.swal2-activeprogressstep {
-  background: #3085d6
+  background: #ff00ae
 }
 
 .swal2-progresssteps .swal2-progresscircle.swal2-activeprogressstep~.swal2-progresscircle {
-  background: #add8e6
+  background: #ff9fe1
 }
 
 .swal2-progresssteps .swal2-progresscircle.swal2-activeprogressstep~.swal2-progressline {
-  background: #add8e6
+  background: #ffe8f8
 }
 
 .swal2-progresssteps .swal2-progressline {
   width: 2.5em;
   height: .4em;
   margin: 0 -1px;
-  background: #3085d6;
+  background: #ffe8f8;
   z-index: 10
 }
 

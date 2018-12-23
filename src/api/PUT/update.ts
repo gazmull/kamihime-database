@@ -16,7 +16,7 @@ export default class PutUpdateRequest extends Api {
     try {
       await this._hasData(data);
       const fields: string[] = [ 'id', 'loli' ];
-      const [ character ] = await this.server.util.db('kamihime').select(fields)
+      const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
         .where('id', data.id)
         .limit(1);
 
@@ -49,14 +49,14 @@ export default class PutUpdateRequest extends Api {
 
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
 
-      await this.server.util.db('kamhime').update(data)
+      await this.util.db('kamhime').update(data)
         .where('id', id);
-      await this.server.util.db('sessions')
+      await this.util.db('sessions')
         .where({ userTag: user, characterId: id })
         .del();
 
-      if (this.server.auth.hook)
-        await this.server.util.webHookSend([
+      if (this.client.auth.discord.dbReportChannel)
+        await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
           `${user} updated ${name} (${id}):\`\`\``,
           Object.entries(data).map(el => {
             const key = Object.keys(el)[0];
@@ -67,13 +67,13 @@ export default class PutUpdateRequest extends Api {
           '```',
         ].join('\n'));
 
-      this.server.util.logger.status(`[U] API: Character: ${name} (${id}) | By: ${user}`);
+      this.util.logger.status(`[U] API: Character: ${name} (${id}) | By: ${user}`);
 
-      const avatar = this.server.kamihimeCache.find(el => el.id === id).avatar;
+      const avatar: IKamihime['avatar'] = this.server.kamihimeCache.find(el => el.id === id).avatar;
 
       res
         .status(200)
         .json({ name, id, avatar });
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

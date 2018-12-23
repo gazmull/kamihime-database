@@ -2,9 +2,10 @@
   "compilerOptions": {
     "allowJs": true,
     "rootDir": "./",
-    "outDir": "../build/proto"
+    "outDir": "../build/proto",
+    "target": "es2018"
   },
   "exclude": [
     "lib/**/*.js"
-  ]
+  ],
 }

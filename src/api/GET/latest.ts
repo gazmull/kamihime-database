@@ -14,27 +14,27 @@ export default class GetLatestRequest extends Api {
 
   public async exec (_, res: Response): Promise<void> {
     try {
-      const soul: any[] = await this.server.util.db('kamihime').select(fields)
+      const soul: IKamihime[] = await this.util.db('kamihime').select(fields)
         .whereRaw('id LIKE \'s%\' AND approved=1')
         .orderBy('_rowId', 'desc')
         .limit(3);
-      const eidolon: any[] = await this.server.util.db('kamihime').select(fields)
+      const eidolon: IKamihime[] = await this.util.db('kamihime').select(fields)
         .whereRaw('id LIKE \'e%\' AND approved=1')
         .orderBy('_rowId', 'desc')
         .limit(3);
-      const ssra: any[] = await this.server.util.db('kamihime').select(fields)
+      const ssra: IKamihime[] = await this.util.db('kamihime').select(fields)
         .whereRaw('id LIKE \'k%\' AND rarity=\'SSR+\' AND approved=1')
         .orderBy('_rowId', 'desc')
         .limit(3);
-      const ssr: any[] = await this.server.util.db('kamihime').select(fields)
+      const ssr: IKamihime[] = await this.util.db('kamihime').select(fields)
         .whereRaw('id LIKE \'k%\' AND rarity=\'SSR\' AND approved=1')
         .orderBy('_rowId', 'desc')
         .limit(3);
-      const sr: any[] = await this.server.util.db('kamihime').select(fields)
+      const sr: IKamihime[] = await this.util.db('kamihime').select(fields)
         .whereRaw('id LIKE \'k%\' AND rarity=\'SR\' AND approved=1')
         .orderBy('_rowId', 'desc')
         .limit(3);
-      const r: any[] = await this.server.util.db('kamihime').select(fields)
+      const r: IKamihime[] = await this.util.db('kamihime').select(fields)
         .whereRaw('id LIKE \'k%\' AND rarity=\'R\' AND approved=1')
         .orderBy('_rowId', 'desc')
         .limit(3);
@@ -42,6 +42,6 @@ export default class GetLatestRequest extends Api {
       res
         .status(200)
         .json({ soul, eidolon, 'ssr+': ssra, ssr, sr, r });
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

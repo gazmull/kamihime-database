@@ -1,17 +1,18 @@
 import { each } from 'bluebird';
-import { Message, WebhookClient } from 'discord.js';
+import { Client as DiscordClient, WSEventType } from 'discord.js';
 import { createWriteStream } from 'fs-extra';
 import { QueryBuilder } from 'knex';
 import fetch from 'node-fetch';
 import * as Wikia from 'nodemw';
 import { resolve } from 'path';
 import { promisify } from 'util';
-import * as logger from '../util/console';
+// @ts-ignore
+import { discordClient as discordAuth } from '../auth/auth';
 import Server from './Server';
 
 let getImageInfo: (...args: any[]) => any = null;
 let getArticle: (...args: any[]) => string = null;
-let khTimeout = null;
+let khTimeout: NodeJS.Timeout = null;
 
 // Max calls and cooldown for scraping for each class (startKamihimeDatabase())
 const COOLDOWN = 1000 * 60 * 60;
@@ -29,14 +30,14 @@ export default class Client {
 
     this.wikiaClient = null;
 
+    this.discordClient = null;
+
+    this.auth = { discord: discordAuth };
+
     this.util = {
-      logger: {
-        error: (message: string) => logger.error(`Client: ${message}`),
-        status: (message: string) => logger.status(`Client: ${message}`),
-        warn: (message: string) => logger.warn(`Client: ${message}`),
-      },
-      webHookSend: (message: string) => new WebhookClient(this.server.auth.hook.id, this.server.auth.hook.token)
-        .send(message),
+      ...this.server.util,
+      // @ts-ignore
+      discordSend: (channel, message) => this.discordClient.channels.get(channel).send(message),
     };
 
     this.fields = [ 'id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'main', 'preview' ];
@@ -44,6 +45,8 @@ export default class Client {
 
   public server: Server;
   public wikiaClient: Wikia;
+  public discordClient: DiscordClient;
+  public auth: IClientAuth;
   public util: IUtil;
   public fields: string[];
 
@@ -59,6 +62,54 @@ export default class Client {
     getArticle = promisify(this.wikiaClient.getArticle.bind(this.wikiaClient));
 
     this.util.logger.status('Initialised');
+
+    return this;
+  }
+
+  public startDiscordClient (): this {
+    if (!(discordAuth.channel || discordAuth.token)) return;
+
+    const events: WSEventType[] = [
+      'GUILD_UPDATE',
+      'GUILD_INTEGRATIONS_UPDATE',
+      'CHANNEL_CREATE',
+      'CHANNEL_UPDATE',
+      'MESSAGE_UPDATE',
+      'USER_UPDATE',
+      'PRESENCE_UPDATE',
+      'VOICE_STATE_UPDATE',
+      'TYPING_START',
+      'WEBHOOKS_UPDATE',
+    ];
+
+    this.discordClient = new DiscordClient({
+      disabledEvents: events,
+      presence: {
+        activity: {
+          name: 'Announcements',
+          type: 'WATCHING',
+        },
+        status: 'dnd',
+      },
+    });
+
+    this.discordClient
+      .on('ready', () => this.util.logger.status('Discord Bot: logged in.'))
+      .on('message', async message => {
+        if (message.channel.id !== discordAuth.channel) return;
+        if (!this.server.auth.exempt.includes(message.author.id)) return;
+
+        try {
+          await this.util.db('status').del();
+          await this.util.db('status').insert({
+            id: message.id,
+            message: message.content,
+          });
+        } catch (e) { this.util.logger.error(e); }
+
+        this.util.logger.status('Discord Bot: New announcement has been saved.');
+      })
+      .login(discordAuth.token);
 
     return this;
   }
@@ -92,7 +143,7 @@ export default class Client {
 
     try {
       const whereState = idPrefix === 'x' ? 'id LIKE \'x%\' or id LIKE \'e%\'' : `id LIKE '${idPrefix}%'`;
-      const rows: any[] = await this.server.util.db('kamihime').select(this.fields)
+      const rows: IKamihime[] = await this.util.db('kamihime').select(this.fields)
         .whereRaw(whereState)
         .orderByRaw('CAST(substr(id, 2) AS DECIMAL) DESC');
       const existing = rows.map(el => el.name);
@@ -203,7 +254,7 @@ export default class Client {
         }
         else main = null;
 
-        await this.server.util.db('kamihime')
+        await this.util.db('kamihime')
         .insert({
           avatar,
           main,
@@ -224,7 +275,7 @@ export default class Client {
 
       const length = itemsAdded.length;
 
-      await this.util.webHookSend([
+      await this.util.discordSend(this.auth.discord.channel, [
         `**Kamihime Database**: **${id}**: __Added ${length}__`,
         `\`\`\`diff`,
         itemsAdded.slice(0, 30).map(slicedEntries).join('\n'),
@@ -244,7 +295,7 @@ export default class Client {
     this.util.logger.status('Kamihime Database: Started update...');
 
     try {
-      let query: QueryBuilder = this.server.util.db('kamihime').select(this.fields)
+      let query: QueryBuilder = this.util.db('kamihime').select(this.fields)
         .whereRaw(`id LIKE '${idPrefix}%'`);
       query = idPrefix === 'e' ? query.orWhereRaw('id LIKE \'x%\'') : query;
 
@@ -386,7 +437,7 @@ export default class Client {
           ? `name = '${escape(el.name)}' OR name = '${escape(el.name).replace(nRarityRegex, '')}'`
           : `name = '${escape(el.name)}'`;
 
-        await this.server.util.db('kamihime')
+        await this.util.db('kamihime')
           .update(updateFields)
           .whereRaw(shouldIncludeLowerRarity);
 
@@ -400,7 +451,7 @@ export default class Client {
 
       if (!length) return this.util.logger.status(`Kamihime Database: ${id}: Nothing to update!`);
 
-      await this.util.webHookSend([
+      await this.util.discordSend(this.auth.discord.channel, [
         `**Kamihime Database**: **${id}**: __Updated ${length}__`,
         `\`\`\`diff`,
         itemsUpdated.slice(0, 30).map(slicedEntries).join('\n'),
@@ -429,13 +480,4 @@ export default class Client {
       .replace(/({|,\s?)([\w]+?)(=["\d])/g, '$1"$2"$3')
       .replace(/=/g, ':'));
   }
-}
-
-interface IUtil {
-  logger: {
-    status: (message: string) => void;
-    error: (message: string) => void;
-    warn: (message: string) => void;
-  };
-  webHookSend: (message: string) => Promise<Message | Message[]>;
 }

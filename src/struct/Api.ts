@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
+import { handleApiError } from '../util/handleError';
+import Client from './Client';
 import Server from './Server';
 
 export default class Api {
-  constructor (options?: IOptions) {
+  constructor (options?: IApiOptions) {
     this.cooldown = options.cooldown || 1;
 
     this.max = options.max || 3;
@@ -10,12 +12,18 @@ export default class Api {
     this.method = options.method;
 
     this.server = null;
+
+    this.client = null;
+
+    this.util = { handleApiError };
   }
 
   public cooldown: number;
   public max: number;
   public method: string;
   public server: Server;
+  public client: Client;
+  public util: IUtil;
 
   public exec (req: Request, res: Response, next?: NextFunction): void {
     throw new Error('You cannot invoke this base class method.');
@@ -54,10 +62,4 @@ export default class Api {
       .filter(el => fn(obj[el]))
       .reduce((prev, cur) => Object.assign(prev, { [cur]: obj[cur] }), {});
   }
-}
-
-interface IOptions {
-  cooldown?: number;
-  max?: number;
-  method: string;
 }

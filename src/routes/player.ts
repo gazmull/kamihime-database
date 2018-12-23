@@ -51,7 +51,7 @@ export default class PlayerRoute extends Route {
       let fields = [ 'id', 'name', 'rarity', 'peeks' ];
       fields = fields.concat([ selected, `harem${ep}Title` ]);
 
-      const [ character ] = await this.server.util.db('kamihime').select(fields)
+      const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
         .where('id', id);
       const resource = character[selected];
 
@@ -64,9 +64,9 @@ export default class PlayerRoute extends Route {
 
       await this._rateLimit(req, character, resource);
 
-      const { scenario } = await this._find('script.json', id, resource);
+      const { scenario = null } = await this._find('script.json', id, resource);
 
-      if (!(template || character || scenario)) throw { code: 404 };
+      if (!template || !character || !scenario) throw { code: 404 };
 
       let files: string[] = null;
 
@@ -98,7 +98,7 @@ export default class PlayerRoute extends Route {
         Object.assign(requested, { files });
 
       if (req.cookies.userId) {
-        const [ user ] = await this.server.util.db('users').select([ 'settings', 'username' ])
+        const [ user ]: IUser[] = await this.util.db('users').select([ 'settings', 'username' ])
           .where('userId', req.cookies.userId)
           .limit(1);
 
@@ -107,7 +107,7 @@ export default class PlayerRoute extends Route {
       }
 
       res.render(template, requested);
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 
   // -- Util
@@ -131,19 +131,31 @@ export default class PlayerRoute extends Route {
     } catch (err) { return false; }
   }
 
-  protected _checkRegistered (req: Request, resource: string): boolean {
+  protected _checkRegistered (id: string, resource: string): boolean {
     const _resource = this.server.recentVisitors.get(resource);
     if (!_resource) return false;
 
-    const logged = _resource.get(req.ip);
+    const logged = _resource.get(id);
     if (!logged) return false;
 
     return true;
   }
 
   protected async _rateLimit (req: Request, character: any, resource: string): Promise<true> {
+    const update = () => this.util.db('kamihime').update('peeks', ++character.peeks)
+      .where('id', character.id);
+    const usr = req.cookies.userId || req.ip;
+    const status = () => this.util.logger.status(`[A] Peek: ${usr} visited ${character.name}`);
+
+    if (this.server.auth.exempt.includes(req.cookies.userId)) {
+      await update();
+      status();
+
+      return true;
+    }
+
     const visitorVisits = this.server.recentVisitors.filter((log, _resource) => {
-      const logged = log.get(req.ip);
+      const logged = log.get(usr);
       if (!logged) return false;
 
       const timeLapsed: number = Date.now() - logged;
@@ -153,19 +165,17 @@ export default class PlayerRoute extends Route {
 
     if (visitorVisits.size >= MAX_VISITS) throw { code: 429, message: 'You may only do 3 visits per 3 minutes.' };
 
-    const currentRegistered = this._checkRegistered(req, resource);
+    const currentRegistered = this._checkRegistered(usr, resource);
     if (!currentRegistered) {
-      await this.server.util.db('kamihime').update('peeks', ++character.peeks)
-        .where('id', character.id);
+      await update();
 
       const resourceLog = () => this.server.recentVisitors.get(resource);
 
       if (!resourceLog())
-        this.server.recentVisitors.set(resource, this.server.util.collection());
+        this.server.recentVisitors.set(resource, this.util.collection());
 
-      resourceLog().set(req.ip, Date.now());
-
-      this.server.util.logger.status(`[A] Peek: ${req.ip} visited ${character.name}`);
+      resourceLog().set(usr, Date.now());
+      status();
     }
 
     return true;

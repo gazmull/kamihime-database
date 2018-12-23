@@ -1,8 +1,8 @@
-import { Api, GrantProvider, Host, WebHook } from 'auth';
+import { Api, DiscordClient, GrantProvider, Host } from 'auth';
 import { Config as Database } from 'knex';
 
 /**
- * The database configuration to use for the server (Sessions and Kamihime)
+ * The database configuration to use for the server
  */
 export const database: Database = {
   acquireConnectionTimeout: 10000,
@@ -30,6 +30,8 @@ export const host: Host = {
 /**
  * Users to exclude from being throttled while browsing characters.
  * Recommended for lead testers.
+ * WATCH OUT:
+ * This is also used for authorized user messages (announcements for the site status) to be read by the Discord Bot.
  */
 export const exempt: string[] = [
   '319102712383799296',
@@ -49,14 +51,6 @@ export const api: Api = {
 };
 
 /**
- * Configuration for the Discord channel's webhook.
- */
-export const hook: WebHook = {
-  id: '319102712383799296',
-  token: 'FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD',
-};
-
-/**
  * Secret to use for express-cookieParser
  */
 export const cookieSecret: string = 'your cookie secret';
@@ -69,4 +63,15 @@ export const discord: GrantProvider = {
   key: 'blah',
   scope: [ 'identify' ],
   secret: 'buh',
+};
+
+/**
+ * Configuration for Discord Bot.
+ * This only serves as a website status message scraper and reports (KamihimeDB/Wikia) sender
+ */
+export const discordClient: DiscordClient = {
+  channel: '319102712383799296',
+  dbReportChannel: '319102712383799296',
+  token: 'FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD',
+  wikiReportChannel: '319102712383799296',
 };

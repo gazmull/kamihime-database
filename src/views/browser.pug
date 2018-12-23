@@ -70,9 +70,14 @@ html
             div(id='thumbnail', class='col-12 d-none d-md-block')
 
         div(id='feed-wrapper' class='col-2 d-none d-md-block px-0')
+          - if (status)
+            div(class='row')
+              div(class='feed col-12')
+                h5 Website Status
+                h6 #{status}
           div(class='row')
             div(class='feed col-12')
-              h6 Latest (<a href='javascript:void(0);' class='text-danger' onclick='showLatest();'>Live Image</a>)
+              h5 Latest (<a href='javascript:void(0);' class='text-danger' onclick='showLatest();'>Live Image</a>)
               each _, k in latest
                 - let chars = latest[k];
 
@@ -86,7 +91,7 @@ html
                       != `<a href="/info/${c.id}">${c.name}</a>`
           div(class='row')        
             div(class='feed col-12')
-              h6 Top 10
+              h5 Top 10
               ul(class='feed-list')
                 each c in hot
                   li(name=c.name, character-id=c.id, class='name')

@@ -71,7 +71,7 @@ export default class ConnectRoute extends Route {
         },
       });
 
-      await this.server.util.db.raw([
+      await this.util.db.raw([
         'INSERT INTO users',
         '(expiration, refreshToken, settings, userId, username)',
         'VALUES (date_add(now(), interval 7 DAY), :rT, :s, :uI, :uN)',
@@ -88,6 +88,6 @@ export default class ConnectRoute extends Route {
       res
         .cookie('userId', user.id, { maxAge: 6048e5 })
         .redirect('/');
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 }
