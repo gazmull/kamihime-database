@@ -1,7 +1,5 @@
-[![Build Status](https://travis-ci.org/gazmull/kamihime-database.svg?branch=master-gentle)](https://travis-ci.org/gazmull/kamihime-database)
+[![Build Status](https://travis-ci.org/gazmull/kamihime-database.svg?branch=master)](https://travis-ci.org/gazmull/kamihime-database)
 # Kamihime Database
-> `master-gentle` branch: Branch that will be submitted as my [webdev](https://github.com/gazmull/webdev) final exam. This is also the superior version of `master` branch at the moment.
-
 Website + REST (JSON) API for Kamihime Database
 <br> Written in TypeScript, transpiled to Uglified CommonJS (NodeJS)
 <br> Character statistics are provided by [Kamihime Project Wikia (Nutaku)](https://kamihime-project.wikia.com)
