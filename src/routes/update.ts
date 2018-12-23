@@ -11,14 +11,14 @@ export default class DashboardRoute extends Route {
   }
 
   public async exec (req: Request, res: Response): Promise<void> {
-    const { character: cId, id: sId, k: key } = req.query;
+    const { character: cId, id: id, k: key } = req.query;
 
     try {
-      if (!(cId || sId || key)) throw { code: 403, message: 'Incomplete query.' };
+      if (!(cId || id || key)) throw { code: 403, message: 'Incomplete query.' };
 
       const character = this.server.kamihimeCache.find(el => el.id === cId);
-      const [ session ]: ISession[] = await this.util.db('sessions').select([ 'sID', 'sPW', 'sAge' ])
-        .where('sID', sId);
+      const [ session ]: ISession[] = await this.util.db('sessions').select([ 'id', 'password', 'created', 'userId' ])
+        .where('id', id);
 
       if (!session) throw { code: 404, message: 'Session not found.' };
       if (key !== session.password)

@@ -95,5 +95,5 @@ html
               ul(class='feed-list')
                 each c in hot
                   li(name=c.name, character-id=c.id, class='name')
-                    != `<a href="/info/${c.id}">${c.name}</a><br>&nbsp;<sub class='text-light'>${c.peeks.toLocaleString()} views</sub>`
+                    != `<a href="/info/${c.id}">${c.name}</a><br>&nbsp;<sub class='text-light'>${c.peeks.toLocaleString('en')} views</sub>`
 

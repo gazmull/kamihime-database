@@ -27,7 +27,7 @@ export default class PostSessionRequest extends Api {
       if (!character) throw { code: 404, message: 'Character not found.' };
 
       const [ session ]: ISession[] = await this.util.db('sessions').select()
-        .where('userTag', user)
+        .where('userId', user)
         .andWhere('characterId', id)
         .limit(1);
 
@@ -46,7 +46,7 @@ export default class PostSessionRequest extends Api {
       }
 
       const sessions: ISession[] = await this.util.db('sessions').select('count(characterId)')
-          .where('userTag', user);
+          .where('userId', user);
 
       if (sessions.length > 3)
         throw { code: 429, message: `Too many sessions active. [${sessions.length} sessions active]` };
@@ -59,7 +59,7 @@ export default class PostSessionRequest extends Api {
           characterId: id,
           id: uniqueID,
           password: uniqueKey,
-          userTag: user,
+          userId: user,
         });
 
       const [ newSession ]: ISession[] = await this.util.db('sessions').select()

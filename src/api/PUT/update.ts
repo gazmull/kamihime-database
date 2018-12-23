@@ -49,18 +49,17 @@ export default class PutUpdateRequest extends Api {
 
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
 
-      await this.util.db('kamhime').update(data)
+      await this.util.db('kamihime').update(data)
         .where('id', id);
       await this.util.db('sessions')
-        .where({ userTag: user, characterId: id })
+        .where({ userId: user, characterId: id })
         .del();
 
       if (this.client.auth.discord.dbReportChannel)
         await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
           `${user} updated ${name} (${id}):\`\`\``,
           Object.entries(data).map(el => {
-            const key = Object.keys(el)[0];
-            const value = el[key];
+            const [ key, value ] = el;
 
             return `${key}=${value}`;
           }),
