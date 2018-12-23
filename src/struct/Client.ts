@@ -275,7 +275,7 @@ export default class Client {
 
       const length = itemsAdded.length;
 
-      await this.util.discordSend(this.auth.discord.channel, [
+      await this.util.discordSend(this.auth.discord.wikiReportChannel, [
         `**Kamihime Database**: **${id}**: __Added ${length}__`,
         `\`\`\`diff`,
         itemsAdded.slice(0, 30).map(slicedEntries).join('\n'),
@@ -451,7 +451,7 @@ export default class Client {
 
       if (!length) return this.util.logger.status(`Kamihime Database: ${id}: Nothing to update!`);
 
-      await this.util.discordSend(this.auth.discord.channel, [
+      await this.util.discordSend(this.auth.discord.wikiReportChannel, [
         `**Kamihime Database**: **${id}**: __Updated ${length}__`,
         `\`\`\`diff`,
         itemsUpdated.slice(0, 30).map(slicedEntries).join('\n'),
