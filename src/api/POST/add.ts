@@ -44,6 +44,7 @@ export default class PostAddRequest extends Api {
         harem3Resource1,
         harem3Resource2,
         harem3Title,
+        id,
         name,
       }, el => el);
 
@@ -56,11 +57,10 @@ export default class PostAddRequest extends Api {
         await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
           `${user} added: \`\`\`py`,
           Object.entries(data).map(el => {
-            const key = Object.keys(el)[0];
-            const value = el[key];
+            const [ key, value ] = el;
 
-            return `${key}=${value}`;
-          }),
+            return `${key}='${value}'`;
+          }).join('\n'),
           '```',
         ].join('\n'));
 

@@ -45,8 +45,8 @@ export default class PostSessionRequest extends Api {
         return;
       }
 
-      const sessions: ISession[] = await this.util.db('sessions').select('count(characterId)')
-          .where('userId', user);
+      const sessions: ISession[] = await this.util.db
+        .raw('SELECT COUNT(characterId) FROM sessions WHERE userId = ?', [ user ]);
 
       if (sessions.length > 3)
         throw { code: 429, message: `Too many sessions active. [${sessions.length} sessions active]` };
@@ -63,7 +63,7 @@ export default class PostSessionRequest extends Api {
         });
 
       const [ newSession ]: ISession[] = await this.util.db('sessions').select()
-        .where('user', user)
+        .where('userId', user)
         .andWhere('characterId', id)
         .limit(1);
 

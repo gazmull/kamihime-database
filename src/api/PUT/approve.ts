@@ -15,7 +15,7 @@ export default class PutApproveRequest extends Api {
 
     try {
       await this._hasData(data);
-      const { user, id, name } = data;
+      const { user, id } = data;
       const fields: string[] = [ 'id', 'approved' ];
       const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
         .where('id', id)
@@ -23,6 +23,7 @@ export default class PutApproveRequest extends Api {
 
       if (!character) throw { code: 404, message: 'Character not found.' };
 
+      const name = character.name;
       const approveToggle: number = character.approved ? 0 : 1;
 
       await this.util.db('kamihime')

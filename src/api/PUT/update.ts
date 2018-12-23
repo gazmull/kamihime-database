@@ -61,8 +61,8 @@ export default class PutUpdateRequest extends Api {
           Object.entries(data).map(el => {
             const [ key, value ] = el;
 
-            return `${key}=${value}`;
-          }),
+            return `${key}='${value}'`;
+          }).join('\n'),
           '```',
         ].join('\n'));
 

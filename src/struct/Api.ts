@@ -39,7 +39,7 @@ export default class Api {
   public async _hasData (data, ...except: string[]): Promise<boolean> {
     const isExempted = entry => except.includes(entry) ? true : data[entry];
     const hasAll: boolean = isExempted('token') && isExempted('user') &&
-      isExempted('id') && isExempted('name');
+      isExempted('id');
 
     if (!hasAll)
       throw { code: 403, message: 'Incomplete data.' };
