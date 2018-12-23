@@ -4,13 +4,14 @@ $(() => {
     Cookies.set('menu', 'true');
 
     const alertMsg = `
-    <div class="alert alert-dismissible alert-warning" style="z-index: 1337">
+    <div class="alert alert-dismissible alert-warning fade show" style="z-index: 1337">
       <a href="#" class="close" data-dismiss="alert">&times;</a>
-      <b>Heads up!</b> This site uses cookies to save your browsing settings.
+      <h4 class='alert-heading'>Heads up!</h4>
+      <p>This site uses cookies to save your browsing settings.</p>
     </div>`;
 
     $('.container-fluid').prepend(alertMsg);
-    $('#pop').css('visibility', 'visible');
+    $('[data-toggle="tooltip"]').tooltip('show');
   }
 
   if (Cookies.get('menu') === 'false') {
@@ -70,46 +71,35 @@ $(() => {
         $('#thumbnail')
           .css({
             'background-image': `url('/img/wiki/close/${name} Close.png')`,
-            visibility: 'visible'
+            visibility: 'visible',
           });
     })
     .on('mouseleave', () => $('#thumbnail').css('visibility', 'hidden'));
-
-  const target = $('#pop-target');
-  const pop = $('#pop');
-  new Popper(target, pop, { placement: 'top' });
-
-  target
-    .on('mouseenter', () => pop.css('visibility', 'visible'))
-    .on('mouseleave', () => pop.css('visibility', 'hidden'));
 });
 
-function showHelp() {
-  swal({
-    title: 'Keyboard Shortcuts',
-    text: [
-      'ESC: Hide/Show Navigation',
-      '1 - 7: Select category (e.g. 1 is for \'All\')',
-      '\n',
+function showHelp () {
+  sweet({
+    html: [
+      '<ol style="list-style: none; padding: 0;">',
+      '<li>ESC: Hide/Show Navigation</li>',
+      '<li>1 - 7: Select category (e.g. 1 is for \'All\')</li>',
+      '</ol><br><br>',
       'Additional Help:',
-      '- Feeds ("Latest" and "Hot 10" Sidebars on the right) are also accessible for navigation.',
-      '- You can click the white bar beside navigation bar to hide/show it.'
-    ].join('\n'),
-    icon: 'info',
-    closeOnEsc: false
+      '<ol>',
+      '<li>Feeds ("Latest" and "Hot 10" Sidebars on the right) are also accessible for navigation.</li>',
+      '<li>You can click the white bar beside navigation bar to hide/show it.</li>',
+      '</ol>',
+    ].join(''),
+    titleText: 'Keyboard Shortcuts',
+    type: 'info',
   });
 }
 
-function showLatest() {
-  swal({
-    content: {
-      element: 'img',
-      attributes: {
-        src: '/latest',
-        alt: 'Latest Image',
-        style: 'width: 100%;'
-      }
-    },
-    text: 'http://kamihimedb.thegzm.space/latest'
-  })
+function showLatest () {
+  sweet({
+    html: '<a href="/latest" class="text-light" target="_blank">http://kamihimedb.thegzm.space/latest</a>',
+    imageAlt: 'Latest Image',
+    imageUrl: '/latest',
+    imageWidth: '100%',
+  });
 }

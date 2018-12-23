@@ -1,0 +1,6 @@
+- if (user.username)
+  li
+    a(href='/logout') Log out (#{user.username})
+- else
+  li
+    a(data-toggle='tooltip', data-placement='bottom', title='Hello there! Login via Discord.', class='text-light logbutton', href='javascript:void(0);', onclick='showLoginWarning();') Log in

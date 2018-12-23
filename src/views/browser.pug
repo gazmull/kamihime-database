@@ -3,39 +3,43 @@ html
   head
     meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
     script(src='/lib/jquery.min.js')
-    script(src='/lib/bootstrap.min.js')
     script(src='/lib/popper.min.js')
+    script(src='/lib/bootstrap.min.js')
     script(src='/lib/js.cookie.min.js')
-    script(src='/lib/sweetalert.min.js')
+    script(src='/lib/sweetalert2.min.js')
+    link(rel='stylesheet', href='/lib/sweetalert2.css')
     link(rel='stylesheet', href='/lib/bootstrap.min.css')
-
     script(src='/constants/script.js')
     script(src='/browser/script.js')
     link(rel='stylesheet', href='/constants/style.css')
     link(rel='stylesheet', href='/browser/style.css')
+    include constants/userSettings.pug
     title Kamihime Database - Browser
   body
+    <!-- Menu -->
+    div(class='col-1 px-0')
+      nav(class='navbar navbar-light navbar-expand-sm px-0 flex-row flex-nowrap float-left')
+        div(id='nav' class='nav')
+          a(class='nav-item text-light text-uppercase', href='javascript:void(0);', data-toggle='tooltip', data-placement='top', title='Click me for a list of keyboard shortcuts!', onclick='showHelp();')
+            | Navigation <sup>?</sup>
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#all') All
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#soul') Soul
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#eidolon') Eidolon
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#ssra') SSRA
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#ssr') SSR
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#sr') SR
+          a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#r') R
+          input(type='text', id='search-bar', placeholder='Search by name')
+        div(class='nav-switch nav-switch-hide')
+    <!-- Menu End -->
     div(class='container-fluid px-0')
       div(class='row')
 
-        <!-- Menu -->
         div(class='col-1 px-0')
-          nav(class='navbar navbar-light navbar-expand-sm px-0 flex-row flex-nowrap float-left')
-            div(id='nav' class='nav')
-              a(class='nav-item text-light text-uppercase', id='pop-target', href='#', onclick='showHelp();')
-                span(id='pop') Click me for a list of<br>keyboard shortcuts!
-                | Navigation <sup>?</sup>
-              a(class='nav-item nav-link', href='#all', data-toggle='collapse', data-target='#all') All
-              a(class='nav-item nav-link', href='#soul', data-toggle='collapse', data-target='#soul') Soul
-              a(class='nav-item nav-link', href='#eidolon', data-toggle='collapse', data-target='#eidolon') Eidolon
-              a(class='nav-item nav-link', href='#ssra', data-toggle='collapse', data-target='#ssra') SSRA
-              a(class='nav-item nav-link', href='#ssr', data-toggle='collapse', data-target='#ssr') SSR
-              a(class='nav-item nav-link', href='#sr', data-toggle='collapse', data-target='#sr') SR
-              a(class='nav-item nav-link', href='#r', data-toggle='collapse', data-target='#r') R
-              input(type='text', id='search-bar', placeholder='Search by name')
-            div(class='nav-switch nav-switch-hide')
-        <!-- Menu End -->
+        include constants/member.pug
+      div(class='row')
 
+        div(class='col-1 px-0')
         div(class='col-9 px-0')
           div(id='content', class='row')
             - let key = 49;
@@ -66,9 +70,14 @@ html
             div(id='thumbnail', class='col-12 d-none d-md-block')
 
         div(id='feed-wrapper' class='col-2 d-none d-md-block px-0')
+          - if (status)
+            div(class='row')
+              div(class='feed col-12')
+                h5 Website Status
+                h6 #{status}
           div(class='row')
             div(class='feed col-12')
-              h6 Latest (<a href='#' class='text-danger' onclick='showLatest();'>Live Image</a>)
+              h5 Latest (<a href='javascript:void(0);' class='text-danger' onclick='showLatest();'>Live Image</a>)
               each _, k in latest
                 - let chars = latest[k];
 
@@ -76,15 +85,15 @@ html
 
                 - k = k.toUpperCase();
                 ul(class='feed-list')
-                  | <a href='#' class='text-light' data-toggle='collapse' data-target='##{k.toLowerCase()}' title='Filter to #{k}'>#{k}</a>
+                  | <a href='javascript:void(0);' class='text-light' data-toggle='collapse' data-target='##{k.toLowerCase()}' title='Filter to #{k}'>#{k}</a>
                   each c in chars
                     li(name=c.name, character-id=c.id, class='name')
                       != `<a href="/info/${c.id}">${c.name}</a>`
           div(class='row')        
             div(class='feed col-12')
-              h6 Hot 10
+              h5 Top 10
               ul(class='feed-list')
                 each c in hot
                   li(name=c.name, character-id=c.id, class='name')
-                    != `<a href="/info/${c.id}">${c.name}</a><br>&nbsp;<sub class='text-light'>${c.peeks.toLocaleString()} views</sub>`
+                    != `<a href="/info/${c.id}">${c.name}</a><br>&nbsp;<sub class='text-light'>${c.peeks.toLocaleString('en')} views</sub>`
 

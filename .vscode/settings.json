@@ -1,0 +1,5 @@
+{
+  "npm.autoDetect": "on",
+  "tslint.configFile": ".\\.tslint.js",
+  "tslint.jsEnable": true
+}

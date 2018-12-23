@@ -1,29 +1,35 @@
 import { Request, Response } from 'express';
-import Route from '../struct/Route';
 import fetch from 'node-fetch';
+import Route from '../struct/Route';
 
-export = RedirectRoute;
-class RedirectRoute extends Route {
-  constructor() {
+export default class RedirectRoute extends Route {
+  constructor () {
     super({
       id: 'redirect',
       method: 'post',
-      route: ['/redirect']
+      route: [ '/redirect' ],
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     const data = req.body;
+    data.token = this.server.auth.api.token;
 
     try {
       const form = await fetch(this.server.auth.rootURL + 'api/update', {
-        method: 'POST',
         body: JSON.stringify(data),
-        compress: true
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
       });
-      const { id, name, avatar } = await form.json();
+
+      const { id, name, avatar, error } = await form.json();
+
+      if (error) throw error;
 
       res.render('redirect', { id, name, avatar });
-    } catch (err) { this.server.util.handleSiteError(res, err); }
+    } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

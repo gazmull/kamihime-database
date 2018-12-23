@@ -4,24 +4,25 @@ html
 
   head
     script.
-      const script = !{JSON.stringify(script)};
+      let script = !{JSON.stringify(script)};
       const files = !{JSON.stringify(files)};
-      const res = "#{res}";
-    script(src = '/lib/jquery.min.js')
-    script(src = '/player/script/legacy.js')
-    link(rel = 'stylesheet' href = '/player/style.css')
-    title Kamihime Player
-
+      const SCENARIOS = "#{SCENARIOS}";
+    script(src='/lib/jquery.min.js')
+    script(src='/lib/sweetalert2.min.js')
+    link(rel='stylesheet', href='/lib/sweetalert2.css')
+    link(rel='stylesheet', href='/constants/style.css')
+    link(rel='stylesheet', href='/player/style.css')
+    script(src='/constants/script.js')
+    script(src='/player/script/legacy.js')
+    title Kamihime Database - Player
   body
-    ul
+    ul(class='top-nav')
       include ../constants/navigation.pug
-      li(style="float: right; user-select: none;")
+      include ../constants/member2.pug
+      li(style='float: right; user-select: none;')
         a Legacy Mode
-    center
-      include ../constants/buttons.pug
-
-      #panel()
-        button(class = 'invi' nav = 'left' style = 'margin-left: -450px; width: 450px;')
-        |
-        button(class = 'invi' nav = 'right' style = 'width: 450px;')
-        #image()
+    div(id='panel', style='max-width: 900px; max-height: 640px;')
+      button(class='invi leftNav', nav='left')
+      |
+      button(class='invi rightNav', nav='right')
+      div(id='image')

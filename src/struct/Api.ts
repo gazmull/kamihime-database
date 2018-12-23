@@ -1,8 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { handleApiError } from '../util/handleError';
+import Client from './Client';
 import Server from './Server';
 
 export default class Api {
-  constructor(options?: Options) {
+  constructor (options?: IApiOptions) {
     this.cooldown = options.cooldown || 1;
 
     this.max = options.max || 3;
@@ -10,14 +12,20 @@ export default class Api {
     this.method = options.method;
 
     this.server = null;
+
+    this.client = null;
+
+    this.util = { handleApiError };
   }
 
-  cooldown: number;
-  max: number;
-  method: string;
-  server: Server;
+  public cooldown: number;
+  public max: number;
+  public method: string;
+  public server: Server;
+  public client: Client;
+  public util: IUtil;
 
-  exec(req: Request, res: Response, next?: NextFunction): void {
+  public exec (req: Request, res: Response, next?: NextFunction): void {
     throw new Error('You cannot invoke this base class method.');
   }
 
@@ -28,10 +36,10 @@ export default class Api {
    * @param data The data to check
    * @param except Data entries to exempt from requirement
    */
-  async _hasData (data, ...except: string[]): Promise<boolean> {
+  public async _hasData (data, ...except: string[]): Promise<boolean> {
     const isExempted = entry => except.includes(entry) ? true : data[entry];
     const hasAll: boolean = isExempted('token') && isExempted('user') &&
-      isExempted('id') && isExempted('name');
+      isExempted('id');
 
     if (!hasAll)
       throw { code: 403, message: 'Incomplete data.' };
@@ -49,15 +57,9 @@ export default class Api {
    * @param obj Object to filter
    * @param fn Function to use as filter
    */
-  _filter(obj: object, fn: (el: any) => any): object {
+  public _filter (obj: object, fn: (el: any) => any): object {
     return Object.keys(obj)
       .filter(el => fn(obj[el]))
       .reduce((prev, cur) => Object.assign(prev, { [cur]: obj[cur] }), {});
   }
-}
-
-interface Options {
-  cooldown?: number;
-  max?: number;
-  method: string;
 }

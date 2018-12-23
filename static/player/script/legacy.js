@@ -1,32 +1,74 @@
-/* eslint-disable no-undef, no-use-before-define, no-invalid-this */
-
 $(() => {
-  const images = files.filter(i => i.endsWith('.jpg'));
-  const scr = script.filter(i => !i.sequence.includes('pink'));
+  const images = files.filter(i => i.endsWith('.jpg') && i !== 'pink_s.jpg');
+  const scr = script.filter(i => i.sequence !== 'pink_s.jpg');
 
   const maxScriptLength = scr.length - 1;
-  let animation = 'play 1s steps(1) infinite';
+  let animation = 'none';
   let lastImage;
   let sequenceIDX = 0;
 
   const newSeq = () => scr[sequenceIDX];
 
-  for (const image of images)
-    $('<div/>', {
-      id: image,
-      class: 'animate'
-    })
-      .css({
-        'background-image': `url("${res}/${image}")`,
-        position: 'absolute',
-        visibility: 'hidden',
-        top: '-130px',
-        width: '640px',
-        height: '900px'
-      })
-      .appendTo('#image');
+  function loadImage (src, name) {
+    const deferred = $.Deferred();
+    const image = new Image();
+    image.onload = () => deferred.resolve({ src, name });
+    image.onerror = () => deferred.reject(new Error('URL does not return OK status: ' + src));
+    image.src = src;
 
-  render();
+    return deferred.promise();
+  }
+
+  const _images = [];
+
+  sweet({
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    animation: false,
+    customClass: 'animated zoomIn',
+    showConfirmButton: false,
+    titleText: 'Resolving images...',
+  });
+
+  Array.prototype.push.apply(_images, images.map(image => loadImage(SCENARIOS + image, image)));
+
+  $.when.apply(null, _images)
+    .done((...imgs) => {
+      for (const img of imgs)
+        $('<div/>', {
+          class: 'animate',
+          id: img.name,
+        })
+          .css({
+            'background-image': `url("${img.src}")`,
+            display: 'none',
+            height: '900px',
+            position: 'relative',
+            right: '-130px',
+            top: '-130px',
+            width: '640px',
+            'z-index': -1,
+          })
+          .appendTo('#image');
+
+      setTimeout(() => {
+        $('.swal2-popup').addClass('animated zoomOut');
+        $('.swal2-container').addClass('animated fadeOut');
+      }, 1000);
+      setTimeout(() => {
+        sweet.close();
+        $('#panel').addClass('animated faster fadeIn');
+        render();
+      }, 1350);
+    })
+    .fail(err => {
+      console.log(err); // tslint:disable-line:no-console
+      sweet({
+        html: 'An error occurred while loading the images. <sub>(See console)</sub>',
+        titleText: 'Failed to resolve images',
+        type: 'error',
+      });
+    });
 
   $('button').click(({ currentTarget: $this }) => {
     const code = $($this).attr('nav');
@@ -60,21 +102,21 @@ $(() => {
     render();
   });
 
-  function navLeft() {
+  function navLeft () {
     if (sequenceIDX === 0) return;
 
     sequenceIDX--;
     animation = `play ${newSeq().seconds}s steps(${newSeq().steps}) infinite`;
   }
 
-  function navRight() {
+  function navRight () {
     if (sequenceIDX === maxScriptLength) return window.history.back();
 
     sequenceIDX++;
     animation = `play ${newSeq().seconds}s steps(${newSeq().steps}) infinite`;
   }
 
-  function render() {
+  function render () {
     const img = newSeq().sequence;
 
     $('#panel')
@@ -82,14 +124,12 @@ $(() => {
 
     const currentIMG = `#image > div[id='${img}']`;
     const hidden = {
-      position: 'absolute',
-      visibility: 'hidden',
-      'background-position-y': '0px',
-      animation: 'play 1s steps(1) infinite',
-      '-webkit-animation': 'play 1s steps(1) infinite',
-      '-moz-animation': 'play 1s steps(1) infinite',
-      '-o-animation': 'play 1s steps(1) infinite',
-      '-ms-animation': 'play 1s steps(1) infinite'
+      '-moz-animation': 'none',
+      '-ms-animation': 'none',
+      '-o-animation': 'none',
+      '-webkit-animation': 'none',
+      animation: 'none',
+      display: 'none',
     };
 
     if (lastImage && lastImage !== img)
@@ -98,13 +138,12 @@ $(() => {
 
     $(currentIMG)
       .css({
-        position: 'relative',
-        visibility: 'visible',
-        animation: animation, // eslint-disable-line object-shorthand
-        '-webkit-animation': animation,
         '-moz-animation': animation,
+        '-ms-animation': animation,
         '-o-animation': animation,
-        '-ms-animation': animation
+        '-webkit-animation': animation,
+        animation: animation, // tslint:disable-line:object-literal-shorthand
+        display: 'block',
       });
 
     lastImage = img;

@@ -1,17 +1,18 @@
 import { each } from 'bluebird';
-import { promisify } from 'util';
-import { QueryBuilder } from 'knex';
-import { WebhookClient, Message } from 'discord.js';
-import * as logger from '../util/console';
-import * as Wikia from 'nodemw';
-import Server from './Server';
-import fetch from 'node-fetch';
+import { Client as DiscordClient, WSEventType } from 'discord.js';
 import { createWriteStream } from 'fs-extra';
+import { QueryBuilder } from 'knex';
+import fetch from 'node-fetch';
+import * as Wikia from 'nodemw';
 import { resolve } from 'path';
+import { promisify } from 'util';
+// @ts-ignore
+import { discordClient as discordAuth } from '../auth/auth';
+import Server from './Server';
 
 let getImageInfo: (...args: any[]) => any = null;
 let getArticle: (...args: any[]) => string = null;
-let khTimeout = null;
+let khTimeout: NodeJS.Timeout = null;
 
 // Max calls and cooldown for scraping for each class (startKamihimeDatabase())
 const COOLDOWN = 1000 * 60 * 60;
@@ -24,34 +25,37 @@ const clean = url => url.split('/').slice(0, 8).join('/');
 const escape = (name: string) => name.replace(/'/g, '\'\'');
 
 export default class Client {
-  constructor(server: Server) {
+  constructor (server: Server) {
     this.server = server;
 
     this.wikiaClient = null;
 
+    this.discordClient = null;
+
+    this.auth = { discord: discordAuth };
+
     this.util = {
-      logger: {
-        status: (message: string) => logger.status(`Client: ${message}`),
-        error: (message: string) => logger.error(`Client: ${message}`),
-        warn: (message: string) => logger.warn(`Client: ${message}`)
-      },
-      webHookSend: (message: string) => new WebhookClient(this.server.auth.hook.id, this.server.auth.hook.token).send(message)
+      ...this.server.util,
+      // @ts-ignore
+      discordSend: (channel, message) => this.discordClient.channels.get(channel).send(message),
     };
 
-    this.fields = ['id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'main', 'preview'];
+    this.fields = [ 'id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'main', 'preview' ];
   }
 
-  server: Server;
-  wikiaClient: Wikia;
-  util: Util;
-  fields: string[];
+  public server: Server;
+  public wikiaClient: Wikia;
+  public discordClient: DiscordClient;
+  public auth: IClientAuth;
+  public util: IUtil;
+  public fields: string[];
 
-  init(): this {
+  public init (): this {
     this.wikiaClient = new Wikia({
+      debug: false,
+      path: '',
       protocol: 'https',
       server: 'kamihime-project.wikia.com',
-      path: '',
-      debug: false
     });
 
     getImageInfo = promisify(this.wikiaClient.getImageInfo.bind(this.wikiaClient));
@@ -62,13 +66,61 @@ export default class Client {
     return this;
   }
 
+  public startDiscordClient (): this {
+    if (!(discordAuth.channel || discordAuth.token)) return;
+
+    const events: WSEventType[] = [
+      'GUILD_UPDATE',
+      'GUILD_INTEGRATIONS_UPDATE',
+      'CHANNEL_CREATE',
+      'CHANNEL_UPDATE',
+      'MESSAGE_UPDATE',
+      'USER_UPDATE',
+      'PRESENCE_UPDATE',
+      'VOICE_STATE_UPDATE',
+      'TYPING_START',
+      'WEBHOOKS_UPDATE',
+    ];
+
+    this.discordClient = new DiscordClient({
+      disabledEvents: events,
+      presence: {
+        activity: {
+          name: 'Announcements',
+          type: 'WATCHING',
+        },
+        status: 'dnd',
+      },
+    });
+
+    this.discordClient
+      .on('ready', () => this.util.logger.status('Discord Bot: logged in.'))
+      .on('message', async message => {
+        if (message.channel.id !== discordAuth.channel) return;
+        if (!this.server.auth.exempt.includes(message.author.id)) return;
+
+        try {
+          await this.util.db('status').del();
+          await this.util.db('status').insert({
+            id: message.id,
+            message: message.content,
+          });
+        } catch (e) { this.util.logger.error(e); }
+
+        this.util.logger.status('Discord Bot: New announcement has been saved.');
+      })
+      .login(discordAuth.token);
+
+    return this;
+  }
+
   /**
    * Calls add and update functions every time specified from COOLDOWN.
    * @param forced Whether the call is forced or not [can be forced thru server API (api/refresh)]
    */
-  startKamihimeDatabase(forced: boolean = false): this {
-    each(['x', 'w'], this._add.bind(this))
-      .then(() => each(['s', 'e', 'k', 'w'], this._update.bind(this)))
+  public startKamihimeDatabase (forced: boolean = false): this {
+    each([ 'x', 'w' ], this._add.bind(this))
+      .then(() => each([ 's', 'e', 'k', 'w' ], this._update.bind(this)))
       .then(() => this.util.logger.status('Refreshed Kamihime Database.'))
       .catch(this.util.logger.error);
 
@@ -86,12 +138,12 @@ export default class Client {
    * Adds items into the kamihime database.
    * @param idPrefix The prefix of item type to refresh.
    */
-  protected async _add(idPrefix: string): Promise<any> {
+  protected async _add (idPrefix: string): Promise<any> {
     this.util.logger.status('Kamihime Database: Started add...');
 
     try {
       const whereState = idPrefix === 'x' ? 'id LIKE \'x%\' or id LIKE \'e%\'' : `id LIKE '${idPrefix}%'`;
-      const rows: any[] = await this.server.util.db('kamihime').select(this.fields)
+      const rows: IKamihime[] = await this.util.db('kamihime').select(this.fields)
         .whereRaw(whereState)
         .orderByRaw('CAST(substr(id, 2) AS DECIMAL) DESC');
       const existing = rows.map(el => el.name);
@@ -202,17 +254,17 @@ export default class Client {
         }
         else main = null;
 
-        await this.server.util.db('kamihime')
+        await this.util.db('kamihime')
         .insert({
+          avatar,
+          main,
+          preview,
+          element: el.element,
           id: newId,
           name: clean(el.name),
+          peeks: 0,
           rarity: el.rarity,
-          element: el.element,
           type: el.type,
-          avatar,
-          preview,
-          main,
-          peeks: 0
         });
 
         itemsAdded.push(el.name);
@@ -223,12 +275,12 @@ export default class Client {
 
       const length = itemsAdded.length;
 
-      await this.util.webHookSend([
+      await this.util.discordSend(this.auth.discord.channel, [
         `**Kamihime Database**: **${id}**: __Added ${length}__`,
         `\`\`\`diff`,
         itemsAdded.slice(0, 30).map(slicedEntries).join('\n'),
         length > 30 ? `- And ${length - 30} more... (See console logs)` : '',
-        '```'
+        '```',
       ].join('\n'));
 
       return this.util.logger.status(`Kamihime Database: ${id}: Added ${length}: ${itemsAdded.join(', ')}`);
@@ -239,11 +291,11 @@ export default class Client {
    * Updates items from the kamihime database.
    * @param idPrefix The prefix of item type to refresh.
    */
-  protected async _update(idPrefix: string): Promise<any> {
+  protected async _update (idPrefix: string): Promise<any> {
     this.util.logger.status('Kamihime Database: Started update...');
 
     try {
-      let query: QueryBuilder = this.server.util.db('kamihime').select(this.fields)
+      let query: QueryBuilder = this.util.db('kamihime').select(this.fields)
         .whereRaw(`id LIKE '${idPrefix}%'`);
       query = idPrefix === 'e' ? query.orWhereRaw('id LIKE \'x%\'') : query;
 
@@ -258,8 +310,8 @@ export default class Client {
         case 'k':
           id = {
             e: 'Eidolon',
+            k: 'Kamihime',
             s: 'Soul',
-            k: 'Kamihime'
           }[idPrefix];
           fileNameSuffix = '.png';
           break;
@@ -381,9 +433,11 @@ export default class Client {
 
         const nRarityRegex = / \(N\)/;
         const testedRarity = nRarityRegex.test(el.name);
-        const shouldIncludeLowerRarity = testedRarity ? `name = '${escape(el.name)}' OR name = '${escape(el.name).replace(nRarityRegex, '')}'` : `name = '${escape(el.name)}'`;
+        const shouldIncludeLowerRarity = testedRarity
+          ? `name = '${escape(el.name)}' OR name = '${escape(el.name).replace(nRarityRegex, '')}'`
+          : `name = '${escape(el.name)}'`;
 
-        await this.server.util.db('kamihime')
+        await this.util.db('kamihime')
           .update(updateFields)
           .whereRaw(shouldIncludeLowerRarity);
 
@@ -397,12 +451,12 @@ export default class Client {
 
       if (!length) return this.util.logger.status(`Kamihime Database: ${id}: Nothing to update!`);
 
-      await this.util.webHookSend([
+      await this.util.discordSend(this.auth.discord.channel, [
         `**Kamihime Database**: **${id}**: __Updated ${length}__`,
         `\`\`\`diff`,
         itemsUpdated.slice(0, 30).map(slicedEntries).join('\n'),
         length > 30 ? `- And ${length - 30} more... (See console logs)` : '',
-        '```'
+        '```',
       ].join('\n'));
 
       return this.util.logger.status(`Kamihime Database: ${id}: Updated ${length}: ${itemsUpdated.join(', ')}`);
@@ -415,10 +469,10 @@ export default class Client {
    * Parses article database to internal useable (e.g. array of items)
    * @param item The item article to parse
    */
-  protected async _parseDatabase(item: string): Promise<any> {
+  protected async _parseDatabase (item: string): Promise<any> {
     const data = await getArticle(`Module:${item} Database`);
 
-    if (!data) throw `API returned no item name ${item} found.`;
+    if (!data) throw new Error(`API returned no item name ${item} found.`);
 
     return JSON.parse(data
       .replace(/.+\s.+?= {/, '[')
@@ -426,13 +480,4 @@ export default class Client {
       .replace(/({|,\s?)([\w]+?)(=["\d])/g, '$1"$2"$3')
       .replace(/=/g, ':'));
   }
-}
-
-interface Util {
-  logger: {
-    status: (message: string) => void;
-    error: (message: string) => void;
-    warn: (message: string) => void;
-  };
-  webHookSend: (message: string) => Promise<Message | Message[]>;
 }

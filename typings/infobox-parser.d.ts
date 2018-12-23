@@ -2,7 +2,7 @@
 
 export = infobox_parser;
 
-declare function infobox_parser(e: any, t?: any): any;
+declare function infobox_parser(infobox: string, options?: any): any;
 
 declare namespace infobox_parser {
     const prototype: {

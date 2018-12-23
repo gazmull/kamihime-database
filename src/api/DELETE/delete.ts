@@ -1,36 +1,37 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-export = DeleteRequest;
-class DeleteRequest extends Api {
-  constructor() {
+export default class DeleteRequest extends Api {
+  constructor () {
     super({
-      method: 'DELETE',
       cooldown: 5,
-      max: 1
+      max: 1,
+      method: 'DELETE',
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     const data = req.body;
 
     try {
       await this._hasData(data);
-      const { user, id, name } = data;
-      const character = await this.server.util.db('kamihime').select('id').where('id', id);
+      const { user, id } = data;
+      const [ character ]: IKamihime[] = await this.util.db('kamihime').select('id').where('id', id);
 
       if (!character) throw { code: 404, message: 'Character not found.' };
 
-      await this.server.util.db('kamihime').where('id', id).delete();
+      const name = character.name;
 
-      if (this.server.auth.hook)
-        await this.server.util.webHookSend(`${user} deleted ${name} (${id}).`);
+      await this.util.db('kamihime').where('id', id).delete();
 
-      this.server.util.logger.status(`[D] API: Character: ${name} (${id}) | By: ${user}`);
+      if (this.client.auth.discord.dbReportChannel)
+        await this.util.discordSend(this.client.auth.discord.dbReportChannel, `${user} deleted ${name} (${id}).`);
+
+      this.util.logger.status(`[D] API: Character: ${name} (${id}) | By: ${user}`);
 
       res
         .status(200)
         .json({ id, name });
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

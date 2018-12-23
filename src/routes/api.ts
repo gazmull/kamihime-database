@@ -1,19 +1,18 @@
 import { Collection } from 'discord.js';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import Api from '../struct/Api';
 import Route from '../struct/Route';
 
-export = ApiRoute;
-class ApiRoute extends Route {
-  constructor() {
+export default class ApiRoute extends Route {
+  constructor () {
     super({
       id: 'api',
       method: 'all',
-      route: ['/api/:request', '/api/:request/*?']
+      route: [ '/api/:request', '/api/:request/*?' ],
     });
   }
 
-  exec(req: Request, res: Response, next: NextFunction): void {
+  public exec (req: Request, res: Response, next: NextFunction): void {
     try {
       if (!this._validateRequest(req))
         throw { code: 404, message: 'Request class not found.' };
@@ -21,7 +20,11 @@ class ApiRoute extends Route {
       const request: string  = req.params.request;
       const requestClass: Api = this.server.api.get(this._getMethod(req)).get(request);
 
-      if (req.ip.includes(this.server.auth.hostAddress)) return requestClass.exec(req, res, next);
+      if (
+        req.ip.includes(this.server.auth.host.address) ||
+        (req.cookies.userId && this.server.auth.exempt.includes(req.cookies.userId))
+      )
+        return requestClass.exec(req, res, next);
 
       const requests = this.server.rateLimits.get(this._getMethod(req)).get(request);
       const user = requests.find(r => r.address === req.ip);
@@ -44,58 +47,58 @@ class ApiRoute extends Route {
         const remaining = (user.timestamp + cooldown) - Date.now();
 
         throw {
+          remaining,
           code: 429,
           message: [
             `Maximum requests for this request has been reached (${maxRequests}/${cooldown / 1000}s).`,
-            `Please wait for ${remaining / 1000} seconds.`
-          ].join(' '),
-          remaining
+            `Please wait for ${remaining / 1000} seconds.`,
+          ],
         };
       }
       this._update(req, requests);
 
       requestClass.exec(req, res, next);
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 
-  protected _getMethod(req: Request): string {
+  protected _getMethod (req: Request): string {
     const request: string = req.params.request;
     const methods = this.server.api.keys();
 
     for (const method of methods) {
-      const key = this.server.api.get(method).findKey((_, key) => key === request);
+      const key = this.server.api.get(method).findKey((_, _key) => _key === request);
 
       if (key) return method;
     }
   }
 
-  protected _initialise(req: Request, requests: Collection<string, any>): void {
+  protected _initialise (req: Request, requests: Collection<string, any>): void {
     const request: string = req.params.request;
     requests.set(req.ip, { address: req.ip, triggers: 1, timestamp: Date.now() });
 
     const user = requests.get(req.ip);
-    this.server.util.logger.status(
-      `[I/RI] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`
+    this.util.logger.status(
+      `[I/RI] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
   }
 
-  protected _update(req: Request, requests: Collection<string, any>): void {
+  protected _update (req: Request, requests: Collection<string, any>): void {
     let user = requests.get(req.ip);
     const request: string = req.params.request;
     requests.set(req.ip, { address: req.ip, triggers: user.triggers + 1, timestamp: user.timestamp });
 
     user = requests.get(req.ip);
-    this.server.util.logger.status(
-      `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`
+    this.util.logger.status(
+      `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
   }
 
-  protected _validateRequest(req: Request): boolean {
+  protected _validateRequest (req: Request): boolean {
     const request: string = req.params.request;
     const methods = this.server.api.keys();
 
     for (const method of methods) {
-      const key = this.server.api.get(method).findKey((_, key) => key === request);
+      const key = this.server.api.get(method).findKey((_, _key) => _key === request);
 
       if (key) return true;
     }

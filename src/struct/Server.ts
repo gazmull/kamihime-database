@@ -1,43 +1,38 @@
-import { Api as ApiAuth, WebHook } from 'auth';
-import { Collection, WebhookClient, Message } from 'discord.js';
-// @ts-ignore
-import { database, hostAddress, rootURL, api, hook } from '../auth/auth';
-import { Express, Request, Response, NextFunction } from 'express';
-import { handleApiError, handleSiteError, ErrorHandlerObject } from '../util/handleError';
-import { resolve } from 'path';
+import { Collection } from 'discord.js';
+import { Express, NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
 import * as knex from 'knex';
+import fetch from 'node-fetch';
+import { resolve } from 'path';
+// @ts-ignore
+import { api, database, discord, exempt, host, rootURL } from '../auth/auth';
 import * as logger from '../util/console';
 import Api from './Api';
 import Client from './Client';
-import fetch from 'node-fetch';
 import Route from './Route';
 
 const GENERAL_COOLDOWN: number = 1000 * 60 * 3;
 
 export default class Server {
-  constructor() {
+  constructor () {
     this.client = null;
 
     this.auth = {
-      database,
-      hostAddress,
-      rootURL,
       api,
-      hook
+      database,
+      discord,
+      exempt,
+      host,
+      rootURL,
     };
 
     this.util = {
-      collection: (...args) => new Collection(args),
       db: knex(database),
-      handleApiError,
-      handleSiteError,
       logger: {
-        status: (message: string) => logger.status(`Server: ${message}`),
-        error: (message: string) => logger.error(`Server: ${message}`),
-        warn: (message: string) => logger.warn(`Server: ${message}`)
+        error: message => logger.error(message),
+        status: (message: string) => logger.status(message),
+        warn: (message: string) => logger.warn(message),
       },
-      webHookSend: (message: string) => new WebhookClient(hook.id, hook.token).send(message)
     };
 
     this.api = new Collection();
@@ -49,15 +44,15 @@ export default class Server {
     this.kamihimeCache = [];
   }
 
-  client: Client;
-  auth: Auth;
-  util: Util;
-  api: Collection<string, Collection<string, Api>>;
-  rateLimits: Collection<string, Collection<string, Collection<string, any>>>;
-  recentVisitors: Collection<string, Collection<string, number>>;
-  kamihimeCache: any[];
+  public client: Client;
+  public auth: IAuth;
+  public util: IUtil;
+  public api: Collection<string, Collection<string, Api>>;
+  public rateLimits: Collection<string, Collection<string, Collection<string, any>>>;
+  public recentVisitors: Collection<string, Collection<string, number>>;
+  public kamihimeCache: any[];
 
-  init(server: Express, client: Client): this {
+  public init (server: Express, client: Client): this {
     this.client = client;
 
     // Api
@@ -74,8 +69,10 @@ export default class Server {
       requests = requests.map(el => el.slice(0, el.indexOf('.js')));
 
       for (const request of requests) {
-        const file: Api = new (require(resolve(API_METHOD_REQUESTS_DIR, request)))();
+        const file: Api = new (require(resolve(API_METHOD_REQUESTS_DIR, request)).default)();
         file.server = this;
+        file.client = client;
+        Object.assign(file.util, {  ...this.client.util });
 
         this.api.get(method).set(request, file);
         this.rateLimits.get(method).set(request, new Collection());
@@ -85,11 +82,19 @@ export default class Server {
     }
 
     // Routes
+
+    server.get('*', (req, res, next) => {
+      if (!req.cookies.verified && !(req.xhr || req.headers.accept && req.headers.accept.includes('application/json')))
+        return res.render('invalids/disclaimer');
+
+      next();
+    });
+
     const ROUTES_DIR: string = resolve(__dirname, '../routes');
     const routeDir: string[] = fs.readdirSync(ROUTES_DIR);
 
     for (const route of routeDir) {
-      const file: Route = new (require(`${ROUTES_DIR}/${route}`))(this);
+      const file: Route = new (require(`${ROUTES_DIR}/${route}`).default)(this);
 
       if (!file.method) {
         this.util.logger.error(`Missing Method: Route ${route} was not included`);
@@ -99,15 +104,16 @@ export default class Server {
 
       file.server = this;
       file.client = client;
+      Object.assign(file.util, {  ...this.client.util });
 
       server[file.method](file.route, (req: Request, res: Response, next: NextFunction) => file.exec(req, res, next));
     }
 
     server
       .all('*', (_, res) => res.render('invalids/403'))
-      .listen(80);
+      .listen(host.port);
 
-    this.util.logger.status(`Listening to ${hostAddress}:80`);
+    this.util.logger.status(`Listening to ${host.address}:${host.port}`);
 
     return this;
   }
@@ -116,8 +122,14 @@ export default class Server {
    * Calls cleaner functions every time specified from GENERAL_COOLDOWN
    * @param forced Whether the call is forced or not [can be forced thru server API (api/refresh)]
    */
-  startCleaners(forced: boolean = false): this {
-    Promise.all([this._cleanRateLimits(), this._cleanSessions(), this._cleanVisitors()])
+  public startCleaners (forced: boolean = false): this {
+    Promise.all([
+      this._cleanRateLimits(),
+      this._cleanReports(),
+      this._cleanSessions(),
+      this._cleanUsers(),
+      this._cleanVisitors(),
+    ])
       .then(() => this.util.logger.status('Cleanup Rotation Occurred.'))
       .catch(this.util.logger.error);
 
@@ -127,8 +139,8 @@ export default class Server {
     return this;
   }
 
-  startKamihimeCache(): this {
-    fetch(`${this.auth.rootURL}api/list`)
+  public startKamihimeCache (): this {
+    fetch(`${this.auth.rootURL}api/list`, { headers: { Accept: 'application/json' } })
       .then(res => res.json())
       .then(cache => {
         this.kamihimeCache = cache;
@@ -141,7 +153,7 @@ export default class Server {
     return this;
   }
 
-  protected async _cleanRateLimits(): Promise<boolean> {
+  protected async _cleanRateLimits (): Promise<boolean> {
     const methods = this.api;
 
     for (const method of methods.keys()) {
@@ -159,9 +171,9 @@ export default class Server {
         if (!users.size) continue;
 
         for (const user of users.keys()) {
-          const users = this.rateLimits.get(method).get(request);
+          const _users = this.rateLimits.get(method).get(request);
 
-          users.delete(user);
+          _users.delete(user);
         }
 
         this.util.logger.status(`API users cleanup finished (Req: ${method}->${request}). Cleaned: ${users.size}`);
@@ -171,10 +183,29 @@ export default class Server {
     return true;
   }
 
-  protected async _cleanSessions(): Promise<boolean> {
+  protected async _cleanReports (): Promise<boolean> {
     try {
-      const EXPIRED: string = 'sAge <= DATE_SUB(NOW(), INTERVAL \'30:00\' MINUTE_SECOND)';
-      const sessions: any[] = await this.util.db.select('sID').from('sessions').whereRaw(EXPIRED);
+      const expired = 'DATE_ADD(date, INTERVAL IF(userId LIKE \'%:%\', 24, 3) HOUR) < NOW()';
+      const reports: IReport[] = await this.util.db('reports').select('userId')
+        .whereRaw(expired);
+
+      if (reports.length) {
+        await this.util.db('reports').whereRaw(expired).delete();
+
+        this.util.logger.status('Existing Reports cleanup finished.');
+
+        return true;
+      }
+    } catch (err) {
+      this.util.logger.error(err);
+    }
+  }
+
+  protected async _cleanSessions (): Promise<boolean> {
+    try {
+      const EXPIRED: string = 'created <= DATE_SUB(NOW(), INTERVAL 30 MINUTE)';
+      const sessions: ISession[] = await this.util.db('sessions').select('id')
+        .whereRaw(EXPIRED);
 
       if (sessions.length) {
         await this.util.db('sessions').whereRaw(EXPIRED).delete();
@@ -188,7 +219,25 @@ export default class Server {
     }
   }
 
-  protected async _cleanVisitors(): Promise<boolean> {
+  protected async _cleanUsers (): Promise<boolean> {
+    try {
+      const EXPIRED: string = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 14 DAY)';
+      const users: IUser[] = await this.util.db('users').select('userId')
+        .whereRaw(EXPIRED);
+
+      if (users.length) {
+        await this.util.db('users').whereRaw(EXPIRED).delete();
+
+        this.util.logger.status('Existing Inactive Users cleanup finished.');
+
+        return true;
+      }
+    } catch (err) {
+      this.util.logger.error(err);
+    }
+  }
+
+  protected async _cleanVisitors (): Promise<boolean> {
     const resources = this.recentVisitors;
     let cleaned: number = 0;
 
@@ -204,6 +253,9 @@ export default class Server {
         log.delete(visitor);
 
       cleaned += visitors.size;
+
+      if (!log.size)
+        resources.delete(resource);
     }
 
     if (cleaned)
@@ -211,27 +263,4 @@ export default class Server {
 
     return true;
   }
-}
-
-interface Auth {
-  database: knex.Config;
-  hostAddress: string;
-  rootURL: string;
-  api: ApiAuth;
-  hook: WebHook;
-}
-
-interface Logger {
-  status: (message: string) => void;
-  error: (message: string) => void;
-  warn: (message: string) => void;
-}
-
-interface Util {
-  collection: () => Collection<any, any>;
-  db: knex;
-  handleApiError: (res: Response, err: ErrorHandlerObject) => void;
-  handleSiteError: (res: Response, err: ErrorHandlerObject) => void;
-  logger: Logger;
-  webHookSend: (message: string) => Promise<Message | Message[]>;
 }

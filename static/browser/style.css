@@ -1,38 +1,42 @@
+/* Member Area */
+
+.member {
+  z-index: 1040;
+  /* border-bottom: 15px solid #ff00ae; */
+  box-shadow: 0px 1px 5px #ff00ae;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+#logbadge {
+  position: absolute;
+  left: 2px;
+}
+
+#username {
+  position: absolute;
+  left: 30px;
+}
+
+.logbutton {
+  position: absolute;
+  right: 5px;
+}
+
+/* Navigation */
+
 #search-bar {
   position: relative;
   top: 5px;
   width: 100%;
 }
 
-/* Tooltip (navigation text) */
-
-#pop {
-  background-color: #222;
-  border: 1px solid #ff00ae;
-  color: #ff00ae;
-  visibility: hidden;
-  font-size: 14px;
-  font-weight: bold;
-  min-height: 50px;
-  min-width: 200px;
-  z-index: 1090;
-}
-
-#pop:after {
-  border-color: #ff00ae transparent transparent transparent;
-  border-style: solid;
-  border-width: 10px;
-  content: "";
-  left: 1%;
-  position: absolute;
-  top: 100%;
-}
-
 /* Latest/Hot */
 
 #feed-wrapper {
+  max-height: 100vh;
   position: fixed;
-  top: 0;
+  top: 0.5vh;
   right: 0;
 }
 
@@ -41,10 +45,10 @@
   border-bottom: 2px solid transparent;
   border-left: 2px solid #ff00ae31;
   border-top: 2px solid transparent;
-  border-top-left-radius: 1%;
-  border-bottom-left-radius: 1%;
+  border-top-left-radius: 5%;
+  border-bottom-left-radius: 5%;
   overflow-y: auto;
-  max-height: 50vh;
+  max-height: 33vh;
   margin: 0.5vh 0;
 }
 
@@ -63,6 +67,7 @@
   font-size: 14px;
   transition: all 0.1s ease;
 }
+
 .feed-list a.text-light:hover {
   animation: wee 2s linear infinite alternate;
   font-size: 16px;
@@ -79,10 +84,12 @@
 .content { background-color: transparent; }
 
 .kh-list-wrapper { z-index: 1; }
+
 .kh-list {
   list-style-position: outside;
   list-style-type: none;
 }
+
 .kh-list li {
   float: left;
   clear: left;

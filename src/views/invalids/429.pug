@@ -1,0 +1,15 @@
+include ../constants/invalids.pug
+title Kamihime Database - Error
+
+body
+  ul(class='top-nav')
+    include ../constants/navigation.pug
+    li(style="float: right; user-select: none;")
+      a Error: 429
+  center
+    br
+    img(src='/img/LME.png', alt='Let Me Explain...')
+    - if (message)
+      h1 #{message}
+    - else
+      h1 Your connection has been throttled to avoid heavy traffic.

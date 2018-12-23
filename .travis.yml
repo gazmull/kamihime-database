@@ -18,8 +18,8 @@ sudo: false
 install: npm install
 jobs:
   include:
-    - stage: test
-      script: npm test
+    - stage: build
+      script: npm run build
 cache:
   directories:
     - node_modules

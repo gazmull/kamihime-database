@@ -1,19 +1,17 @@
 # NPM
-package-lock.json
 node_modules/
+package-lock.json
 
 # Yarn
 yarn-error.log
 
-# VSC
-.vscode/
-
 # Private Credentials
-src/auth/auth.ts
-test.js
 build/
 provider/
+scenarios-error.log
+src/auth/auth.ts
 static/img/wiki
 static/scenarios/
 static/scripts/
+test.js
 test/

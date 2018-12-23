@@ -1,48 +1,48 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-export = PutFlagRequest;
-class PutFlagRequest extends Api {
-  constructor() {
+export default class PutFlagRequest extends Api {
+  constructor () {
     super({
-      method: 'PUT',
       cooldown: 5,
-      max: 1
+      max: 1,
+      method: 'PUT',
     });
   }
 
-  async exec(req: Request, res: Response): Promise<void> {
+  public async exec (req: Request, res: Response): Promise<void> {
     const data = req.body;
 
     try {
       await this._hasData(data);
-      const { user, id, name } = data;
-      const fields: string[] = ['id', 'loli'];
-      const [ character ] = await this.server.util.db('kamihime').select(fields)
+      const { user, id } = data;
+      const fields: string[] = [ 'id', 'loli' ];
+      const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
         .where('id', id)
         .limit(1);
 
       if (!character) throw { code: 404, message: 'Character not found.' };
 
+      const name = character.name;
       const loliToggle: number = character.loli ? 0 : 1;
 
-      await this.server.util.db('kamihime')
+      await this.util.db('kamihime')
         .update('loli', loliToggle)
         .where('id', id);
 
-      if (this.server.auth.hook)
-        await this.server.util.webHookSend([
+      if (this.client.auth.discord.dbReportChannel)
+        await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
           user,
           loliToggle ? 'flagged' : 'unflagged',
           name,
-          `(${id}).`
+          `(${id}).`,
         ].join(' '));
 
-      this.server.util.logger.status(`[F] API: Character: ${name} (${id}) | By: ${user}`);
+      this.util.logger.status(`[F] API: Character: ${name} (${id}) | By: ${user}`);
 
       res
         .status(200)
         .json({ name, id, loli: loliToggle });
-    } catch (err) { this.server.util.handleApiError(res, err); }
+    } catch (err) { this.util.handleApiError(res, err); }
   }
 }

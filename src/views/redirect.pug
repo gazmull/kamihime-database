@@ -1,0 +1,25 @@
+doctype html
+html
+  head
+    title Kamihime Database
+    script.
+        setTimeout(() => this.location.replace('/'), 10000);
+    link(rel='stylesheet', href='/lib/constants/style.css')
+  body
+      h1 Kamihime Database Dashboard
+      h2 <sup>Successfully saved your inputs into the database. ♥</sup>
+      br
+
+      center
+        div(class="container")
+          img(src='/img/wiki/' + avatar)
+          span(value=name) 
+            b #{name}
+          br
+          span(value=id)
+            span(style="font-size:13px") ##{id.toUpperCase()}
+
+        h2 <sub>Your session for this character has been destroyed. <br/> You will be redirected shortly to index page...</sub>
+        p
+          form(action="http://google.com")
+            input(type="submit" value="OR HOW ABOUT SOMEWHERE...?")
