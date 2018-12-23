@@ -17,7 +17,9 @@ export default class BrowserRoute extends Route {
     try {
       let hot: IKamihime[] = this.server.kamihimeCache.slice();
       hot = hot.sort((a, b) => b.peeks - a.peeks).slice(0, 10);
-      const characters = this.server.kamihimeCache.map(el => ({ id: el.id, name: el.name, rarity: el.rarity }));
+      const characters = this.server.kamihimeCache
+        .filter((el: IKamihime) => el.approved)
+        .map((el: IKamihime) => ({ id: el.id, name: el.name, rarity: el.rarity }));
 
       const data = await fetch(endPoint + 'latest', { headers: { Accept: 'application/json' } });
       const latest = await data.json();
