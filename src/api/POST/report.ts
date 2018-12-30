@@ -1,6 +1,41 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
+/**
+ * @api {post} /report report
+ * @apiVersion 2.1.0
+ * @apiName PostReport
+ * @apiGroup Site Specific
+ * @apiDescription Creates a user report entry regarding a character to the database.
+ *
+ * **Warning**: Requires cookies to be passed at headers.
+ *
+ * @apiParam (Request Body) {string} characterId The character's ID.
+ * @apiParam (Request Body) {object} message The user's message.
+ * @apiParam (Request Body) {string} message.subject The message's subject.
+ * Valid options can be seen at `Message Subject Options`'s Fields.
+ * @apiParam (Request Body) {string} message.content The message's content.
+ * @apiParam (Request Body) {number} type The type of the report.
+ * <br>0 for `Wiki Info` report<br>1 for `Episodes` report
+ *
+ * @apiParam (Message Subject Options - Wiki Info) image `Image issues`
+ * @apiParam (Message Subject Options - Wiki Info) internal `Info cannot be resolved`
+ * @apiParam (Message Subject Options - Wiki Info) notes `Needs additional notes`
+ * @apiParam (Message Subject Options - Wiki Info) others `Others`
+ * @apiParam (Message Subject Options - Wiki Info) stats `Wrong stats`
+ *
+ * @apiParam (Message Subject Options - Episodes) internal `Cannot view story/scenario`
+ * @apiParam (Message Subject Options - Episodes) others `Others`
+ * @apiParam (Message Subject Options - Episodes) resource `Wrong episode story/scenario`
+ * @apiParam (Message Subject Options - Episodes) title `Wrong episode title`
+ *
+ * @apiSuccess {string} ok JSON body of <Response.status>.ok.
+ * @apiSuccessExample {json} Response:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "ok": ""
+ *  }
+ */
 export default class PostReportRequest extends Api {
   constructor () {
     super({

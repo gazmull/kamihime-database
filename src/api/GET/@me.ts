@@ -2,7 +2,40 @@ import { Request, Response } from 'express';
 import fetch from 'node-fetch';
 import Api from '../../struct/Api';
 
-export default class AtMeRoute extends Api {
+/**
+ * @api {get} /@me @me
+ * @apiVersion 2.1.0
+ * @apiName GetAtMe
+ * @apiGroup Site Specific
+ * @apiDescription Retrieves site user's information.
+ *
+ * **Warning**: Requires cookies to be passed at headers.
+ *
+ * @apiParam (Query) {boolean} [save=true] Saves user info from cookies to database.
+ *
+ * @apiSuccess {string} settings The user's settings.
+ * @apiSuccess {string} username The user's name.
+ * @apiSuccessExample {json} Response:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "settings": {
+ *      "audio": {
+ *        "bgm": 0.1,
+ *        "glo": 1.0,
+ *        "snd": 0.5,
+ *      },
+ *      "info-lastNav": "#info",
+ *      "lastNav": "#all",
+ *      "menu": "true",
+ *      "visual": {
+ *        "bg": "rgb(255, 183, 183)",
+ *        "cl": "rgb(190, 50, 74)",
+ *      }
+ *    },
+ *    "username": "Euni"
+ *  }
+ */
+export default class GetAtMeRequest extends Api {
   constructor () {
     super({
       cooldown: 3,
@@ -64,7 +97,7 @@ export default class AtMeRoute extends Api {
       } else username = user.username;
 
       const settings = JSON.stringify({
-        audio: req.cookies.audio
+        audio: req.cookies.audio && Object.keys(JSON.parse(req.cookies.audio)).length
           ? JSON.parse(req.cookies.audio)
           : {
           bgm: 0.1,
@@ -74,11 +107,14 @@ export default class AtMeRoute extends Api {
         'info-lastNav': req.cookies['info-lastNav'] || '#info',
         lastNav: req.cookies.lastNav || '#all',
         menu: req.cookies.menu || true,
-        visual: req.cookies.visual
+        visual: req.cookies.visual && Object.keys(JSON.parse(req.cookies.visual)).length
           ? JSON.parse(req.cookies.visual)
           : {
-          bg: 'rgb(255, 183, 183)',
-          cl: 'rgb(190, 50, 74)',
+          bg: '#997777',
+          cl: '#ffffff',
+          cls: '#dd55ff',
+          containDialog: true,
+          fontSize: 18,
         },
       });
 

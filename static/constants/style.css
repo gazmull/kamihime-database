@@ -44,6 +44,16 @@ body {
 
 h1, h2, h3, h4, h5, h6 { font-family: 'Raleway', sans-serif; }
 
+input[type=color] {
+  background-color: #56003b;
+  border-radius: 3%;
+  border: none;
+  cursor: pointer;
+  height: 35px;
+  margin: 4px 2px;
+  width: 45%;
+}
+
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   background: #d62ea1;
@@ -56,7 +66,6 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 input[type=range]::-moz-range-thumb {
-  border-radius: 3px;
   border-radius: 50%;
   box-shadow: 1px 1px 1px #7c2962, 0px 0px 1px #7c2962;
   cursor: pointer;
@@ -66,7 +75,6 @@ input[type=range]::-moz-range-thumb {
 
 input[type=range]::-ms-thumb {
   background: #ffffff;
-  border-radius: 3px;
   border-radius: 50%;
   box-shadow: 1px 1px 1px #7c2962, 0px 0px 1px #7c2962;
   cursor: pointer;

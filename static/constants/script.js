@@ -1,8 +1,16 @@
 $(() => {
   saveSettings(true);
 
-  if (typeof $().modal !== 'undefined')
-    $('[data-toggle="tooltip"]').tooltip();
+  if (typeof $().modal !== 'undefined') {
+    const tooltips = $('[data-toggle="tooltip"]');
+
+    tooltips.tooltip({
+      container: 'body',
+      trigger : 'hover',
+    });
+
+    tooltips.on('click', ({ currentTarget: $this }) => $($this).tooltip('hide'));
+  }
 
   if (typeof swal !== 'undefined')
     sweet = swal.mixin({
@@ -30,10 +38,14 @@ $(() => {
 
 })
   .on('keyup', e => {
+    if (
+      $('#search-bar').length && $('#search-bar').is(':focus') ||
+      $('.swal2-container').length
+      ) return;
+
     const code = e.keyCode || e.which || e.charCode;
 
     if (code === 27) return $('.nav-switch').triggerHandler('click');
-    if ($('#search-bar').length && $('#search-bar').is(':focus')) return;
 
     const toggle = id => {
       const el = $(`.collapse[key='${id}']`);

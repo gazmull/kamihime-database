@@ -1,3 +1,4 @@
+import anchorme from 'anchorme';
 import { Request, Response } from 'express';
 import fetch from 'node-fetch';
 import Route from '../struct/Route';
@@ -58,7 +59,11 @@ export default class BrowserRoute extends Route {
         .limit(1);
 
       if (status)
-        Object.assign(requested, { status: status.message });
+        Object.assign(
+          requested, {
+            status: anchorme(status.message, { attributes: [ { name: 'target', value: '_blank' } ] }),
+          },
+        );
 
       res.render('browser', requested);
     } catch (err) { this.util.handleSiteError(res, err); }

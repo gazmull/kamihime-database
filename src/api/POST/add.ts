@@ -1,6 +1,38 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
+/**
+ * @api {post} /add add
+ * @apiVersion 2.1.0
+ * @apiName PostAdd
+ * @apiGroup Kamihime Specific
+ * @apiDescription Adds an item to the database.
+ * @apiPermission Owner Only
+ *
+ * @apiParam (Request Body) {string} id The item's ID.
+ * @apiParam (Request Body) {string} name The item's name.
+ * @apiParam (Request Body) {string} user The user's ID.
+ * @apiParam (Request Body) {string} token The user's authentication token.
+ * @apiParam (Request Body) {string} [harem1Title=null] The Episode 1 Title.
+ * @apiParam (Request Body) {string} [harem1Resource1=null] The Episode 1 Story Resource ID.
+ * @apiParam (Request Body) {string} [harem2Title=null] The Episode 2 Title.
+ * @apiParam (Request Body) {string} [harem2Resource1=null] The Episode 2 Story Resource ID.
+ * @apiParam (Request Body) {string} [harem2Resource2=null] The Episode 2 Scenario Resource ID.
+ * @apiParam (Request Body) {string} [harem3Title=null] The Episode 3 Title.
+ * @apiParam (Request Body) {string} [harem3Resource1=null] The Episode 3 Story Resource ID.
+ * @apiParam (Request Body) {string} [harem3Resource2=null] The Episode 3 Scenario Resource ID.
+ * @apiParam (Request Body) {number} [loli=0] `1 / 0 only`: Whether the character is a loli or not.
+ * @apiParam (Request Body) {string} [rarity=null] The item's rarity if it ever has one.
+ *
+ * @apiSuccess {string} id The item's ID.
+ * @apiSuccess {string} name The item's name.
+ * @apiSuccessExample {json} Response:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "id": "k0001",
+ *    "name": "Satan"
+ *  }
+ */
 export default class PostAddRequest extends Api {
   constructor () {
     super({
@@ -33,6 +65,7 @@ export default class PostAddRequest extends Api {
         id,
         loli = 0,
         name,
+        rarity,
         user,
       } = data;
       data = this._filter({
@@ -46,6 +79,7 @@ export default class PostAddRequest extends Api {
         harem3Title,
         id,
         name,
+        rarity,
       }, el => el);
 
       if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
@@ -68,7 +102,7 @@ export default class PostAddRequest extends Api {
 
       res
         .status(201)
-        .json({ name, id });
+        .json({ id, name });
     } catch (err) { this.util.handleApiError(res, err); }
   }
 }

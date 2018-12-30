@@ -87,10 +87,10 @@ html, body { height: 100% }
   width: 100%;
   position: absolute;
   display: inline-block;
-  background-image: linear-gradient(to bottom, #977 1%, transparent 110%);
+  background-image: linear-gradient(to bottom, #997777 1%, transparent 110%);
   bottom: 0;
   left: 0;
-  color: #fff;
+  color: #ffffff;
   text-align: left;
   text-shadow: #dd55ff 2px 1px;
   word-wrap: break-word;

@@ -4,6 +4,33 @@ import Api from '../../struct/Api';
 
 shortid.seed(11);
 
+/**
+ * @api {post} /session session
+ * @apiVersion 2.1.0
+ * @apiName PostSession
+ * @apiGroup Kamihime Specific
+ * @apiDescription Creates a session for updating an item from the database.
+ * @apiPermission Owner Only
+ *
+ * @apiParam (Request Body) {string} id The item's ID.
+ * @apiParam (Request Body) {string} user The user's ID.
+ * @apiParam (Request Body) {string} token The user's authentication token.
+ *
+ * @apiSuccess {string} id The sessions's ID.
+ * @apiSuccess {string} password The session's password.
+ * @apiSuccess {string} created The session's creation date.
+ * @apiSuccess {string} characterId The item's ID.
+ * @apiSuccess {string} userId The user's ID.
+ * @apiSuccessExample {json} Response:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "id": "sdww2fh",
+ *    "password": "h2no387sw",
+ *    "created": "2018-12-29 04:21:04",
+ *    "characterId": "k0001",
+ *    "userId": "319102712383799296"
+ *  }
+ */
 export default class PostSessionRequest extends Api {
   constructor () {
     super({
@@ -18,7 +45,7 @@ export default class PostSessionRequest extends Api {
 
     try {
       await this._hasData(data);
-      const { user, id, name } = data;
+      const { user, id } = data;
       const characterFields: string[] = [ 'id', 'name' ];
       const [ character ]: IKamihime[] = await this.util.db('kamihime').select(characterFields)
         .where('id', id)
@@ -72,7 +99,7 @@ export default class PostSessionRequest extends Api {
         `${user}'s session for ${character.name} (${character.id}) has been created.`,
       );
 
-      this.util.logger.status(`[A] API: Character-Session: ${name} (${id}) | By: ${user}`);
+      this.util.logger.status(`[A] API: Character-Session: ${character.name} (${id}) | By: ${user}`);
 
       res
         .status(200)

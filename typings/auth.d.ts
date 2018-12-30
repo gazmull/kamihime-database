@@ -9,7 +9,7 @@ export interface Api {
 
 /**
  * @property address The machine's external IP Address
- * @property port The port where the serve should listen
+ * @property port The port where the server should listen
  */
 export interface Host {
   address: string;

@@ -6,12 +6,12 @@ import Downloader from './Downloader';
 const formatErr = (message: string) => `${new Date().toLocaleString()}: ${message}`;
 
 export default class Extractor {
-  constructor (options: IOptions) {
+  constructor (options: IExtractorOptions) {
     this.base = options.base;
 
     this.codes = options.codes;
 
-    this.links = {};
+    this.files = {};
 
     this.blacklist = [];
 
@@ -26,9 +26,9 @@ export default class Extractor {
     this.verbose = process.argv.includes('--verbose');
   }
 
-  public base: IOptions['base'];
-  public codes: IOptions['codes'];
-  public links: ILinks;
+  public base: IExtractorOptions['base'];
+  public codes: IExtractorOptions['codes'];
+  public files: IExtractorFiles;
   public blacklist: string[];
   public resourcesExtracted: number;
   public resourcesFound: number;
@@ -41,15 +41,15 @@ export default class Extractor {
       const { id, ..._resources } = character;
       const resources = this._filter(_resources, el => el);
 
-      if (!this.links[id])
-        this.links[id] = {};
+      if (!this.files[id])
+        this.files[id] = {};
 
       this.resourcesFound += Object.keys(resources).length;
       this.resourcesExtracted += await this._extract(id, resources);
     }
 
-    if (await Downloader.exists(process.cwd() + 'blacklist.array'))
-      this.blacklist = (await fs.readFile(`${process.cwd()}/blacklist.array`, 'utf8')).split('\n');
+    if (await Downloader.exists(process.cwd() + '/.blacklist'))
+      this.blacklist = (await fs.readFile(`${process.cwd()}/.blacklist`, 'utf8')).split('\n');
 
     await this._download();
 
@@ -60,7 +60,7 @@ export default class Extractor {
       );
 
     if (this.blacklist.length)
-      await fs.outputFile(process.cwd() + '/blacklist.array', this.blacklist.join('\n'));
+      await fs.outputFile(process.cwd() + '/.blacklist', this.blacklist.join('\n'));
 
     status([
       `Extracted ${this.resourcesExtracted} resources. (Expected: ${this.resourcesFound})`,
@@ -79,33 +79,31 @@ export default class Extractor {
   // -- Utils
 
   private async _download (): Promise<boolean> {
-    for (const chara in this.links) {
-      if (!this.links[chara]) continue;
+    for (const chara in this.files) {
+      if (!this.files[chara]) continue;
 
-      const resourceDirectories = this.links[chara];
+      const resourceDirectories = this.files[chara];
 
       if (this.verbose) warn(`Extracting resource assets for ${chara}...`);
 
       for (const resourceDirectory in resourceDirectories) {
         if (!resourceDirectories[resourceDirectory]) continue;
 
-        const links = resourceDirectories[resourceDirectory];
-        const files: string[] = [];
-        this.filesFound += links.length;
+        const files = resourceDirectories[resourceDirectory];
+        const _files: string[] = [];
+        this.filesFound += files.length;
 
         if (this.verbose) warn(`Extracting ${resourceDirectory} assets...`);
 
-        for (const link of links) {
-          if (!link) continue;
-          else if (this.blacklist.includes(link)) continue;
+        for (const file of files) {
+          if (!file) continue;
+          else if (this.blacklist.includes(file)) continue;
 
-          const name = link.split('/').pop();
-
-          files.push(name);
+          _files.push(file);
         }
 
         try {
-          await fs.outputFile(this.base.DESTINATION + `/${chara}/${resourceDirectory}/files.rsc`, files.join(','));
+          await fs.outputFile(this.base.DESTINATION + `/${chara}/${resourceDirectory}/files.rsc`, _files.join(','));
         } catch (err) {
           this.errors.push(formatErr(`[${chara}] [${resourceDirectory}]\n ${err.stack}`));
 
@@ -198,14 +196,14 @@ export default class Extractor {
 
   private async _doStory (
     { id, resource, script, type }:
-    { id: string, resource: string, script: string, type: IOptions['codes']['type'] },
+    { id: string, resource: string, script: string, type: IExtractorOptions['codes']['type'] },
   ): Promise<boolean> {
     const chara = {};
     let lines = [];
     let name;
 
-    if (!this.links[id][resource])
-      this.links[id][resource] = [];
+    if (!this.files[id][resource])
+      this.files[id][resource] = [];
 
     const entries = script
       .replace(/\]\[/, ']\n[')
@@ -233,13 +231,13 @@ export default class Extractor {
 
         switch (attribute.command) {
           case 'chara_new': {
-            this.links[id][resource].push(this.base.URL.FG_IMAGE + attribute.storage);
+            this.files[id][resource].push(attribute.storage);
             Object.assign(chara, { [attribute.name]: { name: attribute.jname } });
             break;
           }
 
           case 'chara_face': {
-            this.links[id][resource].push(this.base.URL.FG_IMAGE + attribute.storage);
+            this.files[id][resource].push(attribute.storage);
 
             if (!chara[attribute.name].face)
               Object.assign(chara[attribute.name], { face: {} });
@@ -249,7 +247,7 @@ export default class Extractor {
           }
 
           case 'playbgm': {
-            this.links[id][resource].push(this.base.URL.BGM + attribute.storage);
+            this.files[id][resource].push(attribute.storage);
             lines.push({ bgm: attribute.storage });
             break;
           }
@@ -259,7 +257,7 @@ export default class Extractor {
 
             if (irrBG) continue;
 
-            this.links[id][resource].push(this.base.URL.BG_IMAGE + attribute.storage);
+            this.files[id][resource].push(attribute.storage);
             lines.push({ bg: attribute.storage });
             break;
           }
@@ -279,11 +277,7 @@ export default class Extractor {
 
             if (!isGetIntro) continue;
 
-            this.links[id][resource].push(
-              attribute.storage.startsWith('h_get')
-                ? `${this.base.URL.SCENARIOS}${type.get}${resource}/sound/${attribute.storage}`
-                : `${this.base.URL.SCENARIOS}${type.intro}${resource}/sound/${attribute.storage}`,
-            );
+            this.files[id][resource].push(attribute.storage);
             lines.push({ voice: attribute.storage });
             break;
           }
@@ -354,28 +348,24 @@ export default class Extractor {
 
   private async _doScenario (
     { id, resource, script, type }:
-    { id: string, resource: string, script: IScenarioSequence[], type: IOptions['codes']['type'] },
+    { id: string, resource: string, script: IScenarioSequence[], type: IExtractorOptions['codes']['type'] },
   ): Promise<boolean> {
     const lines = [];
 
-    if (!this.links[id][resource])
-      this.links[id][resource] = [];
+    if (!this.files[id][resource])
+      this.files[id][resource] = [];
 
     for (const entry of script) {
       const entryData = {};
 
       if (entry.bgm) {
-        this.links[id][resource].push(
-          `${this.base.URL.SCENARIOS}${type.scene}${resource}/${entry.bgm}`,
-        );
+        this.files[id][resource].push(entry.bgm);
 
         Object.assign(entryData, { bgm: entry.bgm });
       }
 
       if (entry.film) {
-        this.links[id][resource].push(
-          `${this.base.URL.SCENARIOS}${type.scene}${resource}/${entry.film}`,
-        );
+        this.files[id][resource].push(entry.film);
 
         const fps = Number(entry.fps);
 
@@ -392,9 +382,7 @@ export default class Extractor {
         const talkEntry = {};
 
         if (line.hasOwnProperty('voice')) {
-          this.links[id][resource].push(
-            `${this.base.URL.SCENARIOS}${type.scene}${resource}/${line.voice}`,
-          );
+          this.files[id][resource].push(line.voice);
 
           if (line.voice.length)
             Object.assign(talkEntry, { voice: line.voice });
@@ -441,42 +429,4 @@ export default class Extractor {
       .filter(el => fn(obj[el]))
       .reduce((prev, cur) => Object.assign(prev, { [cur]: obj[cur] }), {});
   }
-}
-
-interface IOptions {
-  base: {
-    URL: {
-      BG_IMAGE: string;
-      BGM: string;
-      FG_IMAGE: string;
-      SCENARIOS: string;
-    };
-    DESTINATION: string;
-    CHARACTERS: any[];
-  };
-  codes: {
-    [type: string]: {
-      get: string;
-      intro: string;
-      scene: string;
-    },
-  };
-}
-
-interface ILinks {
-  [key: string]: {
-    [key: string]: string[],
-  };
-}
-
-interface IScenarioSequence {
-  fps?: number;
-  auto?: boolean;
-  film: string;
-  bgm: string;
-  talk: Array<{
-    chara: string;
-    words: string;
-    voice: string;
-  }>;
 }

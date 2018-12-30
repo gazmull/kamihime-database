@@ -1,7 +1,28 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
-export default class DeleteRequest extends Api {
+/**
+ * @api {delete} /delete delete
+ * @apiVersion 2.1.0
+ * @apiName DeleteDelete
+ * @apiGroup Kamihime Specific
+ * @apiDescription Deletes an item from the database.
+ * @apiPermission Owner Only
+ *
+ * @apiParam (Request Body) {string} id The item's ID.
+ * @apiParam (Request Body) {string} user The user's ID.
+ * @apiParam (Request Body) {string} token The user's authentication token.
+ *
+ * @apiSuccess {string} id The item's ID.
+ * @apiSuccess {string} name The item's name.
+ * @apiSuccessExample {json} Response:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "id": "k0001",
+ *    "name": "Satan"
+ *  }
+ */
+export default class DeleteDeleteRequest extends Api {
   constructor () {
     super({
       cooldown: 5,

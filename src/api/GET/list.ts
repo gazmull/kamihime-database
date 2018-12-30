@@ -64,6 +64,58 @@ const queries = {
 
 /* tslint:enable:object-literal-sort-keys */
 
+/**
+ * @api {get} /list/:options list
+ * @apiVersion 2.1.0
+ * @apiName GetList
+ * @apiGroup Kamihime Specific
+ * @apiDescription Retrieves a list of items.
+ * `:options` available:
+ * ### Primary Options
+ *  > A must before any other options.
+ *  - `soul` / `eidolon` / `kamihime` / `weapon`
+ *  - `approved` / `loli` / `no-loli`
+ * ### Secondary Options
+ *  - **Soul Only**: `legendary` / `elite` / `standard`
+ *  - **Kamihime Only**: `healer` / `offense` / `tricky` / `balance` / `defense`
+ *  - **Weapon Only**: `hammer` / `lance` / `glaive` / `arcane` / `staff` / `axe` / `gun` / `bow` / `sword`
+ *  - **Eidolon / Kamihime / Weapon Only**:
+ *    - `light` / `dark` / `wind` / `thunder` / `water` / `fire` / `phantom`
+ *    - `ssr+` / `ssr` / `sr` / `r` / `n`
+ *
+ * @apiExample {html} Example: this will return items that are approved, eidolon, not a loli, and of water element.
+ * http://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water
+ * @apiParam {string} [options] An array of options with `/` delimiter. See description.
+ *
+ * @apiSuccess {/id[]} items An array of items from `GET /id` object.
+ * @apiSuccessExample {json} Response:
+ *  HTTP/1.1 200 OK
+ *  [
+ *    {
+ *    "_rowId": 204,
+ *    "id": "e6021",
+ *    "name": "Jack Frost",
+ *    "approved": 1,
+ *    "avatar": "portrait/Jack Frost Portrait.png",
+ *    "main": "main/Jack Frost.png",
+ *    "preview": "close/Jack Frost Close.png",
+ *    "loli": 1,
+ *    "peeks": "1715",
+ *    "harem1Title": "Clinking Head and Hands",
+ *    "harem1Resource1": "1e3a94a3d3d8348f86482b055d2dd8db4a70cac361bc9f51",
+ *    "harem2Title": "Chilled Hands and Feet, Burning Desire",
+ *    "harem2Resource1": "1e3a94a3d3d8348f35658ab6e49a6d134a70cac361bc9f51",
+ *    "harem2Resource2": "1e3a94a3d3d8348f79b2217040cc025206f12ba16f14d7ad",
+ *    "harem3Title": null,
+ *    "harem3Resource1": null,
+ *    "harem3Resource2": null,
+ *    "element": "Water",
+ *    "type": null,
+ *    "rarity": "SSR",
+ *    "tier": null
+ *    }, ...items
+ *  ]
+ */
 export default class GetListRequest extends Api {
   constructor () {
     super({

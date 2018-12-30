@@ -49,6 +49,41 @@ declare global {
     stack?: string;
   }
 
+  interface IExtractorOptions {
+    base: {
+      URL: {
+        SCENARIOS: string;
+      };
+      DESTINATION: string;
+      CHARACTERS: any[];
+    };
+    codes: {
+      [type: string]: {
+        get: string;
+        intro: string;
+        scene: string;
+      },
+    };
+  }
+  
+  interface IExtractorFiles {
+    [key: string]: {
+      [key: string]: string[],
+    };
+  }
+  
+  interface IScenarioSequence {
+    fps?: number;
+    auto?: boolean;
+    film: string;
+    bgm: string;
+    talk: Array<{
+      chara: string;
+      words: string;
+      voice: string;
+    }>;
+  }
+
   interface IUser {
     userId: string;
     username?: string;

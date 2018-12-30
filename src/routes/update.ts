@@ -40,6 +40,7 @@ export default class DashboardRoute extends Route {
         harem3Title: character.harem3Title,
         id: character.id,
         name: character.name,
+        rarity: character.rarity,
       };
 
       if (character.tier)

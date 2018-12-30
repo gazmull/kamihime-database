@@ -26,5 +26,10 @@ body
       br
       a(href='https://google.com') Let me the fuck out
       |  | 
-      a(href='/', onclick='document.cookie = "verified=true;path=/"') Alright, I'm in
+      a(href='javascript:void(0);', onclick='verified();') Alright, I'm in
   div(id='thumbnail', style='background-image: url("/img/wiki/close/(Eclipse%20Princess)%20Amaterasu%20Close.png"); opacity: 0.2; right: 0;')
+  script.
+    function verified() {
+      document.cookie = "verified=true;path=/;max-age=604800";
+      location.reload(true);
+    }

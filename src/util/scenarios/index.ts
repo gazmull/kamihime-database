@@ -13,7 +13,7 @@ export default async function start () {
   try {
     warn('kh-snek started...');
 
-    const CHARACTERS: any[] = await Knex(database)('kamihime').select([
+    let query = Knex(database)('kamihime').select([
       'id',
       'harem1Resource1',
       'harem2Resource1', 'harem2Resource2',
@@ -21,35 +21,59 @@ export default async function start () {
     ])
     .where('approved', 1);
 
-    await new Extractor({
-      base: {
-        CHARACTERS,
-        DESTINATION: resolve(__dirname, '../../../static/scenarios'),
-        URL: {
-          BG_IMAGE: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/bgimage/',
-          BGM: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/bgm/',
-          FG_IMAGE: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/fgimage/',
-          SCENARIOS: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/',
+    const latest = process.argv.find(el => el.includes('-l') || el.includes('--latest='));
+    const id = process.argv.find(el => el.includes('-i') || el.includes('--id='));
+
+    if (latest && id)
+      throw new Error('Latest and ID cannot be invoked at the same time.');
+
+    if (latest) {
+      const num = parseInt(latest.split('').pop());
+
+      if (isNaN(num) || num <= 0)
+        throw new TypeError('Latest value should be a valid unsigned integer and more than 0.');
+
+      query = query
+        .orderBy('_rowId', 'DESC')
+        .limit(num);
+    } else if (id) {
+      const val = /--id=/.test(id) ? id.split('=').pop() : id.slice(2);
+
+      if (!val)
+        throw new Error('ID value should be not empty.');
+
+      query = query.andWhere('id', val);
+    }
+
+    const CHARACTERS: IKamihime[] = await query;
+
+    if (!CHARACTERS.length)
+      status('Nothing to be processed.');
+    else
+      await new Extractor({
+        base: {
+          CHARACTERS,
+          DESTINATION: resolve(__dirname, '../../../static/scenarios'),
+          URL: { SCENARIOS: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/' },
         },
-      },
-      codes: {
-        e: { // -- Eidolon
-          get: '9f/51/',
-          intro: '9f/51/',
-          scene: 'd7/ad/',
+        codes: {
+          e: { // -- Eidolon
+            get: '9f/51/',
+            intro: '9f/51/',
+            scene: 'd7/ad/',
+          },
+          k: { // -- Kamihime
+            get: '76/89/',
+            intro: '94/76/',
+            scene: 'de/59/',
+          },
+          s: { // -- Soul
+            get: '3b/26/',
+            intro: '67/01/',
+            scene: 'ec/4d/',
+          },
         },
-        k: { // -- Kamihime
-          get: '76/89/',
-          intro: '94/76/',
-          scene: 'de/59/',
-        },
-        s: { // -- Soul
-          get: '3b/26/',
-          intro: '67/01/',
-          scene: 'ec/4d/',
-        },
-      },
-    }).exec();
+      }).exec();
   } catch (err) {
     error(err.stack);
 

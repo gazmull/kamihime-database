@@ -1,6 +1,29 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
+/**
+ * @api {put} /flag flag
+ * @apiVersion 2.1.0
+ * @apiName PutFlag
+ * @apiGroup Kamihime Specific
+ * @apiDescription Flags/Unflags a character as loli from the database.
+ * @apiPermission Owner Only
+ *
+ * @apiParam (Request Body) {string} id The item's ID.
+ * @apiParam (Request Body) {string} user The user's ID.
+ * @apiParam (Request Body) {string} token The user's authentication token.
+ *
+ * @apiSuccess {string} id The item's ID.
+ * @apiSuccess {string} name The item's name.
+ * @apiSuccess {number} flagged The current status of the character for flag.
+ * @apiSuccessExample {json} Response:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "id": "k0001",
+ *    "name": "Satan",
+ *    "loli": 0
+ *  }
+ */
 export default class PutFlagRequest extends Api {
   constructor () {
     super({

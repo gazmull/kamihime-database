@@ -16,6 +16,9 @@ $(() => {
   const audioSettings = Cookies.getJSON('audio');
   const visualSettings = Cookies.getJSON('visual');
 
+  for (const vSetting of [ 'bg', 'cl', 'cls', 'containDialog', 'fontSize' ])
+    updateDialog(vSetting, visualSettings[vSetting], true);
+
   Howler.volume(audioSettings.glo !== undefined ? audioSettings.glo : 1.0);
 
   function loadAsset (src, name, type) {
@@ -123,8 +126,6 @@ $(() => {
         break;
       default: return;
     }
-
-    render();
   });
 
   $(this).keyup(e => {
@@ -139,8 +140,6 @@ $(() => {
         break;
       default: return;
     }
-
-    render();
   });
 
   function navLeft () {
@@ -151,6 +150,8 @@ $(() => {
       talkIDX = maxSequenceTalk();
     } else
       $('#text').attr('data', --talkIDX);
+
+    render();
   }
 
   function navRight () {
@@ -162,6 +163,8 @@ $(() => {
       talkIDX = 0;
     } else
       $('#text').attr('data', ++talkIDX);
+
+    render();
   }
 
   function render () {

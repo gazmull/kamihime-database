@@ -1,6 +1,29 @@
 import { Request, Response } from 'express';
 import Api from '../../struct/Api';
 
+/**
+ * @api {put} /approve approve
+ * @apiVersion 2.1.0
+ * @apiName PutApprove
+ * @apiGroup Kamihime Specific
+ * @apiDescription Approves/Disapproves a character from the database.
+ * @apiPermission Owner Only
+ *
+ * @apiParam (Request Body) {string} id The item's ID.
+ * @apiParam (Request Body) {string} user The user's ID.
+ * @apiParam (Request Body) {string} token The user's authentication token.
+ *
+ * @apiSuccess {string} id The item's ID.
+ * @apiSuccess {string} name The item's name.
+ * @apiSuccess {number} approved The current status of the character for approval.
+ * @apiSuccessExample {json} Response:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "id": "k0001",
+ *    "name": "Satan",
+ *    "approved": 1
+ *  }
+ */
 export default class PutApproveRequest extends Api {
   constructor () {
     super({

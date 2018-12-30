@@ -12,6 +12,12 @@ $(() => {
 
     $('.container-fluid').prepend(alertMsg);
     $('[data-toggle="tooltip"]').tooltip('show');
+
+    $('.alert').on('closed.bs.alert', () =>
+      $('[data-toggle="tooltip"]')
+        .tooltip('hide')
+        .tooltip('show'),
+    );
   }
 
   if (Cookies.get('menu') === 'false') {
@@ -66,6 +72,8 @@ $(() => {
 
   $('.name')
     .on('mouseenter', ({ currentTarget: $this }) => {
+        if (!$($this).attr('name')) return;
+
         const name = $($this).attr('name').replace(/'/g, '\\$&');
 
         $('#thumbnail')
@@ -85,9 +93,11 @@ function showHelp () {
       '<li>1 - 7: Select category (e.g. 1 is for \'All\')</li>',
       '</ol><br><br>',
       'Additional Help:',
-      '<ol>',
-      '<li>Feeds ("Latest" and "Hot 10" Sidebars on the right) are also accessible for navigation.</li>',
-      '<li>You can click the white bar beside navigation bar to hide/show it.</li>',
+      '<ol style="text-align: justify;">',
+      '<li>Feeds ("Latest" and "Top 10" Sidebars on the right) are also accessible for navigation.</li>',
+      '<li>You can click the white bar beside navigation sidebar to hide/show it.</li>',
+      '<li><u>IMPORTANT!</u> Hiding the navigation sidebar will also hide it to other pages.<br>',
+      'Each page that has it has unique options. Watch out for that!</li>',
       '</ol>',
     ].join(''),
     titleText: 'Keyboard Shortcuts',
