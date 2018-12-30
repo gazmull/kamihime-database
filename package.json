@@ -1,11 +1,12 @@
 {
   "name": "kamihime-database",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Website + API for Kamihime Database (Eros)",
   "main": "./build/index.js",
   "typings": "./src/typings",
   "scripts": {
     "build": "npm run test && npm run finalize",
+    "docs:build": "apidoc -f .ts -i src/api/ -o ../kamihime-database-docs",
     "test": "npm run lint && npm run compile",
     "compile": "tsc -p .",
     "lint": "npm run lint-src && npm run lint-static",
@@ -35,6 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/uws": "10.149.0",
+    "anchorme": "^1.1.2",
     "body-parser": "^1.18.3",
     "canvas": "^2.2.0",
     "compression": "^1.7.3",
@@ -69,6 +71,7 @@
     "@types/pug": "^2.0.4",
     "@types/serve-favicon": "^2.2.30",
     "@types/shortid": "^0.0.29",
+    "apidoc": "^0.17.7",
     "tslint": "^5.11.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.1.6",
