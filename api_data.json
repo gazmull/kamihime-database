@@ -161,7 +161,14 @@
     "version": "2.0.0",
     "name": "GetList",
     "group": "Kamihime_Specific",
-    "description": "<p>Retrieves a list of items. <code>:options</code> available:</p> <h3>Primary Options</h3> <blockquote> <p>A must before any other options.</p> </blockquote> <ul> <li><code>soul</code> / <code>eidolon</code> / <code>kamihime</code> / <code>weapon</code></li> <li><code>approved</code> / <code>loli</code> / <code>no-loli</code></li> </ul> <h3>Secondary Options</h3> <ul> <li><strong>Soul Only</strong>: <code>legendary</code> / <code>elite</code> / <code>standard</code></li> <li><strong>Kamihime Only</strong>: <code>healer</code> / <code>offense</code> / <code>tricky</code> / <code>balance</code> / <code>defense</code></li> <li><strong>Weapon Only</strong>: <code>hammer</code> / <code>lance</code> / <code>glaive</code> / <code>arcane</code> / <code>staff</code> / <code>axe</code> / <code>gun</code> / <code>bow</code> / <code>sword</code></li> <li><strong>Eidolon / Kamihime / Weapon Only</strong>: <ul> <li><code>light</code> / <code>dark</code> / <code>wind</code> / <code>thunder</code> / <code>water</code> / <code>fire</code> / <code>phantom</code></li> <li><code>ssr+</code> / <code>ssr</code> / <code>sr</code> / <code>r</code> / <code>n</code></li> </ul> </li> </ul> <h4>Example</h4> <p>This will return items that are approved, eidolon, not a loli, and of water element. <code>http://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water</code></p>",
+    "description": "<p>Retrieves a list of items. <code>:options</code> available:</p> <h3>Primary Options</h3> <blockquote> <p>A must before any other options.</p> </blockquote> <ul> <li><code>soul</code> / <code>eidolon</code> / <code>kamihime</code> / <code>weapon</code></li> <li><code>approved</code> / <code>loli</code> / <code>no-loli</code></li> </ul> <h3>Secondary Options</h3> <ul> <li><strong>Soul Only</strong>: <code>legendary</code> / <code>elite</code> / <code>standard</code></li> <li><strong>Kamihime Only</strong>: <code>healer</code> / <code>offense</code> / <code>tricky</code> / <code>balance</code> / <code>defense</code></li> <li><strong>Weapon Only</strong>: <code>hammer</code> / <code>lance</code> / <code>glaive</code> / <code>arcane</code> / <code>staff</code> / <code>axe</code> / <code>gun</code> / <code>bow</code> / <code>sword</code></li> <li><strong>Eidolon / Kamihime / Weapon Only</strong>: <ul> <li><code>light</code> / <code>dark</code> / <code>wind</code> / <code>thunder</code> / <code>water</code> / <code>fire</code> / <code>phantom</code></li> <li><code>ssr+</code> / <code>ssr</code> / <code>sr</code> / <code>r</code> / <code>n</code></li> </ul> </li> </ul>",
+    "examples": [
+      {
+        "title": "Example: this will return items that are approved, eidolon, not a loli, and of water element.",
+        "content": "http://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water",
+        "type": "html"
+      }
+    ],
     "parameter": {
       "fields": {
         "Parameter": [
