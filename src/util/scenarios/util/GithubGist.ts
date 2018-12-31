@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+// @ts-ignore
 import { github } from '../../../auth/auth';
 
 export default async function GithubGist () {

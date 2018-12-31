@@ -1,3 +1,10 @@
+# 2.1.1
+On commit: `5018e33`
+  ## Enhancements
+  - `report`: Added more report titles on Wiki Info
+  ## Fixes
+  - `util/scenarios`: Get .blacklist from gist instead of from repo
+
 # 2.1.0
 On commit: `f55be4e`
   ## Enhancements
