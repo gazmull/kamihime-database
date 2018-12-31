@@ -1,9 +1,17 @@
 import * as fs from 'fs-extra';
 import fetch from 'node-fetch';
 import { status, warn } from '../../console';
-import Downloader from './Downloader';
+import GithubGist from './GithubGist';
 
 const formatErr = (message: string) => `${new Date().toLocaleString()}: ${message}`;
+
+const headers = {
+  'user-agent': [
+    'Mozilla/5.0 (Windows NT 6.1; Win64; x64)',
+    'AppleWebKit/537.36 (KHTML, like Gecko)',
+    'Chrome/58.0.3029.110 Safari/537.36',
+  ].join(' '),
+};
 
 export default class Extractor {
   constructor (options: IExtractorOptions) {
@@ -48,8 +56,7 @@ export default class Extractor {
       this.resourcesExtracted += await this._extract(id, resources);
     }
 
-    if (await Downloader.exists(process.cwd() + '/.blacklist'))
-      this.blacklist = (await fs.readFile(`${process.cwd()}/.blacklist`, 'utf8')).split('\n');
+    this.blacklist = await GithubGist();
 
     await this._download();
 
@@ -58,9 +65,6 @@ export default class Extractor {
         process.cwd() + '/scenarios-error.log',
         this.errors.join('\r\n').replace(/\n/g, '\n'),
       );
-
-    if (this.blacklist.length)
-      await fs.outputFile(process.cwd() + '/.blacklist', this.blacklist.join('\n'));
 
     status([
       `Extracted ${this.resourcesExtracted} resources. (Expected: ${this.resourcesFound})`,
@@ -151,7 +155,7 @@ export default class Extractor {
         const fLen = folder.length / 2;
         folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
 
-        const data = await fetch(this.base.URL.SCENARIOS + folder + resource + file, { headers: Downloader.headers });
+        const data = await fetch(this.base.URL.SCENARIOS + folder + resource + file, { headers });
         const script = await data.text();
 
         if (!data.ok || !script) {

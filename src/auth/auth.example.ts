@@ -1,4 +1,4 @@
-import { Api, DiscordClient, GrantProvider, Host } from 'auth';
+import { Api, DiscordClient, Github, GrantProvider, Host } from 'auth';
 import { Config as Database } from 'knex';
 
 /**
@@ -29,7 +29,9 @@ export const host: Host = {
 
 /**
  * Users to exclude from being throttled while browsing characters.
+ *
  * Recommended for lead testers.
+ *
  * WATCH OUT:
  * This is also used for authorized user messages (announcements for the site status) to be read by the Discord Bot.
  */
@@ -67,6 +69,7 @@ export const discord: GrantProvider = {
 
 /**
  * Configuration for Discord Bot.
+ *
  * This only serves as a website status message scraper and reports (KamihimeDB/Wikia) sender
  */
 export const discordClient: DiscordClient = {
@@ -74,4 +77,22 @@ export const discordClient: DiscordClient = {
   dbReportChannel: '319102712383799296',
   token: 'FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD',
   wikiReportChannel: '319102712383799296',
+};
+
+/**
+ * Configuration for Github.
+ *
+ * This serves as your auth to access the blacklist for Scenarios Util.
+ *
+ * Warning: Only change the gist if you have your own blacklist, and the blacklist's filename must be `.blacklist`.
+ *
+ * -
+ *
+ * Get your personal access token at https://github.com/settings/tokens
+ *
+ * Create a token with no scope, since the util will only need to read the gist.
+ */
+export const github: Github = {
+  gist: '45cd187e4a476795bcef630a8018e1a6',
+  token: 'ieatalotofass',
 };

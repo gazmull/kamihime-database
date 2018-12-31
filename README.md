@@ -9,17 +9,20 @@ Website + REST (JSON) API for Kamihime Database
 - [Support](http://support.thegzm.space)
 - [API Documentation](https://gazmull.github.io/kamihime-database)
 - [Changelog](/CHANGELOG.md)
+- [Scenario-Util / Blacklist](https://gist.github.com/gazmull/45cd187e4a476795bcef630a8018e1a6)
 
 ## Requirements
 - [Node](https://nodejs.org) 10 or 11
 - [MariaDB](https://mariadb.org) 10
 - [Discord App + Bot Account](https://discordapp.com/developers/applications/me)
+- [Github Personal Access Token](https://github.com/settings/tokens)
 
 ## Notice
 - I do not guarantee 100% coverage of the project within this documentation. If there is really something needed to be added, see [Contributing](#Contributing)
 - Please configure `auth.ts`. Get its template from `auth.example.ts`.
   - Can be found at `src/auth` folder
 - The `db.sql` file will not be updated for every new character release. It only serves as a starting kit for running the website.
+- If you found non-existent files that causes error on any story/scenario, please report [here](https://gist.github.com/gazmull/45cd187e4a476795bcef630a8018e1a6).
 
 ## Testing / Production Procedures
 1. Read [Requirements](#Requirements) and [Notice](#Notice)

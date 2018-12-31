@@ -33,7 +33,9 @@ function showReport (id, type = 0) {
   const types = [
     {
       stats: 'Wrong stats',
-      notes: 'Needs additional notes',
+      info: 'Wrong brief info (first table)',
+      ability: 'Wrong abilities',
+      notes: 'Needs additional/wrong notes',
       image: 'Image issues',
       internal: 'Info cannot be resolved',
       others: 'Others',

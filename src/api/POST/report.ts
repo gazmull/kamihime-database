@@ -18,9 +18,11 @@ import Api from '../../struct/Api';
  * @apiParam (Request Body) {number} type The type of the report.
  * <br>0 for `Wiki Info` report<br>1 for `Episodes` report
  *
+ * @apiParam (Message Subject Options - Wiki Info) ability `Wrong abilities`
  * @apiParam (Message Subject Options - Wiki Info) image `Image issues`
+ * @apiParam (Message Subject Options - Wiki Info) info `Wrong brief info (first table)`
  * @apiParam (Message Subject Options - Wiki Info) internal `Info cannot be resolved`
- * @apiParam (Message Subject Options - Wiki Info) notes `Needs additional notes`
+ * @apiParam (Message Subject Options - Wiki Info) notes `Needs additional/wrong notes`
  * @apiParam (Message Subject Options - Wiki Info) others `Others`
  * @apiParam (Message Subject Options - Wiki Info) stats `Wrong stats`
  *
@@ -95,9 +97,11 @@ export default class PostReportRequest extends Api {
       const type = data.type === 0 ? 'Wiki Info' : 'Episodes';
       const types = [
         {
+          ability: 'Wrong abilities',
           image: 'Image issues',
+          info: 'Wrong brief info (first table)',
           internal: 'Info cannot be resolved',
-          notes: 'Needs additional notes',
+          notes: 'Needs additional/wrong notes',
           others: 'Others',
           stats: 'Wrong stats',
         },

@@ -41,3 +41,12 @@ export interface DiscordClient {
   token: string;
   wikiReportChannel: string;
 }
+
+/**
+ * @property gist The Github Gist ID.
+ * @property token The Github user's personal access token.
+ */
+export interface Github {
+  gist: string;
+  token: string;
+}
