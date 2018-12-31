@@ -943,8 +943,20 @@ define({ "api": [
           {
             "group": "Message Subject Options - Wiki Info",
             "optional": false,
+            "field": "ability",
+            "description": "<p><code>Wrong abilities</code></p>"
+          },
+          {
+            "group": "Message Subject Options - Wiki Info",
+            "optional": false,
             "field": "image",
             "description": "<p><code>Image issues</code></p>"
+          },
+          {
+            "group": "Message Subject Options - Wiki Info",
+            "optional": false,
+            "field": "info",
+            "description": "<p><code>Wrong brief info (first table)</code></p>"
           },
           {
             "group": "Message Subject Options - Wiki Info",
@@ -956,7 +968,7 @@ define({ "api": [
             "group": "Message Subject Options - Wiki Info",
             "optional": false,
             "field": "notes",
-            "description": "<p><code>Needs additional notes</code></p>"
+            "description": "<p><code>Needs additional/wrong notes</code></p>"
           },
           {
             "group": "Message Subject Options - Wiki Info",
