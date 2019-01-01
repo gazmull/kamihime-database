@@ -14,11 +14,12 @@ export default class ApiRoute extends Route {
 
   public exec (req: Request, res: Response, next: NextFunction): void {
     try {
-      if (!this._validateRequest(req))
+      if (!this._getMethod(req))
         throw { code: 404, message: 'Request class not found.' };
 
       const request: string  = req.params.request;
       const requestClass: Api = this.server.api.get(this._getMethod(req)).get(request);
+      req.ip = req.ip.slice(7);
 
       if (
         req.ip.includes(this.server.auth.host.address) ||
@@ -70,6 +71,8 @@ export default class ApiRoute extends Route {
 
       if (key) return method;
     }
+
+    return null;
   }
 
   protected _initialise (req: Request, requests: Collection<string, any>): void {
@@ -91,18 +94,5 @@ export default class ApiRoute extends Route {
     this.util.logger.status(
       `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
-  }
-
-  protected _validateRequest (req: Request): boolean {
-    const request: string = req.params.request;
-    const methods = this.server.api.keys();
-
-    for (const method of methods) {
-      const key = this.server.api.get(method).findKey((_, _key) => _key === request);
-
-      if (key) return true;
-    }
-
-    return false;
   }
 }

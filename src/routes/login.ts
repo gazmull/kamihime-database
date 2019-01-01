@@ -19,6 +19,12 @@ export default class LoginRoute extends Route {
 
       const slug = shortid.generate();
 
+      // Continue this
+      // if (req.query.admin) {
+
+      //   return res.render('admin/login', { slug });
+      // }
+
       res
         .cookie('slug', slug, { maxAge: 18e5 })
         .redirect([

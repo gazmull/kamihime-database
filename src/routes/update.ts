@@ -16,7 +16,6 @@ export default class DashboardRoute extends Route {
     try {
       if (!(cId || id || key)) throw { code: 403, message: 'Incomplete query.' };
 
-      const character = this.server.kamihimeCache.find(el => el.id === cId);
       const [ session ]: ISession[] = await this.util.db('sessions').select([ 'id', 'password', 'created', 'userId' ])
         .where('id', id);
 
@@ -27,6 +26,10 @@ export default class DashboardRoute extends Route {
       const expired = (Date.now() - new Date(session.created).getTime()) >= 1000 * 60 * 30;
 
       if (expired) throw { code: 403, message: 'Session expired.' };
+
+      const character: IKamihime = this.server.kamihimeCache.find(el => el.id === cId);
+
+      if (!character) throw { code: 404, message: 'Character not found.' };
 
       const info = {
         avatar: character.avatar,
