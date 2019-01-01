@@ -1,5 +1,5 @@
 apps:
-  - name: kamihime-db
+  - name: kamihimedb
     script: build/index.js
     watch:
       - build

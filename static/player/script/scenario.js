@@ -29,7 +29,7 @@ $(() => {
       : new Howl({
         loop: isBGM ? true : false,
         onload: () => deferred.resolve({ obj: asset, src, name, type }),
-        onloaderror: (...err) => deferred.reject(err),
+        onloaderror: (_, err) => deferred.reject(err + ` [type: ${type}, name: ${name}]`),
         preload: true,
         src: [ src ],
         volume: isBGM
@@ -59,9 +59,13 @@ $(() => {
 
   Array.prototype.push.apply(
     _assets,
-    images.map(image => loadAsset(SCENARIOS + image, image, 'img'))
+    images
+      .filter(el => typeof el !== 'undefined')
+      .map(image => loadAsset(SCENARIOS + image, image, 'img'))
     .concat(
-      audios.map(audio => loadAsset(SCENARIOS + audio, audio, 'snd')),
+      audios
+      .filter(el => typeof el !== 'undefined')
+      .map(audio => loadAsset(SCENARIOS + audio, audio, 'snd')),
       [ loadAsset(SCENARIOS + bgm, bgm, 'bgm') ],
     ),
   );

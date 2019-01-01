@@ -30,7 +30,12 @@ $(() => {
     titleText: 'Resolving images...',
   });
 
-  Array.prototype.push.apply(_images, images.map(image => loadImage(SCENARIOS + image, image)));
+  Array.prototype.push.apply(
+    _images,
+    images
+      .filter(el => typeof el !== 'undefined')
+      .map(image => loadImage(SCENARIOS + image, image)),
+  );
 
   $.when.apply(null, _images)
     .done((...imgs) => {
