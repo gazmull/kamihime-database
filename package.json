@@ -18,9 +18,8 @@
     "finalize": "node tools/finalize",
     "scenarios": "node build/util/scenarios",
     "scenarios-v": "npm run scenarios -- --verbose",
-    "serve": "npm run build && node .",
-    "pm2-serve": "npm run build && pm2 start .pm2.yml --env production",
-    "pm2-serve-bind": "npm run build && authbind --deep pm2 start .pm2.yml --env production"
+    "pm2": "pm2 start .pm2.yml --env production",
+    "pm2-bind": "authbind --deep pm2 start .pm2.yml --env production"
   },
   "engine": {
     "node": ">=10"
