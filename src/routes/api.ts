@@ -19,7 +19,6 @@ export default class ApiRoute extends Route {
 
       const request: string  = req.params.request;
       const requestClass: Api = this.server.api.get(this._getMethod(req)).get(request);
-      req.ip = req.ip.slice(7);
 
       if (
         req.ip.includes(this.server.auth.host.address) ||
