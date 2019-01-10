@@ -29,8 +29,12 @@ server
     hidePoweredBy: { setTo: 'cream3.14' },
   }))
   .use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-    if (req.secure)
-      res.redirect(301, 'https://' + req.headers.host + req.originalUrl);
+    if (!req.headers.host)
+      res
+        .json({ error: { code: 403, message: 'Send a host header!' } })
+        .status(403);
+    if (!req.secure && process.env.NODE_ENV === 'production')
+      res.redirect(301, 'https://' + req.headers.hostname + req.originalUrl);
 
     next();
   })
