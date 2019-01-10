@@ -35,22 +35,23 @@ export default class ApiRoute extends Route {
         return requestClass.exec(req, res, next);
       }
 
-      const { max: maxRequests } = requestClass;
-      const cooldown = requestClass.cooldown * 1000;
-      const expired = Date.now() - user.timestamp > cooldown ;
+      const { cooldown, max: maxRequests } = requestClass;
+      const now = Date.now();
+      const expiration = user.timestamp + (cooldown * 1000);
+      const expired = now > expiration;
 
       if (expired) {
         this._initialise(req, requests);
 
         return requestClass.exec(req, res, next);
       } else if (user.triggers === maxRequests && !expired) {
-        const remaining = (user.timestamp + cooldown) - Date.now();
+        const remaining = (expiration - now);
 
         throw {
           remaining,
           code: 429,
           message: [
-            `Maximum requests for this request has been reached (${maxRequests}/${cooldown / 1000}s).`,
+            `Maximum requests for this request has been reached (${maxRequests}/${cooldown}s).`,
             `Please wait for ${remaining / 1000} seconds.`,
           ],
         };

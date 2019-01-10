@@ -19,14 +19,13 @@ export default class LoginRoute extends Route {
 
       const slug = shortid.generate();
 
-      // Continue this
-      // if (req.query.admin) {
+      this.server.states.set(slug, { timestamp: Date.now(), url: req.headers.referer });
 
+      // if (req.query.admin)
       //   return res.render('admin/login', { slug });
-      // }
 
       res
-        .cookie('slug', slug, { maxAge: 18e5 })
+        .cookie('slug', slug, { maxAge: 18e5, httpOnly: true })
         .redirect([
           'https://discordapp.com/oauth2/authorize?',
           'client_id=' + this.server.auth.discord.key,

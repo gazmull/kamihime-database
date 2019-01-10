@@ -1,10 +1,17 @@
 include ../constants/invalids.pug
 title Kamihime Database - Warning
 
+head
+  style.
+    #thumbnail {
+      background-image: url("/img/wiki/close/(Eclipse%20Princess)%20Amaterasu%20Close.png");
+      opacity: 0.2;
+      right: 0;
+    }
 body
   ul(class='top-nav')
     include ../constants/navigation.pug
-    li(style="float: right; user-select: none;")
+    li(class='top-nav-status')
       a Warning
   center
     br
@@ -19,7 +26,21 @@ body
       u Use this site at your own discretion.
       br
       br
-      | And this site is using cookies to give you a better browsing experience.
+    h1 Cookies
+    p
+      | This site is using cookies to give you a better browsing experience.
+      br
+      table(class='info-table')
+        thead
+          tr
+            th USAGE OF COOKIES
+        tbody
+          tr
+            td Episodes Player settings
+          tr
+            td Last navigation settings
+          tr
+            td User session (Logged in users only)
 
     p
       b And your response is?
@@ -27,7 +48,7 @@ body
       a(href='https://google.com') Let me the fuck out
       |  | 
       a(href='javascript:void(0);', onclick='verified();') Alright, I'm in
-  div(id='thumbnail', style='background-image: url("/img/wiki/close/(Eclipse%20Princess)%20Amaterasu%20Close.png"); opacity: 0.2; right: 0;')
+  div(id='thumbnail')
   script.
     function verified() {
       document.cookie = "verified=true;path=/;max-age=604800";

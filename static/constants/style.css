@@ -195,6 +195,11 @@ input[type=range]::-ms-thumb {
   color: white;
 }
 
+.top-nav-status {
+  float: right;
+  user-select: none;
+}
+
 /* Content */
 
 .row { margin: 0 !important; }

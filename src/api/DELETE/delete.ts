@@ -3,7 +3,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {delete} /delete delete
- * @apiVersion 2.1.0
  * @apiName DeleteDelete
  * @apiGroup Kamihime Specific
  * @apiDescription Deletes an item from the database.

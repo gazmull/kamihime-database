@@ -7,10 +7,11 @@ const RULES = {
   eofline: true,
   indent: [ true, 'spaces', 2 ],
   'member-ordering': [ true, {
-    order: [ 'constructor', 'instance-field', 'instance-method', 'static-field', 'static-method' ]
+    order: [ 'constructor', 'instance-field', 'instance-method', 'static-field', 'static-method' ],
   } ],
   'newline-before-return': true,
   'no-angle-bracket-type-assertion': false,
+  'no-consecutive-blank-lines': true,
   'no-duplicate-variable': true,
   'no-eval': true,
   'no-trailing-whitespace': true,
@@ -34,26 +35,27 @@ const RULES = {
     'check-format',
     'allow-pascal-case',
     'allow-leading-underscore',
-    'allow-trailing-underscore'
+    'allow-trailing-underscore',
   ],
-  whitespace: [ true, 'check-branch', 'check-decl', 'check-operator', 'check-separator', 'check-type' ]
+  whitespace: [ true, 'check-branch', 'check-decl', 'check-operator', 'check-separator', 'check-type' ],
 };
 
 module.exports = {
   extends: [
     'tslint:recommended',
-    'tslint-eslint-rules'
+    'tslint-eslint-rules',
   ],
   jsRules: RULES,
   rules: {
     ...RULES,
+    'no-inferrable-types': [ true, 'ignore-params', 'ignore-properties' ],
     'no-internal-module': true,
     'typedef-whitespace': [ true, {
       'call-signature': 'nospace',
       'index-signature': 'nospace',
       parameter: 'nospace',
       'property-declaration': 'nospace',
-      'variable-declaration': 'nospace'
+      'variable-declaration': 'nospace',
     } ],
-  }
+  },
 };

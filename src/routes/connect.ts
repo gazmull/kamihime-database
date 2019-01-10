@@ -24,6 +24,13 @@ export default class ConnectRoute extends Route {
 
       if (!match) throw { code: 403, message: 'Invalid state ID.' };
 
+      const slug = this.server.states.get(state);
+
+      if (!slug) throw { code: 408, message: 'You took too long to log in? Shame!' };
+
+      const { url: slugURL } = slug;
+
+      this.server.states.delete(state);
       res.clearCookie('slug');
 
       const discord = this.server.auth.discord;
@@ -76,21 +83,20 @@ export default class ConnectRoute extends Route {
 
       await this.util.db.raw([
         'INSERT INTO users',
-        '(expiration, refreshToken, settings, userId, username)',
-        'VALUES (date_add(now(), interval 7 DAY), :rT, :s, :uI, :uN)',
+        '(settings, userId, username)',
+        'VALUES (:settings, :userId, :username)',
         'ON DUPLICATE KEY UPDATE',
-        'expiration=date_add(now(), interval 7 DAY), refreshToken=:rT, username=:uN',
+        'username=:username',
         ].join(' '), {
-          rT: response.refresh_token,
-          s: settings,
-          uI: user.id,
-          uN: user.username,
+          settings,
+          userId: user.id,
+          username: user.username,
         },
       );
 
       res
-        .cookie('userId', user.id, { maxAge: 6048e5 })
-        .redirect('/');
+        .cookie('userId', user.id, { maxAge: 6048e5, httpOnly: true })
+        .redirect(slugURL || '/');
     } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

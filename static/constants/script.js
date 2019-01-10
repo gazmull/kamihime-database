@@ -63,9 +63,10 @@ function showLoginWarning () {
   sweet({
     html: [
       'While you are able to save your settings, accounts that are inactive for 14 days will be deleted.',
-      '<br><br>Click OK to continue to log in.',
-    ].join(''),
+      'Click OK to continue to log in.',
+    ].join('<br><br>'),
     titleText: 'Login Warning',
+    type: 'warning',
   })
   .then(res => {
     if (res.value)

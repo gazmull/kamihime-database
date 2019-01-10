@@ -42,7 +42,7 @@ export const exempt: string[] = [
 /**
  * The server's root URL
  */
-export const rootURL: string = 'http://localhost/';
+export const rootURL = 'http://localhost/';
 
 /**
  * Configuration for this server's API
@@ -55,7 +55,7 @@ export const api: Api = {
 /**
  * Secret to use for express-cookieParser
  */
-export const cookieSecret: string = 'your cookie secret';
+export const cookieSecret = 'your cookie secret';
 
 /**
  * Discord provider OAuth2 Grant configuration

@@ -1,6 +1,6 @@
 $(() => {
-  const images = files.filter(i => i.endsWith('.jpg'));
-  const audios = files.filter(i => i.endsWith('.mp3'));
+  const images = files.filter((v, i, arr) => v.endsWith('.jpg') && arr.indexOf(v) === i);
+  const audios = files.filter((v, i, arr) => v.endsWith('.mp3') && arr.indexOf(v) === i);
   const bgm = files.find(i => i.startsWith('bgm_h'));
 
   const talkVal = parseInt($('#text').attr('data'));
@@ -100,10 +100,10 @@ $(() => {
 
       setTimeout(() => {
         sweet({
-          text: 'Click OK to proceed.',
+          text: 'Click OK to proceed. For navigation help, see HELP at the sidebar.',
           titleText: 'Assets loaded!',
         }).then(() => {
-          $('#panel').addClass('animated faster fadeIn');
+          $('.panel').addClass('animated faster fadeIn');
           audioPool[bgm].play();
           render();
         });
@@ -179,7 +179,7 @@ $(() => {
       words: newSeq().talk[talkIDX].words,
     };
 
-    $('#panel')
+    $('.panel')
       .attr('sequence', sequenceIDX);
 
     const currentIMG = `#image > div[id='${n.img}']`;

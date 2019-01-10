@@ -1,6 +1,6 @@
 $(() => {
-  const images = files.filter(i => i.endsWith('.jpg') && i !== 'pink_s.jpg');
-  const scr = script.filter(i => i.sequence !== 'pink_s.jpg');
+  const images = files.filter((v, i, arr) => v.endsWith('.jpg') && v !== 'pink_s.jpg' && arr.indexOf(v) === i);
+  const scr = script.filter(v => v.sequence !== 'pink_s.jpg');
 
   const maxScriptLength = scr.length - 1;
   let animation = 'none';
@@ -62,7 +62,7 @@ $(() => {
       }, 1000);
       setTimeout(() => {
         sweet.close();
-        $('#panel').addClass('animated faster fadeIn');
+        $('.panel').addClass('animated faster fadeIn');
         render();
       }, 1350);
     })
@@ -124,7 +124,7 @@ $(() => {
   function render () {
     const img = newSeq().sequence;
 
-    $('#panel')
+    $('.panel')
       .attr('sequence', sequenceIDX);
 
     const currentIMG = `#image > div[id='${img}']`;

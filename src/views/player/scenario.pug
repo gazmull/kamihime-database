@@ -26,15 +26,16 @@ html
     ul(class='top-nav')
       include ../constants/navigation.pug
       include ../constants/member2.pug
-      li(style='float: right; user-select: none;')
+      li(class='top-nav-status')
           a Scenario Mode
     include ../constants/player_sideNavigation.pug
-    div(id='panel', sequence=0, style='width: 900px; height: 640px;')
-      button(class='invi leftNav', nav='left')
-      |
-      button(class='invi rightNav', nav='right')
-      div(id='image')
-      div(id='dialog')
-        div(id='text', data=0)
-          div(id='characterName')
-          div(id='characterTalk')
+    div(class='scenario panel-wrapper')
+      div(class='panel', sequence=0)
+        button(class='invi leftNav', nav='left')
+        |
+        button(class='invi rightNav', nav='right')
+        div(id='image')
+        div(id='dialog')
+          div(id='text', data=0)
+            div(id='characterName')
+            div(id='characterTalk')

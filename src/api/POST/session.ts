@@ -6,7 +6,6 @@ shortid.seed(11);
 
 /**
  * @api {post} /session session
- * @apiVersion 2.1.0
  * @apiName PostSession
  * @apiGroup Kamihime Specific
  * @apiDescription Creates a session for updating an item from the database.

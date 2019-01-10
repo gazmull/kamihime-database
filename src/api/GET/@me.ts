@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
-import fetch from 'node-fetch';
 import Api from '../../struct/Api';
 
 /**
  * @api {get} /@me @me
- * @apiVersion 2.1.0
  * @apiName GetAtMe
  * @apiGroup Site Specific
  * @apiDescription Retrieves site user's information.
@@ -46,56 +44,16 @@ export default class GetAtMeRequest extends Api {
 
   public async exec (req: Request, res: Response): Promise<void> {
     try {
-      if (!req.cookies.userId) throw { code: 403 };
+      if (!req.cookies.userId) throw { code: 401 };
 
       const [ user ]: IUser[] = await this.util.db('users')
-        .select([ 'userId', 'username', 'refreshToken', 'expiration' ])
+        .select([ 'userId', 'username' ])
         .where('userId', req.cookies.userId)
         .limit(1);
 
       if (!user) throw { code: 403 };
 
-      const timeLapsed = Date.now() - new Date(user.expiration).getTime();
-      const expired = timeLapsed > 6048e5;
-      let username: string;
-
-      if (expired) {
-        const discord = this.server.auth.discord;
-        const credentials = Buffer.from(`${discord.key}:${discord.secret}`).toString('base64');
-        const url = [
-          'https://discordapp.com/api/oauth2/token?',
-          'grant_type=refresh_token',
-          'refresh_token=' + user.refreshToken,
-          '&redirect_uri=' + this.server.auth.rootURL + discord.callback,
-          '&scope=identify',
-        ].join('');
-
-        const _response = await fetch(url, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: 'Basic ' + credentials,
-          },
-          method: 'POST',
-        });
-        const response = await _response.json();
-
-        const _user = await fetch('https://discordapp.com/api/users/@me', {
-          headers: {
-            Accept: 'application/json',
-            Authorization: 'Bearer ' + response.access_token,
-          },
-        });
-        const newUser = await _user.json();
-        username = newUser.username;
-
-        await this.util.db.raw([
-          'UPDATE users SET',
-          'expiration=date_add(now(), interval 7 DAY),',
-          `username='${user}'`,
-          `WHERE userId='${newUser.id}'`,
-        ].join(' '));
-      } else username = user.username;
-
+      const username = user.username;
       const settings = JSON.stringify({
         audio: req.cookies.audio && Object.keys(JSON.parse(req.cookies.audio)).length
           ? JSON.parse(req.cookies.audio)

@@ -31,9 +31,9 @@ $(() => {
       $('.collapse.show').collapse('hide');
     })
     .on('shown.bs.collapse', () => {
-      const currentPage = $(`.collapse.show`).attr('id');
+      const currentPage = '#' + $(`.collapse.show`).attr('id');
 
-      Cookies.set('lastNav', '#' + currentPage);
+      Cookies.set('lastNav', currentPage);
 
       $('.content.show .kh-list').attr('class', 'kh-list px-0 visible-browser');
       $(`.nav-link[data-target='${Cookies.get('lastNav')}']`).addClass('active');
@@ -65,7 +65,7 @@ $(() => {
         .attr('class', 'name visible-browser')
         .css('position', 'relative');
     } else
-      $(`${names}[class*='hiddenInstant-browser']`)
+      $(`${names}.hiddenInstant-browser`)
         .attr('class', 'name visible-browser')
         .css('position', 'relative');
   });
@@ -107,7 +107,7 @@ function showHelp () {
 
 function showLatest () {
   sweet({
-    html: '<a href="/latest" class="text-light" target="_blank">http://kamihimedb.thegzm.space/latest</a>',
+    html: '<a href="/latest" class="text-light" target="_blank">https://kamihimedb.thegzm.space/latest</a>',
     imageAlt: 'Latest Image',
     imageUrl: '/latest',
     imageWidth: '100%',

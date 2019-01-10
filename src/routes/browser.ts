@@ -16,11 +16,11 @@ export default class BrowserRoute extends Route {
     const endPoint = this.server.auth.rootURL + 'api/';
 
     try {
-      let hot: IKamihime[] = this.server.kamihimeCache.slice();
+      let hot = this.server.kamihime.slice();
       hot = hot.sort((a, b) => b.peeks - a.peeks).slice(0, 10);
-      const characters = this.server.kamihimeCache
-        .filter((el: IKamihime) => el.approved)
-        .map((el: IKamihime) => ({ id: el.id, name: el.name, rarity: el.rarity }));
+      const characters = this.server.kamihime
+        .filter(el => el.approved)
+        .map(el => ({ id: el.id, name: el.name, rarity: el.rarity }));
 
       const data = await fetch(endPoint + 'latest', { headers: { Accept: 'application/json' } });
       const latest = await data.json();

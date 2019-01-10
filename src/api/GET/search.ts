@@ -4,7 +4,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {get} /search search
- * @apiVersion 2.1.0
  * @apiName GetSearch
  * @apiGroup Kamihime Specific
  * @apiDescription Searches items with the provided name.
@@ -98,8 +97,8 @@ export default class GetSearchRequest extends Api {
         };
 
       let results = !isNaN(accurate) && accurate
-          ? this.server.kamihimeCache.filter(el => el.name.toLowerCase() === name.toLowerCase())
-          : fuzzy.filter(name, this.server.kamihimeCache, { extract: el => el.name })
+          ? this.server.kamihime.filter(el => el.name.toLowerCase() === name.toLowerCase())
+          : fuzzy.filter(name, this.server.kamihime, { extract: el => el.name })
             .map(el => el.original);
 
       if (typeof itemClass === 'function')

@@ -4,7 +4,8 @@ import * as path from 'path';
 import Route from '../struct/Route';
 
 const COOLDOWN = 1000 * 60 * 3;
-const MAX_VISITS = 3;
+const MAX_VISITS = 5;
+const MAX_LOGGED_IN_VISITS = 10;
 
 const SCENARIOS = 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/';
 const BG_IMAGE = SCENARIOS + 'bgimage/';
@@ -132,7 +133,7 @@ export default class PlayerRoute extends Route {
   }
 
   protected _checkRegistered (id: string, resource: string): boolean {
-    const _resource = this.server.recentVisitors.get(resource);
+    const _resource = this.server.visitors.get(resource);
     if (!_resource) return false;
 
     const logged = _resource.get(id);
@@ -154,25 +155,22 @@ export default class PlayerRoute extends Route {
       return true;
     }
 
-    const visitorVisits = this.server.recentVisitors.filter((log, _resource) => {
-      const logged = log.get(usr);
-      if (!logged) return false;
+    const visitorVisits = this.server.visitors.filter((timestamps, _resource) =>
+      _resource !== resource && Date.now() < (timestamps.get(usr) + COOLDOWN),
+    );
 
-      const timeLapsed: number = Date.now() - logged;
-
-      return _resource !== resource && timeLapsed < COOLDOWN;
-    });
-
-    if (visitorVisits.size >= MAX_VISITS) throw { code: 429, message: 'You may only do 3 visits per 3 minutes.' };
+    const visitLimit = req.cookies.userId ? MAX_LOGGED_IN_VISITS : MAX_VISITS;
+    if (visitorVisits.size >= visitLimit)
+      throw { code: 429, message: `You may only do ${visitLimit} visits per 3 minutes.` };
 
     const currentRegistered = this._checkRegistered(usr, resource);
     if (!currentRegistered) {
       await update();
 
-      const resourceLog = () => this.server.recentVisitors.get(resource);
+      const resourceLog = () => this.server.visitors.get(resource);
 
       if (!resourceLog())
-        this.server.recentVisitors.set(resource, this.util.collection());
+        this.server.visitors.set(resource, this.util.collection());
 
       resourceLog().set(usr, Date.now());
       status();

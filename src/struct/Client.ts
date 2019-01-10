@@ -36,8 +36,14 @@ export default class Client {
 
     this.util = {
       ...this.server.util,
-      // @ts-ignore
-      discordSend: (channel, message) => this.discordClient.channels.get(channel).send(message),
+      discordSend: (channelId, message) => {
+        const channel = this.discordClient.channels.get(channelId);
+
+        if (!channel) return this.util.logger.warn(`Channel ${channel} does not exist.`);
+
+        // @ts-ignore
+        return channel.send(message);
+      },
     };
 
     this.fields = [ 'id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'main', 'preview' ];
@@ -186,7 +192,7 @@ export default class Client {
           return false;
         };
 
-        const newId: string = `${idPrefix}${++fromIndex}`;
+        const newId = `${idPrefix}${++fromIndex}`;
 
         // -- Portrait
 

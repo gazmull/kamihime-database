@@ -12,9 +12,9 @@ $(() => {
   $('.collapse')
     .on('show.bs.collapse', () => $('.collapse.show').collapse('hide'))
     .on('shown.bs.collapse', () => {
-      const currentPage = $(`.collapse.show`).attr('id');
+      const currentPage = '#' + $(`.collapse.show`).attr('id');
 
-      Cookies.set('info-lastNav', '#' + currentPage);
+      Cookies.set('info-lastNav', currentPage);
 
       $('.content.show .content-wrapper').attr('class', 'content-wrapper visible-browser');
       $(`.nav-link[data-target='${Cookies.get('info-lastNav')}']`).addClass('active');
@@ -26,6 +26,26 @@ $(() => {
 
   $(Cookies.get('info-lastNav')).collapse('show');
 });
+
+function confirmLogin (id, type = 0) {
+  sweet({
+    cancelButtonText: 'No, thanks',
+    confirmButtonText: 'Yes, please',
+    html: [
+      'There is no way to contact you if this needs to contact you back.',
+      'Do you want to log in before reporting?',
+    ].join('<br><br>'),
+    showCancelButton: true,
+    titleText: 'Reporting as Anonymous User',
+    type: 'warning',
+  })
+  .then(res => {
+    if (res.value)
+      location.replace('/login');
+    else if (res.dismiss)
+      showReport(id, type);
+  });
+}
 
 function showReport (id, type = 0) {
 
@@ -66,7 +86,7 @@ function showReport (id, type = 0) {
       allowOutsideClick: () => !sweet.isLoading(),
       progressSteps: [ 1, 2 ],
       showCancelButton: true,
-      titleText: 'Reporting Error(s)...',
+      titleText: 'Reporting Errors...',
     })
     .queue([
       {

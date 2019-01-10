@@ -5,11 +5,11 @@ body
   ul(class='top-nav')
     include ../constants/navigation.pug
     li(class='top-nav-status')
-      a Error: 404
+      a Error: 408
   center
     br
     img(src='/img/LME.png', alt='Let Me Explain...')
     - if (message)
       h1 #{message}
     - else
-      h1 Whatever you are looking for is nowhere to be found.
+      h1 Uh oh... I took too long to wait, so I had to let go.

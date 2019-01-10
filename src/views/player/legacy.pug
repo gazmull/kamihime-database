@@ -19,10 +19,11 @@ html
     ul(class='top-nav')
       include ../constants/navigation.pug
       include ../constants/member2.pug
-      li(style='float: right; user-select: none;')
+      li(class='top-nav-status')
         a Legacy Mode
-    div(id='panel', style='max-width: 900px; max-height: 640px;')
-      button(class='invi leftNav', nav='left')
-      |
-      button(class='invi rightNav', nav='right')
-      div(id='image')
+    div(class='scenario panel-wrapper')
+      div(class='panel')
+        button(class='invi leftNav', nav='left')
+        |
+        button(class='invi rightNav', nav='right')
+        div(id='image')

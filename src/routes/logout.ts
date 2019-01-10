@@ -12,7 +12,7 @@ export default class LogoutRoute extends Route {
 
   public async exec (req: Request, res: Response): Promise<void> {
     try {
-      if (!req.cookies.userId) throw { code: 403 };
+      if (!req.cookies.userId) throw { code: 401 };
 
       const val = req.query.id ? req.query.id : req.cookies.userId;
       const [ match ]: IUser[] = await this.util.db('users').select('userId')

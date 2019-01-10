@@ -39,18 +39,21 @@ export default class Server {
 
     this.rateLimits = new Collection();
 
-    this.recentVisitors = new Collection();
+    this.states = new Collection();
 
-    this.kamihimeCache = [];
+    this.visitors = new Collection();
+
+    this.kamihime = [];
   }
 
   public client: Client;
   public auth: IAuth;
   public util: IUtil;
   public api: Collection<string, Collection<string, Api>>;
-  public rateLimits: Collection<string, Collection<string, Collection<string, any>>>;
-  public recentVisitors: Collection<string, Collection<string, number>>;
-  public kamihimeCache: any[];
+  public rateLimits: Collection<string, Collection<string, Collection<string, IRateLimitLog>>>;
+  public states: Collection<string, IState>;
+  public visitors: Collection<string, Collection<string, number>>;
+  public kamihime: IKamihime[];
 
   public init (server: Express, client: Client): this {
     this.client = client;
@@ -111,9 +114,7 @@ export default class Server {
 
     server
       .all('*', (_, res) => res.render('invalids/403'))
-      .listen(host.port);
-
-    this.util.logger.status(`Listening to ${host.address}:${host.port}`);
+      .listen(host.port, () => this.util.logger.status(`Listening to http://${host.address}:${host.port}`));
 
     return this;
   }
@@ -127,6 +128,7 @@ export default class Server {
       this._cleanRateLimits(),
       this._cleanReports(),
       this._cleanSessions(),
+      this._cleanStates(),
       this._cleanUsers(),
       this._cleanVisitors(),
     ])
@@ -143,7 +145,7 @@ export default class Server {
     fetch(`${this.auth.rootURL}api/list`, { headers: { Accept: 'application/json' } })
       .then(res => res.json())
       .then(cache => {
-        this.kamihimeCache = cache;
+        this.kamihime = cache;
 
         this.util.logger.status('Refreshed Kamihime Cache.');
         setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
@@ -162,10 +164,9 @@ export default class Server {
       for (const request of requests.keys()) {
         const users = this.rateLimits.get(method).get(request).filter(u => {
           const requestInstance = methods.get(method).get(request);
-          const timeLapsed: number = Date.now() - u.timestamp;
           const cooldown: number = requestInstance.cooldown * 1000;
 
-          return timeLapsed > cooldown;
+          return Date.now() > (u.timestamp + cooldown);
         });
 
         if (!users.size) continue;
@@ -203,7 +204,7 @@ export default class Server {
 
   protected async _cleanSessions (): Promise<boolean> {
     try {
-      const EXPIRED: string = 'created <= DATE_SUB(NOW(), INTERVAL 30 MINUTE)';
+      const EXPIRED = 'created <= DATE_SUB(NOW(), INTERVAL 30 MINUTE)';
       const sessions: ISession[] = await this.util.db('sessions').select('id')
         .whereRaw(EXPIRED);
 
@@ -219,9 +220,24 @@ export default class Server {
     }
   }
 
+  protected async _cleanStates (): Promise<boolean> {
+    let cleaned = 0;
+    const states = this.states.filter(s => Date.now() > (s.timestamp + 18e5));
+
+    for (const state of states.keys())
+      this.states.delete(state);
+
+    cleaned += states.size;
+
+    if (cleaned)
+      this.util.logger.status(`Login Slugs cleanup finished. Cleaned: ${cleaned}`);
+
+    return true;
+  }
+
   protected async _cleanUsers (): Promise<boolean> {
     try {
-      const EXPIRED: string = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 14 DAY)';
+      const EXPIRED = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 14 DAY)';
       const users: IUser[] = await this.util.db('users').select('userId')
         .whereRaw(EXPIRED);
 
@@ -238,16 +254,12 @@ export default class Server {
   }
 
   protected async _cleanVisitors (): Promise<boolean> {
-    const resources = this.recentVisitors;
-    let cleaned: number = 0;
+    const resources = this.visitors;
+    let cleaned = 0;
 
     for (const resource of resources.keys()) {
       const log = resources.get(resource);
-      const visitors = log.filter(u => {
-        const timeLapsed: number = Date.now() - u;
-
-        return timeLapsed > GENERAL_COOLDOWN;
-      });
+      const visitors = log.filter(u => Date.now() > (u + GENERAL_COOLDOWN));
 
       for (const visitor of visitors.keys())
         log.delete(visitor);

@@ -23,7 +23,7 @@ export default class InfoRoute extends Route {
     try {
       if (!id) throw { code: 403, message: 'ID is empty.' };
 
-      const character: IKamihime = this.server.kamihimeCache.find(el => el.id === id);
+      const character = this.server.kamihime.find(el => el.id === id);
 
       if (!character) throw { code: 422 };
 
