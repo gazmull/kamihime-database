@@ -16,7 +16,7 @@ export default function enforceSecured () {
       )
         res
           .status(403)
-          .json({ code: 403, message: 'Please use https protocol instead.' });
+          .json({ error: { code: 403, message: 'Please use https protocol instead.' } });
       else
         res.redirect(301, 'https' + rootURL.slice(4) + req.originalUrl.slice(1));
 
