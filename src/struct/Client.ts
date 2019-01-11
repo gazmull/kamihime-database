@@ -152,7 +152,7 @@ export default class Client {
       const rows: IKamihime[] = await this.util.db('kamihime').select(this.fields)
         .whereRaw(whereState)
         .orderByRaw('CAST(substr(id, 2) AS DECIMAL) DESC');
-      const existing = rows.map(el => el.name);
+      const existing = rows.map(el => el.name.toLowerCase());
 
       let id: string = null;
       let fileNameSuffix: string = null;
@@ -172,8 +172,8 @@ export default class Client {
 
       this.util.logger.status(`Kamihime Database: Adding ${id}...`);
 
-      let result = await this._parseDatabase(id);
-      result = result.filter(el => !existing.includes(el.name));
+      let result: IKamihime[] = await this._parseDatabase(id);
+      result = result.filter(el => !existing.includes(el.name.toLowerCase()));
 
       if (!result.length) return this.util.logger.status(`Kamihime Database: ${id}: Nothing to add!`);
 

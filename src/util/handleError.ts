@@ -6,7 +6,7 @@ import { Response } from 'express';
  * @param err The Error interface
  */
 export const handleApiError: (res: Response, err: IErrorHandlerObject) => void = (res, err) => {
-  if (err.stack) console.log(err.stack); // tslint:disable-line:no-console
+  if (err.stack) console.error(err.stack); // tslint:disable-line:no-console
 
   if (Array.isArray(err.message)) err.message = err.message.join('\n');
   if (isNaN(err.code))
@@ -25,7 +25,7 @@ export const handleApiError: (res: Response, err: IErrorHandlerObject) => void =
  * @param err The Error interface
  */
 export const handleSiteError: (res: Response, err: IErrorHandlerObject) => void = (res, err) => {
-  if (err.stack) console.log(err.stack); // tslint:disable-line:no-console
+  if (err.stack) console.error(err.stack); // tslint:disable-line:no-console
 
   if (Array.isArray(err.message)) err.message = err.message.join('\n');
   if (isNaN(err.code)) res.render('invalids/500', { message: err.message });

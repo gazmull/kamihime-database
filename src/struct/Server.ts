@@ -90,7 +90,7 @@ export default class Server {
       if (!req.cookies.verified && !(req.xhr || req.headers.accept && req.headers.accept.includes('application/json')))
         return res.render('invalids/disclaimer');
 
-      next();
+      return next();
     });
 
     const ROUTES_DIR: string = resolve(__dirname, '../routes');
