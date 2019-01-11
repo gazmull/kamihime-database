@@ -88,7 +88,7 @@ export default class Server {
 
     server.get('*', (req, res, next) => {
       if (!req.cookies.verified && !(req.xhr || req.headers.accept && req.headers.accept.includes('application/json')))
-        return res.render('invalids/disclaimer');
+        return res.render('invalids/disclaimer', { redirected: true });
 
       return next();
     });

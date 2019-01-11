@@ -8,6 +8,8 @@ head
       opacity: 0.2;
       right: 0;
     }
+
+    .table { max-width: 1280px; }
 body
   ul(class='top-nav')
     include ../constants/navigation.pug
@@ -30,24 +32,45 @@ body
     p
       | This site is using cookies to give you a better browsing experience.
       br
-      table(class='info-table')
+      table(class='table table-borderless info-table')
+        h3 Usage of Cookies
         thead
           tr
-            th USAGE OF COOKIES
+            th Purpose
+            th Duration
+            th Shared With
+            th How To Reject/Stay Non-persistent
         tbody
           tr
-            td Episodes Player settings
+            td Agreement to access
+            td 7 days
+            td Browser only
+            td Required; clear cookies
+          tr
+            td Episodes player settings
+            td After you close the browser
+            td User database
+            td Stay as anonymous user
           tr
             td Last navigation settings
+            td After you close the browser
+            td User database
+            td Stay as anonymous user 
           tr
-            td User session (Logged in users only)
+            td User session (logged in users only)
+            td 7 days
+            td User database
+            td Stay as anonymous user
 
-    p
-      b And your response is?
-      br
-      a(href='https://google.com') Let me the fuck out
-      |  | 
-      a(href='javascript:void(0);', onclick='verified();') Alright, I'm in
+    - if (redirected)
+      p
+        b And your response is?
+        br
+        | ... before that, this is an adult <s>wibu</s> site...
+        br
+        a(href='https://google.com') Let me the fuck out
+        |  | 
+        a(href='javascript:void(0);', onclick='verified();') Alright, I'm in
   div(id='thumbnail')
   script.
     function verified() {
