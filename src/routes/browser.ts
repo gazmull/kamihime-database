@@ -6,6 +6,7 @@ import Route from '../struct/Route';
 export default class BrowserRoute extends Route {
   constructor () {
     super({
+      auth: true,
       id: 'browser',
       method: 'get',
       route: [ '/' ],

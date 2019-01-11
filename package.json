@@ -65,10 +65,9 @@
     "@types/howler": "^2.0.5",
     "@types/jquery": "^3.3.29",
     "@types/js-cookie": "^2.2.0",
-    "@types/knex": "^0.15.1",
     "@types/mysql2": "types/npm-mysql2",
-    "@types/node-fetch": "^2.1.4",
     "@types/node": "^10.12.18",
+    "@types/node-fetch": "^2.1.4",
     "@types/pug": "^2.0.4",
     "@types/serve-favicon": "^2.2.30",
     "@types/shortid": "^0.0.29",
@@ -78,15 +77,16 @@
     "howler": "^2.1.1",
     "jquery": "^3.3.1",
     "js-cookie": "^2.2.0",
+    "popper.js": "^1.14.6",
     "sweetalert2": "^7.33.1",
     "terser-folder": "^2.0.0",
     "terser-webpack-plugin": "^1.2.1",
     "ts-loader": "^5.3.3",
     "ts-node": "^7.0.1",
-    "tslint-eslint-rules": "^5.4.0",
     "tslint": "^5.12.1",
+    "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.2.2",
-    "webpack-cli": "^3.2.1",
-    "webpack": "^4.28.4"
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1"
   }
 }

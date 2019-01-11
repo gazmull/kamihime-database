@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { RequestHandler } from 'express';
 // @ts-ignore
 import { rootURL } from '../auth/auth';
 
-export default function enforceSecured () {
-  return (req: Request, res: Response, next: NextFunction) => {
+export default function enforceSecured (): RequestHandler {
+  return (req, res, next) => {
     if (!req.secure)
       if (
         req.method !== 'GET' ||

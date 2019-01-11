@@ -15,6 +15,7 @@ const FG_IMAGE = SCENARIOS + 'fgimage/';
 export default class PlayerRoute extends Route {
   constructor () {
     super({
+      auth: true,
       id: 'player',
       method: 'get',
       route: [ '/player/:id/:ep/:type' ],

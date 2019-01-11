@@ -8,6 +8,7 @@ let getArticle: (...args: any[]) => Promise<string> = null;
 export default class InfoRoute extends Route {
   constructor () {
     super({
+      auth: true,
       id: 'info',
       method: 'get',
       route: [ '/info/:id' ],

@@ -4,6 +4,7 @@ import Route from '../struct/Route';
 export default class LogoutRoute extends Route {
   constructor () {
     super({
+      auth: true,
       id: 'logout',
       method: 'get',
       route: [ '/logout' ],

@@ -1,11 +1,12 @@
 import { Collection } from 'discord.js';
-import { Express, NextFunction, Request, Response } from 'express';
+import { Express, RequestHandler } from 'express';
 import * as fs from 'fs-extra';
 import * as knex from 'knex';
 import fetch from 'node-fetch';
 import { resolve } from 'path';
 // @ts-ignore
 import { api, database, discord, exempt, host, rootURL } from '../auth/auth';
+import authHandler from '../middleware/auth-handler';
 import * as logger from '../util/console';
 import Api from './Api';
 import Client from './Client';
@@ -109,7 +110,11 @@ export default class Server {
       file.client = client;
       Object.assign(file.util, {  ...this.client.util });
 
-      server[file.method](file.route, (req: Request, res: Response, next: NextFunction) => file.exec(req, res, next));
+      // ! - Unfinished - needs double-check
+      const mainHandler: RequestHandler = (req, res, next) => file.exec(req, res, next);
+
+      if (file.auth) server[file.method](file.route, authHandler(this, file).bind(server), mainHandler);
+      else server[file.method](file.route, mainHandler);
     }
 
     server
