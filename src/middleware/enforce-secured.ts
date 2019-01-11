@@ -1,4 +1,3 @@
-
 import { NextFunction, Request, Response } from 'express';
 // @ts-ignore
 import { rootURL } from '../auth/auth';
