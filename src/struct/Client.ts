@@ -39,7 +39,7 @@ export default class Client {
       discordSend: (channelId, message) => {
         const channel = this.discordClient.channels.get(channelId);
 
-        if (!channel) return this.util.logger.warn(`Channel ${channel} does not exist.`);
+        if (!channel) return this.util.logger.warn(`Channel ${channelId} does not exist.`);
 
         // @ts-ignore
         return channel.send(message);

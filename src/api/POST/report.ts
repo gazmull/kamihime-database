@@ -58,7 +58,7 @@ export default class PostReportRequest extends Api {
           .where('userId', req.cookies.userId);
 
         if (!user)
-          throw { code: 401, message: 'Invalid user.' };
+          throw { code: 404, message: 'Invalid user.' };
       }
 
       const [ recentlyReported ] = await this.util.db('reports').select('userId')

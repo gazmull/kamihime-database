@@ -104,7 +104,10 @@ $(() => {
 
       setTimeout(() => {
         sweet({
-          text: 'Click OK to proceed. For navigation help, see HELP at the sidebar.',
+          html: [
+            'Click OK to proceed.',
+            'For navigation help, see <b>HELP</b> at the sidebar.',
+          ].join('<br><br>'),
           titleText: 'Assets loaded!',
         }).then(() => {
           $('.panel').addClass('animated faster fadeIn');

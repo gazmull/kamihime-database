@@ -17,8 +17,10 @@ export default class BrowserRoute extends Route {
     const endPoint = this.server.auth.rootURL + 'api/';
 
     try {
-      let hot = this.server.kamihime.slice();
-      hot = hot.sort((a, b) => b.peeks - a.peeks).slice(0, 10);
+      const hot: IKamihime[] = await this.util.db('kamihime').select([ 'id', 'name', 'rarity', 'peeks' ])
+        .where('approved', 1)
+        .orderBy('peeks', 'desc')
+        .limit(10);
       const characters = this.server.kamihime
         .filter(el => el.approved)
         .map(el => ({ id: el.id, name: el.name, rarity: el.rarity }));

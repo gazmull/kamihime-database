@@ -77,13 +77,13 @@ export default class PostSessionRequest extends Api {
       if (sessions.length > 3)
         throw { code: 429, message: `Too many sessions active. [${sessions.length} sessions active]` };
 
-      const uniqueID: string = Math.random().toString(36).substr(2, 16);
+      const uniqueId: string = Math.random().toString(36).substr(2, 16);
       const uniqueKey: string = Buffer.from(shortid.generate()).toString('base64');
 
       await this.util.db('sessions')
         .insert({
           characterId: id,
-          id: uniqueID,
+          id: uniqueId,
           password: uniqueKey,
           userId: user,
         });

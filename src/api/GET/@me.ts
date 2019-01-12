@@ -51,7 +51,7 @@ export default class GetAtMeRequest extends Api {
         .where('userId', req.cookies.userId)
         .limit(1);
 
-      if (!user) throw { code: 403 };
+      if (!user) throw { code: 404 };
 
       const username = user.username;
       const settings = JSON.stringify({
