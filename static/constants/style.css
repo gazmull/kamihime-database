@@ -39,6 +39,7 @@ body {
   height: 100%;
   font-family: 'Open Sans', sans-serif;
   margin: 0 !important;
+  min-width: 450px;
   padding: 0 !important;
 }
 
