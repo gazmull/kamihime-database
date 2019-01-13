@@ -25,7 +25,7 @@ export default class LoginRoute extends Route {
       //   return res.render('admin/login', { slug });
 
       res
-        .cookie('slug', slug, { maxAge: 18e5, httpOnly: true })
+        .cookie('slug', slug, { maxAge: 18e5 })
         .redirect([
           'https://discordapp.com/oauth2/authorize?',
           'client_id=' + this.server.auth.discord.key,

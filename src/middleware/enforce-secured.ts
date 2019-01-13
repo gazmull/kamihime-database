@@ -4,7 +4,7 @@ import { rootURL } from '../auth/auth';
 
 export default function enforceSecured (): RequestHandler {
   return (req, res, next) => {
-    if (!req.secure)
+    if (!req.secure) {
       if (
         req.method !== 'GET' ||
         // ? - Future use
@@ -19,6 +19,9 @@ export default function enforceSecured (): RequestHandler {
       else
         res.redirect(301, 'https' + rootURL.slice(4) + req.originalUrl.slice(1));
 
-    return next(`${req.cookies.userId || req['auth-ip']}: Using HTTP protocol; blocked.`);
+      return next(`${req.cookies.userId || req['auth-ip']}: Using HTTP protocol; blocked.`);
+    }
+
+    next();
   };
 }

@@ -123,7 +123,7 @@ export default class Server {
 
       const mainHandler: RequestHandler = (req, res, next) => file.exec(req, res, next);
 
-      if (file.auth) server[file.method](file.route, authHandler(this, file), mainHandler);
+      if (file.auth) server[file.method](file.route, authHandler(this.util, file), mainHandler);
       else server[file.method](file.route, mainHandler);
     }
 

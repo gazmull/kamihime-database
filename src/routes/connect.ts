@@ -95,7 +95,7 @@ export default class ConnectRoute extends Route {
       );
 
       res
-        .cookie('userId', user.id, { maxAge: 6048e5, httpOnly: true })
+        .cookie('userId', user.id, { maxAge: 6048e5 })
         .redirect(slugURL || '/');
     } catch (err) { this.util.handleSiteError(res, err); }
   }
