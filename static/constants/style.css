@@ -242,19 +242,19 @@ input[type=range]::-ms-thumb {
 }
 
 #thumbnail {
-  -moz-mask-image: radial-gradient(circle at center center, black 50%, transparent 78%);
-  -webkit-mask-image: radial-gradient(circle at center center, black 50%, transparent 78%);
+  -moz-mask-image: radial-gradient(circle at center 90%, black 50%, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at center 90%, black 50%, transparent 78%);
   background-color: transparent;
   background-repeat: no-repeat;
   background-size: contain;
-  border-bottom-left-radius: 30%;
-  border-bottom-right-radius: 30%;
+  border-top-left-radius: 30%;
+  border-top-right-radius: 30%;
+  bottom: 0;
   height: 640px;
   mask-image: radial-gradient(circle at center center, black 50%, transparent 78%);
   opacity: 0.5;
   position: fixed;
   right: 16.666667%; /* Corresponds to feed containers (latest, hot) */
-  top: 0;
   width: 960px;
   z-index: 0;
 }

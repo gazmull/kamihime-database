@@ -12,6 +12,8 @@ import Api from './Api';
 import Client from './Client';
 import Route from './Route';
 
+let serverRefreshTimeout: NodeJS.Timeout = null;
+
 const GENERAL_COOLDOWN: number = 1000 * 60 * 3;
 
 export default class Server {
@@ -45,6 +47,8 @@ export default class Server {
     this.visitors = new Collection();
 
     this.kamihime = [];
+
+    this.status = null;
   }
 
   public client: Client;
@@ -55,9 +59,17 @@ export default class Server {
   public states: Collection<string, IState>;
   public visitors: Collection<string, Collection<string, number>>;
   public kamihime: IKamihime[];
+  public status: string;
 
   public init (server: Express, client: Client): this {
     this.client = client;
+
+    // Website status message
+    this.util.db('status').select('message')
+      .orderBy('date', 'desc')
+      .limit(1)
+      .then(([ msg ]) => this.status = msg.message || null)
+      .catch(this.util.logger.error);
 
     // Api
     const API_METHODS_DIR: string = resolve(__dirname, '../api');
@@ -86,7 +98,6 @@ export default class Server {
     }
 
     // Routes
-
     server.get('*', (req, res, next) => {
       if (!req.cookies.verified && !(req.xhr || req.headers.accept && req.headers.accept.includes('application/json')))
         return res.render('invalids/disclaimer', { redirected: true });
@@ -110,10 +121,9 @@ export default class Server {
       file.client = client;
       Object.assign(file.util, {  ...this.client.util });
 
-      // ! - Unfinished - needs double-check
       const mainHandler: RequestHandler = (req, res, next) => file.exec(req, res, next);
 
-      if (file.auth) server[file.method](file.route, authHandler(this, file).bind(server), mainHandler);
+      if (file.auth) server[file.method](file.route, authHandler(this, file), mainHandler);
       else server[file.method](file.route, mainHandler);
     }
 
@@ -140,8 +150,11 @@ export default class Server {
       .then(() => this.util.logger.status('Cleanup Rotation Occurred.'))
       .catch(this.util.logger.error);
 
-    if (!forced)
-      setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
+    if (forced) {
+      clearTimeout(serverRefreshTimeout);
+      serverRefreshTimeout = setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
+    } else
+      serverRefreshTimeout = setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
 
     return this;
   }

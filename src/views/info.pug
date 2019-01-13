@@ -19,7 +19,6 @@ html
     script(src='/info/script.js')
     link(rel='stylesheet', href='/constants/style.css')
     link(rel='stylesheet', href='/info/style.css')
-    include constants/userSettings.pug
     title Kamihime Database - Info
   body
     ul(class='top-nav')
@@ -54,7 +53,7 @@ html
                         a(data-toggle='tooltip', data-placement='bottom', title='Redirects you to edit the info at Wikia.', href=`https://kamihime-project.wikia.com/w/${character.name}?action=edit`)  Edit on Wikia
                       th(class='name')
                         i(class='fa fa-exclamation-triangle text-light')
-                        a(data-toggle='tooltip', data-placement='bottom', title='Reports errors on the info to the Wikia Discord.', href='javascript:void(0);', onclick=`${user.username ? `showReport('${character.id}')` : `confirmLogin('${character.id}')`};`)  Report Error
+                        a(data-toggle='tooltip', data-placement='bottom', title='Reports errors on the info to the Wikia Discord.', href='javascript:void(0);', onclick=`${user ? `showReport('${character.id}')` : `confirmLogin('${character.id}')`};`)  Report Error
 
                 - if (!wiki)
                   h1 #{character.name} - Cannot Retrieve Wiki Information
@@ -119,7 +118,7 @@ html
                     tr
                       th(class='name')
                         i(class='fa fa-exclamation-triangle text-light')
-                        a(data-toggle='tooltip', data-placement='bottom', title='Reports errors on the episodes to the KamihimeDB Discord', href='javascript:void(0);', onclick=`${user.username ? `showReport('${character.id}', 1)` : `confirmLogin('${character.id}', 1)`};`)  Report Error
+                        a(data-toggle='tooltip', data-placement='bottom', title='Reports errors on the episodes to the KamihimeDB Discord', href='javascript:void(0);', onclick=`${user ? `showReport('${character.id}', 1)` : `confirmLogin('${character.id}', 1)`};`)  Report Error
                 h1 #{character.name === 'Eros' ? 'Wha— wait, what are you doing?!' : 'Episodes'}
                 -
                   const episodes = [

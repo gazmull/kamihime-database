@@ -13,7 +13,6 @@ html
     script(src='/browser/script.js')
     link(rel='stylesheet', href='/constants/style.css')
     link(rel='stylesheet', href='/browser/style.css')
-    include constants/userSettings.pug
     title Kamihime Database - Browser
   body
     <!-- Menu -->
@@ -32,6 +31,13 @@ html
         div(class='nav-switch nav-switch-hide')
     <!-- Menu End -->
     div(class='container-fluid px-0')
+      div(class='row')
+        - if(status)
+          div(class='col-xs-12 col-md-10', style='z-index: 1')
+            div(class='alert alert-dismissable alert-danger fade show')
+              a(href='javascript:void(0);', class='close', data-dismiss='alert') &times;
+              h4(class='alert-heading') Announcement
+              p(class='name', style='white-space: pre-wrap') !{status}
       div(class='row')
 
         div(class='col-1 px-0')
@@ -69,11 +75,6 @@ html
             div(id='thumbnail', class='col-12 d-none d-md-block')
 
         div(id='feed-wrapper' class='col-2 d-none d-md-block px-0')
-          - if (status)
-            div(class='row')
-              div(class='feed col-12')
-                h5 Website Status
-                p(class='name') !{status}
           div(class='row')
             div(class='feed col-12')
               h5 Latest (<a href='javascript:void(0);' class='text-danger' onclick='showLatest();'>Live Image</a>)

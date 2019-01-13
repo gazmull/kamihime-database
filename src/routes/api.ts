@@ -19,15 +19,16 @@ export default class ApiRoute extends Route {
 
       const request: string  = req.params.request;
       const requestClass: Api = this.server.api.get(this._getMethod(req)).get(request);
+      const ip = req['auth-ip'];
 
       if (
-        req.ip.includes(this.server.auth.host.address) ||
+        ip.includes(this.server.auth.host.address) ||
         (req.cookies.userId && this.server.auth.exempt.includes(req.cookies.userId))
       )
         return requestClass.exec(req, res, next);
 
       const requests = this.server.rateLimits.get(this._getMethod(req)).get(request);
-      const user = requests.find(r => r.address === req.ip);
+      const user = requests.find(r => r.address === ip);
 
       if (!user) {
         this._initialise(req, requests);
@@ -77,20 +78,22 @@ export default class ApiRoute extends Route {
 
   protected _initialise (req: Request, requests: Collection<string, any>): void {
     const request: string = req.params.request;
-    requests.set(req.ip, { address: req.ip, triggers: 1, timestamp: Date.now() });
+    const ip = req['auth-ip'];
+    requests.set(ip, { address: ip, triggers: 1, timestamp: Date.now() });
 
-    const user = requests.get(req.ip);
+    const user = requests.get(ip);
     this.util.logger.status(
       `[I/RI] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
   }
 
   protected _update (req: Request, requests: Collection<string, any>): void {
-    let user = requests.get(req.ip);
+    const ip = req['auth-ip'];
+    let user = requests.get(ip);
     const request: string = req.params.request;
-    requests.set(req.ip, { address: req.ip, triggers: user.triggers + 1, timestamp: user.timestamp });
+    requests.set(ip, { address: ip, triggers: user.triggers + 1, timestamp: user.timestamp });
 
-    user = requests.get(req.ip);
+    user = requests.get(ip);
     this.util.logger.status(
       `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );

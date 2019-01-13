@@ -88,25 +88,17 @@ export default class PlayerRoute extends Route {
       let folder = resource.slice(-4);
       const fLen = folder.length / 2;
       folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
+      const user = req['auth-user'];
       const requested = {
+        user,
         SCENARIOS: SCENARIOS + folder + `${resource}/`,
         script: scenario,
-        user: {},
       };
 
       if (type === 'story')
         Object.assign(requested, { BG_IMAGE, BGM, FG_IMAGE });
       else
         Object.assign(requested, { files });
-
-      if (req.cookies.userId) {
-        const [ user ]: IUser[] = await this.util.db('users').select([ 'settings', 'username' ])
-          .where('userId', req.cookies.userId)
-          .limit(1);
-
-        if (user)
-          Object.assign(requested, { user });
-      }
 
       res.render(template, requested);
     } catch (err) { this.util.handleSiteError(res, err); }
@@ -146,7 +138,7 @@ export default class PlayerRoute extends Route {
   protected async _rateLimit (req: Request, character: any, resource: string): Promise<true> {
     const update = () => this.util.db('kamihime').update('peeks', ++character.peeks)
       .where('id', character.id);
-    const usr = req.cookies.userId || req.ip;
+    const usr = req.cookies.userId || req['auth-ip'];
     const status = () => this.util.logger.status(`[A] Peek: ${usr} visited ${character.name}`);
 
     if (this.server.auth.exempt.includes(req.cookies.userId)) {

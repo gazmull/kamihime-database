@@ -7,6 +7,7 @@ import * as favicon from 'serve-favicon';
 // @ts-ignore
 import { cookieSecret } from './auth/auth';
 import enforceSecured from './middleware/enforce-secured';
+import ipHandler from './middleware/ovh-ip-handler';
 import Client from './struct/Client';
 import Server from './struct/Server';
 import { error } from './util/console';
@@ -40,6 +41,7 @@ if (process.env.NODE_ENV === 'production')
 else server.disable('x-powered-by');
 
 server
+  .use(ipHandler())
   .use(express.urlencoded({ extended: true }))
   .use(express.json())
   .use(compression({ filter: req => !req.headers['x-no-compression'] }))

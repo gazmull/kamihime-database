@@ -82,7 +82,7 @@ async function saveSettings (key, obj, db = false) {
 
   const shouldSave = isBool ? key : db;
 
-  if (shouldSave && typeof userSettings !== 'undefined') {
+  if (shouldSave && Cookies.get('userId')) {
     const res = await fetch('/api/@me?save=yes', {
       credentials: 'include',
       headers: { Accept: 'application/json' },

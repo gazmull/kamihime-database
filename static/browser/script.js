@@ -3,21 +3,7 @@ $(() => {
     Cookies.set('lastNav', '#all');
     Cookies.set('menu', 'true');
 
-    const alertMsg = `
-    <div class="alert alert-dismissible alert-warning fade show" style="z-index: 1337">
-      <a href="#" class="close" data-dismiss="alert">&times;</a>
-      <h4 class='alert-heading'>Heads up!</h4>
-      <p>This site uses cookies to save your browsing settings.</p>
-    </div>`;
-
-    $('.container-fluid').prepend(alertMsg);
     $('[data-toggle="tooltip"]').tooltip('show');
-
-    $('.alert').on('closed.bs.alert', () =>
-      $('[data-toggle="tooltip"]')
-        .tooltip('hide')
-        .tooltip('show'),
-    );
   }
 
   if (Cookies.get('menu') === 'false') {

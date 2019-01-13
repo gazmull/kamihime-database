@@ -48,8 +48,8 @@ export default class PostReportRequest extends Api {
 
   public async exec (req: Request, res: Response): Promise<void> {
     const data = req.body;
-    const usr = req.cookies.userId ? req.cookies.userId : req.ip;
-    const interval = usr === req.ip ? 24 : 3;
+    const usr = req.cookies.userId ? req.cookies.userId : req['auth-ip'];
+    const interval = usr === req['auth-ip'] ? 24 : 3;
     let user: IUser;
 
     try {
@@ -88,7 +88,8 @@ export default class PostReportRequest extends Api {
           userId: usr,
         });
 
-      const name = usr === req.ip ? `Anonymous User (${req.ip})` : `User ${user.username} (${user.userId})`;
+      const ip = req['auth-ip'];
+      const name = usr === ip ? `Anonymous User (${ip})` : `User ${user.username} (${user.userId})`;
       const character = this.server.kamihime.find(el => el.id === data.characterId);
       const channel = data.type === 0
         ? this.client.auth.discord.wikiReportChannel

@@ -1,7 +1,7 @@
 div(class='col-md-4 px-0 member')
   | ​
   img(src='/img/discord.png', width=24, id='logbadge')
-  - if (user.username)
+  - if (user)
     a(data-toggle='tooltip', data-placement='bottom', title='Your name. Duh.', id='username') #{user.username}
     a(class='text-light logbutton', href='/logout') Log out
   - else

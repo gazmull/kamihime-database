@@ -1,3 +1,4 @@
+import anchorme from 'anchorme';
 import { each } from 'bluebird';
 import { Client as DiscordClient, WSEventType } from 'discord.js';
 import { createWriteStream } from 'fs-extra';
@@ -87,15 +88,17 @@ export default class Client {
       'TYPING_START',
       'WEBHOOKS_UPDATE',
     ];
+    const rootURL = this.server.auth.rootURL;
+    const hostname = rootURL.slice(rootURL.indexOf(':') + 3).slice(0, -1);
 
     this.discordClient = new DiscordClient({
       disabledEvents: events,
       presence: {
         activity: {
-          name: 'Announcements',
+          name: hostname,
           type: 'WATCHING',
         },
-        status: 'dnd',
+        status: 'online',
       },
     });
 
@@ -111,6 +114,8 @@ export default class Client {
             id: message.id,
             message: message.content,
           });
+
+          this.server.status = anchorme(message.content, { attributes: [ { name: 'target', value: '_blank' } ] });
         } catch (e) { this.util.logger.error(e); }
 
         this.util.logger.status('Discord Bot: New announcement has been saved.');
@@ -133,8 +138,7 @@ export default class Client {
     if (forced) {
       clearTimeout(khTimeout);
       khTimeout = setTimeout(() => this.startKamihimeDatabase(), COOLDOWN);
-    }
-    else
+    } else
       khTimeout = setTimeout(() => this.startKamihimeDatabase(), COOLDOWN);
 
     return this;

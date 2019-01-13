@@ -28,20 +28,12 @@ export default class InfoRoute extends Route {
 
       if (!character) throw { code: 422 };
 
-      const requested = { character, wiki: null, user: {} };
-
-      if (req.cookies.userId) {
-        const [ user ]: IUser[] = await this.util.db('users').select([ 'settings', 'username' ])
-          .where('userId', req.cookies.userId)
-          .limit(1);
-
-        if (user)
-          Object.assign(requested, { user });
-      }
+      const user = req['auth-user'];
+      const requested = { character, wiki: null, user };
 
       this._parseArticle(character.name)
       .then(wiki => {
-        Object.assign(requested, { wiki });
+        requested.wiki = wiki;
 
         return res.render('info', requested);
       })
