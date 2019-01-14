@@ -17,7 +17,7 @@ export default function enforceSecured (): RequestHandler {
           .status(403)
           .json({ error: { code: 403, message: 'Please use https protocol instead.' } });
       else
-        res.redirect(301, 'https' + rootURL.slice(4) + req.originalUrl.slice(1));
+        res.redirect(301, `https${rootURL.slice(4) + req.originalUrl.slice(1)}`);
 
       return next(`${req.cookies.userId || req['auth-ip']}: Using HTTP protocol; blocked.`);
     }

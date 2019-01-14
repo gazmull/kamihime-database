@@ -91,7 +91,7 @@ export default class PlayerRoute extends Route {
       const user = req['auth-user'];
       const requested = {
         user,
-        SCENARIOS: SCENARIOS + folder + `${resource}/`,
+        SCENARIOS: `${SCENARIOS + folder}${resource}/`,
         script: scenario,
       };
 

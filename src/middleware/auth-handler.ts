@@ -10,7 +10,7 @@ export default function authHandler (util: IUtil, file: Route): RequestHandler {
       .where('userId', req.cookies.userId);
 
     if (!user) {
-      const msg = `${req.cookies.userId || req['auth-ip']}: Using invalid userId cookie; blocked.`;
+      const msg = `${req.cookies.userId}: Using invalid userId cookie; blocked.`;
 
       res.clearCookie('userId');
       util.handleSiteError(res, { code: 404, message: 'User not found; ID cookie cleared.' });
