@@ -10,9 +10,13 @@ export default function ovhIpHandler (): RequestHandler {
     if (!ip) {
       res
         .status(403)
-        .json({ error: { code: 403, message: 'You should not be accessing me directly!' } });
+        .json({ error:
+          { code: 403, message: 'You should not be accessing me directly! Or you should refresh your cache.' },
+        });
 
-      return next(`${req.cookies.userId || req['auth-ip']}: Accessing me directly; blocked.`);
+      const id = req.cookies ? req.cookies.userId || ip : ip;
+
+      return next(`${id}: Accessing me directly; blocked.`);
     }
 
     Object.assign(req, { 'auth-ip': ip });

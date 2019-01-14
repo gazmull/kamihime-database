@@ -14,6 +14,8 @@ import { error } from './util/console';
 
 const server = express();
 
+server.use(ipHandler());
+
 if (process.env.NODE_ENV === 'production')
   server
     .use(enforceSecured())
@@ -41,7 +43,6 @@ if (process.env.NODE_ENV === 'production')
 else server.disable('x-powered-by');
 
 server
-  .use(ipHandler())
   .use(express.urlencoded({ extended: true }))
   .use(express.json())
   .use(compression({ filter: req => !req.headers['x-no-compression'] }))

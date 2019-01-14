@@ -19,7 +19,10 @@ export default function enforceSecured (): RequestHandler {
       else
         res.redirect(301, `https${rootURL.slice(4) + req.originalUrl.slice(1)}`);
 
-      return next(`${req.cookies.userId || req['auth-ip']}: Using HTTP protocol; blocked.`);
+      const ip = req['auth-ip'];
+      const id = req.cookies ? req.cookies.userId || ip : ip;
+
+      return next(`${id}: Using HTTP protocol; blocked.`);
     }
 
     next();
