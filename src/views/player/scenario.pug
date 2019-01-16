@@ -1,40 +1,23 @@
-doctype html
+extends ../_templates/player
+include assets/side-nav-content
 
-html
+append head
+  script.
+    let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
+    const files = !{JSON.stringify(files)};
+    const SCENARIOS = "#{SCENARIOS}";
+  script(src='/lib/howler.core.min.js')
+  script(src='/player/script.js')
+  script(src='/player/script/scenario.js')
 
-  head
-    script.
-      let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
-      const files = !{JSON.stringify(files)};
-      const SCENARIOS = "#{SCENARIOS}";
-    script(src='/lib/jquery.min.js')
-    script(src='/lib/howler.core.min.js')
-    script(src='/lib/sweetalert2.min.js')
-    script(src='/lib/popper.min.js')
-    script(src='/lib/bootstrap.min.js')
-    script(src='/lib/js.cookie.min.js')
-    link(rel='stylesheet', href='/lib/bootstrap.min.css')
-    link(rel='stylesheet', href='/lib/sweetalert2.css')
-    link(rel='stylesheet', href='/constants/style.css')
-    link(rel='stylesheet', href='/player/style.css')
-    script(src='/constants/script.js')
-    script(src='/player/script.js')
-    script(src='/player/script/scenario.js')
-    title Kamihime Database - Player
-  body
-    ul(class='top-nav')
-      include ../constants/navigation.pug
-      include ../constants/member2.pug
-      li(class='top-nav-status')
-          a Scenario Mode
-    include ../constants/player_sideNavigation.pug
-    div(class='scenario panel-wrapper')
-      div(class='panel', sequence=0)
-        button(class='invi leftNav', nav='left')
-        |
-        button(class='invi rightNav', nav='right')
-        div(id='image')
-        div(id='dialog')
-          div(id='text', data=0)
-            div(id='characterName')
-            div(id='characterTalk')
+block content
+  div(class='scenario panel-wrapper')
+    div(class='panel', sequence=0)
+      button(class='invi leftNav', nav='left')
+      |
+      button(class='invi rightNav', nav='right')
+      div(id='image')
+      div(id='dialog')
+        div(id='text', data=0)
+          div(id='characterName')
+          div(id='characterTalk')

@@ -12,11 +12,15 @@ $(() => {
   }
 
   $('.collapse')
-    .on('show.bs.collapse', () => {
+    .on('show.bs.collapse', function () {
+      if (this.className.includes('nav')) return;
+
       $('#search-bar').val('').blur();
       $('.collapse.show').collapse('hide');
     })
-    .on('shown.bs.collapse', () => {
+    .on('shown.bs.collapse', function () {
+      if (this.className.includes('nav')) return;
+
       const currentPage = '#' + $(`.collapse.show`).attr('id');
 
       Cookies.set('lastNav', currentPage);
@@ -24,7 +28,9 @@ $(() => {
       $('.content.show .kh-list').attr('class', 'kh-list px-0 visible-browser');
       $(`.nav-link[data-target='${Cookies.get('lastNav')}']`).addClass('active');
     })
-    .on('hide.bs.collapse', () => {
+    .on('hide.bs.collapse', function () {
+      if (this.className.includes('nav')) return;
+
       $('#search-bar').val('').blur();
       $('.kh-list.visible-browser .name.hiddenInstant-browser')
         .attr('class', 'name visible-browser')

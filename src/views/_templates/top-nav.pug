@@ -1,0 +1,38 @@
+div#top-nav-container.row
+    div(class='col-12 px-0')
+      nav(class='top-nav navbar sticky-top navbar-expand-md navbar-dark')
+        b(class='navbar-text text-uppercase d-block d-md-none') Menu
+        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#top-nav-content')
+          span.navbar-toggler-icon
+
+        div#top-nav-content(class='collapse navbar-collapse')
+          block top-nav-content
+            ul(class='navbar-nav mr-auto')
+              li.nav-item
+                +link('/', 'Home')
+              li.nav-item
+                a(href='https://github.com/gazmull/kamihime-database', target='_blank')
+                  | Source 
+                  i(class='fa fa-github text-light') 
+              li.nav-item
+                +link('/disclaimer', 'Disclaimer and Privacy')
+              - if (user)
+                li.nav-item
+                  +link('/logout', `Log out (${user.username})`)
+              - else
+                li.nav-item
+                  a.logbutton(
+                    data-toggle='tooltip',
+                    data-placement='bottom',
+                    title='Hello there! Login via Discord.',
+                    href='javascript:void(0);',
+                    onclick='showLoginWarning();',
+                  ) Log in
+          form(class='form-inline', onsubmit='return event.preventDefault();')
+            div.input-group
+              div.input-group-prepend
+                span.input-group-text
+                  i(class='fa fa-search')
+              input#search-bar(class='form-control mr-sm-2', type='text', placeholder='Search character...')
+            div.result-wrapper
+              ul#result.list-group

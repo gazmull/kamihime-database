@@ -1,15 +1,5 @@
-include ../constants/invalids.pug
-title Kamihime Database - Error
+extends ../_templates/error
 
-body
-  ul(class='top-nav')
-    include ../constants/navigation.pug
-    li(class='top-nav-status')
-      a Error: 401
-  center
-    br
-    img(src='/img/LME.png', alt='Let Me Explain...')
-    - if (message)
-      h1 #{message}
-    - else
-      h1 Stop right there! Only authorised personnel are allowed at this point.
+append message
+  - else
+    h1 Stop right there! Only authorised personnel are allowed at this point.

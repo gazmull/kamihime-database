@@ -1,42 +1,9 @@
-/* Member Area */
-
-.member {
-  z-index: 1040;
-  /* border-bottom: 15px solid #ff00ae; */
-  box-shadow: 0px 1px 5px #ff00ae;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-#logbadge {
-  position: absolute;
-  left: 2px;
-}
-
-#username {
-  position: absolute;
-  left: 30px;
-}
-
-.logbutton {
-  position: absolute;
-  right: 5px;
-}
-
-/* Navigation */
-
-#search-bar {
-  position: relative;
-  top: 5px;
-  width: 100%;
-}
-
 /* Latest/Hot */
 
 #feed-wrapper {
   max-height: 100vh;
   position: fixed;
-  top: 0.5vh;
+  top: 56px;
   right: 0;
 }
 
@@ -48,7 +15,7 @@
   border-top-left-radius: 5%;
   border-bottom-left-radius: 5%;
   overflow-y: auto;
-  max-height: 48.5vh;
+  max-height: 45.5vh;
   margin: 0.5vh 0;
 }
 
@@ -95,4 +62,4 @@
   clear: left;
 }
 
-.nav-switch-hide { height: 250px; }
+.side-nav .nav-switch-hide { height: 270px; }

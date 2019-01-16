@@ -20,10 +20,10 @@ p { white-space: pre-wrap; }
 
 #thumbnail { z-index: -1; }
 
-.navbar { top: 50.2%; }
+.side-nav.navbar { top: 50.2%; }
 
-@media (max-height: 640px) { .navbar { top: 48.2%; } }
-@media (max-height: 414px) { .navbar { top: 38.2%; } }
+@media (max-height: 640px) { .side-nav.navbar { top: 48.2%; } }
+@media (max-height: 414px) { .side-nav.navbar { top: 38.2%; } }
 
 .nav-switch-hide { height: 100px; }
 

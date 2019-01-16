@@ -5,7 +5,7 @@ export default function ovhIpHandler (): RequestHandler {
     // See: https://docs.ovh.com/fr/ssl-gateway/utiliser-le-ssl-gateway/
     const ip = process.env.NODE_ENV === 'production'
       ? req.headers['X-Remote-Ip'] || req.headers['X-Forwarded-For']
-      : req.ip;
+      : req.ip.slice(7);
 
     if (!ip) {
       res

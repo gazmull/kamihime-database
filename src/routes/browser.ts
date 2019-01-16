@@ -30,7 +30,7 @@ export default class BrowserRoute extends Route {
       const status = this.server.status;
       const requested = { characters, latest, hot, user, status };
 
-      res.render('browser', requested);
+      res.render('browser/browser', requested);
     } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

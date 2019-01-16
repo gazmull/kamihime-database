@@ -35,9 +35,9 @@ export default class InfoRoute extends Route {
       .then(wiki => {
         requested.wiki = wiki;
 
-        return res.render('info', requested);
+        return res.render('info/info', requested);
       })
-      .catch(() => res.render('info', requested));
+      .catch(() => res.render('info/info', requested));
     } catch (err) { this.util.handleSiteError(res, err); }
   }
 

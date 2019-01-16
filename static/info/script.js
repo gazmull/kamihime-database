@@ -10,8 +10,14 @@ $(() => {
   }
 
   $('.collapse')
-    .on('show.bs.collapse', () => $('.collapse.show').collapse('hide'))
-    .on('shown.bs.collapse', () => {
+    .on('show.bs.collapse', function () {
+      if (this.className.includes('nav')) return;
+
+      $('.collapse.show').collapse('hide')
+    })
+    .on('shown.bs.collapse', function () {
+      if (this.className.includes('nav')) return;
+
       const currentPage = '#' + $(`.collapse.show`).attr('id');
 
       Cookies.set('info-lastNav', currentPage);
@@ -19,7 +25,9 @@ $(() => {
       $('.content.show .content-wrapper').attr('class', 'content-wrapper visible-browser');
       $(`.nav-link[data-target='${Cookies.get('info-lastNav')}']`).addClass('active');
     })
-    .on('hide.bs.collapse', () => {
+    .on('hide.bs.collapse', function () {
+      if (this.className.includes('nav')) return;
+
       $('.content-wrapper.visible-browser').attr('class', 'content-wrapper hidden-browser');
       $(`.nav-link.active`).removeClass('active');
     });
@@ -42,7 +50,7 @@ function confirmLogin (id, type = 0) {
   .then(res => {
     if (res.value)
       location.replace('/login');
-    else if (res.dismiss)
+    else if (res.dismiss === Swal.DismissReason.cancel)
       showReport(id, type);
   });
 }

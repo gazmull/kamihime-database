@@ -7,8 +7,12 @@ const ex = require('util').promisify(exec);
 // tslint:disable-next-line:no-console
 const log = (message, obj) => console.log('finalize: ' + message, obj || '');
 
+const pugTask = process.argv.includes('--pug');
+
 // -- Uglify TypeScript build
 (async () => {
+  if (pugTask) return true;
+
   const command = 'terser-folder build/proto --config-file .terser-folder.json -ey -x .js -o build';
   const { stderr } = await ex(command, { cwd: resolve(__dirname, '..') });
 
@@ -21,6 +25,8 @@ const log = (message, obj) => console.log('finalize: ' + message, obj || '');
 
 // -- Remove TypeScript build
 .then(async () => {
+  if (pugTask) return true;
+
   const proto = resolve(__dirname, '../build/proto');
 
   await fs.remove(proto);
