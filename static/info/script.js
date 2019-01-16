@@ -13,7 +13,7 @@ $(() => {
     .on('show.bs.collapse', function () {
       if (this.className.includes('nav')) return;
 
-      $('.collapse.show').collapse('hide')
+      $('.collapse.show').collapse('hide');
     })
     .on('shown.bs.collapse', function () {
       if (this.className.includes('nav')) return;
