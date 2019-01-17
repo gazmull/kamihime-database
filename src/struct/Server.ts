@@ -99,9 +99,11 @@ export default class Server {
     }
 
     // Routes
-    server.get('*', (req, res, next) => {
+    server.get('*',
+    authHandler(this.util, new Route({ auth: true })),
+    (req, res, next) => {
       if (!req.cookies.verified && !(req.xhr || req.headers.accept && req.headers.accept.includes('application/json')))
-        return res.render('invalids/disclaimer', { redirected: true });
+        return res.render('invalids/disclaimer', { redirected: true, user: req['auth-user'] });
 
       return next();
     });
@@ -128,7 +130,11 @@ export default class Server {
       else server[file.method](file.route, mainHandler);
     }
 
-    server.all('*', (_, res) => res.render('invalids/403'));
+    server.all(
+      '*',
+      authHandler(this.util, new Route({ auth: true })),
+      (req, res) =>  res.render('invalids/403', { user: req['auth-user'] }),
+    );
 
     let _server: Express | https.Server = server;
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
