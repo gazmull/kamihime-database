@@ -3,21 +3,7 @@ $(() => {
     Cookies.set('lastNav', '#all');
     Cookies.set('menu', 'true');
 
-    const alertMsg = `
-    <div class="alert alert-dismissible alert-warning fade show" style="z-index: 1337">
-      <a href="#" class="close" data-dismiss="alert">&times;</a>
-      <h4 class='alert-heading'>Heads up!</h4>
-      <p>This site uses cookies to save your browsing settings.</p>
-    </div>`;
-
-    $('.container-fluid').prepend(alertMsg);
     $('[data-toggle="tooltip"]').tooltip('show');
-
-    $('.alert').on('closed.bs.alert', () =>
-      $('[data-toggle="tooltip"]')
-        .tooltip('hide')
-        .tooltip('show'),
-    );
   }
 
   if (Cookies.get('menu') === 'false') {
@@ -26,20 +12,24 @@ $(() => {
   }
 
   $('.collapse')
-    .on('show.bs.collapse', () => {
-      $('#search-bar').val('').blur();
+    .on('show.bs.collapse', function () {
+      if (isNav.bind(this)()) return;
+
       $('.collapse.show').collapse('hide');
     })
-    .on('shown.bs.collapse', () => {
-      const currentPage = $(`.collapse.show`).attr('id');
+    .on('shown.bs.collapse', function () {
+      if (isNav.bind(this)()) return;
 
-      Cookies.set('lastNav', '#' + currentPage);
+      const currentPage = '#' + $(`.collapse.show`).attr('id');
+
+      Cookies.set('lastNav', currentPage);
 
       $('.content.show .kh-list').attr('class', 'kh-list px-0 visible-browser');
       $(`.nav-link[data-target='${Cookies.get('lastNav')}']`).addClass('active');
     })
-    .on('hide.bs.collapse', () => {
-      $('#search-bar').val('').blur();
+    .on('hide.bs.collapse', function () {
+      if (isNav.bind(this)()) return;
+
       $('.kh-list.visible-browser .name.hiddenInstant-browser')
         .attr('class', 'name visible-browser')
         .css('position', 'relative');
@@ -48,27 +38,6 @@ $(() => {
     });
 
   $(Cookies.get('lastNav')).collapse('show');
-
-  $('#search-bar:input').on('click input keyup', ({ currentTarget: $this }) => {
-    let query = $($this).val();
-    query = query.toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase());
-
-    const names = '.kh-list.visible-browser .name';
-    const toHide = $(`${names}[name!='${query}']`);
-    const toShow = $(`${names}[name*='${query}']`);
-
-    if (query) {
-      toHide
-        .attr('class', 'name hiddenInstant-browser')
-        .css('position', 'absolute');
-      toShow
-        .attr('class', 'name visible-browser')
-        .css('position', 'relative');
-    } else
-      $(`${names}[class*='hiddenInstant-browser']`)
-        .attr('class', 'name visible-browser')
-        .css('position', 'relative');
-  });
 
   $('.name')
     .on('mouseenter', ({ currentTarget: $this }) => {
@@ -107,7 +76,7 @@ function showHelp () {
 
 function showLatest () {
   sweet({
-    html: '<a href="/latest" class="text-light" target="_blank">http://kamihimedb.thegzm.space/latest</a>',
+    html: '<a href="/latest" class="text-light" target="_blank">https://kamihimedb.thegzm.space/latest</a>',
     imageAlt: 'Latest Image',
     imageUrl: '/latest',
     imageWidth: '100%',

@@ -3,7 +3,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {put} /approve approve
- * @apiVersion 2.1.0
  * @apiName PutApprove
  * @apiGroup Kamihime Specific
  * @apiDescription Approves/Disapproves a character from the database.

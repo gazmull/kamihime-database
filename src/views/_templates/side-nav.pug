@@ -1,0 +1,14 @@
+div(class='col-1 px-0')
+  nav(class='side-nav navbar navbar-light navbar-expand-sm px-0 flex-row flex-nowrap float-left')
+    div#nav.nav
+      block side-nav-help
+        a(
+          class='nav-item text-light text-uppercase',
+          href='javascript:void(0);',
+          data-toggle='tooltip',
+          data-placement='top',
+          title='Click me for help using this page!',
+          onclick='showHelp();'
+        ) Help
+      block side-nav-content
+    div(class='nav-switch nav-switch-hide')

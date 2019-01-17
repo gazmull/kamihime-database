@@ -4,7 +4,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {get} /search search
- * @apiVersion 2.1.0
  * @apiName GetSearch
  * @apiGroup Kamihime Specific
  * @apiDescription Searches items with the provided name.
@@ -21,7 +20,7 @@ import Api from '../../struct/Api';
  *  <br>- **Kamihime Only**: `healer` / `offense` / `tricky` / `balance` / `defense`
  *  <br>- **Weapon Only**: `hammer` / `lance` / `glaive` / `arcane` / `staff` / `axe` / `gun` / `bow` / `sword`
  *
- * @apiSuccess {/id[]} items An array of items from `GET /id` object.
+ * @apiSuccess {/id[]} items An array of items (up to 10 items) from `GET /id` object.
  * @apiSuccessExample {json} Response:
  *  HTTP/1.1 200 OK
  *  [
@@ -63,6 +62,7 @@ export default class GetSearchRequest extends Api {
     let itemClass: any = req.query.class;
     const name: string = decodeURI(req.query.name);
     const accurate: number = parseInt(req.query.accurate);
+    const approved: number = parseInt(req.query.approved);
     const loli: number = parseInt(req.query.loli);
     const element: string = req.query.element;
     const rarity: string = req.query.rarity;
@@ -98,8 +98,8 @@ export default class GetSearchRequest extends Api {
         };
 
       let results = !isNaN(accurate) && accurate
-          ? this.server.kamihimeCache.filter(el => el.name.toLowerCase() === name.toLowerCase())
-          : fuzzy.filter(name, this.server.kamihimeCache, { extract: el => el.name })
+          ? this.server.kamihime.filter(el => el.name.toLowerCase() === name.toLowerCase())
+          : fuzzy.filter(name, this.server.kamihime, { extract: el => el.name })
             .map(el => el.original);
 
       if (typeof itemClass === 'function')
@@ -114,6 +114,9 @@ export default class GetSearchRequest extends Api {
       if (rarity)
         results = results.filter(el =>  String(el.rarity).toLowerCase() === rarity.toLowerCase());
 
+      if (!isNaN(approved))
+        results = results.filter(el => el.approved === approved);
+
       if (!isNaN(loli))
         results = results.filter(el => el.loli === loli);
 
@@ -121,7 +124,7 @@ export default class GetSearchRequest extends Api {
 
       res
         .status(200)
-        .json(results);
+        .json(results.slice(0, 10));
     } catch (err) { this.util.handleApiError(res, err); }
   }
 }

@@ -1,4 +1,4 @@
 - const souls = characters.filter(el => el.id.startsWith('s'));
 - for(const character of souls)
-  li(name=character.name, character-id=character.id, class='name')
+  li.name(name=character.name, character-id=character.id)
     a(href='info/' + character.id) #{character.name}

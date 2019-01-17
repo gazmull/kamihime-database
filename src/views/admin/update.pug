@@ -5,7 +5,7 @@ html
     script(src='/lib/jquery.min.js')
     link(rel='stylesheet', href='/lib/bootstrap.min.css')
     link(rel='stylesheet', href='/constants/style.css')
-  body(style="min-width: 1280px; float:center;")
+  body()
     h1 Kamihime Database Dashboard
     h2 <sup>Where we configure our 2D Waifus.</sup>
     h2 <sup>Session Creator: #{user.userId}</sup>
@@ -18,9 +18,9 @@ html
           b #{info.name}
         br
         span(value=info.id)
-          span(style="font-size:13px") ##{info.id.toUpperCase()}
-      div(style="position: relative;")
-        div(id="manual" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;")
+          span() ##{info.id.toUpperCase()}
+      div()
+        div(id="manual")
           form(method="POST" action="/redirect")
             input(type="hidden" name="id" value=info.id)
             input(type="hidden" name="user" value=user.userId)

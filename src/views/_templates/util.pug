@@ -1,0 +1,5 @@
+mixin link(url, text, newTab = false)
+  a(
+    href=url,
+    target=newTab ? '_blank' : '_self',
+  ) !{text}

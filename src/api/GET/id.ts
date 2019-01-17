@@ -3,7 +3,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {get} /id/:id id
- * @apiVersion 2.1.0
  * @apiName GetId
  * @apiGroup Kamihime Specific
  * @apiDescription Retrieves an item's information.
@@ -53,7 +52,7 @@ export default class GetIdRequest extends Api {
     try {
       if (!checkId) throw { code: 403, message: 'Invalid id.' };
 
-      const character: IKamihime = this.server.kamihimeCache.find(el => el.id === id.toLowerCase());
+      const character = this.server.kamihime.find(el => el.id === id.toLowerCase());
 
       if (!character) throw { code: 404, message: 'Character not found.' };
 

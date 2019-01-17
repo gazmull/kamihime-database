@@ -41,29 +41,14 @@ export default class LatestRoute extends Route {
       };
 
       const positions = {
-        eidolon: {
-          x: 174,
-          y: 63,
-        },
-        r: {
-          x: 174,
-          y: 118,
-        },
-        soul: {
-          x: 14,
-          y: 63,
-        },
-        sr: {
-          x: 14,
-          y: 118,
-        },
-        ssr: {
-          x: 334,
-          y: 63,
-        },
+        eidolon: { x: 174, y: 63 },
+        r: { x: 174, y: 118 },
+        soul: { x: 14, y: 63 },
+        sr: { x: 14, y: 118 },
+        ssr: { x: 334, y: 63 },
       };
 
-      for (const category of Object.keys(result))
+      for (const category in result)
         ctx.fillText(
           result[category]
             .map(c => c.name)

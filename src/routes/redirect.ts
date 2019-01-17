@@ -29,7 +29,7 @@ export default class RedirectRoute extends Route {
 
       if (error) throw error;
 
-      res.render('redirect', { id, name, avatar });
+      res.render('admin/redirect', { id, name, avatar });
     } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

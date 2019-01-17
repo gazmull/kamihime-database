@@ -3,7 +3,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {put} /update update
- * @apiVersion 2.1.0
  * @apiName PutUpdate
  * @apiGroup Kamihime Specific
  * @apiDescription Updates an item from the database.
@@ -111,7 +110,7 @@ export default class PutUpdateRequest extends Api {
 
       this.util.logger.status(`[U] API: Character: ${name} (${id}) | By: ${user}`);
 
-      const avatar: IKamihime['avatar'] = this.server.kamihimeCache.find(el => el.id === id).avatar;
+      const { avatar } = this.server.kamihime.find(el => el.id === id);
 
       res
         .status(200)

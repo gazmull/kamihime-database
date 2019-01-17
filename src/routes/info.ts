@@ -8,6 +8,7 @@ let getArticle: (...args: any[]) => Promise<string> = null;
 export default class InfoRoute extends Route {
   constructor () {
     super({
+      auth: true,
       id: 'info',
       method: 'get',
       route: [ '/info/:id' ],
@@ -23,28 +24,20 @@ export default class InfoRoute extends Route {
     try {
       if (!id) throw { code: 403, message: 'ID is empty.' };
 
-      const character: IKamihime = this.server.kamihimeCache.find(el => el.id === id);
+      const character = this.server.kamihime.find(el => el.id === id);
 
       if (!character) throw { code: 422 };
 
-      const requested = { character, wiki: null, user: {} };
-
-      if (req.cookies.userId) {
-        const [ user ]: IUser[] = await this.util.db('users').select([ 'settings', 'username' ])
-          .where('userId', req.cookies.userId)
-          .limit(1);
-
-        if (user)
-          Object.assign(requested, { user });
-      }
+      const user = req['auth-user'];
+      const requested = { character, wiki: null, user };
 
       this._parseArticle(character.name)
       .then(wiki => {
-        Object.assign(requested, { wiki });
+        requested.wiki = wiki;
 
-        return res.render('info', requested);
+        return res.render('info/info', requested);
       })
-      .catch(() => res.render('info', requested));
+      .catch(() => res.render('info/info', requested));
     } catch (err) { this.util.handleSiteError(res, err); }
   }
 

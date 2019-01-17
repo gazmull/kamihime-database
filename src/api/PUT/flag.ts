@@ -3,7 +3,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {put} /flag flag
- * @apiVersion 2.1.0
  * @apiName PutFlag
  * @apiGroup Kamihime Specific
  * @apiDescription Flags/Unflags a character as loli from the database.

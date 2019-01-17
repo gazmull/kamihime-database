@@ -1,19 +1,16 @@
 $(() => {
   const audios = script
-    .filter(i => i.voice)
-    .map(i => i.voice);
+    .map(v => v.voice)
+    .filter(v => v);
   const bgs = script
-    .filter(i => i.bg)
     .map(i => i.bg)
-    .filter((v, i, arr) => arr.indexOf(v) === i);
+    .filter((v, i, arr) => v && arr.indexOf(v) === i);
   const bgms = script
-    .filter(i => i.bgm)
-    .map(i => i.bgm)
-    .filter((v, i, arr) => arr.indexOf(v) === i);
+    .map(v => v.bgm)
+    .filter((v, i, arr) => v && arr.indexOf(v) === i);
   const expressions = script
-    .filter(i => i.expression)
-    .map(i => i.expression)
-    .filter((v, i, arr) => arr.indexOf(v) === i);
+    .map(v => v.expression)
+    .filter((v, i, arr) => v && arr.indexOf(v) === i);
 
   const maxScriptLength = script.length - 1;
   let lastScriptIDX = -1;
@@ -107,10 +104,13 @@ $(() => {
 
       setTimeout(() => {
         sweet({
-          text: 'Click OK to proceed.',
+          html: [
+            'Click OK to proceed.',
+            'For navigation help, see <b>HELP</b> at the sidebar.',
+          ].join('<br><br>'),
           titleText: 'Assets loaded!',
         }).then(() => {
-          $('#panel').addClass('animated faster fadeIn');
+          $('.panel').addClass('animated faster fadeIn');
           render();
         });
       }, 1000);

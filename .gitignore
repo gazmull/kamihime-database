@@ -6,6 +6,7 @@ package-lock.json
 yarn-error.log
 
 # Private Credentials
+*.sql
 build/
 provider/
 scenarios-error.log

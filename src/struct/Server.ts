@@ -1,15 +1,18 @@
 import { Collection } from 'discord.js';
-import { Express, NextFunction, Request, Response } from 'express';
+import { Express, RequestHandler } from 'express';
 import * as fs from 'fs-extra';
 import * as knex from 'knex';
 import fetch from 'node-fetch';
 import { resolve } from 'path';
 // @ts-ignore
 import { api, database, discord, exempt, host, rootURL } from '../auth/auth';
+import authHandler from '../middleware/auth-handler';
 import * as logger from '../util/console';
 import Api from './Api';
 import Client from './Client';
 import Route from './Route';
+
+let serverRefreshTimeout: NodeJS.Timeout = null;
 
 const GENERAL_COOLDOWN: number = 1000 * 60 * 3;
 
@@ -39,21 +42,34 @@ export default class Server {
 
     this.rateLimits = new Collection();
 
-    this.recentVisitors = new Collection();
+    this.states = new Collection();
 
-    this.kamihimeCache = [];
+    this.visitors = new Collection();
+
+    this.kamihime = [];
+
+    this.status = null;
   }
 
   public client: Client;
   public auth: IAuth;
   public util: IUtil;
   public api: Collection<string, Collection<string, Api>>;
-  public rateLimits: Collection<string, Collection<string, Collection<string, any>>>;
-  public recentVisitors: Collection<string, Collection<string, number>>;
-  public kamihimeCache: any[];
+  public rateLimits: Collection<string, Collection<string, Collection<string, IRateLimitLog>>>;
+  public states: Collection<string, IState>;
+  public visitors: Collection<string, Collection<string, number>>;
+  public kamihime: IKamihime[];
+  public status: string;
 
   public init (server: Express, client: Client): this {
     this.client = client;
+
+    // Website status message
+    this.util.db('status').select('message')
+      .orderBy('date', 'desc')
+      .limit(1)
+      .then(([ msg ]) => this.status = msg.message || null)
+      .catch(this.util.logger.error);
 
     // Api
     const API_METHODS_DIR: string = resolve(__dirname, '../api');
@@ -82,12 +98,13 @@ export default class Server {
     }
 
     // Routes
-
-    server.get('*', (req, res, next) => {
+    server.get('*',
+    authHandler(this.util, new Route({ auth: true })),
+    (req, res, next) => {
       if (!req.cookies.verified && !(req.xhr || req.headers.accept && req.headers.accept.includes('application/json')))
-        return res.render('invalids/disclaimer');
+        return res.render('invalids/disclaimer', { redirected: true, user: req['auth-user'] });
 
-      next();
+      return next();
     });
 
     const ROUTES_DIR: string = resolve(__dirname, '../routes');
@@ -106,14 +123,21 @@ export default class Server {
       file.client = client;
       Object.assign(file.util, {  ...this.client.util });
 
-      server[file.method](file.route, (req: Request, res: Response, next: NextFunction) => file.exec(req, res, next));
+      const mainHandler: RequestHandler = (req, res, next) => file.exec(req, res, next);
+
+      if (file.auth) server[file.method](file.route, authHandler(this.util, file), mainHandler);
+      else server[file.method](file.route, mainHandler);
     }
 
-    server
-      .all('*', (_, res) => res.render('invalids/403'))
-      .listen(host.port);
+    server.all(
+      '*',
+      authHandler(this.util, new Route({ auth: true })),
+      (req, res) =>  res.render('invalids/403', { user: req['auth-user'] }),
+    );
 
-    this.util.logger.status(`Listening to ${host.address}:${host.port}`);
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+
+    server.listen(host.port, () => this.util.logger.status(`Listening to ${protocol}://${host.address}:${host.port}`));
 
     return this;
   }
@@ -127,14 +151,18 @@ export default class Server {
       this._cleanRateLimits(),
       this._cleanReports(),
       this._cleanSessions(),
+      this._cleanStates(),
       this._cleanUsers(),
       this._cleanVisitors(),
     ])
       .then(() => this.util.logger.status('Cleanup Rotation Occurred.'))
       .catch(this.util.logger.error);
 
-    if (!forced)
-      setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
+    if (forced) {
+      clearTimeout(serverRefreshTimeout);
+      serverRefreshTimeout = setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
+    } else
+      serverRefreshTimeout = setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
 
     return this;
   }
@@ -143,7 +171,7 @@ export default class Server {
     fetch(`${this.auth.rootURL}api/list`, { headers: { Accept: 'application/json' } })
       .then(res => res.json())
       .then(cache => {
-        this.kamihimeCache = cache;
+        this.kamihime = cache;
 
         this.util.logger.status('Refreshed Kamihime Cache.');
         setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
@@ -162,10 +190,9 @@ export default class Server {
       for (const request of requests.keys()) {
         const users = this.rateLimits.get(method).get(request).filter(u => {
           const requestInstance = methods.get(method).get(request);
-          const timeLapsed: number = Date.now() - u.timestamp;
           const cooldown: number = requestInstance.cooldown * 1000;
 
-          return timeLapsed > cooldown;
+          return Date.now() > (u.timestamp + cooldown);
         });
 
         if (!users.size) continue;
@@ -203,7 +230,7 @@ export default class Server {
 
   protected async _cleanSessions (): Promise<boolean> {
     try {
-      const EXPIRED: string = 'created <= DATE_SUB(NOW(), INTERVAL 30 MINUTE)';
+      const EXPIRED = 'created <= DATE_SUB(NOW(), INTERVAL 30 MINUTE)';
       const sessions: ISession[] = await this.util.db('sessions').select('id')
         .whereRaw(EXPIRED);
 
@@ -219,9 +246,24 @@ export default class Server {
     }
   }
 
+  protected async _cleanStates (): Promise<boolean> {
+    let cleaned = 0;
+    const states = this.states.filter(s => Date.now() > (s.timestamp + 18e5));
+
+    for (const state of states.keys())
+      this.states.delete(state);
+
+    cleaned += states.size;
+
+    if (cleaned)
+      this.util.logger.status(`Login Slugs cleanup finished. Cleaned: ${cleaned}`);
+
+    return true;
+  }
+
   protected async _cleanUsers (): Promise<boolean> {
     try {
-      const EXPIRED: string = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 14 DAY)';
+      const EXPIRED = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 14 DAY)';
       const users: IUser[] = await this.util.db('users').select('userId')
         .whereRaw(EXPIRED);
 
@@ -238,16 +280,12 @@ export default class Server {
   }
 
   protected async _cleanVisitors (): Promise<boolean> {
-    const resources = this.recentVisitors;
-    let cleaned: number = 0;
+    const resources = this.visitors;
+    let cleaned = 0;
 
     for (const resource of resources.keys()) {
       const log = resources.get(resource);
-      const visitors = log.filter(u => {
-        const timeLapsed: number = Date.now() - u;
-
-        return timeLapsed > GENERAL_COOLDOWN;
-      });
+      const visitors = log.filter(u => Date.now() > (u + GENERAL_COOLDOWN));
 
       for (const visitor of visitors.keys())
         log.delete(visitor);

@@ -5,7 +5,6 @@ const fields = [ 'id', 'name' ];
 
 /**
  * @api {get} /id/:id latest
- * @apiVersion 2.1.0
  * @apiName GetLatest
  * @apiGroup Kamihime Specific
  * @apiDescription Retrieves latest added characters up to 3 each category.

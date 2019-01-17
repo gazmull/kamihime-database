@@ -12,6 +12,8 @@ export default class Route {
 
     this.route = options.route;
 
+    this.auth = options.auth;
+
     this.server = null;
 
     this.client = null;
@@ -26,6 +28,7 @@ export default class Route {
   public id: string;
   public method: string;
   public route: string[];
+  public auth: boolean | 'required';
   public server: Server;
   public client: Client;
   public util: IUtil;

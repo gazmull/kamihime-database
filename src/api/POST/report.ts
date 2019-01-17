@@ -3,7 +3,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {post} /report report
- * @apiVersion 2.1.0
  * @apiName PostReport
  * @apiGroup Site Specific
  * @apiDescription Creates a user report entry regarding a character to the database.
@@ -59,7 +58,7 @@ export default class PostReportRequest extends Api {
           .where('userId', req.cookies.userId);
 
         if (!user)
-          throw { code: 403, message: 'Invalid user.' };
+          throw { code: 404, message: 'Invalid user.' };
       }
 
       const [ recentlyReported ] = await this.util.db('reports').select('userId')
@@ -72,7 +71,7 @@ export default class PostReportRequest extends Api {
         .limit(1);
 
       if (recentlyReported)
-        throw { code: 403, message: 'Please wait before you submit another report.' };
+        throw { code: 429, message: 'Please wait before you submit another report.' };
 
       const recentReports: IReport[] = await this.util.db('reports').select('id')
         .where('userId', usr)
@@ -89,8 +88,9 @@ export default class PostReportRequest extends Api {
           userId: usr,
         });
 
-      const name = usr === req.ip ? `Anonymous User (${req.ip})` : `User ${user.username} (${user.userId})`;
-      const character = this.server.kamihimeCache.find(el => el.id === data.characterId);
+      const ip = req.ip;
+      const name = usr === ip ? `Anonymous User (${ip})` : `User ${user.username} (${user.userId})`;
+      const character = this.server.kamihime.find(el => el.id === data.characterId);
       const channel = data.type === 0
         ? this.client.auth.discord.wikiReportChannel
         : this.client.auth.discord.dbReportChannel;
@@ -114,7 +114,7 @@ export default class PostReportRequest extends Api {
       ];
 
       await this.util.discordSend(channel, [
-        `${name} from KamihimeDB reported that ${character.name}'s ${type} has error(s). Details:`,
+        `${name} from KamihimeDB reported that ${character.name}'s ${type} has errors. Details:`,
         `Occurred at <${this.server.auth.rootURL}info/${character.id}>`,
         '```x1',
         'Regarding: ' + types[data.type][data.message.subject],

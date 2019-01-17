@@ -47,7 +47,7 @@ export default class Api {
     const validToken = data.token === this.server.auth.api.token;
 
     if (!validToken)
-      throw { code: 403, message: 'Invalid token.' };
+      throw { code: 401, message: 'Invalid token.' };
 
     return true;
   }

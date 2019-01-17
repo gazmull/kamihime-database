@@ -12,9 +12,10 @@ declare global {
   }
 
   interface IRouteOptions {
-    id: string;
-    method: string;
-    route: string[];
+    auth?: boolean | 'required';
+    id?: string;
+    method?: string;
+    route?: string[];
   }
 
   interface IAuth {
@@ -33,6 +34,7 @@ declare global {
   interface IUtil {
     collection?: () => Collection<any, any>;
     db?: Knex;
+    discordSend?: (channelId: string, message: any) => Promise<Message | Message[]>;
     handleApiError?: (res: Response, err: IErrorHandlerObject) => void;
     handleSiteError?: (res: Response, err: IErrorHandlerObject) => void;
     logger?: {
@@ -40,7 +42,6 @@ declare global {
       error: (message: string) => void;
       warn: (message: string) => void;
     };
-    discordSend?: (channel: string, message: any) => Promise<Message | Message[]>;
   }
 
   interface IErrorHandlerObject {
@@ -51,11 +52,9 @@ declare global {
 
   interface IExtractorOptions {
     base: {
-      URL: {
-        SCENARIOS: string;
-      };
-      DESTINATION: string;
       CHARACTERS: any[];
+      DESTINATION: string;
+      URL: { SCENARIOS: string };
     };
     codes: {
       [type: string]: {
@@ -73,75 +72,86 @@ declare global {
   }
   
   interface IScenarioSequence {
-    fps?: number;
     auto?: boolean;
-    film: string;
     bgm: string;
+    film: string;
+    fps?: number;
     talk: Array<{
       chara: string;
-      words: string;
       voice: string;
+      words: string;
     }>;
   }
 
   interface IUser {
+    lastLogin: string;
+    settings?: string;
     userId: string;
     username?: string;
-    expiration?: string;
-    refreshToken?: string;
-    settings?: string;
-    lastLogin: string;
   }
 
   interface IAdminUser extends IUser {
+    ip: string;
+    password: string;
     slug: string;
   }
 
   interface IKamihime {
     _rowId: number;
-    id: string;
-    name: string;
     approved: number;
     avatar: string;
-    main: string;
-    preview?: string;
-    loli: number;
-    peeks?: number;
-    harem1Title?: string;
+    element?: string;
     harem1Resource1?: string;
     harem1Resource2?: string;
-    harem2Title?: string;
+    harem1Title?: string;
     harem2Resource1?: string;
     harem2Resource2?: string;
-    harem3Title?: string;
+    harem2Title?: string;
     harem3Resource1?: string;
     harem3Resource2?: string;
-    element?: string;
-    type?: string;
+    harem3Title?: string;
+    id: string;
+    loli: number;
+    main: string;
+    name: string;
+    peeks?: number;
+    preview?: string;
     rarity?: string;
     tier?: string;
+    type?: string;
+  }
+
+  interface IRateLimitLog {
+    address: string;
+    timestamp: number;
+    triggers: number;
   }
 
   interface IReport {
-    id: number;
-    userId: string;
     characterId: string;
-    type: number;
-    message: string;
     date: string;
+    id: number;
+    message: string;
+    type: number;
+    userId: string;
   }
 
   interface ISession {
+    characterId: string;
+    created: string;
     id: string;
     password: string;
-    created: string;
-    characterId: string;
     userId: string;
   }
 
+  interface IState {
+    timestamp: number;
+    url: string
+  }
+
   interface IStatus {
-    id: string;
     date: string;
+    id: string;
     message: string;
   }
 }

@@ -1,15 +1,5 @@
-include ../constants/invalids.pug
-title Kamihime Database - Error
+extends ../_templates/error
 
-body
-  ul(class='top-nav')
-    include ../constants/navigation.pug
-    li(style="float: right; user-select: none;")
-      a Error: 422
-  center
-    br
-    img(src='/img/LME.png', alt='Let Me Explain...')
-    - if (message)
-      h1 #{message}
-    - else
-      h1 Bad Character Name detected.<br>Are you sure you have this character?
+append message
+  - else
+    h1 Bad Character Name detected.<br>Are you sure you have this character?

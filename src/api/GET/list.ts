@@ -66,7 +66,6 @@ const queries = {
 
 /**
  * @api {get} /list/:options list
- * @apiVersion 2.1.0
  * @apiName GetList
  * @apiGroup Kamihime Specific
  * @apiDescription Retrieves a list of items.
@@ -84,7 +83,7 @@ const queries = {
  *    - `ssr+` / `ssr` / `sr` / `r` / `n`
  *
  * @apiExample {html} Example: this will return items that are approved, eidolon, not a loli, and of water element.
- * http://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water
+ * https://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water
  * @apiParam {string} [options] An array of options with `/` delimiter. See description.
  *
  * @apiSuccess {/id[]} items An array of items from `GET /id` object.
@@ -120,7 +119,7 @@ export default class GetListRequest extends Api {
   constructor () {
     super({
       cooldown: 5,
-      max: 1,
+      max: 2,
       method: 'GET',
     });
   }

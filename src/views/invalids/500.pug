@@ -1,15 +1,8 @@
-include ../constants/invalids.pug
-title Kamihime Database - Error
+extends ../_templates/error
 
-body
-  ul(class='top-nav')
-    include ../constants/navigation.pug
-    li(style="float: right; user-select: none;")
-      a Error: 500
-  center
-    br
-    img(src='/img/S.png', alt='Sorry...')
-    - if (message)
-      h1 #{message}
-    - else
-      h1 Something went wrong. Please contact the admin!
+block image
+  img(src='/img/S.png', alt='Sorry...')
+
+append message
+  - else
+    h1 Something went wrong. Please contact the admin!

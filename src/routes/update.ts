@@ -27,7 +27,7 @@ export default class DashboardRoute extends Route {
 
       if (expired) throw { code: 403, message: 'Session expired.' };
 
-      const character: IKamihime = this.server.kamihimeCache.find(el => el.id === cId);
+      const character = this.server.kamihime.find(el => el.id === cId);
 
       if (!character) throw { code: 404, message: 'Character not found.' };
 
@@ -55,7 +55,7 @@ export default class DashboardRoute extends Route {
       if (character.type)
         Object.assign(info, { type: character.type });
 
-      res.render('update', { info, user: session });
+      res.render('admin/update', { info, user: session });
     } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

@@ -1,9 +1,9 @@
 html, body { height: 100% }
 
-.navbar { top: 50.2%; }
+.side-nav.navbar { top: 50.2%; }
 
-@media (max-height: 640px) { .navbar { top: 48.2%; } }
-@media (max-height: 414px) { .navbar { top: 38.2%; } }
+@media (max-height: 640px) { .side-nav.navbar { top: 48.2%; } }
+@media (max-height: 414px) { .side-nav.navbar { top: 38.2%; } }
 
 .nav-switch-hide { height: 120px; }
 
@@ -58,14 +58,32 @@ html, body { height: 100% }
 .leftNav { left: 0; }
 .rightNav { right: 0; }
 
-#panel {
+.scenario {
+  height: 642px !important;
+  width: 902px !important;
+}
+
+.panel {
   position: relative;
   opacity: 0;
   width: 100%;
   height: 100%;
+}
+
+.panel-wrapper {
+  border: 1px solid #ff00ae;
+  border-radius: 5px;
+  animation: guidance 5s linear infinite alternate;
   max-height: 900px;
-  max-width: 900px;
+  max-width: 902px;
   margin: 0 auto;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes guidance {
+  from { border-color: #ff00ae; }
+  to { border-color: transparent;}
 }
 
 #image {
@@ -76,6 +94,7 @@ html, body { height: 100% }
 #image div {
   background-repeat: no-repeat;
   background-size: cover;
+  border-radius: 5px;
   top: 0;
   width: 100%;
   height: 100%;

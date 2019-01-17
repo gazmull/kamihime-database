@@ -28,7 +28,8 @@ export default async function start () {
       throw new Error('Latest and ID cannot be invoked at the same time.');
 
     if (latest) {
-      const num = parseInt(latest.split('').pop());
+      const detectNum = /--latest=/.test(latest) ? latest.split('=').pop() : latest.slice(2);
+      const num = parseInt(detectNum);
 
       if (isNaN(num) || num <= 0)
         throw new TypeError('Latest value should be a valid unsigned integer and more than 0.');

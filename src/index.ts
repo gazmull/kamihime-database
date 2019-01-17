@@ -1,27 +1,53 @@
-import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
+import * as helmet from 'helmet';
 import { resolve } from 'path';
 import * as favicon from 'serve-favicon';
 // @ts-ignore
 import { cookieSecret } from './auth/auth';
+import enforceSecured from './middleware/enforce-secured';
 import Client from './struct/Client';
 import Server from './struct/Server';
 import { error } from './util/console';
 
 const server = express();
 
+if (process.env.NODE_ENV === 'production')
+  server
+    .set('trust proxy', [ '213.32.4.0/24', '54.39.240.0/24', '144.217.9.0/24' ])
+    .use(enforceSecured())
+    .use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: [
+            '\'self\'',
+            'www.w3.org',
+            'cf.static.r.kamihimeproject.dmmgames.com',
+          ],
+          fontSrc: [ '\'self\'', 'fonts.gstatic.com', 'maxcdn.bootstrapcdn.com' ],
+          scriptSrc: [ '\'self\'', '\'unsafe-inline\'' ],
+          styleSrc: [ '\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com', 'maxcdn.bootstrapcdn.com' ],
+        },
+      },
+      hidePoweredBy: { setTo: 'cream3.14' },
+      hsts: {
+        includeSubdomains: true,
+        maxAge: 31536000,
+        preload: true,
+      },
+    }));
+else server.disable('x-powered-by');
+
 server
-  .disable('x-powered-by')
-  .set('view engine', 'pug')
-  .set('views', resolve(__dirname, './views'))
-  .use(bodyParser.urlencoded({ extended: true }))
-  .use(bodyParser.json())
+  .use(express.urlencoded({ extended: true }))
+  .use(express.json())
   .use(compression({ filter: req => !req.headers['x-no-compression'] }))
   .use(cookieParser(cookieSecret))
   .use(favicon(resolve(__dirname, '../static/favicon.ico')))
-  .use(express.static(resolve(__dirname, '../static')));
+  .use(express.static(resolve(__dirname, '../static')))
+  .set('view engine', 'pug')
+  .set('views', resolve(__dirname, './views'));
 
 const serverStruct: Server = new Server();
 const client: Client = new Client(serverStruct);

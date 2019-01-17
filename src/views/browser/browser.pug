@@ -1,0 +1,75 @@
+extends ../_templates/main
+
+append head
+  script(src='/browser/script.js')
+  link(rel='stylesheet', href='/browser/style.css')
+  block title
+    title Kamihime Database - Browser
+
+block side-nav-content
+  a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#all') All
+  a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#soul') Soul
+  a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#eidolon') Eidolon
+  a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#ssra') SSRA
+  a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#ssr') SSR
+  a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#sr') SR
+  a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#r') R
+
+block content
+  div(class='container-fluid px-0')
+    div.row
+      - if(status)
+        div(class='col-xs-12 col-md-10', style='z-index: 1')
+          div(class='alert alert-dismissable alert-danger fade show')
+            a(href='javascript:void(0);', class='close', data-dismiss='alert') &times;
+            h4.alert-heading Announcement
+            p.name(style='white-space: pre-wrap') !{status}
+    div.row 
+      div(class='col-1 px-0')
+      div(class='col-9 px-0')
+        div#content.row
+          - let key = 49;
+          - for(const el of ['all', 'soul', 'eidolon', 'ssra', 'ssr', 'sr', 'r'])
+            div(id=el, class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
+              - const title = el.toUpperCase();
+              h2 #{title}
+              div(class='col-11 kh-list-wrapper')
+                ul(class='kh-list px-0 hidden-browser')
+                  case el
+                    when 'soul': include assets/soul
+                    when 'eidolon': include assets/eidolon
+                    when 'ssra': include assets/ssra
+                    when 'ssr': include assets/ssr
+                    when 'sr': include assets/sr
+                    when 'r': include assets/r
+                    default: include assets/all
+          div#thumbnail(class='col-12 d-none d-md-block')
+      div#feed-wrapper(class='col-2 d-none d-md-block px-0')
+        div.row
+          div(class='feed col-12')
+            h5
+              | Latest (
+              a.text-danger(href='javascript:void(0);', onclick='showLatest();') Live Image
+              | )
+            each _, k in latest
+              - let chars = latest[k];
+              - if (k === 'ssr+') k = 'ssra';
+              - k = k.toUpperCase();
+              ul.feed-list
+                a.text-light(
+                  href='javascript:void(0);',
+                  data-toggle='collapse',
+                  data-target=`#${k.toLowerCase()}`,
+                  title='Filter to #{k}') #{k}
+                each c in chars
+                  li.name(name=c.name, character-id=c.id)
+                    a(href=`/info/${c.id}`) #{c.name}
+        div.row
+          div(class='feed col-12')
+            h5 Top 10
+            ul.feed-list
+              each c in hot
+                li.name(name=c.name, character-id=c.id)
+                  a(href=`/info/${c.id}`) #{c.name}
+                  br
+                  sub.text-light &nbsp;#{parseInt(c.peeks).toLocaleString('en')} views

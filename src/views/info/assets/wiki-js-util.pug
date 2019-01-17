@@ -1,0 +1,54 @@
+-
+  const burstDescParse = () => {
+    switch (wiki.rarity) {
+      default: return `${wiki.element} DMG (5.5x Burst DMG)`;
+      case 'SSR': return `${wiki.element} DMG (4.5x Burst DMG)`;
+      case 'SR': return `${wiki.element} DMG (3x Burst DMG)`;
+      case 'R': return `${wiki.element} DMG (2x Burst DMG)`;
+    }
+  };
+  const burstUpgradeParse = () => {
+    switch (wiki.rarity) {
+      default: return null;
+      case 'SSR': return ` <b>★ [LB ★★★☆]</b>: ${wiki.burstPowerupDesc ? wiki.burstPowerupDesc : 'Increases to 5x Burst DMG'}`;
+      case 'SR': return ` <b>★ [LB ★★★☆]</b>: ${wiki.burstPowerupDesc ? wiki.burstPowerupDesc : 'Increases to 3.5x Burst DMG'}`;
+      case 'R': return ` <b>★ [LB ★★☆]</b>: ${wiki.burstPowerupDesc ? wiki.burstPowerupDesc : 'Increases to 2.5x Burst DMG'}`;
+    }
+  };
+  const abilityDescParse = (desc, ability) => {
+    if (wiki.tier)
+      switch (wiki.tier) {
+        default: return null;
+        case 'Standard': return ability === 2 ? ' <b>★ [LV 5]</b>' : null;
+        case 'Elite':
+        case 'Legendary':
+          switch (ability) {
+            default: return null;
+            case 2: return ' <b>★ [LV 5]</b>';
+            case 3: return ' <b>★ [LV 15]</b>';
+          }
+      }
+    if (wiki.rarity)
+      switch (wiki.rarity) {
+        default:
+          switch (ability) {
+            default: return ` <b>★ [LV 65]</b>: ${desc}`;
+            case 2: return ` <b>★ [LV 75]</b>: ${desc}`;
+            case 3: return ` <b>★ [LV 45]</b>: ${desc}`;
+            case 4: return ` <b>★ [LV 55]</b>: ${desc}`;
+          }
+        case 'SSR':
+          switch (ability) {
+            default: return ` <b>★ [LV 55]</b>: ${desc}`;
+            case 2: return ` <b>★ [LV 75]</b>: ${desc}`;
+            case 3: return ' <b>★ [LV 45]</b>';
+          }
+        case 'SR':
+          switch (ability) {
+            default: return ` <b>★ [LV 45]</b>: ${desc}`;
+            case 2: return ` <b>★ [LV 65]</b>: ${desc}`;
+            case 3: return ' <b>★ [LV 35]</b>';
+          }
+        case 'R': return ability === 2 ? ' <b>★ [LV 25]</b>' : ` <b>★ [LV 45]</b>: ${desc}`;
+      }
+  };

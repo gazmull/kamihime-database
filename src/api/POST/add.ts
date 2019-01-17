@@ -3,7 +3,6 @@ import Api from '../../struct/Api';
 
 /**
  * @api {post} /add add
- * @apiVersion 2.1.0
  * @apiName PostAdd
  * @apiGroup Kamihime Specific
  * @apiDescription Adds an item to the database.

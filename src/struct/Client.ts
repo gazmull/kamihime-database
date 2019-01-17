@@ -1,3 +1,4 @@
+import anchorme from 'anchorme';
 import { each } from 'bluebird';
 import { Client as DiscordClient, WSEventType } from 'discord.js';
 import { createWriteStream } from 'fs-extra';
@@ -36,8 +37,14 @@ export default class Client {
 
     this.util = {
       ...this.server.util,
-      // @ts-ignore
-      discordSend: (channel, message) => this.discordClient.channels.get(channel).send(message),
+      discordSend: (channelId, message) => {
+        const channel = this.discordClient.channels.get(channelId);
+
+        if (!channel) return this.util.logger.warn(`Channel ${channelId} does not exist.`);
+
+        // @ts-ignore
+        return channel.send(message);
+      },
     };
 
     this.fields = [ 'id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'main', 'preview' ];
@@ -81,15 +88,17 @@ export default class Client {
       'TYPING_START',
       'WEBHOOKS_UPDATE',
     ];
+    const rootURL = this.server.auth.rootURL;
+    const hostname = rootURL.slice(rootURL.indexOf(':') + 3).slice(0, -1);
 
     this.discordClient = new DiscordClient({
       disabledEvents: events,
       presence: {
         activity: {
-          name: 'Announcements',
+          name: hostname,
           type: 'WATCHING',
         },
-        status: 'dnd',
+        status: 'online',
       },
     });
 
@@ -105,6 +114,8 @@ export default class Client {
             id: message.id,
             message: message.content,
           });
+
+          this.server.status = anchorme(message.content, { attributes: [ { name: 'target', value: '_blank' } ] });
         } catch (e) { this.util.logger.error(e); }
 
         this.util.logger.status('Discord Bot: New announcement has been saved.');
@@ -127,8 +138,7 @@ export default class Client {
     if (forced) {
       clearTimeout(khTimeout);
       khTimeout = setTimeout(() => this.startKamihimeDatabase(), COOLDOWN);
-    }
-    else
+    } else
       khTimeout = setTimeout(() => this.startKamihimeDatabase(), COOLDOWN);
 
     return this;
@@ -146,7 +156,7 @@ export default class Client {
       const rows: IKamihime[] = await this.util.db('kamihime').select(this.fields)
         .whereRaw(whereState)
         .orderByRaw('CAST(substr(id, 2) AS DECIMAL) DESC');
-      const existing = rows.map(el => el.name);
+      const existing = rows.map(el => el.name.toLowerCase());
 
       let id: string = null;
       let fileNameSuffix: string = null;
@@ -166,8 +176,8 @@ export default class Client {
 
       this.util.logger.status(`Kamihime Database: Adding ${id}...`);
 
-      let result = await this._parseDatabase(id);
-      result = result.filter(el => !existing.includes(el.name));
+      let result: IKamihime[] = await this._parseDatabase(id);
+      result = result.filter(el => !existing.includes(el.name.toLowerCase()));
 
       if (!result.length) return this.util.logger.status(`Kamihime Database: ${id}: Nothing to add!`);
 
@@ -186,7 +196,7 @@ export default class Client {
           return false;
         };
 
-        const newId: string = `${idPrefix}${++fromIndex}`;
+        const newId = `${idPrefix}${++fromIndex}`;
 
         // -- Portrait
 

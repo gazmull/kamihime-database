@@ -19,15 +19,16 @@ export default class ApiRoute extends Route {
 
       const request: string  = req.params.request;
       const requestClass: Api = this.server.api.get(this._getMethod(req)).get(request);
+      const ip = req.ip;
 
       if (
-        req.ip.includes(this.server.auth.host.address) ||
+        ip.includes(this.server.auth.host.address) ||
         (req.cookies.userId && this.server.auth.exempt.includes(req.cookies.userId))
       )
         return requestClass.exec(req, res, next);
 
       const requests = this.server.rateLimits.get(this._getMethod(req)).get(request);
-      const user = requests.find(r => r.address === req.ip);
+      const user = requests.find(r => r.address === ip);
 
       if (!user) {
         this._initialise(req, requests);
@@ -35,22 +36,23 @@ export default class ApiRoute extends Route {
         return requestClass.exec(req, res, next);
       }
 
-      const { max: maxRequests } = requestClass;
-      const cooldown = requestClass.cooldown * 1000;
-      const expired = Date.now() - user.timestamp > cooldown ;
+      const { cooldown, max: maxRequests } = requestClass;
+      const now = Date.now();
+      const expiration = user.timestamp + (cooldown * 1000);
+      const expired = now > expiration;
 
       if (expired) {
         this._initialise(req, requests);
 
         return requestClass.exec(req, res, next);
       } else if (user.triggers === maxRequests && !expired) {
-        const remaining = (user.timestamp + cooldown) - Date.now();
+        const remaining = (expiration - now);
 
         throw {
           remaining,
           code: 429,
           message: [
-            `Maximum requests for this request has been reached (${maxRequests}/${cooldown / 1000}s).`,
+            `Maximum requests for this request has been reached (${maxRequests}/${cooldown}s).`,
             `Please wait for ${remaining / 1000} seconds.`,
           ],
         };
@@ -76,20 +78,22 @@ export default class ApiRoute extends Route {
 
   protected _initialise (req: Request, requests: Collection<string, any>): void {
     const request: string = req.params.request;
-    requests.set(req.ip, { address: req.ip, triggers: 1, timestamp: Date.now() });
+    const ip = req.ip;
+    requests.set(ip, { address: ip, triggers: 1, timestamp: Date.now() });
 
-    const user = requests.get(req.ip);
+    const user = requests.get(ip);
     this.util.logger.status(
       `[I/RI] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
   }
 
   protected _update (req: Request, requests: Collection<string, any>): void {
-    let user = requests.get(req.ip);
+    const ip = req.ip;
+    let user = requests.get(ip);
     const request: string = req.params.request;
-    requests.set(req.ip, { address: req.ip, triggers: user.triggers + 1, timestamp: user.timestamp });
+    requests.set(ip, { address: ip, triggers: user.triggers + 1, timestamp: user.timestamp });
 
-    user = requests.get(req.ip);
+    user = requests.get(ip);
     this.util.logger.status(
       `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
