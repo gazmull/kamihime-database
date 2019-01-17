@@ -8,6 +8,8 @@ export default function ovhIpHandler (): RequestHandler {
       ? req.headers['X-Remote-Ip'] || (Array.isArray(forwarded) ? forwarded[0] : forwarded)
       : req.ip;
 
+    console.log(forwarded, ip, req.ip); // tslint:disable-line
+
     // @ts-ignore
     if ([ '213.32.4.0/24', '54.39.240.0/24', '144.217.9.0/24' ].includes(ip)) return next();
 
