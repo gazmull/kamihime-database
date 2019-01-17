@@ -19,7 +19,7 @@ export default class ApiRoute extends Route {
 
       const request: string  = req.params.request;
       const requestClass: Api = this.server.api.get(this._getMethod(req)).get(request);
-      const ip = req['auth-ip'];
+      const ip = req.ip;
 
       if (
         ip.includes(this.server.auth.host.address) ||
@@ -78,7 +78,7 @@ export default class ApiRoute extends Route {
 
   protected _initialise (req: Request, requests: Collection<string, any>): void {
     const request: string = req.params.request;
-    const ip = req['auth-ip'];
+    const ip = req.ip;
     requests.set(ip, { address: ip, triggers: 1, timestamp: Date.now() });
 
     const user = requests.get(ip);
@@ -88,7 +88,7 @@ export default class ApiRoute extends Route {
   }
 
   protected _update (req: Request, requests: Collection<string, any>): void {
-    const ip = req['auth-ip'];
+    const ip = req.ip;
     let user = requests.get(ip);
     const request: string = req.params.request;
     requests.set(ip, { address: ip, triggers: user.triggers + 1, timestamp: user.timestamp });

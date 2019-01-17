@@ -5,9 +5,6 @@ import { rootURL } from '../auth/auth';
 export default function enforceSecured (): RequestHandler {
   return (req, res, next) => {
     if (!req.secure) {
-      const isProxy = req.headers['X-Forwarded-Host'];
-
-      if (isProxy) return next();
       if (
         req.method !== 'GET' ||
         // ? - Future use
@@ -22,7 +19,7 @@ export default function enforceSecured (): RequestHandler {
       else
         res.redirect(301, `https${rootURL.slice(4) + req.originalUrl.slice(1)}`);
 
-      const ip = req['auth-ip'];
+      const ip = req.ip;
       const id = req.cookies ? req.cookies.userId || ip : ip;
 
       return next(`${id}: Using HTTP protocol; blocked.`);

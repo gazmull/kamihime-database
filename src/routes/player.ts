@@ -138,7 +138,7 @@ export default class PlayerRoute extends Route {
   protected async _rateLimit (req: Request, character: any, resource: string): Promise<true> {
     const update = () => this.util.db('kamihime').update('peeks', ++character.peeks)
       .where('id', character.id);
-    const usr = req.cookies.userId || req['auth-ip'];
+    const usr = req.cookies.userId || req.ip;
     const status = () => this.util.logger.status(`[A] Peek: ${usr} visited ${character.name}`);
 
     if (this.server.auth.exempt.includes(req.cookies.userId)) {
