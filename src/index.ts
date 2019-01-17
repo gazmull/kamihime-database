@@ -14,6 +14,9 @@ import { error } from './util/console';
 
 const server = express();
 
+if (process.env.NODE_ENV === 'production')
+  server.set('trust proxy', [ '213.32.4.0/24', '54.39.240.0/24', '144.217.9.0/24' ]);
+
 server.use(ipHandler());
 
 if (process.env.NODE_ENV === 'production')
@@ -38,8 +41,7 @@ if (process.env.NODE_ENV === 'production')
         maxAge: 31536000,
         preload: true,
       },
-    }))
-    .set('trust proxy', [ '213.32.4.0/24', '54.39.240.0/24', '144.217.9.0/24' ]);
+    }));
 else server.disable('x-powered-by');
 
 server
