@@ -7,7 +7,7 @@ import * as favicon from 'serve-favicon';
 // @ts-ignore
 import { cookieSecret } from './auth/auth';
 import enforceSecured from './middleware/enforce-secured';
-import ipHandler from './middleware/ovh-ip-handler';
+// import ipHandler from './middleware/ovh-ip-handler';
 import Client from './struct/Client';
 import Server from './struct/Server';
 import { error } from './util/console';
@@ -17,7 +17,7 @@ const server = express();
 if (process.env.NODE_ENV === 'production')
   server.set('trust proxy', [ '213.32.4.0/24', '54.39.240.0/24', '144.217.9.0/24' ]);
 
-server.use(ipHandler());
+// server.use(ipHandler());
 
 if (process.env.NODE_ENV === 'production')
   server
