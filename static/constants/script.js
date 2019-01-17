@@ -36,6 +36,59 @@ $(() => {
     }
   });
 
+  $('.navbar-toggler, #result-close').on('click', () => {
+    $('#search-bar').val('');
+    $('#search-bar').trigger('input');
+  });
+
+  let searchTimeout = null;
+  $('#search-bar').on('input keyup',  function () {
+    const query = $(this).val();
+
+    if (searchTimeout) clearTimeout(searchTimeout);
+    if (!query) {
+      $('.result-wrapper').css('transform', 'translateX(100%)');
+      $('#result-head').text('What are you looking at?');
+
+      return $('#result li').remove();
+    }
+
+    $('#result li').remove();
+    $('.result-wrapper').css('transform', 'translateX(0)');
+
+    if (query.length < 2) return $('#result-head').text('I need 2 or more characters');
+
+    $('#result-head').text('Waiting to finish typing...');
+
+    searchTimeout = setTimeout(async () => {
+      $('#result-head').text('Searching...');
+
+      try {
+        const response = await fetch(`/api/search?name=${query}&approved=1`, {
+          headers: { Accept: 'application/json' },
+        });
+        const result = await response.json();
+
+        if (result.error) return $('#result-head').text(result.error.message);
+        if (!result.length) return $('#result-head').text('No match found');
+
+        $('#result-head').text(`${result.length} Found`);
+        result.map(el =>
+          $('<li>')
+            .html([
+              `<a href='/info/${el.id}'>`,
+                `<img src='/img/wiki/portrait/${encodeURI(el.name)} Portrait.png' height=56>`,
+                el.name,
+                ` <span class='badge badge-secondary'>${el.tier || el.rarity}</span> `,
+                `<span class='badge badge-secondary'>${el.id.startsWith('k') ? 'KAMIHIME' : 'EIDOLON'}</span>`,
+              '</a>',
+            ].join(''))
+            .appendTo('#result'),
+        );
+      } catch (e) { return $('#result-head').text(e); }
+    }, 1000);
+  });
+
 })
   .on('keyup', e => {
     if (
@@ -94,4 +147,8 @@ async function saveSettings (key, obj, db = false) {
   }
 
   return true;
+}
+
+function isNav () {
+  return [ 'nav', 'result' ].some(el => new RegExp(el, 'i').test(this.className));
 }

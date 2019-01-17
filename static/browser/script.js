@@ -13,13 +13,12 @@ $(() => {
 
   $('.collapse')
     .on('show.bs.collapse', function () {
-      if (this.className.includes('nav')) return;
+      if (isNav.bind(this)()) return;
 
-      $('#search-bar').val('').blur();
       $('.collapse.show').collapse('hide');
     })
     .on('shown.bs.collapse', function () {
-      if (this.className.includes('nav')) return;
+      if (isNav.bind(this)()) return;
 
       const currentPage = '#' + $(`.collapse.show`).attr('id');
 
@@ -29,9 +28,8 @@ $(() => {
       $(`.nav-link[data-target='${Cookies.get('lastNav')}']`).addClass('active');
     })
     .on('hide.bs.collapse', function () {
-      if (this.className.includes('nav')) return;
+      if (isNav.bind(this)()) return;
 
-      $('#search-bar').val('').blur();
       $('.kh-list.visible-browser .name.hiddenInstant-browser')
         .attr('class', 'name visible-browser')
         .css('position', 'relative');
@@ -40,27 +38,6 @@ $(() => {
     });
 
   $(Cookies.get('lastNav')).collapse('show');
-
-  $('#search-bar:input').on('click input keyup', ({ currentTarget: $this }) => {
-    let query = $($this).val();
-    query = query.toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase());
-
-    const names = '.kh-list.visible-browser .name';
-    const toHide = $(`${names}[name!='${query}']`);
-    const toShow = $(`${names}[name*='${query}']`);
-
-    if (query) {
-      toHide
-        .attr('class', 'name hiddenInstant-browser')
-        .css('position', 'absolute');
-      toShow
-        .attr('class', 'name visible-browser')
-        .css('position', 'relative');
-    } else
-      $(`${names}.hiddenInstant-browser`)
-        .attr('class', 'name visible-browser')
-        .css('position', 'relative');
-  });
 
   $('.name')
     .on('mouseenter', ({ currentTarget: $this }) => {

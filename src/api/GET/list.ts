@@ -119,7 +119,7 @@ export default class GetListRequest extends Api {
   constructor () {
     super({
       cooldown: 5,
-      max: 1,
+      max: 2,
       method: 'GET',
     });
   }

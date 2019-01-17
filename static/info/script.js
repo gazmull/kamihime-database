@@ -11,12 +11,12 @@ $(() => {
 
   $('.collapse')
     .on('show.bs.collapse', function () {
-      if (this.className.includes('nav')) return;
+      if (isNav.bind(this)()) return;
 
       $('.collapse.show').collapse('hide');
     })
     .on('shown.bs.collapse', function () {
-      if (this.className.includes('nav')) return;
+      if (isNav.bind(this)()) return;
 
       const currentPage = '#' + $(`.collapse.show`).attr('id');
 
@@ -26,7 +26,7 @@ $(() => {
       $(`.nav-link[data-target='${Cookies.get('info-lastNav')}']`).addClass('active');
     })
     .on('hide.bs.collapse', function () {
-      if (this.className.includes('nav')) return;
+      if (isNav.bind(this)()) return;
 
       $('.content-wrapper.visible-browser').attr('class', 'content-wrapper hidden-browser');
       $(`.nav-link.active`).removeClass('active');

@@ -55,7 +55,6 @@
     "shortid": "^2.2.14"
   },
   "devDependencies": {
-    "@types/body-parser": "^1.17.0",
     "@types/bootstrap": "^4.2.0",
     "@types/compression": "0.0.36",
     "@types/cookie-parser": "^1.4.1",
@@ -65,7 +64,6 @@
     "@types/howler": "^2.0.5",
     "@types/jquery": "^3.3.29",
     "@types/js-cookie": "^2.2.0",
-    "@types/mysql2": "types/npm-mysql2",
     "@types/node": "^10.12.18",
     "@types/node-fetch": "^2.1.4",
     "@types/pug": "^2.0.4",

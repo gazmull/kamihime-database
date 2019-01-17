@@ -1,6 +1,6 @@
 div#top-nav-container.row
     div(class='col-12 px-0')
-      nav(class='top-nav navbar sticky-top navbar-expand-md navbar-dark')
+      nav(class='top-nav navbar navbar-expand-md navbar-dark')
         b(class='navbar-text text-uppercase d-block d-md-none') Menu
         button.navbar-toggler(type='button', data-toggle='collapse', data-target='#top-nav-content')
           span.navbar-toggler-icon
@@ -12,8 +12,8 @@ div#top-nav-container.row
                 +link('/', 'Home')
               li.nav-item
                 a(href='https://github.com/gazmull/kamihime-database', target='_blank')
-                  | Source 
-                  i(class='fa fa-github text-light') 
+                  i(class='fa fa-github text-light')
+                  |  Source
               li.nav-item
                 +link('/disclaimer', 'Disclaimer and Privacy')
               - if (user)
@@ -34,5 +34,7 @@ div#top-nav-container.row
                 span.input-group-text
                   i(class='fa fa-search')
               input#search-bar(class='form-control mr-sm-2', type='text', placeholder='Search character...')
-            div.result-wrapper
-              ul#result.list-group
+div(class='result-wrapper col-sm-12 col-md-5')
+  a#result-head
+  i#result-close(class='fa fa-2x fa-times')
+  ul#result.list-group
