@@ -80,7 +80,13 @@ $(() => {
                 `<img src='/img/wiki/portrait/${encodeURI(el.name)} Portrait.png' height=56>`,
                 el.name,
                 ` <span class='badge badge-secondary'>${el.tier || el.rarity}</span> `,
-                `<span class='badge badge-secondary'>${el.id.startsWith('k') ? 'KAMIHIME' : 'EIDOLON'}</span>`,
+                `<span class='badge badge-secondary'>${
+                  el.id.startsWith('k')
+                    ? 'KAMIHIME'
+                    : el.id.startsWith('e')
+                      ? 'EIDOLON'
+                      : 'SOUL'
+                }</span>`,
               '</a>',
             ].join(''))
             .appendTo('#result'),
