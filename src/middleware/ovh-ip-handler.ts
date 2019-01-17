@@ -4,15 +4,16 @@ export default function ovhIpHandler (): RequestHandler {
   return (req, res, next) => {
     // See: https://docs.ovh.com/fr/ssl-gateway/utiliser-le-ssl-gateway/
     const forwarded = req.headers['X-Forwarded-For'];
+    const forwardedIp = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+    const isProxy = [ '213\.32\.4\.\d{1,3}', '54\.39\.240\.\d{1,3}', '144\.217\.9\.\d{1,3}' ]
+      .some(el => new RegExp(el).test(req.ip));
     const ip = process.env.NODE_ENV === 'production'
-      ? req.headers['X-Remote-Ip'] || (Array.isArray(forwarded) ? forwarded[0] : forwarded)
+      ? req.headers['X-Remote-Ip'] || forwardedIp
       : req.ip;
 
     console.log(forwarded, ip, req.ip); // tslint:disable-line
 
-    // @ts-ignore
-    if ([ '213.32.4.0/24', '54.39.240.0/24', '144.217.9.0/24' ].includes(ip)) return next();
-
+    if (isProxy) return next();
     if (!ip) {
       res
         .status(403)

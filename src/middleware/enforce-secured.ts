@@ -5,6 +5,10 @@ import { rootURL } from '../auth/auth';
 export default function enforceSecured (): RequestHandler {
   return (req, res, next) => {
     if (!req.secure) {
+      const isProxy = [ '213\.32\.4\.\d{1,3}', '54\.39\.240\.\d{1,3}', '144\.217\.9\.\d{1,3}' ]
+        .some(el => new RegExp(el).test(req.ip));
+
+      if (isProxy) return next();
       if (
         req.method !== 'GET' ||
         // ? - Future use
