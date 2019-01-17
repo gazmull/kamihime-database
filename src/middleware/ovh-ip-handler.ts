@@ -6,8 +6,7 @@ export default function ovhIpHandler (): RequestHandler {
     const forwarded = req.headers['X-Forwarded-For'];
     console.log(forwarded, req.ip); // tslint:disable-line
     const forwardedIp = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-    const isProxy = [ '213\.32\.4\.\d{1,3}', '54\.39\.240\.\d{1,3}', '144\.217\.9\.\d{1,3}' ]
-      .some(el => new RegExp(el).test(req.ip));
+    const isProxy = req.headers['X-Forwarded-Host'];
     const ip = process.env.NODE_ENV === 'production'
       ? req.headers['X-Remote-Ip'] || forwardedIp
       : req.ip;
