@@ -220,6 +220,8 @@ input[type=range]::-ms-thumb {
   }
 }
 
+@media (max-height: 770px) { .result-wrapper { overflow-y: scroll; } }
+
 #result-head {
   color: #ddd;
   font-size: 2em;
