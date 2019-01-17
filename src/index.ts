@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === 'production')
         preload: true,
       },
     }))
-    .set('trust proxy', [ '213.32.4.0/24', '144.217.9.0/24' ]);
+    .set('trust proxy', [ '213.32.4.0/24', '54.39.240.0/24', '144.217.9.0/24' ]);
 else server.disable('x-powered-by');
 
 server

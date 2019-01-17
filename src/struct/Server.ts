@@ -1,7 +1,6 @@
 import { Collection } from 'discord.js';
 import { Express, RequestHandler } from 'express';
 import * as fs from 'fs-extra';
-import * as https from 'https';
 import * as knex from 'knex';
 import fetch from 'node-fetch';
 import { resolve } from 'path';
@@ -136,25 +135,9 @@ export default class Server {
       (req, res) =>  res.render('invalids/403', { user: req['auth-user'] }),
     );
 
-    let _server: Express | https.Server = server;
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 
-    if (protocol === 'https')
-      try {
-        const opt: https.ServerOptions = {
-          cert: fs.readFileSync(resolve(__dirname, '../../provider/certs/certificate.pem')),
-          key: fs.readFileSync(resolve(__dirname, '../../provider/certs/key.pem')),
-        };
-
-        _server = https.createServer(opt, server);
-      } catch {
-        throw new Error([
-          'Certificate not found. Please configure it properly',
-          `Create them at: ${resolve(__dirname, '../../provider/certs')}`,
-        ].join(' '));
-      }
-
-    _server.listen(host.port, () => this.util.logger.status(`Listening to ${protocol}://${host.address}:${host.port}`));
+    server.listen(host.port, () => this.util.logger.status(`Listening to ${protocol}://${host.address}:${host.port}`));
 
     return this;
   }
