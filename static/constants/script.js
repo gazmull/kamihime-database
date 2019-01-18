@@ -77,7 +77,7 @@ $(() => {
           $('<li>')
             .html([
               `<a href='/info/${el.id}'>`,
-                `<img src='/img/wiki/portrait/${encodeURI(el.name)} Portrait.png' height=56>`,
+                `<img src='/img/wiki/portrait/${encodeURI(el.name.replace(/'/g, '%27'))} Portrait.png' height=56>`,
                 el.name,
                 ` <span class='badge badge-secondary'>${el.tier || el.rarity}</span> `,
                 `<span class='badge badge-secondary'>${
