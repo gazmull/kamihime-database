@@ -22,10 +22,16 @@ if (process.env.NODE_ENV === 'production')
         directives: {
           defaultSrc: [
             '\'self\'',
+            'data:',
             'www.w3.org',
             'cf.static.r.kamihimeproject.dmmgames.com',
           ],
           fontSrc: [ '\'self\'', 'fonts.gstatic.com', 'maxcdn.bootstrapcdn.com' ],
+          imgSrc: [
+            '\'self\'',
+            'data:',
+            'cf.static.r.kamihimeproject.dmmgames.com',
+          ],
           scriptSrc: [ '\'self\'', '\'unsafe-inline\'' ],
           styleSrc: [ '\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com', 'maxcdn.bootstrapcdn.com' ],
         },
