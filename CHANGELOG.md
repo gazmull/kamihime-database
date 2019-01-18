@@ -1,3 +1,9 @@
+# 2.2.1
+On commit: 00d95122e20dc38d8cd1082b5dce0f8294b124d1
+  ## Fixes
+  - `Fix`: (`Already fixed at 2.2.0`) `Player/scenario` `/legacy` image duplicates on repeating sequence
+  - `Fix`: `CSP` breaks top-nav's `burger icon`
+  - `Fix`: `Player/story` images has been centered to be friendlier on mobile
 # 2.2.0
 On commit: 0af8843f5f0477fa88366b788c1a49eff4b999fd
 <br>More info (#7)
