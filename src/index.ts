@@ -22,7 +22,6 @@ if (process.env.NODE_ENV === 'production')
         directives: {
           defaultSrc: [
             '\'self\'',
-            'data:',
             'www.w3.org',
             'cf.static.r.kamihimeproject.dmmgames.com',
           ],
