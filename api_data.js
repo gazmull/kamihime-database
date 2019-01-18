@@ -3,7 +3,6 @@ define({ "api": [
     "type": "delete",
     "url": "/delete",
     "title": "delete",
-    "version": "2.1.0",
     "name": "DeleteDelete",
     "group": "Kamihime_Specific",
     "description": "<p>Deletes an item from the database.</p>",
@@ -66,6 +65,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/DELETE/delete.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -73,7 +73,6 @@ define({ "api": [
     "type": "get",
     "url": "/id/:id",
     "title": "id",
-    "version": "2.1.0",
     "name": "GetId",
     "group": "Kamihime_Specific",
     "description": "<p>Retrieves an item's information.</p>",
@@ -99,6 +98,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/GET/id.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -106,7 +106,6 @@ define({ "api": [
     "type": "get",
     "url": "/id/:id",
     "title": "latest",
-    "version": "2.1.0",
     "name": "GetLatest",
     "group": "Kamihime_Specific",
     "description": "<p>Retrieves latest added characters up to 3 each category.</p>",
@@ -151,6 +150,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/GET/latest.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -158,14 +158,13 @@ define({ "api": [
     "type": "get",
     "url": "/list/:options",
     "title": "list",
-    "version": "2.1.0",
     "name": "GetList",
     "group": "Kamihime_Specific",
     "description": "<p>Retrieves a list of items. <code>:options</code> available:</p> <h3>Primary Options</h3> <blockquote> <p>A must before any other options.</p> </blockquote> <ul> <li><code>soul</code> / <code>eidolon</code> / <code>kamihime</code> / <code>weapon</code></li> <li><code>approved</code> / <code>loli</code> / <code>no-loli</code></li> </ul> <h3>Secondary Options</h3> <ul> <li><strong>Soul Only</strong>: <code>legendary</code> / <code>elite</code> / <code>standard</code></li> <li><strong>Kamihime Only</strong>: <code>healer</code> / <code>offense</code> / <code>tricky</code> / <code>balance</code> / <code>defense</code></li> <li><strong>Weapon Only</strong>: <code>hammer</code> / <code>lance</code> / <code>glaive</code> / <code>arcane</code> / <code>staff</code> / <code>axe</code> / <code>gun</code> / <code>bow</code> / <code>sword</code></li> <li><strong>Eidolon / Kamihime / Weapon Only</strong>: <ul> <li><code>light</code> / <code>dark</code> / <code>wind</code> / <code>thunder</code> / <code>water</code> / <code>fire</code> / <code>phantom</code></li> <li><code>ssr+</code> / <code>ssr</code> / <code>sr</code> / <code>r</code> / <code>n</code></li> </ul> </li> </ul>",
     "examples": [
       {
         "title": "Example: this will return items that are approved, eidolon, not a loli, and of water element.",
-        "content": "http://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water",
+        "content": "https://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water",
         "type": "html"
       }
     ],
@@ -202,6 +201,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/GET/list.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -209,7 +209,6 @@ define({ "api": [
     "type": "get",
     "url": "/search",
     "title": "search",
-    "version": "2.1.0",
     "name": "GetSearch",
     "group": "Kamihime_Specific",
     "description": "<p>Searches items with the provided name.</p>",
@@ -276,7 +275,7 @@ define({ "api": [
             "type": "/id[]",
             "optional": false,
             "field": "items",
-            "description": "<p>An array of items from <code>GET /id</code> object.</p>"
+            "description": "<p>An array of items (up to 10 items) from <code>GET /id</code> object.</p>"
           }
         ]
       },
@@ -288,6 +287,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/GET/search.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -295,7 +295,6 @@ define({ "api": [
     "type": "post",
     "url": "/add",
     "title": "add",
-    "version": "2.1.0",
     "name": "PostAdd",
     "group": "Kamihime_Specific",
     "description": "<p>Adds an item to the database.</p>",
@@ -445,6 +444,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/POST/add.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -452,7 +452,6 @@ define({ "api": [
     "type": "post",
     "url": "/session",
     "title": "session",
-    "version": "2.1.0",
     "name": "PostSession",
     "group": "Kamihime_Specific",
     "description": "<p>Creates a session for updating an item from the database.</p>",
@@ -536,6 +535,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/POST/session.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -543,7 +543,6 @@ define({ "api": [
     "type": "put",
     "url": "/approve",
     "title": "approve",
-    "version": "2.1.0",
     "name": "PutApprove",
     "group": "Kamihime_Specific",
     "description": "<p>Approves/Disapproves a character from the database.</p>",
@@ -613,6 +612,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/PUT/approve.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -620,7 +620,6 @@ define({ "api": [
     "type": "put",
     "url": "/flag",
     "title": "flag",
-    "version": "2.1.0",
     "name": "PutFlag",
     "group": "Kamihime_Specific",
     "description": "<p>Flags/Unflags a character as loli from the database.</p>",
@@ -690,6 +689,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/PUT/flag.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -697,10 +697,9 @@ define({ "api": [
     "type": "put",
     "url": "/update",
     "title": "update",
-    "version": "2.1.0",
     "name": "PutUpdate",
     "group": "Kamihime_Specific",
-    "description": "<p>Updates an item from the database.</p> <p><strong>Warning</strong>: You have to do to <code>POST /session</code> first to obtain an authorization to update an item.</p>",
+    "description": "<p>Updates an item from the database.</p> <p><strong>Warning</strong>: You have to do <code>POST /session</code> first to obtain an authorization to update an item.</p>",
     "permission": [
       {
         "name": "Owner Only"
@@ -837,6 +836,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/PUT/update.ts",
     "groupTitle": "Kamihime_Specific"
   },
@@ -844,7 +844,6 @@ define({ "api": [
     "type": "get",
     "url": "/@me",
     "title": "@me",
-    "version": "2.1.0",
     "name": "GetAtMe",
     "group": "Site_Specific",
     "description": "<p>Retrieves site user's information.</p> <p><strong>Warning</strong>: Requires cookies to be passed at headers.</p>",
@@ -889,6 +888,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/GET/@me.ts",
     "groupTitle": "Site_Specific"
   },
@@ -896,7 +896,6 @@ define({ "api": [
     "type": "post",
     "url": "/report",
     "title": "report",
-    "version": "2.1.0",
     "name": "PostReport",
     "group": "Site_Specific",
     "description": "<p>Creates a user report entry regarding a character to the database.</p> <p><strong>Warning</strong>: Requires cookies to be passed at headers.</p>",
@@ -1031,6 +1030,7 @@ define({ "api": [
         }
       ]
     },
+    "version": "0.0.0",
     "filename": "src/api/POST/report.ts",
     "groupTitle": "Site_Specific"
   }
