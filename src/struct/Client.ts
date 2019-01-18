@@ -108,14 +108,16 @@ export default class Client {
         if (message.channel.id !== discordAuth.channel) return;
         if (!this.server.auth.exempt.includes(message.author.id)) return;
 
+        const msg = anchorme(message.content, { attributes: [ { name: 'target', value: '_blank' } ] });
+
         try {
           await this.util.db('status').del();
           await this.util.db('status').insert({
             id: message.id,
-            message: message.content,
+            message: msg,
           });
 
-          this.server.status = anchorme(message.content, { attributes: [ { name: 'target', value: '_blank' } ] });
+          this.server.status = msg;
         } catch (e) { this.util.logger.error(e); }
 
         this.util.logger.status('Discord Bot: New announcement has been saved.');
