@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Raleway');
+
+body {
+  background-color: $core-background;
+  color: $core-text;
+  height: 100%;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0 !important;
+  min-width: 450px;
+  padding: 0 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif;
+}
+
+input {
+  &[type=color] {
+    background-color: $input-color-background;
+    border-radius: 3%;
+    border: none;
+    cursor: pointer;
+    height: 35px;
+    margin: 4px 2px;
+    width: 45%;
+  }
+  &[type=range] {
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      background: $range-thumb-background;
+      border-radius: 50%;
+      box-shadow: $box-shadow;
+      cursor: pointer;
+      height: 25px;
+      margin-top: -10px;
+      width: 25px;
+    }
+    &::-moz-range-thumb {
+      border-radius: 50%;
+      box-shadow: $box-shadow;
+      cursor: pointer;
+      height: 25px;
+      width: 25px;
+    }
+    &::-ms-thumb {
+      background: $range-thumb-background;
+      border-radius: 50%;
+      box-shadow: $box-shadow;
+      cursor: pointer;
+      height: 25px;
+      width: 25px;
+    }
+  }
+}
+
+:focus {
+  outline: none !important;
+}
+
+::-moz-focus-inner {
+  border: 0 !important;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $scroll-background;
+  &:hover {
+    background: $scroll-background-hover;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background: $scroll-track-background;
+}

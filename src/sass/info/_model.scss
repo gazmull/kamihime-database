@@ -1,0 +1,21 @@
+#model {
+  -moz-mask-image: radial-gradient(circle at 50% 65%, black 35%, transparent 69%);
+  -webkit-mask-image: radial-gradient(circle at 50% 65%, black 35%, transparent 69%);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: contain;
+  bottom: 0;
+  height: 100%;
+  mask-image: radial-gradient(circle at 50% 65%, black 35%, transparent 69%);
+  max-height: 683px;
+  max-width: 1024px;
+  opacity: 0.8;
+  position: fixed;
+  right: 0;
+  width: 100%;
+  z-index: -1;
+}
+
+#thumbnail {
+  z-index: -1;
+}

@@ -28,7 +28,7 @@ export default class Route {
   public id: string;
   public method: string;
   public route: string[];
-  public auth: boolean | 'required';
+  public auth: boolean;
   public server: Server;
   public client: Client;
   public util: IUtil;

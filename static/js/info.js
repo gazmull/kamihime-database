@@ -4,11 +4,6 @@ $(() => {
     Cookies.set('menu', 'true');
   }
 
-  if (Cookies.get('menu') === 'false') {
-    $('#nav').addClass('nav-hidden');
-    $('.nav-switch').removeClass('nav-switch-hide');
-  }
-
   $('.collapse')
     .on('show.bs.collapse', function () {
       if (isNav.bind(this)()) return;

@@ -12,7 +12,7 @@ declare global {
   }
 
   interface IRouteOptions {
-    auth?: boolean | 'required';
+    auth?: boolean;
     id?: string;
     method?: string;
     route?: string[];

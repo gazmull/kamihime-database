@@ -16,3 +16,6 @@ static/scenarios/
 static/scripts/
 test.js
 test/
+
+# Compilers / Transpilers
+*.map

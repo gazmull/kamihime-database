@@ -6,11 +6,6 @@ $(() => {
     $('[data-toggle="tooltip"]').tooltip('show');
   }
 
-  if (Cookies.get('menu') === 'false') {
-    $('#nav').addClass('nav-hidden');
-    $('.nav-switch').removeClass('nav-switch-hide');
-  }
-
   $('.collapse')
     .on('show.bs.collapse', function () {
       if (isNav.bind(this)()) return;
@@ -30,9 +25,6 @@ $(() => {
     .on('hide.bs.collapse', function () {
       if (isNav.bind(this)()) return;
 
-      $('.kh-list.visible-browser .name.hiddenInstant-browser')
-        .attr('class', 'name visible-browser')
-        .css('position', 'relative');
       $('.kh-list.visible-browser').attr('class', 'kh-list px-0 hidden-browser');
       $(`.nav-link.active`).removeClass('active');
     });

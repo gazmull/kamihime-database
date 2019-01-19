@@ -1,0 +1,122 @@
+.animate {
+  z-index: -1;
+  overflow: hidden;
+  backface-visibility: hidden;
+  transform: rotate(-90deg);
+  will-change: background;
+}
+
+.invi {
+  z-index: 1040;
+  position: absolute;
+  height: 100%;
+  width: 50%;
+  top: 0;
+  background: transparent;
+  color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.leftNav {
+  left: 0;
+}
+
+.rightNav {
+  right: 0;
+}
+
+.scenario {
+  height: 642px !important;
+  width: 902px !important;
+}
+
+.panel-wrapper {
+  border: 1px solid #ff00ae;
+  border-radius: 5px;
+  max-height: 900px;
+  max-width: 902px;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+}
+
+.panel {
+  position: relative;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#image {
+  width: 100%;
+  height: 100%;
+  div {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 5px;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+}
+
+#dialog {
+  height: 23.4%;
+  width: 100%;
+  position: absolute;
+  display: inline-block;
+  background-image: linear-gradient(to bottom, #997777 1%, transparent 110%);
+  bottom: 0;
+  left: 0;
+  color: #ffffff;
+  text-align: left;
+  text-shadow: #dd55ff 2px 1px;
+  word-wrap: break-word;
+  z-index: 1050;
+}
+
+#text {
+  padding: 5px 5px;
+}
+
+#characterName {
+  font-weight: 600;
+  font-size: 22px;
+}
+
+#characterTalk {
+  font-size: 18px;
+}
+
+@keyframes play {
+  from {
+    background-position-y: 0px;
+  }
+
+  to {
+    background-position-y: -14400px;
+  }
+}
+
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

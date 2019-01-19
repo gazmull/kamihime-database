@@ -17,10 +17,6 @@ $(() => {
       fontSize: 18,
     }, true);
 
-  if (Cookies.get('menu') === 'false') {
-    $('#nav').addClass('nav-hidden');
-    $('.nav-switch').removeClass('nav-switch-hide');
-  }
 });
 
 const audioPool = {};

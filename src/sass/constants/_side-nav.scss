@@ -1,0 +1,56 @@
+.side-nav {
+  &.navbar {
+    position: fixed;
+    z-index: 1050;
+    max-width: 150px;
+    @include prepareTransform('opacity', 'all 0.5s ease-in-out, transform 0.8s cubic-bezier(0.01, 1, 0.22, 0.99) 0s');
+    @media (min-height: 640px) {
+      top: 35%;
+    }
+    @media screen {
+      @media (min-height: 411px) and (max-height: 639px) {
+        top: 25%;
+      }
+      @media (min-height: 360px) and (max-height: 410px) {
+        top: 15%;
+      }
+    }
+  }
+  &.nav-hidden {
+    opacity: 0.5;
+    @include doTransform(translateX(-120px));
+  }
+  .nav-item {
+    width: 120px;
+  }
+  .nav-link {
+    background-color: $background;
+    color: $text;
+    transition: all 1s ease, font 0.05s linear, border-left 0.3s ease;
+    &:hover {
+      @include doActiveBorder();
+      color: $text-hover;
+      font-weight: bold;
+      transition: all 0.3s ease, font 0.05s linear;
+    }
+  }
+  .nav .active {
+    background-color: $background-active;
+    @include doActiveBorder();
+    color: $text-active;
+    font-weight: bold;
+  }
+  .nav-switch {
+    border-bottom: 15px solid transparent;
+    border-left: 30px solid $text-hover;
+    border-top: 15px solid transparent;
+    cursor: pointer;
+    height: 100px;
+    @include prepareTransform ('border');
+    position: absolute;
+    right: 0;
+  }
+  .nav-switch-hide {
+    border-left-color: $text-active;
+  }
+}

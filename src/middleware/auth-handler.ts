@@ -1,10 +1,8 @@
 import { RequestHandler } from 'express';
-import Route from '../struct/Route';
 
-export default function authHandler (util: IUtil, file: Route): RequestHandler {
+export default function authHandler (util: IUtil): RequestHandler {
   return async (req, res, next) => {
-    if (!file.auth || (file.auth === true && !req.cookies.userId)) return next();
-    if (file.auth === 'required' && !req.cookies.userId) return res.redirect('/login');
+    if (!req.cookies.userId) return next();
 
     const [ user ]: IUser[] = await util.db('users').select()
       .where('userId', req.cookies.userId);
@@ -27,12 +25,12 @@ export default function authHandler (util: IUtil, file: Route): RequestHandler {
         [ req.cookies.userId ],
       );
 
-    Object.assign(req, { 'auth-user': { userId, username } });
     const settings = JSON.parse(user.settings);
     const lastNav = req.cookies.lastNav || settings.lastNav;
     const infoLastNav = req.cookies['info-lastNav'] || settings['info-lastNav'];
     const menu = req.cookies.menu || settings.menu;
 
+    res.locals.user = { userId, username };
     res
       .cookie('userId', user.userId, { maxAge: 6048e5 })
       .cookie('lastNav', lastNav)

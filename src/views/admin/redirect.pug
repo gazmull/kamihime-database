@@ -1,25 +1,22 @@
-doctype html
-html
-  head
-    title Kamihime Database
-    script.
-        setTimeout(() => this.location.replace('/'), 10000);
-    link(rel='stylesheet', href='/lib/constants/style.css')
-  body
-      h1 Kamihime Database Dashboard
-      h2 <sup>Successfully saved your inputs into the database. ♥</sup>
+extends ../_templates/admin
+
+append head
+  script.
+    setTimeout(() => this.location.replace('/'), 10000);
+
+append content
+  div.container-fluid
+    h3 Successfully saved your inputs into the database. ♥
+    div.text-center
+      img.rounded-circle(src='/img/wiki/' + avatar)
+      h4 #{name}
+      h6 ##{id.toUpperCase()}
+    p
+      | Your session for this character has been destroyed.
       br
-
-      center
-        div(class="container")
-          img(src='/img/wiki/' + avatar)
-          span(value=name) 
-            b #{name}
-          br
-          span(value=id)
-            span() ##{id.toUpperCase()}
-
-        h2 <sub>Your session for this character has been destroyed. <br/> You will be redirected shortly to index page...</sub>
-        p
-          form(action="https://google.com")
-            input(type="submit" value="OR HOW ABOUT SOMEWHERE...?")
+      br
+      | You will be redirected shortly to index page...
+      br
+      br
+      br
+      a.text-danger(href='https://google.com') How about at Google?

@@ -1,8 +1,8 @@
 extends ../_templates/main
 
 append head
-  script(src='/browser/script.js')
-  link(rel='stylesheet', href='/browser/style.css')
+  script(src='/js/browser.js')
+  link(rel='stylesheet', href='/css/browser.css')
   block title
     title Kamihime Database - Browser
 
@@ -21,7 +21,7 @@ block content
       - if(status)
         div(class='col-xs-12 col-md-10', style='z-index: 1')
           div(class='alert alert-dismissable alert-danger fade show')
-            a(href='javascript:void(0);', class='close', data-dismiss='alert') &times;
+            a.close(data-dismiss='alert') &times;
             h4.alert-heading Announcement
             p.name(style='white-space: pre-wrap') !{status}
     div.row 
@@ -30,11 +30,10 @@ block content
         div#content.row
           - let key = 49;
           - for(const el of ['all', 'soul', 'eidolon', 'ssra', 'ssr', 'sr', 'r'])
-            div(id=el, class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
-              - const title = el.toUpperCase();
-              h2 #{title}
+            div(id=el, class='content collapse col-12', data-parent='#content', key=key++)
               div(class='col-11 kh-list-wrapper')
                 ul(class='kh-list px-0 hidden-browser')
+                  h2 #{el.toUpperCase()}
                   case el
                     when 'soul': include assets/soul
                     when 'eidolon': include assets/eidolon
@@ -60,7 +59,7 @@ block content
                   href='javascript:void(0);',
                   data-toggle='collapse',
                   data-target=`#${k.toLowerCase()}`,
-                  title='Filter to #{k}') #{k}
+                  title='Filter to ' + k) #{k}
                 each c in chars
                   li.name(name=c.name, character-id=c.id)
                     a(href=`/info/${c.id}`) #{c.name}

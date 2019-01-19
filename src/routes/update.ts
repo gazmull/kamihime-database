@@ -55,7 +55,7 @@ export default class DashboardRoute extends Route {
       if (character.type)
         Object.assign(info, { type: character.type });
 
-      res.render('admin/update', { info, user: session });
+      res.render('admin/update', { info, session });
     } catch (err) { this.util.handleSiteError(res, err); }
   }
 }

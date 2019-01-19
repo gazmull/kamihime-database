@@ -15,13 +15,12 @@ $(() => {
   if (typeof swal !== 'undefined')
     sweet = swal.mixin({
       allowEscapeKey: false,
-      backdrop: '#ff00ae2f',
-      background: '#7c2962',
+      background: '#333',
       buttonsStyling: false,
     });
 
   $('.nav-switch').on('click', ({ currentTarget: $this }) => {
-    const nav = $('#nav');
+    const nav = $('.side-nav');
 
     if (nav.hasClass('nav-hidden')) {
       nav.removeClass('nav-hidden');
@@ -36,6 +35,12 @@ $(() => {
     }
   });
 
+  if ($('.side-nav').length && Cookies.get('menu') === 'true')
+    setTimeout(() => {
+      $('.side-nav').removeClass('nav-hidden');
+      $('.nav-switch').addClass('nav-switch-hide');
+    }, 801);
+
   $('.navbar-toggler, #result-close').on('click', () => {
     $('#search-bar').val('');
     $('#search-bar').trigger('input');
@@ -47,7 +52,7 @@ $(() => {
 
     if (searchTimeout) clearTimeout(searchTimeout);
     if (!query) {
-      $('.result-wrapper').css('transform', 'translateX(100%)');
+      $('.result-wrapper').css('transform', '');
       $('#result-head').text('What are you looking at?');
 
       return $('#result li').remove();

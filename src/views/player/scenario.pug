@@ -6,9 +6,9 @@ append head
     let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
     const files = !{JSON.stringify(files)};
     const SCENARIOS = "#{SCENARIOS}";
-  script(src='/lib/howler.core.min.js')
-  script(src='/player/script.js')
-  script(src='/player/script/scenario.js')
+  script(src='//cdn.jsdelivr.net/npm/howler@2.1.1/dist/howler.core.min.js')
+  script(src='/js/player.js')
+  script(src='/js/player/scenario.js')
 
 block content
   div(class='scenario panel-wrapper')

@@ -8,7 +8,6 @@ let getArticle: (...args: any[]) => Promise<string> = null;
 export default class InfoRoute extends Route {
   constructor () {
     super({
-      auth: true,
       id: 'info',
       method: 'get',
       route: [ '/info/:id' ],
@@ -28,8 +27,7 @@ export default class InfoRoute extends Route {
 
       if (!character) throw { code: 422 };
 
-      const user = req['auth-user'];
-      const requested = { character, wiki: null, user };
+      const requested = { character, wiki: null };
 
       this._parseArticle(character.name)
       .then(wiki => {
