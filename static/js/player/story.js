@@ -90,7 +90,7 @@ $(() => {
             $('<div/>', { id: asset.name })
               .css({
                 'background-image': `url(${asset.src})`,
-                visibility: 'hidden',
+                display: 'none',
                 'z-index': asset.type === 'img' ? -1 : -2,
               })
               .appendTo('#image');
@@ -195,16 +195,8 @@ $(() => {
       words: currentScript().words,
     };
 
-    const shown = {
-      position: 'relative',
-      visibility: 'visible',
-    };
-    const hidden = {
-      position: 'absolute',
-      visibility: 'hidden',
-    };
-    const lastIMG = $(`#image > div[id='${last.bg}']`);
-    const currentIMG = $(`#image > div[id='${current.bg}']`);
+    const lastIMG = $(`#image div[id='${last.bg}']`);
+    const currentIMG = $(`#image div[id='${current.bg}']`);
 
     if (last.bgm !== current.bgm) {
       if (last.bgm)
@@ -217,24 +209,24 @@ $(() => {
 
     if (last.bg !== current.bg) {
       if (last.bg)
-        lastIMG.css({ visibility: 'hidden' });
+        lastIMG.css('display', 'none');
 
       if (current.bg)
-        currentIMG.css({ visibility: 'visible' });
+        currentIMG.css('display', '');
     }
 
     $('#characterName')
-      .html(current.chara);
+      .text(current.chara);
     $('#characterTalk')
-      .html(current.words);
+      .text(current.words);
 
     if (last.expression)
-      $(`#image > div[id='${last.expression}']`)
-        .css(hidden);
+      $(`#image div[id='${last.expression}']`)
+        .css('display', 'none');
 
     if (current.expression)
-      $(`#image > div[id='${current.expression}']`)
-        .css(shown);
+      $(`#image div[id='${current.expression}']`)
+        .css('display', '');
 
     if (last.voice)
       last.voice.stop();

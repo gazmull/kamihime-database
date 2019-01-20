@@ -9,9 +9,10 @@
 .kh-list {
   list-style-position: outside;
   list-style-type: none;
+  will-change: transform;
   li {
-    float: left;
     clear: left;
+    float: left;
   }
 }
 

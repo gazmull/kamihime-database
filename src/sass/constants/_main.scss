@@ -14,52 +14,53 @@
   transition: height 0.01s;
 }
 
+.no-scroll {
+  height: 100%;
+  overflow: hidden;
+}
+
 .name a {
   backface-visibility: hidden;
-  will-change: font, color;
+  will-change: color;
   &:link, &:visited {
     color: $text-link;
     font-size: 15px;
     font-weight: bold;
     text-decoration: none;
-    transition: font-size 0.1s linear, color 0.3s ease-out;
+    transition: color 0.3s ease-out;
   }
   &:hover {
     color: $text;
-    font-size: 15.5px;
   }
 }
 
 .visible-browser {
   opacity: 1;
   transform: translateX(0) translateZ(0);
-  transition: opacity 0.35s, transform 0.8s cubic-bezier(0.01, 1, 0.22, 0.99) 0s;
-  visibility: visible;
+  transition: $transition;
   z-index: 0;
 }
 
 .hidden-browser {
   opacity: 0;
   transform: translateX(-50%) translateZ(0);
-  visibility: hidden;
   z-index: -1;
 }
 
-#thumbnail {
-  -moz-mask-image: radial-gradient(circle at center 90%, black 50%, transparent 78%);
-  -webkit-mask-image: radial-gradient(circle at center 90%, black 50%, transparent 78%);
+.model {
   background-color: transparent;
   background-repeat: no-repeat;
   background-size: contain;
   border-top-left-radius: 30%;
   border-top-right-radius: 30%;
   bottom: 0;
-  height: 640px;
-  mask-image: radial-gradient(circle at center center, black 50%, transparent 78%);
+  height: 100%;
+  mask-image: radial-gradient(circle at 50% 65%, black 35%, transparent 69%);
+  max-height: 683px;
+  max-width: 1024px;
   opacity: 0.5;
   position: fixed;
-  right: 16.666667%;
-  /* Corresponds to feed containers (latest, hot) */
-  width: 960px;
-  z-index: 0;
+  right: 16.666667%; /* Corresponds to feed containers (latest, hot) */
+  width: 100%;
+  z-index: -1;
 }

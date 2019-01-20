@@ -47,7 +47,7 @@ else server.disable('x-powered-by');
 server
   .use(express.urlencoded({ extended: true }))
   .use(express.json())
-  .use(compression({ filter: req => !req.headers['x-no-compression'] }))
+  .use(compression({ filter: req => !req.headers['x-no-compression'], threshold: 0 }))
   .use(cookieParser(cookieSecret))
   .use(favicon(resolve(__dirname, '../static/favicon.ico')))
   .use(express.static(resolve(__dirname, '../static')))

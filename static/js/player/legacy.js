@@ -40,20 +40,11 @@ $(() => {
   $.when.apply(null, _images)
     .done((...imgs) => {
       for (const img of imgs)
-        $('<div/>', {
-          class: 'animate',
+        $('<img/>', {
           id: img.name,
+          src: img.src,
         })
-          .css({
-            'background-image': `url("${img.src}")`,
-            display: 'none',
-            height: '900px',
-            position: 'relative',
-            right: '-130px',
-            top: '-130px',
-            width: '640px',
-            'z-index': -1,
-          })
+          .css('display', 'none')
           .appendTo('#image');
 
       setTimeout(() => {
@@ -123,23 +114,15 @@ $(() => {
 
   function render () {
     const img = newSeq().sequence;
-
-    $('.panel')
-      .attr('sequence', sequenceIDX);
-
-    const currentIMG = `#image > div[id='${img}']`;
+    const currentIMG = `#image img[id='${img}']`;
     const hidden = {
-      '-moz-animation': 'none',
-      '-ms-animation': 'none',
-      '-o-animation': 'none',
-      '-webkit-animation': 'none',
-      animation: 'none',
+      '-moz-animation': '',
+      '-ms-animation': '',
+      '-o-animation': '',
+      '-webkit-animation': '',
+      animation: '',
       display: 'none',
     };
-
-    if (lastImage && lastImage !== img)
-      $(`#image > div[id='${lastImage}']`)
-        .css(hidden);
 
     $(currentIMG)
       .css({
@@ -148,8 +131,12 @@ $(() => {
         '-o-animation': animation,
         '-webkit-animation': animation,
         animation: animation, // tslint:disable-line:object-literal-shorthand
-        display: 'block',
+        display: '',
       });
+
+    if (lastImage && lastImage !== img)
+      $(`#image img[id='${lastImage}`)
+        .css(hidden);
 
     lastImage = img;
   }

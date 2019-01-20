@@ -12,7 +12,7 @@ Website + REST (JSON) API for Kamihime Database
 
 ## Recommendations
 - VS Code Extensions
-    1. **[Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass)** For watching saved Sass files
+    1. **[Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass)** For watching saved Sass files and applying vendor prefixes on compilation.
 
 ## Requirements
 - **Debian-based OS only**: [authbind](https://sites.google.com/site/mytechnicalcollection/utility/authbind)

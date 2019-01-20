@@ -1,32 +1,38 @@
-#feed-wrapper {
-  max-height: 100vh;
-  position: fixed;
-  top: 56px;
-  right: 0;
-}
-
 .feed {
+  backface-visibility: hidden;
   background-color: $background;
   border-top-left-radius: 1%;
   border-bottom-left-radius: 1%;
   overflow-y: auto;
-  max-height: 45.5vh;
-  margin: 0.5vh 0;
+  margin: 1vh 0;
+  will-change: transform;
 }
 
 .feed-list {
-  float: left;
-  clear: left;
-  list-style-position: outside;
-  list-style-type: circle;
+  display: flow-root;
   padding-left: 10px;
-  a.text-light {
+  &.numbered {
+    list-style-type: decimal;
+  }
+  &:not(.numbered) {
+    list-style-position: outside;
+    list-style-type: square;
+  }
+  li, a {
+    clear: left;
+    float: left;
+  }
+  a.label {
     color: $text-link-header !important;
+    display: block;
     font-size: 14px;
+    text-decoration: none;
     transition: all 0.1s ease;
+    will-change: transform, color;
+    @include prepareTransform('color');
     &:hover {
-      font-size: 16px;
-      font-weight: bolder;
+      transform: scale(1.512);
+      color: $text-hover;
     }
   }
 }

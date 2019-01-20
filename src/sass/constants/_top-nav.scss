@@ -3,13 +3,14 @@
   margin: 0 !important;
   width: 100%;
   padding: 10px;
-  z-index: 9;
+  z-index: 1055;
   li a {
     color: $text;
     padding: 0 15px;
     text-decoration: none;
     text-transform: uppercase;
     transition: color 0.3s;
+    will-change: color;
     @media (max-width: 640px) {
       font-size: 22px;
     }
@@ -22,21 +23,21 @@
   }
 }
 
-.result-wrapper {
+#result-wrapper {
   background-color: $background;
   padding: 15px 15px;
   position: fixed;
   top: 58px;
   right: 0;
   transform: translateX(100%);
-  transition: transform 0.8s cubic-bezier(0.01, 1, 0.22, 0.99) 0s;
+  transition: transform $core-transition;
   will-change: transform;
   z-index: 1055;
   @media (min-width: 768px) {
     height: calc(100vh - 58px);
   }
   @media (max-height: 770px) {
-    overflow-y: scroll;
+    overflow-y: auto;
   }
   @media screen {
     @media (min-width: 640px) and (max-width: 767px) {
@@ -66,24 +67,25 @@
   top: 22px;
 }
 
-.result-wrapper li {
+#result-wrapper li {
+  backface-visibility: hidden;
   background: $list-background;
   display: block;
   padding: 0;
   margin: 5px 0;
-  will-change: transform, font, background, color, border;
+  will-change: transform;
   a {
     color: $text;
     display: block;
     font-family: 'Raleway', sans-serif;
     text-decoration: none;
     transition: all 0.5s ease, font 0.1s ease-in-out, transform 0.2s ease;
+    will-change: transform, font, background, color, border;
     &:hover {
       color: $text-hover;
       @include doActiveBorder();
       background-color: $background-hover;
       font-weight: bold;
-      font-size: 18px;
       transform: scale(1.0384) translateZ(0);
     }
     &:active {
@@ -91,11 +93,13 @@
     }
   }
   img {
-    border-radius: 100%;
+    backface-visibility: hidden;
+    border-radius: 50%;
     padding: 5px 15px;
-    @include prepareTransform('transform');
+    height: 48px;
+    @include prepareTransform();
     &:hover {
-      transform: scale(1.792);
+      @include doTransform(scale(1.512));
     }
   }
 }

@@ -3,7 +3,7 @@ $(() => {
     Cookies.set('lastNav', '#all');
     Cookies.set('menu', 'true');
 
-    $('[data-toggle="tooltip"]').tooltip('show');
+    $('#side-nav-help').tooltip('show');
   }
 
   $('.collapse')
@@ -20,30 +20,46 @@ $(() => {
       Cookies.set('lastNav', currentPage);
 
       $('.content.show .kh-list').attr('class', 'kh-list px-0 visible-browser');
-      $(`.nav-link[data-target='${Cookies.get('lastNav')}']`).addClass('active');
+      $(`.side-nav .nav-link[data-target='${Cookies.get('lastNav')}']`).addClass('active');
     })
     .on('hide.bs.collapse', function () {
       if (isNav.bind(this)()) return;
 
       $('.kh-list.visible-browser').attr('class', 'kh-list px-0 hidden-browser');
-      $(`.nav-link.active`).removeClass('active');
+      $(`.side-nav .nav-link.active`).removeClass('active');
     });
 
   $(Cookies.get('lastNav')).collapse('show');
 
+  let nameTimeout = null;
   $('.name')
     .on('mouseenter', ({ currentTarget: $this }) => {
         if (!$($this).attr('name')) return;
+        if (nameTimeout) clearTimeout(nameTimeout);
 
-        const name = $($this).attr('name').replace(/'/g, '\\$&');
-
-        $('#thumbnail')
-          .css({
-            'background-image': `url('/img/wiki/close/${name} Close.png')`,
-            visibility: 'visible',
-          });
+        nameTimeout = setTimeout(() => {
+          const name = $($this).attr('name').replace(/'/g, '\\$&');
+          $('.model')
+            .css({
+              'background-image': `url('/img/wiki/close/${name} Close.png')`,
+              display: '',
+              visibility: '',
+            });
+        }, 300);
     })
-    .on('mouseleave', () => $('#thumbnail').css('visibility', 'hidden'));
+    .on('mouseleave', () => {
+      if (nameTimeout) clearTimeout(nameTimeout);
+
+      $('.model').css({
+        display: 'none !important',
+        visibility: 'hidden',
+      });
+    });
+
+  $('.model').css({
+    display: 'none !important',
+    visibility: 'hidden',
+  });
 });
 
 function showHelp () {

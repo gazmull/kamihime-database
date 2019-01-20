@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans|Raleway');
 
 body {
+  backface-visibility: hidden;
   background-color: $core-background;
   color: $core-text;
   height: 100%;
@@ -67,6 +68,7 @@ input {
 
 ::-webkit-scrollbar-thumb {
   background: $scroll-background;
+  will-change: background;
   &:hover {
     background: $scroll-background-hover;
   }

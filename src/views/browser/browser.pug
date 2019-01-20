@@ -17,17 +17,16 @@ block side-nav-content
 
 block content
   div(class='container-fluid px-0')
-    div.row
-      - if(status)
-        div(class='col-xs-12 col-md-10', style='z-index: 1')
-          div(class='alert alert-dismissable alert-danger fade show')
-            a.close(data-dismiss='alert') &times;
-            h4.alert-heading Announcement
-            p.name(style='white-space: pre-wrap') !{status}
     div.row 
-      div(class='col-1 px-0')
-      div(class='col-9 px-0')
+      div(class='col-sm-12 col-md-9 col-lg-10 p-2')
         div#content.row
+          div.row(style='margin: 0 auto !important')
+            - if(status)
+              div.col-12(style='z-index: 1')
+                div(class='alert alert-dismissable alert-danger fade show')
+                  a.close(data-dismiss='alert') &times;
+                  h4.alert-heading Announcement
+                  p.name(style='white-space: pre-wrap') !{status}
           - let key = 49;
           - for(const el of ['all', 'soul', 'eidolon', 'ssra', 'ssr', 'sr', 'r'])
             div(id=el, class='content collapse col-12', data-parent='#content', key=key++)
@@ -42,8 +41,8 @@ block content
                     when 'sr': include assets/sr
                     when 'r': include assets/r
                     default: include assets/all
-          div#thumbnail(class='col-12 d-none d-md-block')
-      div#feed-wrapper(class='col-2 d-none d-md-block px-0')
+          div(class='model col-12 d-none d-md-block')
+      div#feed-wrapper(class='col-3 col-lg-2 d-none d-md-block px-0')
         div.row
           div(class='feed col-12')
             h5
@@ -55,7 +54,7 @@ block content
               - if (k === 'ssr+') k = 'ssra';
               - k = k.toUpperCase();
               ul.feed-list
-                a.text-light(
+                a.label(
                   href='javascript:void(0);',
                   data-toggle='collapse',
                   data-target=`#${k.toLowerCase()}`,
@@ -66,7 +65,7 @@ block content
         div.row
           div(class='feed col-12')
             h5 Top 10
-            ul.feed-list
+            ol(class='feed-list numbered')
               each c in hot
                 li.name(name=c.name, character-id=c.id)
                   a(href=`/info/${c.id}`) #{c.name}

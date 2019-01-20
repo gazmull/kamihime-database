@@ -5,15 +5,10 @@ append head
   style.
     p a:link, p a:visited {
       color: #ff00ae;
-      font-weight: bolder;
+      font-weight: bold;
       text-decoration: none;
     }
     p a:hover { color: #fff; }
-    #thumbnail {
-      background-image: url("/img/wiki/close/(Eclipse%20Princess)%20Amaterasu%20Close.png");
-      right: 0;
-      z-index: -1;
-    }
   script.
     function verified() {
       document.cookie = "verified=true;path=/;max-age=604800";
@@ -39,12 +34,12 @@ block content
       br
       u By entering this site means you are over 18 years old and not offended to sexual content.
       br
-    hr
+    hr.border-white
     h1 Privacy
     p
       | This site only stores your Discord snowflake and username, and cookies.
       | Your visit count to episodes are added anonymously.
-    hr
+    hr.border-white
     h1 Cookies
     p
       | This site is using cookies to give you a better browsing experience.
@@ -98,4 +93,4 @@ block content
         a(href='https://google.com') Let me the fuck out
         |  | 
         a(href='javascript:void(0);', onclick='verified();') Alright, I'm in
-  div#thumbnail(class='d-none d-md-block')
+  div.model(class='d-none d-md-block', style='background-image: url("/img/wiki/close/(Eclipse%20Princess)%20Amaterasu%20Close.png")')

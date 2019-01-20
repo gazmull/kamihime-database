@@ -3,21 +3,23 @@ p {
 }
 
 .side-nav.navbar {
-  top: 50.2%;
-}
-
-@media (max-height: 640px) {
-  .side-nav.navbar {
-    top: 48.2%;
+  @media (min-height: 640px) {
+    top: 50.2%;
   }
-}
-
-@media (max-height: 414px) {
-  .side-nav.navbar {
-    top: 38.2%;
+  @media screen {
+    @media (min-height: 411px) and (max-height: 639px) {
+      top: 48.2%;
+    }
+    @media (min-height: 360px) and (max-height: 410px) {
+      top: 38.2%;
+    }
   }
 }
 
 .nav-switch-hide {
   height: 150px;
+}
+
+.model {
+  right: 0;
 }

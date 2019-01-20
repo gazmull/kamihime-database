@@ -206,7 +206,7 @@ function updateDialog (type, obj, actual = false) {
       dialog.css('text-shadow', $this + ' 2px 1px');
       break;
     case 'containDialog':
-      dialog.css('position', $this ? 'absolute' : 'relative');
+      dialog.css('transform', $this ? '' : 'translateY(100%)');
       break;
     case 'fontSize':
       if (actual) {

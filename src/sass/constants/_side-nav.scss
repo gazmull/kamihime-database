@@ -3,7 +3,7 @@
     position: fixed;
     z-index: 1050;
     max-width: 150px;
-    @include prepareTransform('opacity', 'all 0.5s ease-in-out, transform 0.8s cubic-bezier(0.01, 1, 0.22, 0.99) 0s');
+    @include prepareTransform('opacity', 'all 0.5s ease-in-out, transform #{$core-transition}');
     @media (min-height: 640px) {
       top: 35%;
     }
@@ -22,6 +22,10 @@
   }
   .nav-item {
     width: 120px;
+    &#side-nav-help {
+      font-weight: bold;
+      text-decoration: none;
+    }
   }
   .nav-link {
     background-color: $background;
@@ -30,7 +34,6 @@
     &:hover {
       @include doActiveBorder();
       color: $text-hover;
-      font-weight: bold;
       transition: all 0.3s ease, font 0.05s linear;
     }
   }

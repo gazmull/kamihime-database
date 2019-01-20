@@ -15,8 +15,10 @@ $(() => {
   if (typeof swal !== 'undefined')
     sweet = swal.mixin({
       allowEscapeKey: false,
+      animation: false,
       background: '#333',
       buttonsStyling: false,
+      customClass: 'animated fadeIn faster',
     });
 
   $('.nav-switch').on('click', ({ currentTarget: $this }) => {
@@ -44,22 +46,24 @@ $(() => {
   $('.navbar-toggler, #result-close').on('click', () => {
     $('#search-bar').val('');
     $('#search-bar').trigger('input');
+
+    if ($('body').hasClass('no-scroll'))
+      $('body').removeClass('no-scroll');
   });
 
   let searchTimeout = null;
-  $('#search-bar').on('input keyup',  function () {
+  $('#search-bar').on('input',  function () {
     const query = $(this).val();
 
     if (searchTimeout) clearTimeout(searchTimeout);
-    if (!query) {
-      $('.result-wrapper').css('transform', '');
-      $('#result-head').text('What are you looking at?');
+    if (!query)
+      return $('#result-wrapper').css('transform', '');
+    if (window.pageYOffset !== 0)
+      window.scrollTo(0, 0);
 
-      return $('#result li').remove();
-    }
-
+    $('body').addClass('no-scroll');
     $('#result li').remove();
-    $('.result-wrapper').css('transform', 'translateX(0)');
+    $('#result-wrapper').css('transform', 'none');
 
     if (query.length < 2) return $('#result-head').text('I need 2 or more characters');
 
@@ -82,7 +86,7 @@ $(() => {
           $('<li>')
             .html([
               `<a href='/info/${el.id}'>`,
-                `<img src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png' height=56>`,
+                `<img src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
                 el.name,
                 ` <span class='badge badge-secondary'>${el.tier || el.rarity}</span> `,
                 `<span class='badge badge-secondary'>${
