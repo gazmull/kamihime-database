@@ -12,7 +12,7 @@ declare global {
   }
 
   interface IRouteOptions {
-    auth?: boolean | 'required';
+    auth?: boolean | 'admin';
     id?: string;
     method?: string;
     route?: string[];
@@ -94,6 +94,8 @@ declare global {
     ip: string;
     password: string;
     slug: string;
+    _iterations: number,
+    _salt: string,
   }
 
   interface IKamihime {
@@ -147,6 +149,10 @@ declare global {
   interface IState {
     timestamp: number;
     url: string
+  }
+
+  interface IPasswordAttempts {
+    attempts: number;
   }
 
   interface IStatus {

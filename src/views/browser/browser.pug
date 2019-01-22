@@ -1,10 +1,13 @@
 extends ../_templates/main
 
-append head
-  script(src='/browser/script.js')
-  link(rel='stylesheet', href='/browser/style.css')
-  block title
-    title Kamihime Database - Browser
+append styles
+  link(rel='stylesheet', href='/css/browser.css')
+
+append scripts
+  script(src='/js/browser.js')
+
+block title
+  title Kamihime Database - Browser
 
 block side-nav-content
   a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#all') All
@@ -17,24 +20,22 @@ block side-nav-content
 
 block content
   div(class='container-fluid px-0')
-    div.row
-      - if(status)
-        div(class='col-xs-12 col-md-10', style='z-index: 1')
-          div(class='alert alert-dismissable alert-danger fade show')
-            a(href='javascript:void(0);', class='close', data-dismiss='alert') &times;
-            h4.alert-heading Announcement
-            p.name(style='white-space: pre-wrap') !{status}
     div.row 
-      div(class='col-1 px-0')
-      div(class='col-9 px-0')
+      div(class='col-sm-12 col-md-9 col-lg-10 p-2')
         div#content.row
+          div.row(style='margin: 0 auto !important')
+            - if(status)
+              div.col-12(style='z-index: 1')
+                div(class='alert alert-dismissable alert-danger fade show')
+                  a.close(data-dismiss='alert') &times;
+                  h4.alert-heading Announcement
+                  p.name(style='white-space: pre-wrap') !{status}
           - let key = 49;
           - for(const el of ['all', 'soul', 'eidolon', 'ssra', 'ssr', 'sr', 'r'])
-            div(id=el, class='content rounded-bottom collapse col-12', data-parent='#content', key=key++)
-              - const title = el.toUpperCase();
-              h2 #{title}
+            div(id=el, class='content collapse col-12', data-parent='#content', key=key++)
               div(class='col-11 kh-list-wrapper')
                 ul(class='kh-list px-0 hidden-browser')
+                  h2 #{el.toUpperCase()}
                   case el
                     when 'soul': include assets/soul
                     when 'eidolon': include assets/eidolon
@@ -43,8 +44,8 @@ block content
                     when 'sr': include assets/sr
                     when 'r': include assets/r
                     default: include assets/all
-          div#thumbnail(class='col-12 d-none d-md-block')
-      div#feed-wrapper(class='col-2 d-none d-md-block px-0')
+          div(class='model col-12 d-none d-md-block')
+      div#feed-wrapper(class='col-3 col-lg-2 d-none d-md-block px-0')
         div.row
           div(class='feed col-12')
             h5
@@ -56,18 +57,18 @@ block content
               - if (k === 'ssr+') k = 'ssra';
               - k = k.toUpperCase();
               ul.feed-list
-                a.text-light(
+                a.label(
                   href='javascript:void(0);',
                   data-toggle='collapse',
                   data-target=`#${k.toLowerCase()}`,
-                  title='Filter to #{k}') #{k}
+                  title='Filter to ' + k) #{k}
                 each c in chars
                   li.name(name=c.name, character-id=c.id)
                     a(href=`/info/${c.id}`) #{c.name}
         div.row
           div(class='feed col-12')
             h5 Top 10
-            ul.feed-list
+            ol(class='feed-list numbered')
               each c in hot
                 li.name(name=c.name, character-id=c.id)
                   a(href=`/info/${c.id}`) #{c.name}

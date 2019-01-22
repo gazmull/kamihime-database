@@ -6,4 +6,15 @@
   "tslint.configFile": ".\\.tslint.js",
   "tslint.exclude": "build",
   "tslint.jsEnable": true,
+  "liveSassCompile.settings.autoprefix": [
+    ">= 0.5%",
+    "last 5 versions"
+  ],
+  "liveSassCompile.settings.formats": [
+    {
+      "format": "compressed",
+      "extensionName": ".css",
+      "savePath": "/static/css"
+    }
+  ],
 }

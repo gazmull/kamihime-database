@@ -1,0 +1,67 @@
+.row {
+  margin: 0 !important;
+}
+
+.container-fluid {
+  max-width: 1584px !important;
+}
+
+.collapse {
+  will-change: height;
+}
+
+.collapsing {
+  transition: height 0.01s;
+}
+
+.no-scroll {
+  height: 100%;
+  overflow: hidden;
+}
+
+.name a {
+  backface-visibility: hidden;
+  will-change: color;
+  &:link, &:visited {
+    color: $text-link;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease-out;
+  }
+  &:hover {
+    color: $text;
+  }
+}
+
+.visible-browser {
+  opacity: 1;
+  transform: translateX(0) translateZ(0);
+  transition: $transition;
+  z-index: 0;
+}
+
+.hidden-browser {
+  opacity: 0;
+  transform: translateX(-50%) translateZ(0);
+  z-index: -1;
+}
+
+.model {
+  backface-visibility: hidden;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border-top-left-radius: 30%;
+  border-top-right-radius: 30%;
+  bottom: 0;
+  height: 100%;
+  mask-image: radial-gradient(circle at 50% 65%, black 35%, transparent 69%);
+  max-height: 683px;
+  max-width: 1024px;
+  opacity: 0.5;
+  position: fixed;
+  right: 16.666667%; /* Corresponds to feed containers (latest, hot) */
+  width: 100%;
+  z-index: -1;
+}

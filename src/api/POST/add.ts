@@ -44,7 +44,8 @@ export default class PostAddRequest extends Api {
   public async exec (req: Request, res: Response): Promise<void> {
     let data = req.body;
     try {
-      await this._hasData(data);
+      if (!res.locals.user.admin)
+        await this._hasData(data);
 
       const [ character ]: IKamihime[] = await this.util.db('kamihime').select('id')
         .where('id', data.id)
@@ -65,7 +66,6 @@ export default class PostAddRequest extends Api {
         loli = 0,
         name,
         rarity,
-        user,
       } = data;
       data = this._filter({
         harem1Resource1,
@@ -85,6 +85,8 @@ export default class PostAddRequest extends Api {
 
       Object.assign(data, { loli, peeks: 0 });
       await this.util.db('kamihime').insert(data);
+
+      const user = data.user || req.cookies.userId;
 
       if (this.client.auth.discord.dbReportChannel)
         await this.util.discordSend(this.client.auth.discord.dbReportChannel, [

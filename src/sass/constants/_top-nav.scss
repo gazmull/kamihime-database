@@ -1,0 +1,108 @@
+.top-nav {
+  background-color: $background-hover;
+  margin: 0 !important;
+  width: 100%;
+  padding: 10px;
+  z-index: 1055;
+  li a {
+    color: $text;
+    padding: 0 15px;
+    text-decoration: none;
+    transition: color 0.3s;
+    will-change: color;
+    @media (max-width: 640px) {
+      font-size: 22px;
+    }
+    &:hover {
+      color: $text-hover;
+    }
+    &:active {
+      color: $text;
+    }
+  }
+  & .admin {
+    font-weight: bold;
+    color: $text-hover;
+  }
+}
+
+#result-wrapper {
+  background-color: $background;
+  padding: 15px 15px;
+  position: fixed;
+  top: 58px;
+  right: 0;
+  transform: translateX(100%);
+  transition: transform $core-transition;
+  will-change: transform;
+  z-index: 1055;
+  @media (min-width: 768px) {
+    height: calc(100vh - 58px);
+  }
+  @media (max-height: 770px) {
+    overflow-y: auto;
+  }
+  @media screen {
+    @media (min-width: 640px) and (max-width: 767px) {
+      height: calc(100vh - 194px);
+      overflow-y: auto;
+      top: 194px;
+    }
+    @media (min-width: 320px) and (max-width: 639px) {
+      height: calc(100vh - 230px);
+      overflow-y: auto;
+      top: 230px;
+    }
+  }
+}
+
+#result-head {
+  color: $text-header;
+  font-size: 2em;
+  text-transform: uppercase;
+}
+
+#result-close {
+  color: $text-header;
+  cursor: pointer;
+  position: absolute;
+  right: 15px;
+  top: 22px;
+}
+
+#result-wrapper li {
+  backface-visibility: hidden;
+  background: $list-background;
+  display: block;
+  padding: 0;
+  margin: 5px 0;
+  will-change: transform;
+  a {
+    color: $text;
+    display: block;
+    font-family: 'Raleway', sans-serif;
+    text-decoration: none;
+    transition: all 0.5s ease, font 0.1s ease-in-out, transform 0.2s ease;
+    will-change: transform, font, background, color, border;
+    &:hover {
+      color: $text-hover;
+      @include doActiveBorder();
+      background-color: $background-hover;
+      font-weight: bold;
+      transform: scale(1.0384) translateZ(0);
+    }
+    &:active {
+      color: $text;
+    }
+  }
+  img {
+    backface-visibility: hidden;
+    border-radius: 50%;
+    padding: 5px 15px;
+    height: 48px;
+    @include prepareTransform();
+    &:hover {
+      @include doTransform(scale(1.512));
+    }
+  }
+}

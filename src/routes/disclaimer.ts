@@ -4,7 +4,6 @@ import Route from '../struct/Route';
 export default class DisclaimerRoute extends Route {
   constructor () {
     super({
-      auth: true,
       id: 'disclaimer',
       method: 'get',
       route: [ '/disclaimer' ],

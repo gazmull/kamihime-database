@@ -1,0 +1,28 @@
+extends ../_templates/admin
+
+append styles
+  link(rel='stylesheet', href='/css/dashboard.css')
+
+append scripts
+  script(src='/js/dashboard.js')
+
+append content
+  div.container-fluid
+    h3 Admin Dashboard
+    h4 Last login: #{user.lastLogin}
+    h4 Last IP Address: #{user.ip}
+    div.row
+      div.col-1
+      div(class='col-sm-12 col-md-4')
+        h3 Admin actions
+        ul.list-group
+          li(class='list-group-item list-group-item-action list-group-item-dark')
+            a.text-uppercase(href='#', onclick='promptID("add");') Add
+          li(class='list-group-item list-group-item-action list-group-item-dark')
+            a.text-uppercase(href='#', onclick='promptID("update");') Update
+          li(class='list-group-item list-group-item-action list-group-item-dark')
+            a.text-uppercase(href='#', onclick='promptID("delete");') Delete
+          li(class='list-group-item list-group-item-action list-group-item-dark')
+            a.text-uppercase(href='#', onclick='promptID("flag");') Flag
+          li(class='list-group-item list-group-item-action list-group-item-dark')
+            a.text-uppercase(href='#', onclick='promptID("approve");') Approve

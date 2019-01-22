@@ -1,11 +1,14 @@
 extends ../_templates/main
 include assets/wiki-util
 
-append head
-  script(src='/info/script.js')
-  link(rel='stylesheet', href='/info/style.css')
-  block title
-    title Kamihime Database - Info
+append styles
+  link(rel='stylesheet', href='/css/info.css')
+
+append scripts
+  script(src='/js/info.js')
+
+block title
+  title Kamihime Database - Info
 
 block side-nav-help
 
@@ -27,5 +30,5 @@ block content
             div(class='content-wrapper hidden-browser')
               include assets/episodes
 
-  div(id='model', class='d-none d-lg-block', style=`background-image: url("/img/wiki/${character.main}")`)
-  div(id='thumbnail', class='d-none d-md-block d-lg-none', style=`background-image: url("/img/wiki/${character.preview}")`)
+  div(class='model d-none d-lg-block', style=`background-image: url("/img/wiki/${character.main}")`)
+  div(class='model d-none d-md-block d-lg-none', style=`background-image: url("/img/wiki/${character.preview}")`)

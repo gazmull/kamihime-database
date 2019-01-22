@@ -1,23 +1,23 @@
 extends ../_templates/player
 include assets/side-nav-content
 
-append head
+append scripts
   script.
     let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
     const files = !{JSON.stringify(files)};
     const SCENARIOS = "#{SCENARIOS}";
-  script(src='/lib/howler.core.min.js')
-  script(src='/player/script.js')
-  script(src='/player/script/scenario.js')
+  script(src='//cdn.jsdelivr.net/npm/howler@2.1.1/dist/howler.core.min.js')
+  script(src='/js/player.js')
+  script(src='/js/player/scenario.js')
 
 block content
-  div(class='scenario panel-wrapper')
-    div(class='panel', sequence=0)
+  div(class='scenario panel-wrapper my-1')
+    div.panel(sequence=0)
       button(class='invi leftNav', nav='left')
       |
       button(class='invi rightNav', nav='right')
-      div(id='image')
-      div(id='dialog')
-        div(id='text', data=0)
-          div(id='characterName')
-          div(id='characterTalk')
+      div#image.animate
+      div#dialog
+        div#text(data=0)
+          div#characterName
+          div#characterTalk

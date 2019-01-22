@@ -37,7 +37,7 @@
   "dependencies": {
     "@discordjs/uws": "11.149.1",
     "anchorme": "^1.1.2",
-    "canvas": "^2.2.0",
+    "canvas": "2.2.0",
     "compression": "^1.7.3",
     "cookie-parser": "^1.4.3",
     "discord.js": "github:discordjs/discord.js",
@@ -66,7 +66,6 @@
     "@types/js-cookie": "^2.2.0",
     "@types/node": "^10.12.18",
     "@types/node-fetch": "^2.1.4",
-    "@types/pug": "^2.0.4",
     "@types/serve-favicon": "^2.2.30",
     "@types/shortid": "^0.0.29",
     "apidoc": "^0.17.7",

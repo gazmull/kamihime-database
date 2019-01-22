@@ -15,7 +15,6 @@ const FG_IMAGE = SCENARIOS + 'fgimage/';
 export default class PlayerRoute extends Route {
   constructor () {
     super({
-      auth: true,
       id: 'player',
       method: 'get',
       route: [ '/player/:id/:ep/:type' ],
@@ -88,9 +87,7 @@ export default class PlayerRoute extends Route {
       let folder = resource.slice(-4);
       const fLen = folder.length / 2;
       folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
-      const user = req['auth-user'];
       const requested = {
-        user,
         SCENARIOS: `${SCENARIOS + folder}${resource}/`,
         script: scenario,
       };

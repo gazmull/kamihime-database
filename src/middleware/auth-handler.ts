@@ -1,10 +1,8 @@
 import { RequestHandler } from 'express';
-import Route from '../struct/Route';
 
-export default function authHandler (util: IUtil, file: Route): RequestHandler {
+export default function authHandler (util: IUtil): RequestHandler {
   return async (req, res, next) => {
-    if (!file.auth || (file.auth === true && !req.cookies.userId)) return next();
-    if (file.auth === 'required' && !req.cookies.userId) return res.redirect('/login');
+    if (!req.cookies.userId) return next();
 
     const [ user ]: IUser[] = await util.db('users').select()
       .where('userId', req.cookies.userId);
@@ -19,6 +17,27 @@ export default function authHandler (util: IUtil, file: Route): RequestHandler {
     }
 
     const { userId, username, lastLogin } = user;
+    res.locals.user = { lastLogin, userId, username };
+
+    if (req.cookies.slug) {
+      const [ admin ]: IAdminUser[] = await util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
+        .where({
+          userId,
+          slug: req.cookies.slug,
+        });
+
+      if (admin) {
+        const toPass = {
+          admin: true,
+          ip: admin.ip,
+          lastLogin: admin.lastLogin,
+          username: admin.username,
+        };
+
+        Object.assign(res.locals.user, toPass);
+      }
+    }
+
     const eligible = Date.now() > (new Date(lastLogin).getTime() + 18e5);
 
     if (eligible)
@@ -27,7 +46,6 @@ export default function authHandler (util: IUtil, file: Route): RequestHandler {
         [ req.cookies.userId ],
       );
 
-    Object.assign(req, { 'auth-user': { userId, username } });
     const settings = JSON.parse(user.settings);
     const lastNav = req.cookies.lastNav || settings.lastNav;
     const infoLastNav = req.cookies['info-lastNav'] || settings['info-lastNav'];

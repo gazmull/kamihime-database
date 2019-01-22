@@ -5,7 +5,6 @@ import Route from '../struct/Route';
 export default class BrowserRoute extends Route {
   constructor () {
     super({
-      auth: true,
       id: 'browser',
       method: 'get',
       route: [ '/' ],
@@ -26,9 +25,8 @@ export default class BrowserRoute extends Route {
 
       const data = await fetch(endPoint + 'latest', { headers: { Accept: 'application/json' } });
       const latest = await data.json();
-      const user = req['auth-user'];
       const status = this.server.status;
-      const requested = { characters, latest, hot, user, status };
+      const requested = { characters, latest, hot, status };
 
       res.render('browser/browser', requested);
     } catch (err) { this.util.handleSiteError(res, err); }

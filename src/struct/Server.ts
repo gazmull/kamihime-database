@@ -7,7 +7,9 @@ import { resolve } from 'path';
 // @ts-ignore
 import { api, database, discord, exempt, host, rootURL } from '../auth/auth';
 import authHandler from '../middleware/auth-handler';
+import reAuthHandler from '../middleware/re-auth-handler';
 import * as logger from '../util/console';
+import { handleSiteError } from '../util/handleError';
 import Api from './Api';
 import Client from './Client';
 import Route from './Route';
@@ -30,6 +32,7 @@ export default class Server {
     };
 
     this.util = {
+      handleSiteError,
       db: knex(database),
       logger: {
         error: message => logger.error(message),
@@ -44,6 +47,8 @@ export default class Server {
 
     this.states = new Collection();
 
+    this.passwordAttempts = new Collection();
+
     this.visitors = new Collection();
 
     this.kamihime = [];
@@ -57,6 +62,7 @@ export default class Server {
   public api: Collection<string, Collection<string, Api>>;
   public rateLimits: Collection<string, Collection<string, Collection<string, IRateLimitLog>>>;
   public states: Collection<string, IState>;
+  public passwordAttempts: Collection<string, IPasswordAttempts>;
   public visitors: Collection<string, Collection<string, number>>;
   public kamihime: IKamihime[];
   public status: string;
@@ -97,12 +103,13 @@ export default class Server {
       }
     }
 
+    // Route Auth Handler
+    server.use(authHandler(this.util));
+
     // Routes
-    server.get('*',
-    authHandler(this.util, new Route({ auth: true })),
-    (req, res, next) => {
+    server.get('*', (req, res, next) => {
       if (!req.cookies.verified && !(req.xhr || req.headers.accept && req.headers.accept.includes('application/json')))
-        return res.render('invalids/disclaimer', { redirected: true, user: req['auth-user'] });
+        return res.render('invalids/disclaimer', { redirected: true });
 
       return next();
     });
@@ -125,15 +132,10 @@ export default class Server {
 
       const mainHandler: RequestHandler = (req, res, next) => file.exec(req, res, next);
 
-      if (file.auth) server[file.method](file.route, authHandler(this.util, file), mainHandler);
-      else server[file.method](file.route, mainHandler);
+      server[file.method](file.route, reAuthHandler(file), mainHandler);
     }
 
-    server.all(
-      '*',
-      authHandler(this.util, new Route({ auth: true })),
-      (req, res) =>  res.render('invalids/403', { user: req['auth-user'] }),
-    );
+    server.all('*', (_, res) =>  res.render('invalids/403'));
 
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 

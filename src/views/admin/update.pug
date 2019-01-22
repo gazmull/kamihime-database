@@ -1,35 +1,27 @@
-doctype html
-html
-  head
-    title Kamihime Database
-    script(src='/lib/jquery.min.js')
-    link(rel='stylesheet', href='/lib/bootstrap.min.css')
-    link(rel='stylesheet', href='/constants/style.css')
-  body()
-    h1 Kamihime Database Dashboard
-    h2 <sup>Where we configure our 2D Waifus.</sup>
-    h2 <sup>Session Creator: #{user.userId}</sup>
-    br
+//- @Deprecated
+extends ../_templates/admin
 
-    center
-      div(class="container")
-        img(src='/img/wiki/' + info.avatar)
-        span(value=info.name) 
-          b #{info.name}
-        br
-        span(value=info.id)
-          span() ##{info.id.toUpperCase()}
-      div()
-        div(id="manual")
-          form(method="POST" action="/redirect")
-            input(type="hidden" name="id" value=info.id)
-            input(type="hidden" name="user" value=user.userId)
-            input(type="hidden" name="avatar" value=info.avatar)
-            h2 Empty fields to fill (with ♥ iykwim)
-
-            for key in Object.keys(info)
-              if (key === 'id' || key === 'avatar')
-                - continue;
-              textarea(name=key placeholder=key cols="40" rows="2") #{info[key]}
-            p
-              input(type='submit', value='SUBMIT INFO')
+append content
+  div.container-fluid
+    h3 Session Creator: #{session.userId}
+    div.text-center
+      img.rounded-circle(src='/img/wiki/' + info.avatar)
+      h4 #{info.name}
+      h6 ##{info.id.toUpperCase()}
+    form.form-inline(method='POST', action='/redirect')
+      input(type='hidden', name='id', value=info.id)
+      input(type='hidden', name='user', value=session.userId)
+      input(type='hidden', name='avatar', value=info.avatar)
+      - for (const key in info)
+        - if (key === 'id' || key === 'avatar') continue;
+        div(class='form-group col-4')
+          label.col-4(for=key) #{key}
+          input(
+            id=key,
+            class='form-control col-8 my-1',
+            type='text',
+            name=key,
+            placeholder='Enter ' + key,
+            value=info[key],
+          )
+      button(type='submit', class='btn btn-dark my-3 mx-auto') Submit

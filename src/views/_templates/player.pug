@@ -3,6 +3,9 @@ extends main
 block head
   include meta
   block title
-      title Kamihime Database - Player
-  include vendors
-  link(rel='stylesheet', href='/player/style.css')
+    title Kamihime Database - Player
+  block styles
+    include vendors/styles
+    link(rel='stylesheet', href='/css/player.css')
+  block scripts
+    include vendors/scripts

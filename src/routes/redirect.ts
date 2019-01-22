@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import fetch from 'node-fetch';
 import Route from '../struct/Route';
 
+// @Deprecated
 export default class RedirectRoute extends Route {
   constructor () {
     super({

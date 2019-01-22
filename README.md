@@ -10,6 +10,10 @@ Website + REST (JSON) API for Kamihime Database
 - [Changelog](/CHANGELOG.md)
 - [Util/Scenario `.blacklist`](https://gist.github.com/gazmull/45cd187e4a476795bcef630a8018e1a6)
 
+## Recommendations
+- VS Code Extensions
+    1. **[Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass)** For watching saved Sass files and applying vendor prefixes on compilation.
+
 ## Requirements
 - **Debian-based OS only**: [authbind](https://sites.google.com/site/mytechnicalcollection/utility/authbind)
 - [Node](https://nodejs.org) 10 or 11
@@ -52,6 +56,7 @@ Website + REST (JSON) API for Kamihime Database
         - `$ yarn --production=false` to install.
     - For `src/views`-related, you may use the task `Move PUG Files` to easily copy the new changes from `src` to `build`.
         - This only works with VSCode. However for CLI you may run this: `$ yarn run finalize --pug`
+    - For Sass compilation, see [VS Code Extensions-1](#Recommendations)
     - Run `$ yarn run build` to verify if your build is passing.
         - Failing build will be rejected at default.
 

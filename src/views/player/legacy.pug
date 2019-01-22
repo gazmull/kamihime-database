@@ -1,18 +1,18 @@
 extends ../_templates/player
 
-append head
+append scripts
   script.
     let script = !{JSON.stringify(script)};
     const files = !{JSON.stringify(files)};
     const SCENARIOS = "#{SCENARIOS}";
-  script(src='/player/script/legacy.js')
+  script(src='/js/player/legacy.js')
 
 block side-nav
 
 block content
   div(class='scenario panel-wrapper')
-    div(class='panel')
+    div.panel
       button(class='invi leftNav', nav='left')
       |
       button(class='invi rightNav', nav='right')
-      div(id='image')
+      div#image.animate

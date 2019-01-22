@@ -48,12 +48,14 @@ export default class PutUpdateRequest extends Api {
     let data = req.body;
 
     try {
-      await this._hasData(data);
+      if (!res.locals.user.admin) {
+        await this._hasData(data);
 
-      const [ session ]: ISession[] = await this.util.db('sessions').select('userId')
-        .where({ userId: data.user, characterId: data.id });
+        const [ session ]: ISession[] = await this.util.db('sessions').select('userId')
+          .where({ userId: data.user, characterId: data.id });
 
-      if (!session) throw { code: 401, message: 'You must create a session before updating a character.' };
+        if (!session) throw { code: 401, message: 'You must create a session before updating a character.' };
+      }
 
       const fields: string[] = [ 'id', 'loli' ];
       const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
@@ -74,7 +76,6 @@ export default class PutUpdateRequest extends Api {
         id,
         name,
         rarity,
-        user,
       } = data;
       data = this._filter({
         harem1Resource1,
@@ -93,9 +94,13 @@ export default class PutUpdateRequest extends Api {
 
       await this.util.db('kamihime').update(data)
         .where('id', id);
-      await this.util.db('sessions')
-        .where({ userId: user, characterId: id })
-        .del();
+
+      const user = data.user || req.cookies.userId;
+
+      if (!res.locals.user.admin)
+        await this.util.db('sessions')
+          .where({ userId: user, characterId: id })
+          .del();
 
       if (this.client.auth.discord.dbReportChannel)
         await this.util.discordSend(this.client.auth.discord.dbReportChannel, [

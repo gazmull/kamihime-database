@@ -5,10 +5,13 @@ html
   head
     block head
       include meta
-      meta(name='viewport', content='width=450, initial-scale=0.8, maximum-scale=1.0, user-scalable=0')
+      meta(name='viewport', content='width=device-width, initial-scale=0.8, maximum-scale=1.0, user-scalable=0')
       block title
         title Kamihime Database - Error
-      include vendors
+      block styles
+        include vendors/styles
+      block scripts
+        include vendors/scripts
   body
     block top-nav
       include top-nav
