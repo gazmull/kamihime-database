@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === 'production')
             'www.w3.org',
             'cf.static.r.kamihimeproject.dmmgames.com',
           ],
-          fontSrc: [ '\'self\'', 'fonts.gstatic.com' ],
+          fontSrc: [ '\'self\'', 'fonts.gstatic.com', 'cdn.jsdelivr.net' ],
           imgSrc: [
             '\'self\'',
             'data:',
