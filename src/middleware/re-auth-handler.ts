@@ -2,12 +2,11 @@ import { RequestHandler } from 'express';
 import Route from '../struct/Route';
 
 export default function reAuthHandler (file: Route): RequestHandler {
-  return async (req, res, next) => {
-    if (file.auth && !res.locals.user) {
-      res.redirect('/login');
-
-      next('route');
-    }
+  return async (_, res, next) => {
+    if (file.auth && !res.locals.user)
+      return res.redirect(`/login${file.auth === 'admin' ? '/admin' : ''}`);
+    else if (file.auth === 'admin' && !res.locals.user.admin)
+      return res.redirect('/login/admin');
 
     next();
   };

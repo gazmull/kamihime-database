@@ -1,3 +1,4 @@
+import { pbkdf2 } from 'crypto';
 import { Request, Response } from 'express';
 import * as shortid from 'shortid';
 import Route from '../struct/Route';
@@ -8,21 +9,64 @@ export default class LoginRoute extends Route {
   constructor () {
     super({
       id: 'login',
-      method: 'get',
-      route: [ '/login' ],
+      method: 'all',
+      route: [ '/login/:admin?/:verify?' ],
     });
   }
 
   public async exec (req: Request, res: Response): Promise<void> {
     try {
-      if (req.cookies.userId) throw { code: 403 };
+      const isAdmin = req.params.admin === 'admin';
+      const isVerify = isAdmin && req.params.verify === 'verify';
+
+      if (req.cookies.userId && !(isAdmin || isVerify)) throw { code: 403 };
+      if (isVerify) {
+        const mocked = req.body;
+        const [ admin ]: IAdminUser[] = await this.util.db('admin').select([
+          'userId',
+          'password',
+          '_salt',
+          '_iterations',
+        ])
+          .where({ username: mocked.username });
+        const ip = this.server.passwordAttempts.get(req.ip);
+        const registered = ip ? true : false;
+        const remaining = () => 5 - (registered ? ip.attempts : 1);
+        const increment = () => this.server.passwordAttempts.set(req.ip, {
+          attempts: registered ? ++ip.attempts : 1,
+        });
+        const redirect = () => {
+          increment();
+
+          return res.render('admin/login', { invalid: true, attempts: remaining() });
+        };
+
+        if (!admin) return redirect();
+        if (registered && ip.attempts === 5) throw { code: 429 };
+
+        const valid = await this._validPassword(admin.password, admin._salt, admin._iterations, mocked.password);
+
+        if (!valid) return redirect();
+
+        await this.util.db('admin').update({
+          ip: req.ip,
+          slug: req.cookies.slug,
+        })
+        .where('username', mocked.username);
+
+        return res
+          .cookie('userId', admin.userId, { maxAge: 6048e5 })
+          .redirect('/admin');
+      }
 
       const slug = shortid.generate();
 
       this.server.states.set(slug, { timestamp: Date.now(), url: req.headers.referer });
 
-      // if (req.query.admin)
-      //   return res.render('admin/login', { slug });
+      if (isAdmin)
+        return res
+          .cookie('slug', slug, { httpOnly: true })
+          .render('admin/login');
 
       res
         .cookie('slug', slug, { maxAge: 18e5, httpOnly: true })
@@ -35,5 +79,22 @@ export default class LoginRoute extends Route {
           '&state=' + slug,
         ].join(''));
     } catch (err) { this.util.handleSiteError(res, err); }
+  }
+
+  /**
+   * Validates password with the admin user database.
+   * @param hash The hashed password
+   * @param salt The hashed password's salt
+   * @param iterations The hashed password's iterations
+   * @param mocked The attempting password
+   */
+  protected _validPassword (hash: string, salt: string, iterations: number, mocked: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      pbkdf2(mocked, salt, iterations, 256, 'sha256', (err, mockedHash) => {
+        if (err) return reject(err);
+
+        resolve(hash === mockedHash.toString('hex'));
+      });
+    });
   }
 }

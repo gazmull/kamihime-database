@@ -23,18 +23,28 @@
   .nav-item {
     width: 120px;
     &#side-nav-help {
+      background-color: $background;
+      padding: 0 35px;
       font-weight: bold;
+      font-size: 20px;
       text-decoration: none;
+      transition: all $core-transition;
+      will-change: border, transform;
+      &:hover {
+        @include doActiveBorder();
+        transform: scale(1.2);
+        z-index: 1051;
+      }
     }
   }
   .nav-link {
     background-color: $background;
     color: $text;
-    transition: all 1s ease, font 0.05s linear, border-left 0.3s ease;
+    transition: all $core-transition;
+    will-change: border, color;
     &:hover {
       @include doActiveBorder();
       color: $text-hover;
-      transition: all 0.3s ease, font 0.05s linear;
     }
   }
   .nav .active {

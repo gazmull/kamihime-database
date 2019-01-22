@@ -21,6 +21,10 @@
       color: $text;
     }
   }
+  & .admin {
+    font-weight: bold;
+    color: $text-hover;
+  }
 }
 
 #result-wrapper {

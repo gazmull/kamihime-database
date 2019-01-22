@@ -1,10 +1,13 @@
 extends ../_templates/main
 
-append head
-  script(src='/js/browser.js')
+append styles
   link(rel='stylesheet', href='/css/browser.css')
-  block title
-    title Kamihime Database - Browser
+
+append scripts
+  script(src='/js/browser.js')
+
+block title
+  title Kamihime Database - Browser
 
 block side-nav-content
   a(class='nav-item nav-link', href='javascript:void(0);', data-toggle='collapse', data-target='#all') All

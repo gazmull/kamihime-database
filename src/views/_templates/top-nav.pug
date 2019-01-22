@@ -18,7 +18,13 @@ div#top-nav-container.row
                 +link('/disclaimer', 'Disclaimer and Privacy')
               - if (user)
                 li.nav-item
-                  +link('/logout', `Log out (${user.username})`)
+                  a(href='/logout')
+                    | Logout (
+                    - if (user.admin)
+                      span.admin #{user.username}
+                    - else
+                      | #{user.username}
+                    | )
               - else
                 li.nav-item
                   a.logbutton(

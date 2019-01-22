@@ -36,9 +36,12 @@ export default class PutFlagRequest extends Api {
     const data = req.body;
 
     try {
-      await this._hasData(data);
-      const { user, id } = data;
-      const fields: string[] = [ 'id', 'loli' ];
+      if (!res.locals.user.admin)
+        await this._hasData(data);
+
+      const { id } = data;
+      const user = data.user || req.cookies.userId;
+      const fields: string[] = [ 'name', 'id', 'loli' ];
       const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
         .where('id', id)
         .limit(1);

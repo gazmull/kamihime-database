@@ -17,6 +17,27 @@ export default function authHandler (util: IUtil): RequestHandler {
     }
 
     const { userId, username, lastLogin } = user;
+    res.locals.user = { lastLogin, userId, username };
+
+    if (req.cookies.slug) {
+      const [ admin ]: IAdminUser[] = await util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
+        .where({
+          userId,
+          slug: req.cookies.slug,
+        });
+
+      if (admin) {
+        const toPass = {
+          admin: true,
+          ip: admin.ip,
+          lastLogin: admin.lastLogin,
+          username: admin.username,
+        };
+
+        Object.assign(res.locals.user, toPass);
+      }
+    }
+
     const eligible = Date.now() > (new Date(lastLogin).getTime() + 18e5);
 
     if (eligible)
@@ -30,7 +51,6 @@ export default function authHandler (util: IUtil): RequestHandler {
     const infoLastNav = req.cookies['info-lastNav'] || settings['info-lastNav'];
     const menu = req.cookies.menu || settings.menu;
 
-    res.locals.user = { userId, username };
     res
       .cookie('userId', user.userId, { maxAge: 6048e5 })
       .cookie('lastNav', lastNav)

@@ -1,0 +1,17 @@
+extends ../_templates/admin
+
+append content
+  div.container-fluid
+    h3 Admin Login
+    div.row
+      div.col-1
+      form.col-8(method='POST', action='/login/admin/verify')
+        - if (invalid)
+          h3.text-danger Invalid credentials. #{attempts} attempts remaining.
+        div.form-group
+          label(for='username') Username
+          input#username.form-control(type='text', name='username')
+        div.form-group
+          label(for='password') Password
+          input#password.form-control(type='password', name='password')
+        button(type='submit', class='btn btn-dark my-2 float-right') Submit

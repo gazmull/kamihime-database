@@ -1,7 +1,7 @@
 extends ../_templates/player
 include assets/side-nav-content
 
-append head
+append scripts
   script.
     let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
     const files = !{JSON.stringify(files)};

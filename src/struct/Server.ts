@@ -9,6 +9,7 @@ import { api, database, discord, exempt, host, rootURL } from '../auth/auth';
 import authHandler from '../middleware/auth-handler';
 import reAuthHandler from '../middleware/re-auth-handler';
 import * as logger from '../util/console';
+import { handleSiteError } from '../util/handleError';
 import Api from './Api';
 import Client from './Client';
 import Route from './Route';
@@ -31,6 +32,7 @@ export default class Server {
     };
 
     this.util = {
+      handleSiteError,
       db: knex(database),
       logger: {
         error: message => logger.error(message),
@@ -45,6 +47,8 @@ export default class Server {
 
     this.states = new Collection();
 
+    this.passwordAttempts = new Collection();
+
     this.visitors = new Collection();
 
     this.kamihime = [];
@@ -58,6 +62,7 @@ export default class Server {
   public api: Collection<string, Collection<string, Api>>;
   public rateLimits: Collection<string, Collection<string, Collection<string, IRateLimitLog>>>;
   public states: Collection<string, IState>;
+  public passwordAttempts: Collection<string, IPasswordAttempts>;
   public visitors: Collection<string, Collection<string, number>>;
   public kamihime: IKamihime[];
   public status: string;

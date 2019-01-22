@@ -1,11 +1,14 @@
 extends ../_templates/main
 include assets/wiki-util
 
-append head
-  script(src='/js/info.js')
+append styles
   link(rel='stylesheet', href='/css/info.css')
-  block title
-    title Kamihime Database - Info
+
+append scripts
+  script(src='/js/info.js')
+
+block title
+  title Kamihime Database - Info
 
 block side-nav-help
 

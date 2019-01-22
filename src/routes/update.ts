@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Route from '../struct/Route';
 
+// @Deprecated
 export default class DashboardRoute extends Route {
   constructor () {
     super({

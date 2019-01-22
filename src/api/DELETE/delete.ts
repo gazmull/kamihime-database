@@ -34,9 +34,12 @@ export default class DeleteDeleteRequest extends Api {
     const data = req.body;
 
     try {
-      await this._hasData(data);
-      const { user, id } = data;
-      const [ character ]: IKamihime[] = await this.util.db('kamihime').select('id').where('id', id);
+      if (!res.locals.user.admin)
+        await this._hasData(data);
+
+      const { id } = data;
+      const user = data.user || req.cookies.userId;
+      const [ character ]: IKamihime[] = await this.util.db('kamihime').select([ 'name', 'id' ]).where('id', id);
 
       if (!character) throw { code: 404, message: 'Character not found.' };
 
