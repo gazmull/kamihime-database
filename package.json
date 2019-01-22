@@ -66,7 +66,6 @@
     "@types/js-cookie": "^2.2.0",
     "@types/node": "^10.12.18",
     "@types/node-fetch": "^2.1.4",
-    "@types/pug": "^2.0.4",
     "@types/serve-favicon": "^2.2.30",
     "@types/shortid": "^0.0.29",
     "apidoc": "^0.17.7",
