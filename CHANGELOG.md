@@ -1,3 +1,13 @@
+# 2.3.1
+  On commit: 495fa63883efa120ef765db900fd46967ec66712
+  ## Overview
+  This update implements security enhancement for users, and clarity of the agreement buttons at `/disclaimer`.
+  <br><br>
+  For developers, dashboard prompts has been enhanced.
+  ## Enhancements
+  - `cookies`: Tighter security (added secured and signed flags)
+  - `disclaimer`: Agreement buttons should be easier to see now with background addition
+  - `admin`: Enhanced action prompts
 # 2.3.0
 On commit: 4ecce3179b9422550a19f23e916c4a58cda960a6
 <br>More info (#10)
