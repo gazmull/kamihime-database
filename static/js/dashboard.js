@@ -1,3 +1,18 @@
+const fields = [
+  'id',
+  'name',
+  'rarity',
+  'harem1Title',
+  'harem1Resource1',
+  'harem2Title',
+  'harem2Resource1',
+  'harem2Resource2',
+  'harem3Title',
+  'harem3Resource1',
+  'harem3Resource2',
+];
+const updateFields = fields.filter(el => el !== 'id');
+
 async function promptID (action) {
   if (!action)
     sweet({ titleText: 'Invalid action.', type: 'error' });
@@ -12,13 +27,14 @@ async function promptID (action) {
         input: 'text',
         inputPlaceholder: 'Character ID',
         preConfirm: async id => {
-          const _response = await fetch(`/api/id/${id}`, { headers: { Accept: 'application/json' } });
+          const _response = await fetch(`/api/id/${id.toLowerCase()}`, { headers: { Accept: 'application/json' } });
           const _json = await _response.json();
           if (_json.error) throw _json.error.message;
 
           return _json;
         },
         showLoaderOnConfirm: true,
+        titleText: action.toUpperCase(),
       });
 
       if (dismiss) return;
@@ -31,30 +47,41 @@ async function promptID (action) {
     switch (action) {
       default: response = submit(action, `id='${character.id}'`); break;
       case 'add':
-        response = submit(action, await sweet({
+        response = await sweet({
+          html: [
+            'Add an entry with: [key]=[value]; each separated by newline (\\n).',
+            'If value is string, surround it with quotes.',
+          ].join('<br>'),
           input: 'textarea',
-          inputPlaceholder: 'e.g: [key]=[value], [key2]=[value2]',
-          text: 'Add an entry with: [key]=[value]. If value is string, surround it with quotes.',
+          inputValue: fields.map(el => `${el}=""`).join('\n'),
+          width: 1024,
         })
           .then(res => {
             if (res.dimiss) return;
 
             return res.value;
-          }),
-        );
+          });
+
+        if (!response) return;
+
+        response = submit(action, response, character.id);
         break;
       case 'update':
-        response = submit(action, await sweet({
+        response = await sweet({
           input: 'textarea',
           inputValue: unclean(character),
           text: 'If value is string, surround it with quotes.',
+          width: 1024,
         })
           .then(res => {
             if (res.dimiss) return;
 
             return res.value;
-          }),
-        );
+          });
+
+        if (!response) return;
+
+        response = submit(action, response, character.id);
         break;
     }
 
@@ -65,7 +92,7 @@ async function promptID (action) {
   } catch (err) { sweet({ text: err, type: 'error' }); }
 }
 
-async function submit (action, value = '') {
+async function submit (action, value = '', id) {
   let method;
 
   switch (action) {
@@ -74,8 +101,21 @@ async function submit (action, value = '') {
     case 'delete': method = 'DELETE'; break;
   }
 
+  const data = clean(value);
+  const confirm = await sweet({
+    cancelButtonText: 'No',
+    confirmButtonText: 'Yes',
+    showCancelButton: true,
+    text: 'Are you sure about this action?',
+    titleText: `Destructive Action: ${action} (${data.id || id})`,
+    type: 'warning',
+  })
+    .then(res => res.dismiss ? false : true);
+
+  if (!confirm) return;
+
   const options = {
-    body: JSON.stringify(clean(value)),
+    body: JSON.stringify(data),
     credentials: 'include',
     headers: {
       Accept: 'application/json',
@@ -92,11 +132,13 @@ async function submit (action, value = '') {
 }
 
 function clean (value = '') {
-  const values = value.split(/,(?:\s+)?/g);
+  const values = value.split('\n');
   const result = {};
 
   for (const val of values) {
-    let [ key, _val ] = val.split('=');
+    let [ key, _val ] = val.split(/(?:\s+)?=(?:\s+)?/);
+    key = key.trim();
+    _val = _val.trim();
     _val = /'|"/.test(_val) ? _val.replace(/'|"/g, '') : parseInt(_val);
 
     Object.assign(result, { [key]: _val });
@@ -108,13 +150,11 @@ function clean (value = '') {
 function unclean (obj = {}) {
   const result = [];
 
-  for (const key in obj) {
-    if (!obj[key]) continue;
-
+  for (const key of updateFields) {
     const value = obj[key];
 
     result.push(`${key}=${typeof value === 'string' ? `'${value}'` : value}`);
   }
 
-  return result.join(', ');
+  return result.join('\n');
 }
