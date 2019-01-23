@@ -19,7 +19,7 @@ export default class LoginRoute extends Route {
       const isAdmin = req.params.admin === 'admin';
       const isVerify = isAdmin && req.params.verify === 'verify';
 
-      if (req.cookies.userId && !(isAdmin || isVerify)) throw { code: 403 };
+      if (req.signedCookies.userId && !(isAdmin || isVerify)) throw { code: 403 };
       if (isVerify) {
         const mocked = req.body;
         const [ admin ]: IAdminUser[] = await this.util.db('admin').select([
@@ -49,13 +49,18 @@ export default class LoginRoute extends Route {
         if (!valid) return redirect();
 
         await this.util.db('admin').update({
-          ip: req.ip,
-          slug: req.cookies.slug,
-        })
-        .where('username', mocked.username);
+            ip: req.ip,
+            slug: req.signedCookies.slug,
+          })
+          .where('username', mocked.username);
 
         return res
-          .cookie('userId', admin.userId, { maxAge: 6048e5 })
+          .cookie('userId', admin.userId, {
+            httpOnly: true,
+            maxAge: 6048e5,
+            secure: this.server.production,
+            signed: true,
+          })
           .redirect('/admin');
       }
 
@@ -65,11 +70,11 @@ export default class LoginRoute extends Route {
 
       if (isAdmin)
         return res
-          .cookie('slug', slug, { httpOnly: true })
+          .cookie('slug', slug, { httpOnly: true, secure: this.server.production, signed: true })
           .render('admin/login');
 
       res
-        .cookie('slug', slug, { maxAge: 18e5, httpOnly: true })
+        .cookie('slug', slug, { maxAge: 18e5, httpOnly: true, secure: this.server.production, signed: true })
         .redirect([
           'https://discordapp.com/oauth2/authorize?',
           'client_id=' + this.server.auth.discord.key,

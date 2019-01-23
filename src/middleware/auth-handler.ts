@@ -2,13 +2,13 @@ import { RequestHandler } from 'express';
 
 export default function authHandler (util: IUtil): RequestHandler {
   return async (req, res, next) => {
-    if (!req.cookies.userId) return next();
+    if (!req.signedCookies.userId) return next();
 
     const [ user ]: IUser[] = await util.db('users').select()
-      .where('userId', req.cookies.userId);
+      .where('userId', req.signedCookies.userId);
 
     if (!user) {
-      const msg = `${req.cookies.userId}: Using invalid userId cookie; blocked.`;
+      const msg = `${req.signedCookies.userId}: Using invalid userId cookie; blocked.`;
 
       res.clearCookie('userId');
       util.handleSiteError(res, { code: 404, message: 'User not found; ID cookie cleared.' });
@@ -19,11 +19,11 @@ export default function authHandler (util: IUtil): RequestHandler {
     const { userId, username, lastLogin } = user;
     res.locals.user = { lastLogin, userId, username };
 
-    if (req.cookies.slug) {
+    if (req.signedCookies.slug) {
       const [ admin ]: IAdminUser[] = await util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
         .where({
           userId,
-          slug: req.cookies.slug,
+          slug: req.signedCookies.slug,
         });
 
       if (admin) {
@@ -43,16 +43,18 @@ export default function authHandler (util: IUtil): RequestHandler {
     if (eligible)
       await util.db.raw(
         'UPDATE users SET lastLogin = now() WHERE userId = ?',
-        [ req.cookies.userId ],
+        [ req.signedCookies.userId ],
       );
 
     const settings = JSON.parse(user.settings);
     const lastNav = req.cookies.lastNav || settings.lastNav;
     const infoLastNav = req.cookies['info-lastNav'] || settings['info-lastNav'];
     const menu = req.cookies.menu || settings.menu;
+    const production = process.env.NODE_ENV === 'production';
 
     res
-      .cookie('userId', user.userId, { maxAge: 6048e5 })
+      .cookie('userId', user.userId, { maxAge: 6048e5, httpOnly: true, secure: production, signed: true })
+      .cookie('isUser', 'true', { maxAge: 6048e5 })
       .cookie('lastNav', lastNav)
       .cookie('info-lastNav', infoLastNav)
       .cookie('menu', menu)

@@ -22,7 +22,7 @@ export default function enforceSecured (): RequestHandler {
         );
 
       const ip = req.ip;
-      const id = req.cookies ? req.cookies.userId || ip : ip;
+      const id = req.cookies ? req.signedCookies.userId || ip : ip;
 
       return next(`${id}: Using HTTP protocol; blocked.`);
     }

@@ -135,10 +135,10 @@ export default class PlayerRoute extends Route {
   protected async _rateLimit (req: Request, character: any, resource: string): Promise<true> {
     const update = () => this.util.db('kamihime').update('peeks', ++character.peeks)
       .where('id', character.id);
-    const usr = req.cookies.userId || req.ip;
+    const usr = req.signedCookies.userId || req.ip;
     const status = () => this.util.logger.status(`[A] Peek: ${usr} visited ${character.name}`);
 
-    if (this.server.auth.exempt.includes(req.cookies.userId)) {
+    if (this.server.auth.exempt.includes(req.signedCookies.userId)) {
       await update();
       status();
 
@@ -149,7 +149,7 @@ export default class PlayerRoute extends Route {
       _resource !== resource && Date.now() < (timestamps.get(usr) + COOLDOWN),
     );
 
-    const visitLimit = req.cookies.userId ? MAX_LOGGED_IN_VISITS : MAX_VISITS;
+    const visitLimit = req.signedCookies.userId ? MAX_LOGGED_IN_VISITS : MAX_VISITS;
     if (visitorVisits.size >= visitLimit)
       throw { code: 429, message: `You may only do ${visitLimit} visits per 3 minutes.` };
 

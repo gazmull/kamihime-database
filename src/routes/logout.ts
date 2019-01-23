@@ -13,7 +13,9 @@ export default class LogoutRoute extends Route {
 
   public async exec (req: Request, res: Response): Promise<void> {
     try {
-      res.clearCookie('userId');
+      res
+        .clearCookie('userId')
+        .clearCookie('isUser');
       res.redirect(req.headers.referer || '/');
     } catch (err) { this.util.handleSiteError(res, err); }
   }

@@ -13,14 +13,14 @@ export default class ConnectRoute extends Route {
 
   public async exec (req: Request, res: Response): Promise<void> {
     try {
-      if (req.cookies.userId) throw { code: 403 };
+      if (req.signedCookies.userId) throw { code: 403 };
 
       const code = req.query.code;
       const state = req.query.state;
 
       if (!code) throw { code: 403, message: 'Auth code is missing.' };
 
-      const match = state === req.cookies.slug;
+      const match = state === req.signedCookies.slug;
 
       if (!match) throw { code: 403, message: 'Invalid state ID.' };
 
@@ -95,7 +95,12 @@ export default class ConnectRoute extends Route {
       );
 
       res
-        .cookie('userId', user.id, { maxAge: 6048e5 })
+        .cookie('userId', user.id, {
+          httpOnly: true,
+          maxAge: 6048e5,
+          secure: this.server.production,
+          signed: true,
+        })
         .redirect(slugURL || '/');
     } catch (err) { this.util.handleSiteError(res, err); }
   }

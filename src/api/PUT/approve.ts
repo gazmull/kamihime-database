@@ -40,7 +40,7 @@ export default class PutApproveRequest extends Api {
         await this._hasData(data);
 
       const { id } = data;
-      const user = data.user || req.cookies.userId;
+      const user = data.user || req.signedCookies.userId;
       const fields: string[] = [ 'name', 'id', 'approved' ];
       const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
         .where('id', id)

@@ -86,7 +86,7 @@ export default class PostAddRequest extends Api {
       Object.assign(data, { loli, peeks: 0 });
       await this.util.db('kamihime').insert(data);
 
-      const user = data.user || req.cookies.userId;
+      const user = data.user || req.signedCookies.userId;
 
       if (this.client.auth.discord.dbReportChannel)
         await this.util.discordSend(this.client.auth.discord.dbReportChannel, [

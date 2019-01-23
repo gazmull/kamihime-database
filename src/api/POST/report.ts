@@ -48,14 +48,14 @@ export default class PostReportRequest extends Api {
 
   public async exec (req: Request, res: Response): Promise<void> {
     const data = req.body;
-    const usr = req.cookies.userId ? req.cookies.userId : req.ip;
+    const usr = req.signedCookies.userId ? req.signedCookies.userId : req.ip;
     const interval = usr === req.ip ? 24 : 3;
     let user: IUser;
 
     try {
-      if (req.cookies.userId) {
+      if (req.signedCookies.userId) {
         [ user ] = await this.util.db('users').select([ 'userId', 'username' ])
-          .where('userId', req.cookies.userId);
+          .where('userId', req.signedCookies.userId);
 
         if (!user)
           throw { code: 404, message: 'Invalid user.' };
@@ -77,7 +77,7 @@ export default class PostReportRequest extends Api {
         .where('userId', usr)
         .andWhereRaw('DATE_ADD(date, INTERVAL :ss HOUR) > NOW()', { ss: interval });
 
-      if (recentReports.length > 5 && !this.server.auth.exempt.includes(req.cookies.userId))
+      if (recentReports.length > 5 && !this.server.auth.exempt.includes(req.signedCookies.userId))
         throw { code: 429, message: 'You are limited from reporting.' };
 
       await this.util.db('reports')

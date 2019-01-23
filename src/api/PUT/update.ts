@@ -95,7 +95,7 @@ export default class PutUpdateRequest extends Api {
       await this.util.db('kamihime').update(data)
         .where('id', id);
 
-      const user = data.user || req.cookies.userId;
+      const user = data.user || req.signedCookies.userId;
 
       if (!res.locals.user.admin)
         await this.util.db('sessions')

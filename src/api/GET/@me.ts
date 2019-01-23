@@ -44,11 +44,11 @@ export default class GetAtMeRequest extends Api {
 
   public async exec (req: Request, res: Response): Promise<void> {
     try {
-      if (!req.cookies.userId) throw { code: 401 };
+      if (!req.signedCookies.userId) throw { code: 401 };
 
       const [ user ]: IUser[] = await this.util.db('users')
         .select([ 'userId', 'username' ])
-        .where('userId', req.cookies.userId)
+        .where('userId', req.signedCookies.userId)
         .limit(1);
 
       if (!user) throw { code: 404 };

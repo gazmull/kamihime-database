@@ -81,9 +81,6 @@ function showReport (id, type = 0) {
     } // tslint:disable-line:trailing-comma
   };
 
-  if (Cookies.get('userId'))
-    postBody.userId = Cookies.get('userId');
-
   sweet
     .mixin({
       allowOutsideClick: () => !sweet.isLoading(),

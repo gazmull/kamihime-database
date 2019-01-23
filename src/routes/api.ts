@@ -23,7 +23,7 @@ export default class ApiRoute extends Route {
 
       if (
         ip.includes(this.server.auth.host.address) ||
-        (req.cookies.userId && this.server.auth.exempt.includes(req.cookies.userId))
+        (req.signedCookies.userId && this.server.auth.exempt.includes(req.signedCookies.userId))
       )
         return requestClass.exec(req, res, next);
 

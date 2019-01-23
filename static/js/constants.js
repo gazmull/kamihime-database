@@ -150,7 +150,7 @@ async function saveSettings (key, obj, db = false) {
 
   const shouldSave = isBool ? key : db;
 
-  if (shouldSave && Cookies.get('userId')) {
+  if (shouldSave && Cookies.get('isUser')) {
     const res = await fetch('/api/@me?save=yes', {
       credentials: 'include',
       headers: { Accept: 'application/json' },

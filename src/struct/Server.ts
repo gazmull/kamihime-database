@@ -67,6 +67,10 @@ export default class Server {
   public kamihime: IKamihime[];
   public status: string;
 
+  get production (): boolean {
+    return process.env.NODE_ENV === 'production';
+  }
+
   public init (server: Express, client: Client): this {
     this.client = client;
 
@@ -137,7 +141,7 @@ export default class Server {
 
     server.all('*', (_, res) =>  res.render('invalids/403'));
 
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const protocol = this.production ? 'https' : 'http';
 
     server.listen(host.port, () => this.util.logger.status(`Listening to ${protocol}://${host.address}:${host.port}`));
 

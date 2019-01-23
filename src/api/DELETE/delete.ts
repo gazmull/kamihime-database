@@ -38,7 +38,7 @@ export default class DeleteDeleteRequest extends Api {
         await this._hasData(data);
 
       const { id } = data;
-      const user = data.user || req.cookies.userId;
+      const user = data.user || req.signedCookies.userId;
       const [ character ]: IKamihime[] = await this.util.db('kamihime').select([ 'name', 'id' ]).where('id', id);
 
       if (!character) throw { code: 404, message: 'Character not found.' };

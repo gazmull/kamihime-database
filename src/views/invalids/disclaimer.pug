@@ -3,12 +3,7 @@ extends ../_templates/main-no-side-nav
 append styles
   link(rel='stylesheet', href='/css/info.css')
   style.
-    p a:link, p a:visited {
-      color: #ff00ae;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    p a:hover { color: #fff; }
+    .name a { font-size: 22px !important; }
 
 append scripts
   script.
@@ -26,7 +21,8 @@ block content
     h1 Disclaimer
     p
       | For clarification, this project is established under
-      a(href='https://github.com/gazmull/kamihime-database/blob/master/LICENSE', target='_blank')  MIT License
+      span.name
+        a(href='https://github.com/gazmull/kamihime-database/blob/master/LICENSE', target='_blank')  MIT License
       | . To summarise, this site's owner will not be held responsible for any events that might occur
       |  while using the site. 
       sub Of course bugs and suggestions are welcome.
@@ -40,7 +36,7 @@ block content
     hr.border-white
     h1 Privacy
     p
-      | This site only stores your Discord snowflake and username, and cookies.
+      | This site only stores your Discord snowflake and username (when logged in), and cookies.
       | Your visit count to episodes are added anonymously.
     hr.border-white
     h1 Cookies
@@ -93,7 +89,13 @@ block content
       p.text-center
         b And your response is?
         br
-        a(href='https://google.com') Let me the fuck out
-        |  | 
-        a(href='javascript:void(0);', onclick='verified();') Alright, I'm in
+        div.row
+          div(class='d-none d-md-block col-md-4')
+          table(class='sm-col-8 col-md-4 table table-borderless info-table text-center')
+            thead
+              tr
+                th.name
+                  +link('https://google.com', 'Let me the fuck out')
+                th.name
+                  a(href='javascript:void(0);', onclick='verified();') Alright, I'm in
   div.model(class='d-none d-md-block', style='background-image: url("/img/wiki/close/(Eclipse%20Princess)%20Amaterasu%20Close.png")')
