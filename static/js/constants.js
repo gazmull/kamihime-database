@@ -46,9 +46,6 @@ $(() => {
   $('.navbar-toggler, #result-close').on('click', () => {
     $('#search-bar').val('');
     $('#search-bar').trigger('input');
-
-    if ($('body').hasClass('no-scroll'))
-      $('body').removeClass('no-scroll');
   });
 
   let searchTimeout = null;
@@ -56,12 +53,21 @@ $(() => {
     const query = $(this).val();
 
     if (searchTimeout) clearTimeout(searchTimeout);
-    if (!query)
+    if (!query) {
+      $('body')
+        .removeClass('modal-open')
+        .width('auto');
+
       return $('#result-wrapper').css('transform', '');
+    }
     if (window.pageYOffset !== 0)
       window.scrollTo(0, 0);
 
-    $('body').addClass('no-scroll');
+    const oldWidth = $('body').innerWidth();
+
+    $('body')
+      .addClass('modal-open')
+      .width(oldWidth);
     $('#result li').remove();
     $('#result-wrapper').css('transform', 'none');
 

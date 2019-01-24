@@ -1,23 +1,4 @@
-$(() => {
-  sweet = sweet.mixin({ heightAuto: false });
-
-  if (!Cookies.getJSON('audio') || !Object.keys(Cookies.getJSON('audio')).length)
-    saveSettings('audio', {
-      bgm: 0.1,
-      glo: 1.0,
-      snd: 0.5,
-    }, true);
-
-  if (!Cookies.getJSON('visual') || !Object.keys(Cookies.getJSON('visual')).length)
-    saveSettings('visual', {
-      bg: '#997777',
-      cl: '#ffffff',
-      cls: '#dd55ff',
-      containDialog: true,
-      fontSize: 18,
-    }, true);
-
-});
+$(() => sweet = sweet.mixin({ heightAuto: false }));
 
 const audioPool = {};
 const audioFilter = fn => Object.keys(audioPool).filter(fn);

@@ -1,9 +1,4 @@
 $(() => {
-  if (!(Cookies.get('info-lastNav'))) {
-    Cookies.set('info-lastNav', '#info');
-    Cookies.set('menu', 'true');
-  }
-
   $('.collapse')
     .on('show.bs.collapse', function () {
       if (isNav.bind(this)()) return;

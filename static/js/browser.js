@@ -1,11 +1,4 @@
 $(() => {
-  if (!Cookies.get('lastNav')) {
-    Cookies.set('lastNav', '#all');
-    Cookies.set('menu', 'true');
-
-    $('#side-nav-help').tooltip('show');
-  }
-
   $('.collapse')
     .on('show.bs.collapse', function () {
       if (isNav.bind(this)()) return;

@@ -2,7 +2,23 @@ import { RequestHandler } from 'express';
 
 export default function authHandler (util: IUtil): RequestHandler {
   return async (req, res, next) => {
-    if (!req.signedCookies.userId) return next();
+    if (!req.signedCookies.userId) {
+      const cookies = req.cookies;
+
+      if (!cookies.lastNav) res.cookie('lastNav', '#all');
+      if (!cookies.menu) res.cookie('menu', 'true');
+      if (!cookies['info-lastNav']) res.cookie('info-lastNav', '#info');
+      if (!cookies.audio) res.cookie('audio', JSON.stringify({ bgm: 0.1, glo: 1.0, snd: 0.5 }));
+      if (!cookies.visual) res.cookie('visual', JSON.stringify({
+        bg: '#997777',
+        cl: '#ffffff',
+        cls: '#dd55ff',
+        containDialog: true,
+        fontSize: 18,
+      }));
+
+      return next();
+    }
 
     const [ user ]: IUser[] = await util.db('users').select()
       .where('userId', req.signedCookies.userId);
