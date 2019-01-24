@@ -10,10 +10,10 @@ $(() => {
 
       const currentPage = '#' + $(`.collapse.show`).attr('id');
 
-      Cookies.set('info-lastNav', currentPage);
+      jc.set('info-lastNav', currentPage);
 
       $('.content.show .content-wrapper').attr('class', 'content-wrapper visible-browser');
-      $(`.nav-link[data-target='${Cookies.get('info-lastNav')}']`).addClass('active');
+      $(`.nav-link[data-target='${jc.get('info-lastNav')}']`).addClass('active');
     })
     .on('hide.bs.collapse', function () {
       if (isNav.bind(this)()) return;
@@ -22,7 +22,7 @@ $(() => {
       $(`.nav-link.active`).removeClass('active');
     });
 
-  $(Cookies.get('info-lastNav')).collapse('show');
+  $(jc.get('info-lastNav')).collapse('show');
 });
 
 function confirmLogin (id, type = 0) {

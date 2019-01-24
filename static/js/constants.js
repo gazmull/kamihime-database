@@ -1,4 +1,23 @@
+let jc = Cookies;
+
 $(() => {
+  jc = Cookies.withConverter({
+    read: value => {
+      value = value.replace(/(%[0-9A-Z]{2})+/g, decodeURIComponent);
+
+      return value.slice(0, 2) === 'j:' ? value.slice(2) : value;
+    },
+    write: value => {
+      try {
+        JSON.parse(value);
+        value = 'j:' + value;
+      } catch { } // tslint:disable-line:no-empty
+
+      return encodeURIComponent(String(value))
+        .replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent);
+    },
+  });
+
   saveSettings(true);
 
   if (typeof $().modal !== 'undefined') {
@@ -28,16 +47,16 @@ $(() => {
       nav.removeClass('nav-hidden');
       $($this).addClass('nav-switch-hide');
 
-      Cookies.set('menu', 'true');
+      jc.set('menu', 'true');
     } else {
       nav.addClass('nav-hidden');
       $($this).removeClass('nav-switch-hide');
 
-      Cookies.set('menu', 'false');
+      jc.set('menu', 'false');
     }
   });
 
-  if ($('.side-nav').length && Cookies.get('menu') === 'true')
+  if ($('.side-nav').length && jc.get('menu') === 'true')
     setTimeout(() => {
       $('.side-nav').removeClass('nav-hidden');
       $('.nav-switch').addClass('nav-switch-hide');
@@ -152,11 +171,11 @@ async function saveSettings (key, obj, db = false) {
   const isBool = typeof key === 'boolean';
 
   if (!isBool)
-    Cookies.set(key, typeof obj === 'string' ? obj : { ...obj });
+    jc.set(key, typeof obj === 'string' ? obj : { ...obj });
 
   const shouldSave = isBool ? key : db;
 
-  if (shouldSave && Cookies.get('isUser')) {
+  if (shouldSave && jc.get('isUser')) {
     const res = await fetch('/api/@me?save=yes', {
       credentials: 'include',
       headers: { Accept: 'application/json' },

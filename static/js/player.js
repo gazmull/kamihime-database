@@ -89,7 +89,7 @@ function showAudioSettings () {
 }
 
 function showVisualSettings () {
-  const visuals = Cookies.getJSON('visual');
+  const visuals = jc.getJSON('visual');
   const divPreviewStyle = [
     `background-image: linear-gradient(to bottom, ${visuals.bg} 1%, transparent 110%)`,
     'color: ' + visuals.cl,

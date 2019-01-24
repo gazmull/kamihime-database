@@ -60,8 +60,8 @@ export default class ConnectRoute extends Route {
       });
       const user = await _user.json();
       const settings = JSON.stringify({
-        audio: req.cookies.audio && Object.keys(JSON.parse(req.cookies.audio)).length
-          ? JSON.parse(req.cookies.audio)
+        audio: req.cookies.audio && Object.keys(req.cookies.audio).length
+          ? req.cookies.audio
           : {
           bgm: 0.1,
           glo: 1.0,
@@ -70,8 +70,8 @@ export default class ConnectRoute extends Route {
         'info-lastNav': req.cookies['info-lastNav'] || '#info',
         lastNav: req.cookies.lastNav || '#all',
         menu: req.cookies.menu || true,
-        visual: req.cookies.visual && Object.keys(JSON.parse(req.cookies.visual)).length
-          ? JSON.parse(req.cookies.visual)
+        visual: req.cookies.visual && Object.keys(req.cookies.visual).length
+          ? req.cookies.visual
           : {
           bg: '#997777',
           cl: '#ffffff',

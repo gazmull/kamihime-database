@@ -8,14 +8,14 @@ export default function authHandler (util: IUtil): RequestHandler {
       if (!cookies.lastNav) res.cookie('lastNav', '#all');
       if (!cookies.menu) res.cookie('menu', 'true');
       if (!cookies['info-lastNav']) res.cookie('info-lastNav', '#info');
-      if (!cookies.audio) res.cookie('audio', JSON.stringify({ bgm: 0.1, glo: 1.0, snd: 0.5 }));
-      if (!cookies.visual) res.cookie('visual', JSON.stringify({
+      if (!cookies.audio) res.cookie('audio', { bgm: 0.1, glo: 1.0, snd: 0.5 });
+      if (!cookies.visual) res.cookie('visual', {
         bg: '#997777',
         cl: '#ffffff',
         cls: '#dd55ff',
         containDialog: true,
         fontSize: 18,
-      }));
+      });
 
       return next();
     }
@@ -74,8 +74,8 @@ export default function authHandler (util: IUtil): RequestHandler {
       .cookie('lastNav', lastNav)
       .cookie('info-lastNav', infoLastNav)
       .cookie('menu', menu)
-      .cookie('audio', JSON.stringify(settings.audio))
-      .cookie('visual', JSON.stringify(settings.visual));
+      .cookie('audio', settings.audio)
+      .cookie('visual', settings.visual);
 
     next();
   };

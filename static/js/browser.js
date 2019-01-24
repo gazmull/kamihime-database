@@ -10,10 +10,10 @@ $(() => {
 
       const currentPage = '#' + $(`.collapse.show`).attr('id');
 
-      Cookies.set('lastNav', currentPage);
+      jc.set('lastNav', currentPage);
 
       $('.content.show .kh-list').attr('class', 'kh-list px-0 visible-browser');
-      $(`.side-nav .nav-link[data-target='${Cookies.get('lastNav')}']`).addClass('active');
+      $(`.side-nav .nav-link[data-target='${jc.get('lastNav')}']`).addClass('active');
     })
     .on('hide.bs.collapse', function () {
       if (isNav.bind(this)()) return;
@@ -22,7 +22,7 @@ $(() => {
       $(`.side-nav .nav-link.active`).removeClass('active');
     });
 
-  $(Cookies.get('lastNav')).collapse('show');
+  $(jc.get('lastNav')).collapse('show');
 
   let nameTimeout = null;
   $('.name')

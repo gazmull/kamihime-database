@@ -13,8 +13,8 @@ $(() => {
 
   const newSeq = () => script[sequenceIDX];
   const maxSequenceTalk = () => newSeq().talk.length - 1;
-  const audioSettings = Cookies.getJSON('audio');
-  const visualSettings = Cookies.getJSON('visual');
+  const audioSettings = jc.getJSON('audio');
+  const visualSettings = jc.getJSON('visual');
 
   for (const vSetting of [ 'bg', 'cl', 'cls', 'containDialog', 'fontSize' ])
     updateDialog(vSetting, visualSettings[vSetting], true);
