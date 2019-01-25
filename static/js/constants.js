@@ -1,6 +1,8 @@
 let jc = Cookies;
 let searchTimeout;
 let settings;
+const searchController = new AbortController();
+const searchSignal = searchController.signal;
 
 $(() => {
   jc = Cookies.withConverter({
@@ -75,7 +77,10 @@ $(() => {
   $('#search-bar').on('input',  function () {
     const query = $(this).val();
 
-    if (searchTimeout) clearTimeout(searchTimeout);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+      searchController.abort();
+    }
     if (!query) {
       $('body')
         .removeClass('modal-open')
@@ -104,6 +109,7 @@ $(() => {
       try {
         const response = await fetch(`/api/search?name=${query}&approved=1`, {
           headers: { Accept: 'application/json' },
+          signal: searchSignal,
         });
         const result = await response.json();
 
