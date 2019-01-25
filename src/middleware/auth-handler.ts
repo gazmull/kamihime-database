@@ -72,7 +72,8 @@ export default function authHandler (util: IUtil): RequestHandler {
     if (hasUpdatedAt && settings.updatedAt < req.cookies.settings.updatedAt) {
       settings = req.cookies.settings;
 
-      await util.db('users').update('settings', JSON.stringify(req.cookies.settings));
+      await util.db('users').where('userId', user.userId)
+        .update('settings', JSON.stringify(req.cookies.settings));
     }
 
     res
