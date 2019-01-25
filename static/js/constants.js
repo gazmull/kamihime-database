@@ -1,4 +1,5 @@
 let jc = Cookies;
+let searchTimeout;
 let settings;
 
 $(() => {
@@ -71,7 +72,6 @@ $(() => {
     $('#search-bar').trigger('input');
   });
 
-  let searchTimeout = null;
   $('#search-bar').on('input',  function () {
     const query = $(this).val();
 
