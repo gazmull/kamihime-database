@@ -38,7 +38,7 @@ function showAudioSettings () {
           <h6 id="bgm-range-val">Music - ${bgm1.volume()}</h6>
           <input id="bgm" class="custom-range" type="range" min="0.0" max="1.0" step="0.01" value=${bgm1.volume()} oninput="showRangeVal(this);">
         `,
-      // tslint:enable:max-line-length
+    // tslint:enable:max-line-length
     preConfirm: async () => {
       const glo = Number($('#glo').val());
       const snd = Number($('#snd').val());
@@ -115,7 +115,7 @@ function showVisualSettings () {
           <br>
           <label>Text Size <input id="fontSize" type="text" value="${visuals.fontSize}" oninput="updateDialog('fontSize', this);"></label>
         `,
-      // tslint:enable:max-line-length
+    // tslint:enable:max-line-length
     preConfirm: async () => {
       const bg = $('#bg').val();
       const cl = $('#cl').val();

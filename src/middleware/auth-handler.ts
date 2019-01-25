@@ -66,6 +66,8 @@ export default function authHandler (util: IUtil): RequestHandler {
     const lastNav = req.cookies.lastNav || settings.lastNav;
     const infoLastNav = req.cookies['info-lastNav'] || settings['info-lastNav'];
     const menu = req.cookies.menu || settings.menu;
+    const audio = req.cookies.audio || settings.audio;
+    const visual = req.cookies.visual || settings.visual;
     const production = process.env.NODE_ENV === 'production';
 
     res
@@ -74,8 +76,8 @@ export default function authHandler (util: IUtil): RequestHandler {
       .cookie('lastNav', lastNav)
       .cookie('info-lastNav', infoLastNav)
       .cookie('menu', menu)
-      .cookie('audio', settings.audio)
-      .cookie('visual', settings.visual);
+      .cookie('audio', audio)
+      .cookie('visual', visual);
 
     next();
   };

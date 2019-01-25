@@ -9,8 +9,9 @@ $(() => {
     },
     write: value => {
       try {
-        JSON.parse(value);
-        value = 'j:' + value;
+        const tmp = JSON.parse(value);
+        if (typeof tmp !== 'object') throw undefined;
+        value = 'j:' + JSON.stringify(tmp);
       } catch { } // tslint:disable-line:no-empty
 
       return encodeURIComponent(String(value))
@@ -171,7 +172,7 @@ async function saveSettings (key, obj, db = false) {
   const isBool = typeof key === 'boolean';
 
   if (!isBool)
-    jc.set(key, typeof obj === 'string' ? obj : { ...obj });
+    jc.set(key, obj);
 
   const shouldSave = isBool ? key : db;
 
