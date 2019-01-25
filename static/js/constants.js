@@ -78,7 +78,10 @@ $(() => {
   $('#search-bar').on('input',  function () {
     const query = $(this).val();
 
-    if (searchTimeout) clearTimeout(searchTimeout);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+      controller.abort();
+    }
     if (!query) {
       $('body')
         .removeClass('modal-open')
