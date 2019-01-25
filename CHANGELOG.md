@@ -1,3 +1,10 @@
+# 2.4.1
+  On commit: 5bdbe2a0ea0b8a31c6f8292a63d6a8bfd9ba5d72
+  ## Overview
+  This updated implements follow-up fix for duplicate search results caused by unhandled asynchronous behaviour.
+  > Warning: Please be advised this may not work with browsers marked as red here: [Can I use#abortcontroller](https://caniuse.com/#feat=abortcontroller)
+  ## Fixes
+  - `search`: Added `AbortController API` to handle asynchronous behaviour of search request which causes duplicate search results.
 # 2.4.0
   On commit: cb187df7bf9ecfbdc582a66c8419d3fa6925e69e
   ## Overview
