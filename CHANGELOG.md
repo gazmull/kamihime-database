@@ -1,3 +1,7 @@
+# 2.4.2
+  On commit: e662ed88a970a960c3e44842ff4772ee52f9c339
+  ## Fixes
+  - `auth-handler`: Fixed user settings is being updated to all users.
 # 2.4.1
   On commit: 5bdbe2a0ea0b8a31c6f8292a63d6a8bfd9ba5d72
   ## Overview
