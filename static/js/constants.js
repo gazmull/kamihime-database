@@ -1,4 +1,5 @@
 let jc = Cookies;
+let searchController;
 let searchTimeout;
 let settings;
 
@@ -68,6 +69,8 @@ $(() => {
     }, 801);
 
   $('.navbar-toggler, #result-close').on('click', () => {
+    if (controller) controller.abort();
+
     $('#search-bar').val('');
     $('#search-bar').trigger('input');
   });
@@ -86,6 +89,8 @@ $(() => {
     if (window.pageYOffset !== 0)
       window.scrollTo(0, 0);
 
+    controller = new AbortController();
+    const signal = controller.signal;
     const oldWidth = $('body').innerWidth();
 
     $('body')
@@ -104,6 +109,7 @@ $(() => {
       try {
         const response = await fetch(`/api/search?name=${query}&approved=1`, {
           headers: { Accept: 'application/json' },
+          signal: signal, // tslint:disable-line:object-literal-shorthand
         });
         const result = await response.json();
 
@@ -129,7 +135,7 @@ $(() => {
             ].join(''))
             .appendTo('#result'),
         );
-      } catch (e) { return $('#result-head').text(e); }
+      } catch (e) { if (e.name !== 'AbortError') return $('#result-head').text(e); }
     }, 1000);
   });
 
