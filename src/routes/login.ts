@@ -61,6 +61,8 @@ export default class LoginRoute extends Route {
             secure: this.server.production,
             signed: true,
           })
+          .cookie('ip', admin.ip)
+          .cookie('lastLogin', admin.lastLogin)
           .redirect('/admin');
       }
 

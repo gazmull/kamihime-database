@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 
 export default function authHandler (util: IUtil): RequestHandler {
   return async (req, res, next) => {
+    if (req.xhr || req.headers.accept && req.headers.accept.includes('application/json')) return next();
     if (!req.signedCookies.userId) {
       const cookies = req.cookies;
 
@@ -45,8 +46,8 @@ export default function authHandler (util: IUtil): RequestHandler {
       if (admin) {
         const toPass = {
           admin: true,
-          ip: admin.ip,
-          lastLogin: admin.lastLogin,
+          ip: req.cookies.ip,
+          lastLogin: req.cookies.lastLogin,
           username: admin.username,
         };
 
@@ -63,11 +64,11 @@ export default function authHandler (util: IUtil): RequestHandler {
       );
 
     const settings = JSON.parse(user.settings);
-    const lastNav = req.cookies.lastNav || settings.lastNav;
-    const infoLastNav = req.cookies['info-lastNav'] || settings['info-lastNav'];
-    const menu = req.cookies.menu || settings.menu;
-    const audio = req.cookies.audio || settings.audio;
-    const visual = req.cookies.visual || settings.visual;
+    const lastNav = settings.lastNav;
+    const infoLastNav = settings['info-lastNav'];
+    const menu = settings.menu;
+    const audio = settings.audio;
+    const visual = settings.visual;
     const production = process.env.NODE_ENV === 'production';
 
     res

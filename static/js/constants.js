@@ -19,7 +19,7 @@ $(() => {
     },
   });
 
-  saveSettings(true);
+  saveSettings();
 
   if (typeof $().modal !== 'undefined') {
     const tooltips = $('[data-toggle="tooltip"]');
@@ -168,11 +168,10 @@ function showLoginWarning () {
   });
 }
 
-async function saveSettings (key, obj, db = false) {
+async function saveSettings (key = true, obj, db = false) {
   const isBool = typeof key === 'boolean';
 
-  if (!isBool)
-    jc.set(key, obj);
+  if (!isBool) jc.set(key, obj);
 
   const shouldSave = isBool ? key : db;
 
@@ -183,6 +182,7 @@ async function saveSettings (key, obj, db = false) {
     });
 
     if (!res.ok) throw new Error(res.statusText);
+    if (isBool) return setTimeout(() => saveSettings(), 18e4);
 
     return res.json();
   }
