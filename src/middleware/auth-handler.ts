@@ -1,22 +1,24 @@
 import { RequestHandler } from 'express';
 
+const defaultSettings = {
+  audio: { bgm: 0.1, glo: 1.0, snd: 0.5 },
+  'info-lastNav': '#info',
+  lastNav: '#all',
+  menu: 'true',
+  visual: {
+    bg: '#997777',
+    cl: '#ffffff',
+    cls: '#dd55ff',
+    containDialog: true,
+    fontSize: 18,
+  },
+};
+
 export default function authHandler (util: IUtil): RequestHandler {
   return async (req, res, next) => {
     if (req.xhr || req.headers.accept && req.headers.accept.includes('application/json')) return next();
     if (!req.signedCookies.userId) {
-      const cookies = req.cookies;
-
-      if (!cookies.lastNav) res.cookie('lastNav', '#all');
-      if (!cookies.menu) res.cookie('menu', 'true');
-      if (!cookies['info-lastNav']) res.cookie('info-lastNav', '#info');
-      if (!cookies.audio) res.cookie('audio', { bgm: 0.1, glo: 1.0, snd: 0.5 });
-      if (!cookies.visual) res.cookie('visual', {
-        bg: '#997777',
-        cl: '#ffffff',
-        cls: '#dd55ff',
-        containDialog: true,
-        fontSize: 18,
-      });
+      if (!req.cookies.settings) res.cookie('settings', defaultSettings);
 
       return next();
     }
@@ -63,22 +65,20 @@ export default function authHandler (util: IUtil): RequestHandler {
         [ req.signedCookies.userId ],
       );
 
-    const settings = JSON.parse(user.settings);
-    const lastNav = settings.lastNav;
-    const infoLastNav = settings['info-lastNav'];
-    const menu = settings.menu;
-    const audio = settings.audio;
-    const visual = settings.visual;
+    let settings = JSON.parse(user.settings);
     const production = process.env.NODE_ENV === 'production';
+    const updatedAt = req.cookies.settings.updatedAt;
+
+    if (updatedAt && settings.updatedAt < updatedAt) {
+      settings = req.cookies.settings;
+
+      await util.db('users').update('settings', JSON.stringify(req.cookies.settings));
+    }
 
     res
       .cookie('userId', user.userId, { maxAge: 6048e5, httpOnly: true, secure: production, signed: true })
       .cookie('isUser', 'true', { maxAge: 6048e5 })
-      .cookie('lastNav', lastNav)
-      .cookie('info-lastNav', infoLastNav)
-      .cookie('menu', menu)
-      .cookie('audio', audio)
-      .cookie('visual', visual);
+      .cookie('settings', settings);
 
     next();
   };

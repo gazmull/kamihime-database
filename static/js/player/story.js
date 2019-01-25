@@ -18,8 +18,8 @@ $(() => {
 
   const lastScript = () => script[lastScriptIDX];
   const currentScript = () => script[currentScriptIDX];
-  const audioSettings = jc.getJSON('audio');
-  const visualSettings = jc.getJSON('visual');
+  const audioSettings = settings.audio;
+  const visualSettings = settings.visual;
 
   for (const vSetting of [ 'bg', 'cl', 'cls', 'containDialog', 'fontSize' ])
     updateDialog(vSetting, visualSettings[vSetting], true);

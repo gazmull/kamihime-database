@@ -27,6 +27,8 @@ export default class LoginRoute extends Route {
           'password',
           '_salt',
           '_iterations',
+          'ip',
+          'lastLogin',
         ])
           .where({ username: mocked.username });
         const ip = this.server.passwordAttempts.get(req.ip);

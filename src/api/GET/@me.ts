@@ -55,19 +55,16 @@ export default class GetAtMeRequest extends Api {
 
       const username = user.username;
       const settings = JSON.stringify({
-        audio: req.cookies.audio && Object.keys(req.cookies.audio).length
-          ? req.cookies.audio
-          : {
+        audio: req.cookies.settings.audio || {
           bgm: 0.1,
           glo: 1.0,
           snd: 0.5,
         },
-        'info-lastNav': req.cookies['info-lastNav'] || '#info',
-        lastNav: req.cookies.lastNav || '#all',
-        menu: req.cookies.menu || true,
-        visual: req.cookies.visual && Object.keys(req.cookies.visual).length
-          ? req.cookies.visual
-          : {
+        'info-lastNav': req.cookies.settings['info-lastNav'] || '#info',
+        lastNav: req.cookies.settings.lastNav || '#all',
+        menu: req.cookies.settings.menu || true,
+        updatedAt: req.cookies.settings.updatedAt || Date.now(),
+        visual: req.cookies.settings.visual || {
           bg: '#997777',
           cl: '#ffffff',
           cls: '#dd55ff',

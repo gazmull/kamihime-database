@@ -10,10 +10,10 @@ $(() => {
 
       const currentPage = '#' + $(`.collapse.show`).attr('id');
 
-      jc.set('lastNav', currentPage);
+      saveSettings('lastNav', currentPage);
 
       $('.content.show .kh-list').attr('class', 'kh-list px-0 visible-browser');
-      $(`.side-nav .nav-link[data-target='${jc.get('lastNav')}']`).addClass('active');
+      $(`.side-nav .nav-link[data-target='${settings.lastNav}}']`).addClass('active');
     })
     .on('hide.bs.collapse', function () {
       if (isNav.bind(this)()) return;
@@ -22,7 +22,7 @@ $(() => {
       $(`.side-nav .nav-link.active`).removeClass('active');
     });
 
-  $(jc.get('lastNav')).collapse('show');
+  $(settings.lastNav).collapse('show');
 
   let nameTimeout = null;
   $('.name')

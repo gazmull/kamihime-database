@@ -1,4 +1,5 @@
 let jc = Cookies;
+let settings;
 
 $(() => {
   jc = Cookies.withConverter({
@@ -11,6 +12,7 @@ $(() => {
       try {
         const tmp = JSON.parse(value);
         if (typeof tmp !== 'object') throw undefined;
+        if (jc.get('isUser')) tmp.updatedAt = Date.now();
         value = 'j:' + JSON.stringify(tmp);
       } catch { } // tslint:disable-line:no-empty
 
@@ -18,6 +20,7 @@ $(() => {
         .replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent);
     },
   });
+  settings = jc.getJSON('settings');
 
   saveSettings();
 
@@ -48,16 +51,16 @@ $(() => {
       nav.removeClass('nav-hidden');
       $($this).addClass('nav-switch-hide');
 
-      jc.set('menu', 'true');
+      saveSettings('menu', true);
     } else {
       nav.addClass('nav-hidden');
       $($this).removeClass('nav-switch-hide');
 
-      jc.set('menu', 'false');
+      saveSettings('menu', false);
     }
   });
 
-  if ($('.side-nav').length && jc.get('menu') === 'true')
+  if ($('.side-nav').length && settings.menu)
     setTimeout(() => {
       $('.side-nav').removeClass('nav-hidden');
       $('.nav-switch').addClass('nav-switch-hide');
@@ -171,7 +174,10 @@ function showLoginWarning () {
 async function saveSettings (key = true, obj, db = false) {
   const isBool = typeof key === 'boolean';
 
-  if (!isBool) jc.set(key, obj);
+  if (!isBool) {
+    settings[key] = obj;
+    jc.set('settings', settings);
+  }
 
   const shouldSave = isBool ? key : db;
 
@@ -182,9 +188,6 @@ async function saveSettings (key = true, obj, db = false) {
     });
 
     if (!res.ok) throw new Error(res.statusText);
-    if (isBool) return setTimeout(() => saveSettings(), 18e4);
-
-    return res.json();
   }
 
   return true;
