@@ -67,9 +67,9 @@ export default function authHandler (util: IUtil): RequestHandler {
 
     let settings = JSON.parse(user.settings);
     const production = process.env.NODE_ENV === 'production';
-    const updatedAt = req.cookies.settings.updatedAt;
+    const hasUpdatedAt = req.cookies.settings && req.cookies.settings.updatedAt;
 
-    if (updatedAt && settings.updatedAt < updatedAt) {
+    if (hasUpdatedAt && settings.updatedAt < req.cookies.settings.updatedAt) {
       settings = req.cookies.settings;
 
       await util.db('users').update('settings', JSON.stringify(req.cookies.settings));
