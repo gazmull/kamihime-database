@@ -1,3 +1,12 @@
+# 2.4.0
+  On commit: cb187df7bf9ecfbdc582a66c8419d3fa6925e69e
+  ## Overview
+  This update implements refactorisation of cookie system, and removal of the 'jumpy' effect when searching with a desktop browser.
+  ## Changes
+  - `search`: Removed the 'jumpy' effect it leaves when being closed; trading off window responsiveness (changing window size) while searching
+  ## Enhancements
+  - `cookies`: Refactored, user settings is now distributed under one cookie only
+  - `og:*`: `og:image` added
 # 2.3.1
   On commit: 495fa63883efa120ef765db900fd46967ec66712
   ## Overview
