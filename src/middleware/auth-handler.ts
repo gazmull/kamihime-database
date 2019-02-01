@@ -16,7 +16,6 @@ const defaultSettings = {
 
 export default function authHandler (util: IUtil): RequestHandler {
   return async (req, res, next) => {
-    if (req.xhr || req.headers.accept && req.headers.accept.includes('application/json')) return next();
     if (!req.signedCookies.userId) {
       if (!req.cookies.settings) res.cookie('settings', defaultSettings);
 
