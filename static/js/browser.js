@@ -13,7 +13,7 @@ $(() => {
       saveSettings('lastNav', currentPage);
 
       $('.content.show .kh-list').attr('class', 'kh-list px-0 visible-browser');
-      $(`.side-nav .nav-link[data-target='${settings.lastNav}}']`).addClass('active');
+      $(`.side-nav .nav-link[data-target='${settings.lastNav}']`).addClass('active');
     })
     .on('hide.bs.collapse', function () {
       if (isNav.bind(this)()) return;
