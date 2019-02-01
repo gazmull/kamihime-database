@@ -102,6 +102,9 @@ async function submit (action, value = '', id) {
   }
 
   const data = clean(value);
+
+  if (!data.id) Object.assign(data, { id: id }); // tslint:disable-line:object-literal-shorthand
+
   const confirm = await sweet({
     cancelButtonText: 'No',
     confirmButtonText: 'Yes',
