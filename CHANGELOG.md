@@ -1,3 +1,18 @@
+# 2.5.0
+  On commit: 7fde04e1b387b26685b3c622bbaa84d49cfa1424
+  ## Overview
+  This update implements new features and bug fixes mostly on backend API such as `util/scenarios`, `dashboard`, and `discord client`. A footer has also been added for frontend to track application version and provide the discord link (contact).
+  ## Enhancements
+  - `util/scenarios`: Added extract by character type option
+  - `discord client`: Added listener for `error` and `messageUpdate`
+  - `views template`: Added footer links
+  ## Changes
+  - `auth-handler`: Reverted XHR requests being ignored
+  - `dashboard`: String values don't require quotes anymore
+  ## Fixes
+  - `browser`: Fixed query selector breaking, causing the side-nav to stop highlighting current category
+  - `dashboard`: Fixed a bug where character ID isn't consistently passed, which is required by KamihimeDB API
+  - `dashboard`: Fixed a bug where apostrophes inside update values are being stripped off
 # 2.4.2
   On commit: e662ed88a970a960c3e44842ff4772ee52f9c339
   ## Fixes
