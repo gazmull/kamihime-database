@@ -1,0 +1,13 @@
+div.row
+  div(class='d-none d-md-block col-md-4')
+  div(class='sm-col-8 col-md-4 text-center')
+    span.name
+      +link('http://thegzm.space', 'Discord', true)
+    | 
+    | | 
+    span.name
+      +link(
+        'https://github.com/gazmull/kamihime-database/releases/tag/' + app.version,
+        'KamihimeDB Version: ' + app.version,
+        true
+      )

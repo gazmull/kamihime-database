@@ -52,7 +52,12 @@ server
   .use(favicon(resolve(__dirname, '../static/favicon.ico')))
   .use(express.static(resolve(__dirname, '../static')))
   .set('view engine', 'pug')
-  .set('views', resolve(__dirname, './views'));
+  .set('views', resolve(__dirname, './views'))
+  .use((_, res, next) => {
+    res.locals.app = { version: require('../package.json').version };
+
+    next();
+  });
 
 const serverStruct: Server = new Server();
 const client: Client = new Client(serverStruct);
