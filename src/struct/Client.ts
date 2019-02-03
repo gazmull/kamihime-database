@@ -1,6 +1,6 @@
 import anchorme from 'anchorme';
 import { each } from 'bluebird';
-import { Client as DiscordClient, WSEventType } from 'discord.js';
+import { Client as DiscordClient, Message, WSEventType } from 'discord.js';
 import { createWriteStream } from 'fs-extra';
 import { QueryBuilder } from 'knex';
 import fetch from 'node-fetch';
@@ -81,7 +81,6 @@ export default class Client {
       'GUILD_INTEGRATIONS_UPDATE',
       'CHANNEL_CREATE',
       'CHANNEL_UPDATE',
-      'MESSAGE_UPDATE',
       'USER_UPDATE',
       'PRESENCE_UPDATE',
       'VOICE_STATE_UPDATE',
@@ -102,26 +101,30 @@ export default class Client {
       },
     });
 
+    const handleMessage = async (message: Message) => {
+      if (message.channel.id !== discordAuth.channel) return;
+      if (!this.server.auth.exempt.includes(message.author.id)) return;
+
+      const msg = anchorme(message.content, { attributes: [ { name: 'target', value: '_blank' } ] });
+
+      try {
+        await this.util.db('status').del();
+        await this.util.db('status').insert({
+          id: message.id,
+          message: msg,
+        });
+
+        this.server.status = msg;
+      } catch (e) { this.util.logger.error(e); }
+
+      this.util.logger.status('Discord Bot: New announcement has been saved.');
+    };
+
     this.discordClient
       .on('ready', () => this.util.logger.status('Discord Bot: logged in.'))
-      .on('message', async message => {
-        if (message.channel.id !== discordAuth.channel) return;
-        if (!this.server.auth.exempt.includes(message.author.id)) return;
-
-        const msg = anchorme(message.content, { attributes: [ { name: 'target', value: '_blank' } ] });
-
-        try {
-          await this.util.db('status').del();
-          await this.util.db('status').insert({
-            id: message.id,
-            message: msg,
-          });
-
-          this.server.status = msg;
-        } catch (e) { this.util.logger.error(e); }
-
-        this.util.logger.status('Discord Bot: New announcement has been saved.');
-      })
+      .on('error', this.util.logger.error)
+      .on('message', handleMessage)
+      .on('messageUpdate', (_, newMessage) => handleMessage(newMessage))
       .login(discordAuth.token);
 
     return this;
