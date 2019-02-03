@@ -44,6 +44,8 @@ Website + REST (JSON) API for Kamihime Database
     - Append `-i{{id}}` or `--id={{id}}` to generate episode resources based on the character provided. `{{id}}` is for a character ID.
         - This is not compatible with `--latest`.
         - e.g.: `-ik0001` or `--id=k0001`
+    - Append `--eidolon` / `--soul` / `--ssr+` / `--ssr` / `--sr` / `--r` (rarity options are for `kamihime`) to generate episode resources strictly in the character type specified.
+        - This is compatible with `--latest` but **not** with `--id`.
 4. Run `$ yarn run build`
 5. Run `$ node .`
     - `$ yarn run pm2` for PM2 preference / production stage.

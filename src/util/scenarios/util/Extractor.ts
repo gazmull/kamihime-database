@@ -176,7 +176,7 @@ export default class Extractor {
           const mainData = script
             .replace(/(.*?),\s*(\}|])/g, '$1$2')
             .replace(/;\s*?$/, '')
-            .replace(/”/g, '"');
+            .replace(/”(?!(?:.+)?")/g, '"');
           const json: IScenarioSequence[] = JSON.parse(mainData);
 
           await this._doScenario({
