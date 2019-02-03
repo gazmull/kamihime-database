@@ -48,10 +48,7 @@ async function promptID (action) {
       default: response = submit(action, `id='${character.id}'`); break;
       case 'add':
         response = await sweet({
-          html: [
-            'Add an entry with: [key]=[value]; each separated by newline (\\n).',
-            'If value is string, surround it with quotes.',
-          ].join('<br>'),
+          html: 'Add an entry with: [key]=[value]; each separated by newline (\\n).',
           input: 'textarea',
           inputValue: fields.map(el => `${el}=""`).join('\n'),
           width: 1024,
@@ -70,7 +67,7 @@ async function promptID (action) {
         response = await sweet({
           input: 'textarea',
           inputValue: unclean(character),
-          text: 'If value is string, surround it with quotes.',
+          text: 'Each entry should be separated by newline',
           width: 1024,
         })
           .then(res => {
@@ -88,7 +85,11 @@ async function promptID (action) {
     response = await response;
 
     if (response)
-      sweet({ titleText: 'Operation Successfull', type: 'success' });
+      sweet({
+        text: `${action}: ${character.name} (${character.id})`,
+        titleText: 'Operation Successfull',
+        type: 'success',
+      });
   } catch (err) { sweet({ text: err, type: 'error' }); }
 }
 
@@ -141,8 +142,12 @@ function clean (value = '') {
   for (const val of values) {
     let [ key, _val ] = val.split(/(?:\s+)?=(?:\s+)?/);
     key = key.trim();
+
+    try { if (JSON.parse(_val) === null) continue; }
+    catch { } // tslint:disable-line:no-empty
+
     _val = _val.trim();
-    _val = /'|"/.test(_val) ? _val.replace(/'|"/g, '') : parseInt(_val);
+    _val = isNaN(_val) ?  _val : parseInt(_val);
 
     Object.assign(result, { [key]: _val });
   }
@@ -156,7 +161,7 @@ function unclean (obj = {}) {
   for (const key of updateFields) {
     const value = obj[key];
 
-    result.push(`${key}=${typeof value === 'string' ? `'${value}'` : value}`);
+    result.push(`${key}=${value}`);
   }
 
   return result.join('\n');
