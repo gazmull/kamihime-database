@@ -128,7 +128,7 @@ export default class GetListRequest extends Api {
     let tags: string[] = req.params[0] ? req.params[0].split('/') : [];
     tags = tags.filter(el => queries[el]);
     const length = tags.length;
-    const validPrimaries: string[] = [ 'soul', 'eidolon', 'kamihime', 'weapon', 'approved', 'loli' ];
+    const validPrimaries: string[] = [ 'soul', 'eidolon', 'kamihime', 'weapon', 'approved', 'loli', 'no-loli' ];
 
     try {
       if (length && !validPrimaries.includes(tags[0]))
@@ -137,7 +137,7 @@ export default class GetListRequest extends Api {
           message: 'Invalid first parameter. It must be one of the following: ' + validPrimaries.join(', '),
         };
 
-      validPrimaries.splice(validPrimaries.indexOf('approved'), 2);
+      validPrimaries.splice(validPrimaries.indexOf('approved'), 3);
 
       if (tags.filter(el => validPrimaries.includes(el)).length > 1)
         throw {
