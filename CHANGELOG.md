@@ -1,3 +1,9 @@
+# 2.6.0
+  On commit: e81b713cdf44802d9873f8783ecded0e18875e80
+  # Enhancements
+  - `api /get`: Added `random` method
+  # Fixes
+  - `api /get`: Fixed `list` method where it doesn't include `no-loli` as primary variable
 # 2.5.0
   On commit: 7fde04e1b387b26685b3c622bbaa84d49cfa1424
   ## Overview
