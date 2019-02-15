@@ -207,6 +207,26 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/random",
+    "title": "random",
+    "name": "GetRandom",
+    "group": "Kamihime_Specific",
+    "description": "<p>Randomly provides a character object.</p>",
+    "success": {
+      "examples": [
+        {
+          "title": "Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"_rowId\": 6,\n  \"id\": \"k0001\",\n  \"name\": \"Satan\",\n  \"approved\": 1,\n  \"avatar\": \"portrait/Satan Portrait.png\",\n  \"main\": \"main/Satan.png\",\n  \"preview\": \"close/Satan Close.png\",\n  \"loli\": 0,\n  \"peeks\": \"6670\",\n  \"harem1Title\": \"Satan and the Little Ones\",\n  \"harem1Resource1\": null,\n  \"harem2Title\": \"A Healthy Appetite\",\n  \"harem2Resource1\": null,\n  \"harem2Resource2\": \"aebdeb68bd5da8f168ae45e6a305c1d59531c0de755dde59\",\n  \"harem3Title\": \"The Men's Revenge\",\n  \"harem3Resource1\": null,\n  \"harem3Resource2\": \"aebdeb68bd5da8f1d14add7fe21120889531c0de755dde59\",\n  \"element\": \"Dark\",\n  \"type\": \"Tricky\",\n  \"rarity\": \"SSR\",\n  \"tier\": null\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "src/api/GET/random.ts",
+    "groupTitle": "Kamihime_Specific"
+  },
+  {
+    "type": "get",
     "url": "/search",
     "title": "search",
     "name": "GetSearch",
