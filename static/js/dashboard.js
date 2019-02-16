@@ -45,12 +45,12 @@ async function promptID (action) {
     let response;
 
     switch (action) {
-      default: response = submit(action, `id='${character.id}'`); break;
+      default: response = submit(action, `id=${character.id}`); break;
       case 'add':
         response = await sweet({
           html: 'Add an entry with: [key]=[value]; each separated by newline (\\n).',
           input: 'textarea',
-          inputValue: fields.map(el => `${el}=""`).join('\n'),
+          inputValue: fields.map(el => `${el}=`).join('\n'),
           width: 1024,
         })
           .then(res => {
