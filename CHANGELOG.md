@@ -1,3 +1,8 @@
+# 2.7.0
+  On commit: 07a97dbec15bc6a3fede5c2d649ea0f7260789c8
+  # Enhancements
+  - `api /get`: `random` method now provides an array of up to 10 characters. (returns `Character[]` instead of Character)
+  - `api /get`: Added `version` method
 # 2.6.0
   On commit: e81b713cdf44802d9873f8783ecded0e18875e80
   # Enhancements
