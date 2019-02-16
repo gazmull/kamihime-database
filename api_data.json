@@ -1,5 +1,25 @@
 [
   {
+    "type": "get",
+    "url": "/version",
+    "title": "version",
+    "name": "GetVersion",
+    "group": "API_Specific",
+    "description": "<p>Provides the current application's version.</p>",
+    "success": {
+      "examples": [
+        {
+          "title": "Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"version\": 2.0.0\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "src/api/GET/version.ts",
+    "groupTitle": "API_Specific"
+  },
+  {
     "type": "delete",
     "url": "/delete",
     "title": "delete",
@@ -207,16 +227,29 @@
   },
   {
     "type": "get",
-    "url": "/random",
+    "url": "/random/:length",
     "title": "random",
     "name": "GetRandom",
     "group": "Kamihime_Specific",
-    "description": "<p>Randomly provides a character object.</p>",
+    "description": "<p>Randomly provides character objects based on length provided. Maximum of 10.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "length",
+            "description": "<p>Number of items to be provided.</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "examples": [
         {
           "title": "Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"_rowId\": 6,\n  \"id\": \"k0001\",\n  \"name\": \"Satan\",\n  \"approved\": 1,\n  \"avatar\": \"portrait/Satan Portrait.png\",\n  \"main\": \"main/Satan.png\",\n  \"preview\": \"close/Satan Close.png\",\n  \"loli\": 0,\n  \"peeks\": \"6670\",\n  \"harem1Title\": \"Satan and the Little Ones\",\n  \"harem1Resource1\": null,\n  \"harem2Title\": \"A Healthy Appetite\",\n  \"harem2Resource1\": null,\n  \"harem2Resource2\": \"aebdeb68bd5da8f168ae45e6a305c1d59531c0de755dde59\",\n  \"harem3Title\": \"The Men's Revenge\",\n  \"harem3Resource1\": null,\n  \"harem3Resource2\": \"aebdeb68bd5da8f1d14add7fe21120889531c0de755dde59\",\n  \"element\": \"Dark\",\n  \"type\": \"Tricky\",\n  \"rarity\": \"SSR\",\n  \"tier\": null\n}",
+          "content": "HTTP/1.1 200 OK\n[\n  {\n    \"_rowId\": 6,\n    \"id\": \"k0001\",\n    \"name\": \"Satan\",\n    \"approved\": 1,\n    \"avatar\": \"portrait/Satan Portrait.png\",\n    \"main\": \"main/Satan.png\",\n    \"preview\": \"close/Satan Close.png\",\n    \"loli\": 0,\n    \"peeks\": \"6670\",\n    \"harem1Title\": \"Satan and the Little Ones\",\n    \"harem1Resource1\": null,\n    \"harem2Title\": \"A Healthy Appetite\",\n    \"harem2Resource1\": null,\n    \"harem2Resource2\": \"aebdeb68bd5da8f168ae45e6a305c1d59531c0de755dde59\",\n    \"harem3Title\": \"The Men's Revenge\",\n    \"harem3Resource1\": null,\n    \"harem3Resource2\": \"aebdeb68bd5da8f1d14add7fe21120889531c0de755dde59\",\n    \"element\": \"Dark\",\n    \"type\": \"Tricky\",\n    \"rarity\": \"SSR\",\n    \"tier\": null\n  }, ...items\n]",
           "type": "json"
         }
       ]
