@@ -1,9 +1,7 @@
-import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import { resolve } from 'path';
-import * as favicon from 'serve-favicon';
 // @ts-ignore
 import { cookieSecret } from './auth/auth';
 import Client from './struct/Client';
@@ -45,10 +43,7 @@ else server.disable('x-powered-by');
 server
   .use(express.urlencoded({ extended: true }))
   .use(express.json({ limit: '1mb' }))
-  .use(compression({ filter: req => !req.headers['x-no-compression'], threshold: 0 }))
   .use(cookieParser(cookieSecret))
-  .use(favicon(resolve(__dirname, '../static/favicon.ico')))
-  .use(express.static(resolve(__dirname, '../static')))
   .set('view engine', 'pug')
   .set('views', resolve(__dirname, './views'))
   .use((_, res, next) => {
