@@ -6,7 +6,6 @@ import { resolve } from 'path';
 import * as favicon from 'serve-favicon';
 // @ts-ignore
 import { cookieSecret } from './auth/auth';
-// import enforceSecured from './middleware/enforce-secured';
 import Client from './struct/Client';
 import Server from './struct/Server';
 import { error } from './util/console';
@@ -16,7 +15,6 @@ const server = express();
 if (process.env.NODE_ENV === 'production')
   server
     .enable('trust proxy')
-    // .use(enforceSecured())
     .use(helmet({
       contentSecurityPolicy: {
         directives: {

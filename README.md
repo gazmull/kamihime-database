@@ -15,7 +15,7 @@ Website + REST (JSON) API for Kamihime Database
     1. **[Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass)** For watching saved Sass files and applying vendor prefixes on compilation.
 
 ## Requirements
-- **Debian-based OS only**: [authbind](https://sites.google.com/site/mytechnicalcollection/utility/authbind)
+- [nginx (skip to nginx section)](http://blog.danyll.com/setting-up-express-with-nginx-and-pm2/)
 - [Node](https://nodejs.org) 10 or 11
 - [MariaDB](https://mariadb.org) 10
 - [Discord App + Bot Account](https://discordapp.com/developers/applications/me)
@@ -49,7 +49,6 @@ Website + REST (JSON) API for Kamihime Database
 4. Run `$ yarn run build`
 5. Run `$ node .`
     - `$ yarn run pm2` for PM2 preference / production stage.
-    - `$ yarn run pm2-bind` for Debian-based server. [`authbind`](#Requirements) must be installed.
 
 ## Contributing
 - Looking for feedbacks, so feel free to file an issue or a pull request!

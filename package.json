@@ -18,8 +18,7 @@
     "finalize": "node tools/finalize",
     "scenarios": "node build/util/scenarios",
     "scenarios-v": "yarn run scenarios --verbose",
-    "pm2": "pm2 start .pm2.yml --env production",
-    "pm2-bind": "authbind --deep pm2 start .pm2.yml --env production"
+    "pm2": "pm2 start .pm2.yml --env production"
   },
   "engine": {
     "node": ">=10"
