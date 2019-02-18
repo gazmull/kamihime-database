@@ -1,3 +1,7 @@
+# 2.7.1
+  On Commit: c2993bd6e1daafe5e3bef8774f7c3c3b222dbd4e
+  # Changes
+  - `server`: Server is now being served with nginx as reverse proxy for optimal static files distribution. See [README#Requirements 1](README#Requirements)
 # 2.7.0
   On commit: 07a97dbec15bc6a3fede5c2d649ea0f7260789c8
   # Enhancements
