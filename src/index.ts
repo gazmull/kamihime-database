@@ -15,7 +15,7 @@ const server = express();
 
 if (process.env.NODE_ENV === 'production')
   server
-    .set('trust proxy', [ '213.32.4.0/24', '54.39.240.0/24', '144.217.9.0/24' ])
+    .enable('trust proxy')
     .use(enforceSecured())
     .use(helmet({
       contentSecurityPolicy: {
@@ -46,7 +46,7 @@ else server.disable('x-powered-by');
 
 server
   .use(express.urlencoded({ extended: true }))
-  .use(express.json())
+  .use(express.json({ limit: '1mb' }))
   .use(compression({ filter: req => !req.headers['x-no-compression'], threshold: 0 }))
   .use(cookieParser(cookieSecret))
   .use(favicon(resolve(__dirname, '../static/favicon.ico')))
