@@ -1,5 +1,11 @@
+# 2.7.2
+  On commit: fb61d97decaca933a572a0e9f59609c564a70f21
+  # Changes
+  - `server`: Removed bloat express.static and serve-favicon
+  # Fixes
+  - `dashboard`: (was resolved at 2.7.1) Fixed update values still containing quotes
 # 2.7.1
-  On Commit: c2993bd6e1daafe5e3bef8774f7c3c3b222dbd4e
+  On commit: c2993bd6e1daafe5e3bef8774f7c3c3b222dbd4e
   # Changes
   - `server`: Server is now being served with nginx as reverse proxy for optimal static files distribution. See [README#Requirements 1](README#Requirements)
 # 2.7.0
