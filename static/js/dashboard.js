@@ -86,7 +86,7 @@ async function promptID (action) {
 
     if (response)
       sweet({
-        text: `${action}: ${character.name} (${character.id})`,
+        text: `${action}: ${response.name} (${response.id})`,
         titleText: 'Operation Successfull',
         type: 'success',
       });
@@ -132,7 +132,7 @@ async function submit (action, value = '', id) {
 
   if (json.error) throw json.error.message;
 
-  return true;
+  return json;
 }
 
 function clean (value = '') {
