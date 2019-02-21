@@ -61,7 +61,7 @@ async function promptID (action) {
 
         if (!response) return;
 
-        response = submit(action, response, character.id);
+        response = submit(action, response);
         break;
       case 'update':
         response = await sweet({
