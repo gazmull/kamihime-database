@@ -12,7 +12,7 @@ import Api from '../../struct/Api';
  * @apiSuccessExample {json} Response:
  *  HTTP/1.1 200 OK
  *  {
- *    "version": 2.0.0
+ *    "version": "2.0.0"
  *  }
  */
 export default class GetRandomRequest extends Api {
