@@ -2,6 +2,38 @@ import { Request, Response } from 'express';
 import * as fuzzy from 'fuzzy';
 import Api from '../../struct/Api';
 
+/* -- Replace fuzzy with Fuse.js; the former seems unreliable in some situations, plus the latter has robust options.
+could get some performance hiccups but it'll do its job better. Here's what i configured on the site's docs (neat feat)
+
+var options = {
+  shouldSort: true,
+  tokenize: true,
+  matchAllTokens: true,
+  includeScore: true,
+  threshold: 0.6,
+  location: 0,
+  distance: 100,
+  maxPatternLength: 31,
+  minMatchCharLength: 2,
+  keys: [{
+    name: "name",
+    weight: 0.7
+  }, {
+    name: "element",
+    weight: 0.1
+  }, {
+    name: "type",
+    weight: 0.1
+  }, {
+    name: "rarity",
+    weight: 0.1
+  }]
+};
+
+var fuse = new Fuse(list, options); // "list" is the item array
+var result = fuse.search("");
+*/
+
 /**
  * @api {get} /search search
  * @apiName GetSearch
