@@ -23,9 +23,10 @@ export default class InfoRoute extends Route {
     try {
       if (!id) throw { code: 403, message: 'ID is empty.' };
 
-      const character = this.server.kamihime.find(el => el.id === id);
+      const character = id === 'random' ? await this._getRandom() : this.server.kamihime.find(el => el.id === id);
 
       if (!character) throw { code: 422 };
+      else if ((character as any).error) throw { code: 404 };
 
       const requested = { character, wiki: null };
 
@@ -40,6 +41,11 @@ export default class InfoRoute extends Route {
   }
 
   // -- Util
+
+  protected _getRandom () {
+    return fetch(this.server.auth.api.url + 'random', { headers: { Accept: 'application/json' } })
+      .then(res => res.json() as Promise<IKamihime>);
+  }
 
   /**
    * Parses infobox as JSON.
