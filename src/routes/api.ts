@@ -28,10 +28,12 @@ export default class ApiRoute extends Route {
         return requestClass.exec(req, res, next);
 
       const requests = this.server.rateLimits.get(this._getMethod(req)).get(request);
-      const user = requests.find(r => r.address === ip);
+      let user = requests.find(r => r.address === ip);
 
       if (!user) {
-        this._initialise(req, requests);
+        user = this._initialise(req, requests);
+
+        this._setHeaders(res, user, requestClass.max, user.timestamp + (requestClass.cooldown * 1000));
 
         return requestClass.exec(req, res, next);
       }
@@ -41,12 +43,14 @@ export default class ApiRoute extends Route {
       const expiration = user.timestamp + (cooldown * 1000);
       const expired = now > expiration;
 
+      this._setHeaders(res, user, maxRequests, expiration);
+
       if (expired) {
         this._initialise(req, requests);
 
         return requestClass.exec(req, res, next);
       } else if (user.triggers === maxRequests && !expired) {
-        const remaining = (expiration - now);
+        const remaining = expiration - now;
 
         throw {
           remaining,
@@ -76,7 +80,7 @@ export default class ApiRoute extends Route {
     return null;
   }
 
-  protected _initialise (req: Request, requests: Collection<string, any>): void {
+  protected _initialise (req: Request, requests: Collection<string, IRateLimitLog>) {
     const request: string = req.params.request;
     const ip = req.ip;
     requests.set(ip, { address: ip, triggers: 1, timestamp: Date.now() });
@@ -85,9 +89,11 @@ export default class ApiRoute extends Route {
     this.util.logger.status(
       `[I/RI] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
+
+    return user;
   }
 
-  protected _update (req: Request, requests: Collection<string, any>): void {
+  protected _update (req: Request, requests: Collection<string, IRateLimitLog>): void {
     const ip = req.ip;
     let user = requests.get(ip);
     const request: string = req.params.request;
@@ -97,5 +103,12 @@ export default class ApiRoute extends Route {
     this.util.logger.status(
       `[U] API: User: ${user.address} | request: ${this._getMethod(req)}->${request} | Triggers: ${user.triggers}`,
     );
+  }
+
+  protected _setHeaders (res: Response, user: IRateLimitLog, maxRequests: number, expiration: number) {
+    res
+      .header('X-RateLimit-Limit', String(maxRequests))
+      .header('X-RateLimit-Remaining', String(maxRequests - user.triggers))
+      .header('X-RateLimit-Reset', String(expiration));
   }
 }
