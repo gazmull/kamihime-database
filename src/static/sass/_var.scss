@@ -1,0 +1,44 @@
+$core-transition: 0.8s cubic-bezier(0.01, 1, 0.22, 0.99) 0s;
+$core-background: #2e242b;
+$core-hover: #ff00ae;
+$core-text: #fff;
+$text-active: #fff;
+$text-header: #ddd;
+$text-hover: $core-hover;
+$text-link-header: #ffafe6;
+$text-link: #e7039f;
+$text-shadow: #dd55ff;
+$text: $core-text;
+$transition: all $core-transition;
+$background-active: #222;
+$background-hover: $background-active;
+$background: #333;
+$border: 2px solid $text-hover;
+$box-shadow: 1px 1px 1px #7c2962, 0px 0px 1px #7c2962;
+$input-color-background: #56003b;
+$dialog-background: #997777;
+$kit-name-abl: #0084ffa6;
+$kit-name-bst: #ff0062a6;
+$kit-name-ex: #00ff9da6;
+$list-background: #292929;
+$range-thumb-background: #d62ea1;
+$scroll-background-hover: $core-hover;
+$scroll-background: #7c2962;
+$scroll-track-background: #DBDBDB;
+$table-background: #3a152e;
+$tooltip-background: $scroll-background;
+
+@mixin prepareTransform ($willChange: '', $transition: $transition) {
+  transform: none;
+  transition: unquote('#{$transition}');
+  will-change: if($willChange != '', unquote('transform, #{$willChange}'), transform);
+}
+
+@mixin doTransform ($transform...) {
+  transform: $transform translateZ(0);
+}
+
+@mixin doActiveBorder () {
+  border-left: $border;
+  border-right: $border;
+}

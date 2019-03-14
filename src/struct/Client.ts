@@ -1,13 +1,13 @@
 import anchorme from 'anchorme';
 import { each } from 'bluebird';
-import { Client as DiscordClient, Message, WSEventType } from 'discord.js';
+import { Client as DiscordClient, Message, TextChannel, WSEventType } from 'discord.js';
 import { createWriteStream } from 'fs-extra';
 import { QueryBuilder } from 'knex';
 import fetch from 'node-fetch';
 import * as Wikia from 'nodemw';
 import { resolve } from 'path';
 import { promisify } from 'util';
-// @ts-ignore
+import { IClientAuth, IKamihime, IUtil } from '../../typings';
 import { discordClient as discordAuth } from '../auth/auth';
 import Server from './Server';
 
@@ -38,11 +38,10 @@ export default class Client {
     this.util = {
       ...this.server.util,
       discordSend: (channelId, message) => {
-        const channel = this.discordClient.channels.get(channelId);
+        const channel = this.discordClient.channels.get(channelId) as TextChannel;
 
         if (!channel) return this.util.logger.warn(`Channel ${channelId} does not exist.`);
 
-        // @ts-ignore
         return channel.send(message);
       },
     };
@@ -57,7 +56,7 @@ export default class Client {
   public util: IUtil;
   public fields: string[];
 
-  public init (): this {
+  public init () {
     this.wikiaClient = new Wikia({
       debug: false,
       path: '',
@@ -68,12 +67,12 @@ export default class Client {
     getImageInfo = promisify(this.wikiaClient.getImageInfo.bind(this.wikiaClient));
     getArticle = promisify(this.wikiaClient.getArticle.bind(this.wikiaClient));
 
-    this.util.logger.status('Initialised');
+    this.util.logger.info('Client: Initialised');
 
     return this;
   }
 
-  public startDiscordClient (): this {
+  public startDiscordClient () {
     if (!(discordAuth.channel || discordAuth.token)) return;
 
     const events: WSEventType[] = [
@@ -117,11 +116,11 @@ export default class Client {
         this.server.status = msg;
       } catch (e) { this.util.logger.error(e); }
 
-      this.util.logger.status('Discord Bot: New announcement has been saved.');
+      this.util.logger.info('Discord Bot: New announcement has been saved.');
     };
 
     this.discordClient
-      .on('ready', () => this.util.logger.status('Discord Bot: logged in.'))
+      .on('ready', () => this.util.logger.info('Discord Bot: logged in.'))
       .on('error', this.util.logger.error)
       .on('message', handleMessage)
       .on('messageUpdate', (_, newMessage) => handleMessage(newMessage))
@@ -134,10 +133,20 @@ export default class Client {
    * Calls add and update functions every time specified from COOLDOWN.
    * @param forced Whether the call is forced or not [can be forced thru server API (api/refresh)]
    */
-  public startKamihimeDatabase (forced: boolean = false): this {
+  public startKamihimeDatabase (forced: boolean = false) {
+    this.util.logger.info('Kamihime Database: [ADD] Start');
     each([ 'x', 'w' ], this._add.bind(this))
-      .then(() => each([ 's', 'e', 'k', 'w' ], this._update.bind(this)))
-      .then(() => this.util.logger.status('Refreshed Kamihime Database.'))
+      .then(() => {
+        this.util.logger.info('Kamihime Database: [ADD] End');
+        this.util.logger.info('Kamihime Database: [UPDATE] Start');
+
+        return each([ 's', 'e', 'k', 'w' ], this._update.bind(this));
+      })
+      .then(() => {
+        this.util.logger.info('Kamihime Database: [UPDATE] End');
+
+        return this.util.logger.info('Refreshed Kamihime Database.');
+      })
       .catch(this.util.logger.error);
 
     if (forced) {
@@ -153,9 +162,7 @@ export default class Client {
    * Adds items into the kamihime database.
    * @param idPrefix The prefix of item type to refresh.
    */
-  protected async _add (idPrefix: string): Promise<any> {
-    this.util.logger.status('Kamihime Database: Started add...');
-
+  protected async _add (idPrefix: string) {
     try {
       const whereState = idPrefix === 'x' ? 'id LIKE \'x%\' or id LIKE \'e%\'' : `id LIKE '${idPrefix}%'`;
       const rows: IKamihime[] = await this.util.db('kamihime').select(this.fields)
@@ -179,12 +186,12 @@ export default class Client {
           throw new Error('Invalid Prefix');
       }
 
-      this.util.logger.status(`Kamihime Database: Adding ${id}...`);
+      this.util.logger.info(`Kamihime Database: [ADDING] ${id}...`);
 
       let result: IKamihime[] = await this._parseDatabase(id);
       result = result.filter(el => !existing.includes(el.name.toLowerCase()));
 
-      if (!result.length) return this.util.logger.status(`Kamihime Database: ${id}: Nothing to add!`);
+      if (!result.length) return this.util.logger.info(`Kamihime Database: [ADD SKIPPED] ${id}`);
 
       let fromIndex = rows.length ? parseInt(rows[0].id.slice(1)) + 1 : -1;
       const itemsAdded = [];
@@ -193,7 +200,7 @@ export default class Client {
       for (const el of result) {
         const checkCall: () => boolean = () => {
           if (currentCalls === API_MAX_CALLS) {
-            this.util.logger.warn(`Max calls to Wiki API for ${id} has been reached`);
+            this.util.logger.warn(`Kamihime Database: [RATE LIMITED] ${id}`);
 
             return true;
           }
@@ -298,7 +305,7 @@ export default class Client {
         '```',
       ].join('\n'));
 
-      return this.util.logger.status(`Kamihime Database: ${id}: Added ${length}: ${itemsAdded.join(', ')}`);
+      return this.util.logger.info(`Kamihime Database: [ADDED] ${id} (${length}): ${itemsAdded.join(', ')}`);
     } catch (err) { return this.util.logger.error(err); }
   }
 
@@ -306,9 +313,7 @@ export default class Client {
    * Updates items from the kamihime database.
    * @param idPrefix The prefix of item type to refresh.
    */
-  protected async _update (idPrefix: string): Promise<any> {
-    this.util.logger.status('Kamihime Database: Started update...');
-
+  protected async _update (idPrefix: string) {
     try {
       let query: QueryBuilder = this.util.db('kamihime').select(this.fields)
         .whereRaw(`id LIKE '${idPrefix}%'`);
@@ -338,7 +343,7 @@ export default class Client {
           throw new Error('Invalid Prefix');
       }
 
-      this.util.logger.status(`Kamihime Database: Updating ${id}...`);
+      this.util.logger.info(`Kamihime Database: [UPDATING] ${id}...`);
 
       const result = await this._parseDatabase(id);
       const itemsUpdated = [];
@@ -350,7 +355,7 @@ export default class Client {
         if (!info) continue;
         const checkCall: () => boolean = () => {
           if (currentCalls === API_MAX_CALLS) {
-            this.util.logger.warn(`Max calls to Wiki API for ${id} has been reached`);
+            this.util.logger.warn(`Kamihime Database: [RATE LIMITED] ${id}`);
 
             return true;
           }
@@ -464,7 +469,7 @@ export default class Client {
 
       const length = itemsUpdated.length;
 
-      if (!length) return this.util.logger.status(`Kamihime Database: ${id}: Nothing to update!`);
+      if (!length) return this.util.logger.info(`Kamihime Database: [UPDATE SKIPPED] ${id}`);
 
       await this.util.discordSend(this.auth.discord.wikiReportChannel, [
         `**Kamihime Database**: **${id}**: __Updated ${length}__`,
@@ -474,7 +479,7 @@ export default class Client {
         '```',
       ].join('\n'));
 
-      return this.util.logger.status(`Kamihime Database: ${id}: Updated ${length}: ${itemsUpdated.join(', ')}`);
+      return this.util.logger.info(`Kamihime Database: [UPDATED] ${id} (${length}): ${itemsUpdated.join(', ')}`);
     } catch (err) { return this.util.logger.error(err); }
   }
 
@@ -484,7 +489,7 @@ export default class Client {
    * Parses article database to internal useable (e.g. array of items)
    * @param item The item article to parse
    */
-  protected async _parseDatabase (item: string): Promise<any> {
+  protected async _parseDatabase (item: string) {
     const data = await getArticle(`Module:${item} Database`);
 
     if (!data) throw new Error(`API returned no item name ${item} found.`);
