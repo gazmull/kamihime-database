@@ -20,6 +20,11 @@ export const database: Database = {
 };
 
 /**
+ * List of IP Addresses from trusted proxy (Production ENV only)
+ */
+export const proxy: string[] = [ 'i.love.turtles' ];
+
+/**
  * The host configuration to use for the server
  */
 export const host: Host = {
