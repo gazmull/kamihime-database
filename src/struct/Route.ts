@@ -1,5 +1,6 @@
 import { Collection } from 'discord.js';
 import { NextFunction, Request, Response } from 'express';
+import { IRouteOptions, IUtil } from '../../typings';
 import { handleApiError, handleSiteError } from '../util/handleError';
 import Client from './Client';
 import Server from './Server';
@@ -33,7 +34,7 @@ export default class Route {
   public client: Client;
   public util: IUtil;
 
-  public exec (req: Request, res: Response, next?: NextFunction): void {
+  public exec (req: Request, res: Response, next?: NextFunction) {
     throw new Error('You cannot invoke this base class method.');
   }
 }

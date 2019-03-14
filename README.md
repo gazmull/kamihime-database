@@ -55,9 +55,12 @@ Website + REST (JSON) API for Kamihime Database
 - For code-related:
     - Fork this repository, clone to your machine, and follow the project's development configuration [e.g. TSLint]
         - `$ yarn --production=false` to install.
-    - For `src/views`-related, you may use the task `Move PUG Files` to easily copy the new changes from `src` to `build`.
-        - This only works with VSCode. However for CLI you may run this: `$ yarn run finalize --pug`
-    - For Sass compilation, see [VS Code Extensions-1](#Recommendations)
+    - Compilation:
+      - For `src/views`-related, you may use the task `Move PUG Files` to easily copy the new changes from `src` to `build`.
+          - This only works with VSCode. However for CLI you may run this: `$ yarn run finalize --pug`
+      - For Sass compilation, see [VS Code Extensions-1](#Recommendations)
+      - For Typescript compilation you may run `$ yarn run compile`
+      - All the steps above can be simply done with `$ yarn run dev:build`
     - Run `$ yarn run build` to verify if your build is passing.
         - Failing build will be rejected at default.
 

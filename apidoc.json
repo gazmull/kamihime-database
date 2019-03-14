@@ -4,8 +4,12 @@
   "description": "Documentation for Kamihime Database API",
   "title": "Kamihime Database - API Documentation",
   "url": "https://kamihimedb.thegzm.space/api",
+  "sampleUrl": "https://kamihimedb.thegzm.space/api",
   "header": {
     "title": "Guide",
     "filename": "GUIDE.md"
+  },
+  "template": {
+    "withCompare": false
   }
 }
