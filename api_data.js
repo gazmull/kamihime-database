@@ -10,14 +10,19 @@ define({ "api": [
       "examples": [
         {
           "title": "Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"version\": 2.0.0\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"version\": \"2.0.0\"\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/GET/version.ts",
-    "groupTitle": "API_Specific"
+    "filename": "src/routes/api/GET/version.ts",
+    "groupTitle": "API_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/version"
+      }
+    ]
   },
   {
     "type": "delete",
@@ -86,8 +91,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/DELETE/delete.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/DELETE/delete.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/delete"
+      }
+    ]
   },
   {
     "type": "get",
@@ -119,8 +129,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/GET/id.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/GET/id.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/id/:id"
+      }
+    ]
   },
   {
     "type": "get",
@@ -171,8 +186,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/GET/latest.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/GET/latest.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/id/:id"
+      }
+    ]
   },
   {
     "type": "get",
@@ -222,8 +242,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/GET/list.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/GET/list.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/list/:options"
+      }
+    ]
   },
   {
     "type": "get",
@@ -255,8 +280,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/GET/random.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/GET/random.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/random/:length"
+      }
+    ]
   },
   {
     "type": "get",
@@ -341,8 +371,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/GET/search.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/GET/search.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/search"
+      }
+    ]
   },
   {
     "type": "post",
@@ -498,8 +533,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/POST/add.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/POST/add.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/add"
+      }
+    ]
   },
   {
     "type": "post",
@@ -589,8 +629,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/POST/session.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/POST/session.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/session"
+      }
+    ]
   },
   {
     "type": "put",
@@ -666,8 +711,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/PUT/approve.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/PUT/approve.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/approve"
+      }
+    ]
   },
   {
     "type": "put",
@@ -743,8 +793,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/PUT/flag.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/PUT/flag.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/flag"
+      }
+    ]
   },
   {
     "type": "put",
@@ -890,8 +945,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/PUT/update.ts",
-    "groupTitle": "Kamihime_Specific"
+    "filename": "src/routes/api/PUT/update.ts",
+    "groupTitle": "Kamihime_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/update"
+      }
+    ]
   },
   {
     "type": "get",
@@ -942,8 +1002,13 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/GET/@me.ts",
-    "groupTitle": "Site_Specific"
+    "filename": "src/routes/api/GET/@me.ts",
+    "groupTitle": "Site_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/@me"
+      }
+    ]
   },
   {
     "type": "post",
@@ -1084,7 +1149,12 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "src/api/POST/report.ts",
-    "groupTitle": "Site_Specific"
+    "filename": "src/routes/api/POST/report.ts",
+    "groupTitle": "Site_Specific",
+    "sampleRequest": [
+      {
+        "url": "https://kamihimedb.thegzm.space/api/report"
+      }
+    ]
   }
 ] });
