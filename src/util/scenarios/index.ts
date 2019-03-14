@@ -1,17 +1,18 @@
 import * as Knex from 'knex';
 import { resolve } from 'path';
-// @ts-ignore
+import { IKamihime } from '../../../typings';
 import { database } from '../../auth/auth';
-import { error, status, warn } from '../console';
+import Winston from '../Logger';
 import Extractor from './util/Extractor';
 
 let code = 0;
+const logger = new Winston().logger;
 
 start();
 
 export default async function start () {
   try {
-    warn('kh-snek started...');
+    logger.warn('kh-snek started...');
 
     let query = Knex(database)('kamihime').select([
       'id',
@@ -71,9 +72,10 @@ export default async function start () {
     const CHARACTERS: IKamihime[] = await query;
 
     if (!CHARACTERS.length)
-      status('Nothing to be processed.');
+    logger.info('Nothing to be processed.');
     else
       await new Extractor({
+        logger,
         base: {
           CHARACTERS,
           DESTINATION: resolve(__dirname, '../../../static/scenarios'),
@@ -98,11 +100,11 @@ export default async function start () {
         },
       }).exec();
   } catch (err) {
-    error(err.stack);
+    logger.error(err.stack);
 
     code = 1;
   } finally {
-    status('kh-snek finished.');
+    logger.info('kh-snek finished.');
 
     process.exit(code);
   }

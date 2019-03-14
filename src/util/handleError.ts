@@ -1,12 +1,13 @@
 import { Response } from 'express';
+import { IErrorHandlerObject } from '../../typings';
 
 /**
  * [API Exclusive]: Handles the response to error
  * @param res The Response interface
  * @param err The Error interface
  */
-export const handleApiError: (res: Response, err: IErrorHandlerObject) => void = (res, err) => {
-  if (err.stack) console.error(err.stack); // tslint:disable-line:no-console
+export function handleApiError (res: Response, err: IErrorHandlerObject) {
+  if (err.stack) this.util.logger.error(err.stack);
 
   if (Array.isArray(err.message)) err.message = err.message.join('\n');
   if (isNaN(err.code))
@@ -17,17 +18,17 @@ export const handleApiError: (res: Response, err: IErrorHandlerObject) => void =
     res
       .status(err.code)
       .json({ error: err });
-};
+}
 
 /**
  * [Site Exclusive]: Handles the response to error
  * @param res The Response interface
  * @param err The Error interface
  */
-export const handleSiteError: (res: Response, err: IErrorHandlerObject) => void = (res, err) => {
-  if (err.stack) console.error(err.stack); // tslint:disable-line:no-console
+export function handleSiteError (res: Response, err: IErrorHandlerObject) {
+  if (err.stack) this.util.logger.error(err.stack);
 
   if (Array.isArray(err.message)) err.message = err.message.join('\n');
   if (isNaN(err.code)) res.render('invalids/500', { message: err.message });
   else res.render('invalids/' + err.code, { message: err.message });
-};
+}

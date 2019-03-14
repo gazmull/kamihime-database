@@ -5,17 +5,21 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noUnusedLocals": true,
-    "outDir": "build/proto",
+    "outDir": "build",
     "paths": {
       "*": [
         "typings/*"
       ]
     },
     "removeComments": true,
-    "rootDir": "src",
     "target": "es2018"
   },
+  "include": [
+    "src/**/*.ts"
+  ],
   "exclude": [
-    "build/**/*.js"
+    "src/static/**/*",
+    "build/**/*",
+    "node_modules"
   ]
 }

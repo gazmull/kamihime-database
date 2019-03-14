@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import { IAdminUser, IUser } from '../../typings';
 
 const defaultSettings = {
   audio: { bgm: 0.1, glo: 1.0, snd: 0.5 },
@@ -14,7 +15,7 @@ const defaultSettings = {
   },
 };
 
-export default function authHandler (util: IUtil): RequestHandler {
+export default function authHandler (): RequestHandler {
   return async (req, res, next) => {
     if (!req.signedCookies.userId) {
       if (!req.cookies.settings) res.cookie('settings', defaultSettings);
@@ -22,14 +23,14 @@ export default function authHandler (util: IUtil): RequestHandler {
       return next();
     }
 
-    const [ user ]: IUser[] = await util.db('users').select()
+    const [ user ]: IUser[] = await this.util.db('users').select()
       .where('userId', req.signedCookies.userId);
 
     if (!user) {
       const msg = `${req.signedCookies.userId}: Using invalid userId cookie; blocked.`;
 
       res.clearCookie('userId');
-      util.handleSiteError(res, { code: 404, message: 'User not found; ID cookie cleared.' });
+      this.util.handleSiteError.bind(this)(res, { code: 404, message: 'User not found; ID cookie cleared.' });
 
       return next(msg);
     }
@@ -38,7 +39,7 @@ export default function authHandler (util: IUtil): RequestHandler {
     res.locals.user = { lastLogin, userId, username };
 
     if (req.signedCookies.slug) {
-      const [ admin ]: IAdminUser[] = await util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
+      const [ admin ]: IAdminUser[] = await this.util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
         .where({
           userId,
           slug: req.signedCookies.slug,
@@ -59,7 +60,7 @@ export default function authHandler (util: IUtil): RequestHandler {
     const eligible = Date.now() > (new Date(lastLogin).getTime() + 18e5);
 
     if (eligible)
-      await util.db.raw(
+      await this.util.db.raw(
         'UPDATE users SET lastLogin = now() WHERE userId = ?',
         [ req.signedCookies.userId ],
       );
@@ -71,7 +72,7 @@ export default function authHandler (util: IUtil): RequestHandler {
     if (hasUpdatedAt && settings.updatedAt < req.cookies.settings.updatedAt) {
       settings = req.cookies.settings;
 
-      await util.db('users').where('userId', user.userId)
+      await this.util.db('users').where('userId', user.userId)
         .update('settings', JSON.stringify(req.cookies.settings));
     }
 

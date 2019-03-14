@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import fetch from 'node-fetch';
-import { status, warn } from '../../console';
+import { Logger } from 'winston';
+import { IExtractorFiles, IExtractorOptions, IScenarioSequence } from '../../../../typings';
 import GithubGist from './GithubGist';
 
 const formatErr = (message: string) => `${new Date().toLocaleString()}: ${message}`;
@@ -18,6 +19,8 @@ export default class Extractor {
     this.base = options.base;
 
     this.codes = options.codes;
+
+    this.logger = options.logger;
 
     this.files = {};
 
@@ -42,9 +45,10 @@ export default class Extractor {
   public resourcesFound: number;
   public filesFound: number;
   public errors: string[];
+  public logger: Logger;
   public verbose: boolean;
 
-  public async exec (): Promise<boolean> {
+  public async exec () {
     for (const character of this.base.CHARACTERS) {
       const { id, ..._resources } = character;
       const resources = this._filter(_resources, el => el);
@@ -66,7 +70,7 @@ export default class Extractor {
         this.errors.join('\r\n').replace(/\n/g, '\n'),
       );
 
-    status([
+    this.logger.info([
       `Extracted ${this.resourcesExtracted} resources. (Expected: ${this.resourcesFound})`,
       `Files Found: ${this.filesFound}`,
       this.errors.length
@@ -82,13 +86,13 @@ export default class Extractor {
 
   // -- Utils
 
-  private async _download (): Promise<boolean> {
+  private async _download () {
     for (const chara in this.files) {
       if (!this.files[chara]) continue;
 
       const resourceDirectories = this.files[chara];
 
-      if (this.verbose) warn(`Extracting resource assets for ${chara}...`);
+      if (this.verbose) this.logger.warn(`Extracting resource assets for ${chara}...`);
 
       for (const resourceDirectory in resourceDirectories) {
         if (!resourceDirectories[resourceDirectory]) continue;
@@ -97,7 +101,7 @@ export default class Extractor {
         const _files: string[] = [];
         this.filesFound += files.length;
 
-        if (this.verbose) warn(`Extracting ${resourceDirectory} assets...`);
+        if (this.verbose) this.logger.warn(`Extracting ${resourceDirectory} assets...`);
 
         for (const file of files) {
           if (!file) continue;
@@ -111,17 +115,17 @@ export default class Extractor {
         } catch (err) {
           this.errors.push(formatErr(`[${chara}] [${resourceDirectory}]\n ${err.stack}`));
 
-          if (this.verbose) warn(`Failed extracting ${resourceDirectory} assets see scenario-error.log...`);
+          if (this.verbose) this.logger.warn(`Failed extracting ${resourceDirectory} assets see scenario-error.log...`);
         }
       }
 
-      if (this.verbose) status(`Finished extracting resource assets for ${chara}`);
+      if (this.verbose) this.logger.info(`Finished extracting resource assets for ${chara}`);
     }
 
     return true;
   }
 
-  private async _extract (id: string, resources: { [column: string]: string}): Promise<number> {
+  private async _extract (id: string, resources: { [column: string]: string}) {
     let extracted = Object.keys(resources).length;
 
     for (const r in resources) {
@@ -133,7 +137,7 @@ export default class Extractor {
         continue;
       }
 
-      if (this.verbose) warn(`Extracting ${id} resource script ${resources[r]}...`);
+      if (this.verbose) this.logger.warn(`Extracting ${id} resource script ${resources[r]}...`);
 
       const resource = resources[r];
       const prefix = id.charAt(0);
@@ -160,7 +164,9 @@ export default class Extractor {
 
         if (!data.ok || !script) {
           if (this.verbose)
-            warn(`Failed to download ${file} for ${resource} (${this.base.URL.SCENARIOS + folder + resource + file})`);
+            this.logger.warn(
+              `Failed to download ${file} for ${resource} (${this.base.URL.SCENARIOS + folder + resource + file})`,
+            );
 
           throw new Error(data.status + `: ${data.statusText}`);
         }
@@ -187,12 +193,12 @@ export default class Extractor {
           });
         }
 
-        status(`Extracted ${id} resource script ${resource}`);
+        this.logger.info(`Extracted ${id} resource script ${resource}`);
       } catch (err) {
         extracted--;
         this.errors.push(formatErr(`[${id}] [${resource}]\n ${err.stack}`));
 
-        if (this.verbose) warn(`Failed extracting ${resource} see scenario-error.log...`);
+        if (this.verbose) this.logger.warn(`Failed extracting ${resource} see scenario-error.log...`);
       }
     }
 
@@ -202,7 +208,7 @@ export default class Extractor {
   private async _doStory (
     { id, resource, script, type }:
     { id: string, resource: string, script: string, type: IExtractorOptions['codes']['type'] },
-  ): Promise<boolean> {
+  ) {
     const chara = {};
     let lines = [];
     let name;
@@ -354,7 +360,7 @@ export default class Extractor {
   private async _doScenario (
     { id, resource, script, type }:
     { id: string, resource: string, script: IScenarioSequence[], type: IExtractorOptions['codes']['type'] },
-  ): Promise<boolean> {
+  ) {
     const lines = [];
 
     if (!this.files[id][resource])
@@ -429,7 +435,7 @@ export default class Extractor {
    * @param obj Object to filter
    * @param fn Function to use as filter
    */
-  public _filter (obj: object, fn: (el: any) => any): any {
+  public _filter (obj: object, fn: (el: any) => any) {
     return Object.keys(obj)
       .filter(el => fn(obj[el]))
       .reduce((prev, cur) => Object.assign(prev, { [cur]: obj[cur] }), {});

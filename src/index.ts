@@ -2,17 +2,15 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import { resolve } from 'path';
-// @ts-ignore
-import { cookieSecret } from './auth/auth';
+import { cookieSecret, proxy } from './auth/auth';
 import Client from './struct/Client';
 import Server from './struct/Server';
-import { error } from './util/console';
 
 const server = express();
 
 if (process.env.NODE_ENV === 'production')
   server
-    .enable('trust proxy')
+    .set('trust proxy', proxy)
     .use(helmet({
       contentSecurityPolicy: {
         directives: {
@@ -33,12 +31,16 @@ if (process.env.NODE_ENV === 'production')
       },
       hidePoweredBy: { setTo: 'cream3.14' },
       hsts: {
-        includeSubdomains: true,
+        includeSubDomains: true,
         maxAge: 31536000,
         preload: true,
       },
     }));
-else server.disable('x-powered-by');
+else
+  server
+    .disable('x-powered-by')
+    .use(express.static(__dirname + '/static'))
+    .use(express.static(__dirname + '/../static'));
 
 server
   .use(express.urlencoded({ extended: true }))
@@ -57,12 +59,18 @@ const client: Client = new Client(serverStruct);
 
 serverStruct
   .init(server, client)
-  .startCleaners()
-  .startKamihimeCache();
+  .then(() =>
+    serverStruct
+      .startCleaners()
+      .startKamihimeCache(),
+  );
 
 client
   .init()
   .startDiscordClient()
   .startKamihimeDatabase();
 
-process.on('unhandledRejection', err => error(`Uncaught Promise Error: \n${err.stack || err}`));
+process.on(
+  'unhandledRejection',
+  (err: Error) => serverStruct.util.logger.error(`Uncaught Promise Error: \n${err.stack || err}`),
+);
