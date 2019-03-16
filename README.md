@@ -15,7 +15,7 @@ Website + REST (JSON) API for Kamihime Database
     1. **[Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass)** For watching saved Sass files and applying vendor prefixes on compilation.
 
 ## Requirements
-- [nginx (skip to nginx section)](http://blog.danyll.com/setting-up-express-with-nginx-and-pm2/)
+- [NGINX (skip to NGINX section)](http://blog.danyll.com/setting-up-express-with-nginx-and-pm2/)
 - [Node](https://nodejs.org) 10 or 11
 - [MariaDB](https://mariadb.org) 10
 - [Discord App + Bot Account](https://discordapp.com/developers/applications/me)
@@ -24,6 +24,7 @@ Website + REST (JSON) API for Kamihime Database
 
 ## Notice
 - I do not guarantee 100% coverage of the project within this documentation. If there is really something needed to be added, see [Contributing](#Contributing).
+- **NGINX Config**: Have this under your NGINX config (`/etc/nginx/sites-enabled/[your domain name]`): [Sample Template](https://gist.github.com/gazmull/85ea4cacc30647d8afc8ef910b2291a7). Texts wrapped with `[]` should be replaced.
 - **App Config**: Please configure `auth.ts`. Get its template from `auth.example.ts`
     - It can be found at `src/auth` folder.
 - **MariaDB**: Import database schema to your created database (default: `kamihimedb`) with `utf8_unicode_ci` collation.
@@ -56,11 +57,8 @@ Website + REST (JSON) API for Kamihime Database
     - Fork this repository, clone to your machine, and follow the project's development configuration [e.g. TSLint]
         - `$ yarn --production=false` to install.
     - Compilation:
-      - For `src/views`-related, you may use the task `Move PUG Files` to easily copy the new changes from `src` to `build`.
-          - This only works with VSCode. However for CLI you may run this: `$ yarn run finalize --pug`
-      - For Sass compilation, see [VS Code Extensions-1](#Recommendations)
-      - For Typescript compilation you may run `$ yarn run compile`
-      - All the steps above can be simply done with `$ yarn run dev:build`
+      - `$ yarn run dev:build` for building `views`, `static` and `src (TypeScript)`, or `$ yarn run dev:watch` to watch for `src (TypeScript)` changes.
+      - For Sass incremental compilation, see [VS Code Extensions-1](#Recommendations)
     - Run `$ yarn run build` to verify if your build is passing.
         - Failing build will be rejected at default.
 
