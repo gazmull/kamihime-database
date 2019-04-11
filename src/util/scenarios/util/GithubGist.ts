@@ -6,9 +6,9 @@ export default async function GithubGist () {
     const response = await fetch('https://api.github.com/gists/' + github.gist, {
       headers: {
         Accept: 'application/vnd.github.v3+json',
-        Authorization: 'token ' + github.token,
+        Authorization: 'token ' + github.token
       },
-      method: 'GET',
+      method: 'GET'
     });
 
     if (!response.ok) throw null;

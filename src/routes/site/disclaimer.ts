@@ -6,7 +6,7 @@ export default class DisclaimerRoute extends Route {
     super({
       id: 'disclaimer',
       method: 'get',
-      route: [ '/disclaimer' ],
+      route: [ '/disclaimer' ]
     });
   }
 

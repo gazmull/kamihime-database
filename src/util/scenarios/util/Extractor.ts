@@ -11,7 +11,7 @@ const headers = {
     'Mozilla/5.0 (Windows NT 6.1; Win64; x64)',
     'AppleWebKit/537.36 (KHTML, like Gecko)',
     'Chrome/58.0.3029.110 Safari/537.36',
-  ].join(' '),
+  ].join(' ')
 };
 
 export default class Extractor {
@@ -67,7 +67,7 @@ export default class Extractor {
     if (this.errors.length)
       await fs.outputFile(
         process.cwd() + '/scenarios-error.log',
-        this.errors.join('\r\n').replace(/\n/g, '\n'),
+        this.errors.join('\r\n').replace(/\n/g, '\n')
       );
 
     this.logger.info([
@@ -165,7 +165,7 @@ export default class Extractor {
         if (!data.ok || !script) {
           if (this.verbose)
             this.logger.warn(
-              `Failed to download ${file} for ${resource} (${this.base.URL.SCENARIOS + folder + resource + file})`,
+              `Failed to download ${file} for ${resource} (${this.base.URL.SCENARIOS + folder + resource + file})`
             );
 
           throw new Error(data.status + `: ${data.statusText}`);
@@ -176,7 +176,7 @@ export default class Extractor {
             id,
             resource,
             script,
-            type,
+            type
           });
         else {
           const mainData = script
@@ -189,7 +189,7 @@ export default class Extractor {
             id,
             resource,
             type,
-            script: json,
+            script: json
           });
         }
 
@@ -207,7 +207,7 @@ export default class Extractor {
 
   private async _doStory (
     { id, resource, script, type }:
-    { id: string, resource: string, script: string, type: IExtractorOptions['codes']['type'] },
+    { id: string, resource: string, script: string, type: IExtractorOptions['codes']['type'] }
   ) {
     const chara = {};
     let lines = [];
@@ -351,7 +351,7 @@ export default class Extractor {
     await fs.outputJSON(
       this.base.DESTINATION + `/${id}/${resource}/script.json`,
       { scenario: lines },
-      { spaces: 2 },
+      { spaces: 2 }
     );
 
     return true;
@@ -359,7 +359,7 @@ export default class Extractor {
 
   private async _doScenario (
     { id, resource, script, type }:
-    { id: string, resource: string, script: IScenarioSequence[], type: IExtractorOptions['codes']['type'] },
+    { id: string, resource: string, script: IScenarioSequence[], type: IExtractorOptions['codes']['type'] }
   ) {
     const lines = [];
 
@@ -383,7 +383,7 @@ export default class Extractor {
         Object.assign(entryData, {
           seconds: fps === 1 || fps === 16 ? 1 : fps === 24 ? '0.67' : 2,
           sequence: entry.film,
-          steps: fps === 1 ? 1 : 16,
+          steps: fps === 1 ? 1 : 16
         });
       }
 
@@ -424,7 +424,7 @@ export default class Extractor {
     await fs.outputJSON(
       this.base.DESTINATION + `/${id}/${resource}/script.json`,
       { scenario: lines },
-      { spaces: 2 },
+      { spaces: 2 }
     );
 
     return true;

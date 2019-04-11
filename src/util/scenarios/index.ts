@@ -29,7 +29,7 @@ export default async function start () {
         '--eidolon',
         '--soul',
         '--ssr+', '--ssr', '--sr', '--r',
-      ].some(f => new RegExp(`^${f}`, 'i').test(el)),
+      ].some(f => new RegExp(`^${f}`, 'i').test(el))
     );
 
     if (latest && id) throw new Error('Latest and ID cannot be invoked at the same time.');
@@ -79,25 +79,25 @@ export default async function start () {
         base: {
           CHARACTERS,
           DESTINATION: resolve(__dirname, '../../../static/scenarios'),
-          URL: { SCENARIOS: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/' },
+          URL: { SCENARIOS: 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/' }
         },
         codes: {
           e: { // -- Eidolon
             get: '9f/51/',
             intro: '9f/51/',
-            scene: 'd7/ad/',
+            scene: 'd7/ad/'
           },
           k: { // -- Kamihime
             get: '76/89/',
             intro: '94/76/',
-            scene: 'de/59/',
+            scene: 'de/59/'
           },
           s: { // -- Soul
             get: '3b/26/',
             intro: '67/01/',
-            scene: 'ec/4d/',
-          },
-        },
+            scene: 'ec/4d/'
+          }
+        }
       }).exec();
   } catch (err) {
     logger.error(err.stack);

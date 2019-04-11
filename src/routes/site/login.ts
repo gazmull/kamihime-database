@@ -11,7 +11,7 @@ export default class LoginRoute extends Route {
     super({
       id: 'login',
       method: 'all',
-      route: [ '/login/:admin?/:verify?' ],
+      route: [ '/login/:admin?/:verify?' ]
     });
   }
 
@@ -35,7 +35,7 @@ export default class LoginRoute extends Route {
       const registered = ip ? true : false;
       const remaining = () => 5 - (registered ? ip.attempts : 1);
       const increment = () => this.server.passwordAttempts.set(req.ip, {
-        attempts: registered ? ++ip.attempts : 1,
+        attempts: registered ? ++ip.attempts : 1
       });
       const redirect = () => {
         increment();
@@ -52,7 +52,7 @@ export default class LoginRoute extends Route {
 
       await this.util.db('admin').update({
           ip: req.ip,
-          slug: req.signedCookies.slug,
+          slug: req.signedCookies.slug
         })
         .where('username', mocked.username);
 
@@ -61,7 +61,7 @@ export default class LoginRoute extends Route {
           httpOnly: true,
           maxAge: 6048e5,
           secure: this.server.production,
-          signed: true,
+          signed: true
         })
         .cookie('ip', admin.ip)
         .cookie('lastLogin', admin.lastLogin)

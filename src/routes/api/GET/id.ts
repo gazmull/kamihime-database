@@ -42,7 +42,7 @@ export default class GetIdRequest extends ApiRoute {
       id: 'id',
       max: 3,
       method: 'GET',
-      route: [ '/id/:id' ],
+      route: [ '/id/:id' ]
     });
   }
 

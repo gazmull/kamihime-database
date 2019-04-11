@@ -7,7 +7,7 @@ export default class ConnectRoute extends Route {
     super({
       id: 'connect',
       method: 'get',
-      route: [ '/connect' ],
+      route: [ '/connect' ]
     });
   }
 
@@ -45,26 +45,25 @@ export default class ConnectRoute extends Route {
     const _response = await fetch(url, {
       headers: {
         Accept: 'application/json',
-        Authorization: 'Basic ' + credentials,
+        Authorization: 'Basic ' + credentials
       },
-      method: 'POST',
+      method: 'POST'
     });
     const response = await _response.json();
 
     const _user = await fetch('https://discordapp.com/api/users/@me', {
       headers: {
         Accept: 'application/json',
-        Authorization: 'Bearer ' + response.access_token,
-      },
+        Authorization: 'Bearer ' + response.access_token
+      }
     });
     const user = await _user.json();
     const settings = JSON.stringify({
       audio: req.cookies.settings.audio || {
         bgm: 0.1,
         glo: 1.0,
-        snd: 0.5,
+        snd: 0.5
       },
-      'info-lastNav': req.cookies.settings['info-lastNav'] || '#info',
       lastNav: req.cookies.settings.lastNav || '#all',
       menu: req.cookies.settings.menu || true,
       updatedAt: req.cookies.settings.updatedAt || Date.now(),
@@ -73,8 +72,8 @@ export default class ConnectRoute extends Route {
         cl: '#ffffff',
         cls: '#dd55ff',
         containDialog: true,
-        fontSize: 18,
-      },
+        fontSize: 18
+      }
     });
 
     await this.util.db.raw([
@@ -86,8 +85,8 @@ export default class ConnectRoute extends Route {
       ].join(' '), {
         settings,
         userId: user.id,
-        username: user.username,
-      },
+        username: user.username
+      }
     );
 
     res
@@ -95,7 +94,7 @@ export default class ConnectRoute extends Route {
         httpOnly: true,
         maxAge: 6048e5,
         secure: this.server.production,
-        signed: true,
+        signed: true
       })
       .redirect(slugURL || '/');
   }

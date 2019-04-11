@@ -7,7 +7,7 @@ export default class AdminRoute extends Route {
       auth: 'admin',
       id: 'admin',
       method: 'all',
-      route: [ '/admin/:action?' ],
+      route: [ '/admin/:action?' ]
     });
   }
 

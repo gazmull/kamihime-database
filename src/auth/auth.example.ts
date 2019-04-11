@@ -11,12 +11,12 @@ export const database: Database = {
     database: 'kamihimedb',
     host: '127.0.0.1',
     password: 'uvweve',
-    user: 'root',
+    user: 'root'
   },
   pool: {
     max: 30,
-    min: 0,
-  },
+    min: 0
+  }
 };
 
 /**
@@ -29,7 +29,7 @@ export const proxy: string[] = [ 'i.love.turtles' ];
  */
 export const host: Host = {
   address: '127.0.0.1',
-  port: 80,
+  port: 80
 };
 
 /**
@@ -54,7 +54,7 @@ export const rootURL = 'http://localhost/';
  */
 export const api: Api = {
   token: 'null',
-  url: 'http://localhost/api/',
+  url: 'http://localhost/api/'
 };
 
 /**
@@ -69,7 +69,7 @@ export const discord: GrantProvider = {
   callback: 'connect',
   key: 'blah',
   scope: [ 'identify' ],
-  secret: 'buh',
+  secret: 'buh'
 };
 
 /**
@@ -81,7 +81,7 @@ export const discordClient: DiscordClient = {
   channel: '319102712383799296',
   dbReportChannel: '319102712383799296',
   token: 'FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD',
-  wikiReportChannel: '319102712383799296',
+  wikiReportChannel: '319102712383799296'
 };
 
 /**
@@ -99,5 +99,5 @@ export const discordClient: DiscordClient = {
  */
 export const github: Github = {
   gist: '45cd187e4a476795bcef630a8018e1a6',
-  token: 'ieatalotofass',
+  token: 'ieatalotofass'
 };

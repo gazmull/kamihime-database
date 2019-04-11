@@ -1,18 +1,14 @@
 [![Build Status](https://travis-ci.org/gazmull/kamihime-database.svg?branch=master)](https://travis-ci.org/gazmull/kamihime-database)
 # Kamihime Database
 Website + REST (JSON) API for Kamihime Database
-<br> Character statistics are provided by [Kamihime Project Wikia (Nutaku)](https://kamihime-project.wikia.com)
+<br> Character statistics are provided by [Kamihime Project Fandom (Nutaku)](https://kamihime-project.fandom.com)
 
 ## Links
 - [Site](https://kamihimedb.thegzm.space)
 - [Support](http://support.thegzm.space)
-- [API Documentation](https://gazmull.github.io/kamihime-database)
+- [API Documentation](https://docs.thegzm.space/kamihime-database)
 - [Changelog](/CHANGELOG.md)
 - [Util/Scenario `.blacklist`](https://gist.github.com/gazmull/45cd187e4a476795bcef630a8018e1a6)
-
-## Recommendations
-- VS Code Extensions
-    1. **[Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=ritwickdey.live-sass)** For watching saved Sass files and applying vendor prefixes on compilation.
 
 ## Requirements
 - [NGINX (skip to NGINX section)](http://blog.danyll.com/setting-up-express-with-nginx-and-pm2/)
@@ -30,15 +26,15 @@ Website + REST (JSON) API for Kamihime Database
 - **MariaDB**: Import database schema to your created database (default: `kamihimedb`) with `utf8_unicode_ci` collation.
     - The `db.zip` file will not be updated for every new character release. It only serves as a starting kit for running the website.
 - **Util/Scenario**: If you found non-existent files that causes error on any story/scenario, please report [here](https://gist.github.com/gazmull/45cd187e4a476795bcef630a8018e1a6).
-    - Once the reported files are added, you may do `$ yarn run scenarios-v` again. See [Procedures-3](#Procedures) for more info.
+    - Once the reported files are added, you may do `$ yarn scenarios-v` again. See [Procedures-3](#Procedures) for more info.
 - **Package Manager**: [Yarn](https://yarnpkg.com/en/docs/getting-started) is recommended.
 
 ## Procedures
 1. Read [Requirements](#Requirements) and [Notice](#Notice).
 2. Run `$ yarn`
     - You have to build the src too: `$ yarn --production=false`
-3. Run `$ yarn run scenarios` to generate episode resources.
-    - Or `$ yarn run scenarios-v` to run with verbose logging.
+3. Run `$ yarn scenarios` to generate episode resources.
+    - Or `$ yarn scenarios-v` to run with verbose logging.
     - Append `-l#` or `--latest=#` to generate episode resources based on the number provided (e.g: 5 is for 5 characters). `#` is for a number.
         - This is not compatible with `--id`.
         - e.g: `-l5` or `--latest=5`
@@ -47,9 +43,9 @@ Website + REST (JSON) API for Kamihime Database
         - e.g.: `-ik0001` or `--id=k0001`
     - Append `--eidolon` / `--soul` / `--ssr+` / `--ssr` / `--sr` / `--r` (rarity options are for `kamihime`) to generate episode resources strictly in the character type specified.
         - This is compatible with `--latest` but **not** with `--id`.
-4. Run `$ yarn run build`
+4. Run `$ npx gulp`
 5. Run `$ node .`
-    - `$ yarn run pm2` for PM2 preference / production stage.
+    - `$ yarn pm2` for PM2 preference / production stage.
 
 ## Contributing
 - Looking for feedbacks, so feel free to file an issue or a pull request!
@@ -57,10 +53,11 @@ Website + REST (JSON) API for Kamihime Database
     - Fork this repository, clone to your machine, and follow the project's development configuration [e.g. TSLint]
         - `$ yarn --production=false` to install.
     - Compilation:
-      - `$ yarn run dev:build` for building `views`, `static` and `src (TypeScript)`, or `$ yarn run dev:watch` to watch for `src (TypeScript)` changes.
-      - For Sass incremental compilation, see [VS Code Extensions-1](#Recommendations)
-    - Run `$ yarn run build` to verify if your build is passing.
+      - `$ yarn dev:start` for compile-and-serve process.
+    - Run `$ yarn test` to verify if your build is passing.
         - Failing build will be rejected at default.
 
 ## License
-MIT
+> [**MIT**](/LICENSE)
+
+© 2018-present [Euni](https://github.com/gazmull) (gazmull)

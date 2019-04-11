@@ -56,7 +56,7 @@ export default class GetLatestRequest extends ApiRoute {
       id: 'latest',
       max: 1,
       method: 'GET',
-      route: [ '/latest' ],
+      route: [ '/latest' ]
     });
   }
 

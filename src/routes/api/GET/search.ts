@@ -57,7 +57,7 @@ export default class GetSearchRequest extends ApiRoute {
       id: 'search',
       max: 3,
       method: 'GET',
-      route: [ '/search' ],
+      route: [ '/search' ]
     });
   }
 
@@ -97,7 +97,7 @@ export default class GetSearchRequest extends ApiRoute {
         message: [
           'Invalid item class from [soul,eidolon,kamihime,weapon].',
           'Perhaps you are confusing this with `type` parameter?',
-        ],
+        ]
       };
 
     const fuseOptions: Fuse.FuseOptions<IKamihime> = {
@@ -107,7 +107,7 @@ export default class GetSearchRequest extends ApiRoute {
       maxPatternLength: 31,
       minMatchCharLength: 2,
       shouldSort: true,
-      threshold: 0.35,
+      threshold: 0.35
     };
     let results: IKamihime[] = !isNaN(accurate) && accurate
         ? this.server.kamihime.filter(el => el.name.toLowerCase() === name.toLowerCase())

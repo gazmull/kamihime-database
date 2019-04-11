@@ -43,7 +43,7 @@ export default class Client {
         if (!channel) return this.util.logger.warn(`Channel ${channelId} does not exist.`);
 
         return channel.send(message);
-      },
+      }
     };
 
     this.fields = [ 'id', 'name', 'avatar', 'element', 'rarity', 'type', 'tier', 'main', 'preview' ];
@@ -61,7 +61,7 @@ export default class Client {
       debug: false,
       path: '',
       protocol: 'https',
-      server: 'kamihime-project.wikia.com',
+      server: 'kamihime-project.wikia.com'
     });
 
     getImageInfo = promisify(this.wikiaClient.getImageInfo.bind(this.wikiaClient));
@@ -91,13 +91,14 @@ export default class Client {
 
     this.discordClient = new DiscordClient({
       disabledEvents: events,
+      messageCacheMaxSize: 10,
       presence: {
         activity: {
           name: hostname,
-          type: 'WATCHING',
+          type: 'WATCHING'
         },
-        status: 'online',
-      },
+        status: 'online'
+      }
     });
 
     const handleMessage = async (message: Message) => {
@@ -110,7 +111,7 @@ export default class Client {
         await this.util.db('status').del();
         await this.util.db('status').insert({
           id: message.id,
-          message: msg,
+          message: msg
         });
 
         this.server.status = msg;
@@ -121,7 +122,7 @@ export default class Client {
 
     this.discordClient
       .on('ready', () => this.util.logger.info('Discord Bot: logged in.'))
-      .on('error', this.util.logger.error)
+      .on('error', err => this.util.logger.error(err))
       .on('message', handleMessage)
       .on('messageUpdate', (_, newMessage) => handleMessage(newMessage))
       .login(discordAuth.token);
@@ -286,7 +287,7 @@ export default class Client {
           name: clean(el.name),
           peeks: 0,
           rarity: el.rarity,
-          type: el.type,
+          type: el.type
         });
 
         itemsAdded.push(el.name);
@@ -331,7 +332,7 @@ export default class Client {
           id = {
             e: 'Eidolon',
             k: 'Kamihime',
-            s: 'Soul',
+            s: 'Soul'
           }[idPrefix];
           fileNameSuffix = '.png';
           break;

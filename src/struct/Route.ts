@@ -22,7 +22,7 @@ export default class Route {
     this.util = {
       handleApiError,
       handleSiteError,
-      collection: () => new Collection(),
+      collection: () => new Collection()
     };
   }
 

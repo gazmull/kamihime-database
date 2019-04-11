@@ -1,4 +1,4 @@
-import { Api as ApiAuth, DiscordClient, GrantProvider, Host } from 'auth';
+import { Api as ApiAuth, DiscordClient, GrantProvider, Host } from './auth';
 import { Collection, Message } from 'discord.js';
 import { Response } from 'express';
 import * as Knex from 'knex';

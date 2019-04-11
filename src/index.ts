@@ -26,19 +26,20 @@ if (process.env.NODE_ENV === 'production')
             'cf.static.r.kamihimeproject.dmmgames.com',
           ],
           scriptSrc: [ '\'self\'', '\'unsafe-inline\'', 'cdn.jsdelivr.net' ],
-          styleSrc: [ '\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com', 'cdn.jsdelivr.net' ],
-        },
+          styleSrc: [ '\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com', 'cdn.jsdelivr.net' ]
+        }
       },
       hidePoweredBy: { setTo: 'cream3.14' },
       hsts: {
         includeSubDomains: true,
         maxAge: 31536000,
-        preload: true,
-      },
+        preload: true
+      }
     }));
 else
   server
     .disable('x-powered-by')
+    .enable('trust proxy')
     .use(express.static(__dirname + '/static'))
     .use(express.static(__dirname + '/../static'));
 
@@ -62,7 +63,7 @@ serverStruct
   .then(() =>
     serverStruct
       .startCleaners()
-      .startKamihimeCache(),
+      .startKamihimeCache()
   );
 
 client
@@ -72,5 +73,5 @@ client
 
 process.on(
   'unhandledRejection',
-  (err: Error) => serverStruct.util.logger.error(`Uncaught Promise Error: \n${err.stack || err}`),
+  (err: Error) => serverStruct.util.logger.error(`Uncaught Promise Error: \n${err.stack || err}`)
 );

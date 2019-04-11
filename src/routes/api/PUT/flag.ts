@@ -31,7 +31,7 @@ export default class PutFlagRequest extends ApiRoute {
       id: 'flag',
       max: 1,
       method: 'PUT',
-      route: [ '/flag' ] ,
+      route: [ '/flag' ]
     });
   }
 

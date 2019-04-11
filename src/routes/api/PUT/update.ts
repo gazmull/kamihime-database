@@ -43,7 +43,7 @@ export default class PutUpdateRequest extends ApiRoute {
       id: 'update',
       max: 1,
       method: 'PUT',
-      route: [ '/update' ],
+      route: [ '/update' ]
     });
   }
 
@@ -77,7 +77,7 @@ export default class PutUpdateRequest extends ApiRoute {
       harem3Title,
       id,
       name,
-      rarity,
+      rarity
     } = data;
     data = this._filter({
       harem1Resource1,
@@ -89,7 +89,7 @@ export default class PutUpdateRequest extends ApiRoute {
       harem3Resource2,
       harem3Title,
       name,
-      rarity,
+      rarity
     }, el => el);
 
     if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };

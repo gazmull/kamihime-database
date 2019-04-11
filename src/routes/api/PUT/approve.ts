@@ -31,7 +31,7 @@ export default class PutApproveRequest extends ApiRoute {
       id: 'approve',
       max: 1,
       method: 'PUT',
-      route: [ '/approve' ],
+      route: [ '/approve' ]
     });
   }
 

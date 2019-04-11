@@ -3,7 +3,6 @@ import { IAdminUser, IUser } from '../../typings';
 
 const defaultSettings = {
   audio: { bgm: 0.1, glo: 1.0, snd: 0.5 },
-  'info-lastNav': '#info',
   lastNav: '#all',
   menu: 'true',
   visual: {
@@ -11,8 +10,8 @@ const defaultSettings = {
     cl: '#ffffff',
     cls: '#dd55ff',
     containDialog: true,
-    fontSize: 18,
-  },
+    fontSize: 18
+  }
 };
 
 export default function authHandler (): RequestHandler {
@@ -42,7 +41,7 @@ export default function authHandler (): RequestHandler {
       const [ admin ]: IAdminUser[] = await this.util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
         .where({
           userId,
-          slug: req.signedCookies.slug,
+          slug: req.signedCookies.slug
         });
 
       if (admin) {
@@ -50,7 +49,7 @@ export default function authHandler (): RequestHandler {
           admin: true,
           ip: req.cookies.ip,
           lastLogin: req.cookies.lastLogin,
-          username: admin.username,
+          username: admin.username
         };
 
         Object.assign(res.locals.user, toPass);
@@ -62,7 +61,7 @@ export default function authHandler (): RequestHandler {
     if (eligible)
       await this.util.db.raw(
         'UPDATE users SET lastLogin = now() WHERE userId = ?',
-        [ req.signedCookies.userId ],
+        [ req.signedCookies.userId ]
       );
 
     let settings = JSON.parse(user.settings);

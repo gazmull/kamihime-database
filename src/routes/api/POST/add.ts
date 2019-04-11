@@ -40,7 +40,7 @@ export default class PostAddRequest extends ApiRoute {
       id: 'add',
       max: 1,
       method: 'POST',
-      route: [ '/add' ],
+      route: [ '/add' ]
     });
   }
 
@@ -68,7 +68,7 @@ export default class PostAddRequest extends ApiRoute {
       id,
       loli = 0,
       name,
-      rarity,
+      rarity
     } = data;
     data = this._filter({
       harem1Resource1,
@@ -81,7 +81,7 @@ export default class PostAddRequest extends ApiRoute {
       harem3Title,
       id,
       name,
-      rarity,
+      rarity
     }, el => el);
 
     if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };

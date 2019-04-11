@@ -8,7 +8,7 @@ export default class BrowserRoute extends Route {
     super({
       id: 'browser',
       method: 'get',
-      route: [ '/' ],
+      route: [ '/' ]
     });
   }
 

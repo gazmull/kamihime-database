@@ -20,7 +20,7 @@ export default class GetRandomRequest extends ApiRoute {
       id: 'version',
       max: 3,
       method: 'GET',
-      route: [ '/version' ],
+      route: [ '/version' ]
     });
   }
 

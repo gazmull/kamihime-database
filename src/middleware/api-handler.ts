@@ -11,7 +11,7 @@ export default function apiHandler (file: ApiRoute): RequestHandler {
 
     const user = requests.get(ip);
     this.util.logger.info(
-      `[I/RI] API: User: ${user.address} | request: ${file.method}->${file.id} | Triggers: ${user.triggers}`,
+      `[I/RI] API: User: ${user.address} | request: ${file.method}->${file.id} | Triggers: ${user.triggers}`
     );
 
     return user;
@@ -24,7 +24,7 @@ export default function apiHandler (file: ApiRoute): RequestHandler {
 
     user = requests.get(ip);
     this.util.logger.info(
-      `[U] API: User: ${user.address} | request: ${file.method}->${file.id} | Triggers: ${user.triggers}`,
+      `[U] API: User: ${user.address} | request: ${file.method}->${file.id} | Triggers: ${user.triggers}`
     );
   };
 
@@ -75,7 +75,7 @@ export default function apiHandler (file: ApiRoute): RequestHandler {
           message: [
             `Maximum requests has been reached (${maxRequests}/${cooldown}s).`,
             `Please wait for ${remaining / 1000} seconds.`,
-          ],
+          ]
         };
       }
       _update(req, requests);

@@ -29,7 +29,7 @@ export default class DeleteDeleteRequest extends ApiRoute {
       id: 'delete',
       max: 1,
       method: 'DELETE',
-      route: [ '/delete' ],
+      route: [ '/delete' ]
     });
   }
 

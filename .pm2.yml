@@ -1,11 +1,11 @@
 apps:
   - name: kamihimedb
-    script: build/index.js
+    script: dist/index.js
     watch:
-      - build
+      - dist
     ignore_watch:
-      - build/proto
-      - build/views
+      - dist/views
+      - dist/static
     env:
       NODE_ENV: development
     env_production:

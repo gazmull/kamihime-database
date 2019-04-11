@@ -23,7 +23,6 @@ import ApiRoute from '../../../struct/ApiRoute';
  *        "glo": 1.0,
  *        "snd": 0.5,
  *      },
- *      "info-lastNav": "#info",
  *      "lastNav": "#all",
  *      "menu": "true",
  *      "visual": {
@@ -41,7 +40,7 @@ export default class GetAtMeRequest extends ApiRoute {
       id: '@me',
       max: 5,
       method: 'GET',
-      route: [ '/@me' ],
+      route: [ '/@me' ]
     });
   }
 
@@ -60,9 +59,8 @@ export default class GetAtMeRequest extends ApiRoute {
       audio: req.cookies.settings.audio || {
         bgm: 0.1,
         glo: 1.0,
-        snd: 0.5,
+        snd: 0.5
       },
-      'info-lastNav': req.cookies.settings['info-lastNav'] || '#info',
       lastNav: req.cookies.settings.lastNav || '#all',
       menu: req.cookies.settings.menu || true,
       updatedAt: req.cookies.settings.updatedAt || Date.now(),
@@ -71,8 +69,8 @@ export default class GetAtMeRequest extends ApiRoute {
         cl: '#ffffff',
         cls: '#dd55ff',
         containDialog: true,
-        fontSize: 18,
-      },
+        fontSize: 18
+      }
     });
 
     if (req.query.save)

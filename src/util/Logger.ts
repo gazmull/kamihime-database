@@ -12,9 +12,9 @@ export default class Winston {
         dirname: process.cwd() + '/logs',
         filename: 'kamihimedb.%DATE%.log',
         maxFiles: '15d',
-        maxSize: '256m',
+        maxSize: '256m'
       }),
-    ],
+    ]
   });
 
   protected baseFormat () {
@@ -28,7 +28,7 @@ export default class Winston {
         : formatMessage(
             typeof log.message === 'string'
             ? log
-            : Object.create({ level: log.level, message: inspect(log.message, { showHidden: true, depth: 1 }) }),
+            : Object.create({ level: log.level, message: inspect(log.message, { showHidden: true, depth: 1 }) })
           );
 
     return format.combine(format.printf(_format));

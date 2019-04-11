@@ -38,7 +38,7 @@ export default class PostSessionRequest extends ApiRoute {
       id: 'session',
       max: 1,
       method: 'POST',
-      route: [ '/session' ],
+      route: [ '/session' ]
     });
   }
 
@@ -67,7 +67,7 @@ export default class PostSessionRequest extends ApiRoute {
           code: 202,
           id: session.id,
           message: 'Already existing session.',
-          password: session.password,
+          password: session.password
         });
 
       return;
@@ -87,7 +87,7 @@ export default class PostSessionRequest extends ApiRoute {
         characterId: id,
         id: uniqueId,
         password: uniqueKey,
-        userId: user,
+        userId: user
       });
 
     const [ newSession ]: ISession[] = await this.util.db('sessions').select()
@@ -97,7 +97,7 @@ export default class PostSessionRequest extends ApiRoute {
 
     await this.util.discordSend(
       this.client.auth.discord.dbReportChannel,
-      `${user}'s session for ${character.name} (${character.id}) has been created.`,
+      `${user}'s session for ${character.name} (${character.id}) has been created.`
     );
 
     this.util.logger.info(`[A] API: Character-Session: ${character.name} (${id}) | By: ${user}`);
