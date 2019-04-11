@@ -24,19 +24,19 @@ $(() => {
 
   $(settings.lastNav).collapse('show');
 
-  let nameTimeout = null;
+  let nameTimeout: NodeJS.Timeout = null;
   $('.name')
-    .on('mouseenter', ({ currentTarget: $this }) => {
-        if (!$($this).attr('name')) return;
+    .on('mouseenter', function () {
+        if (!$(this).attr('name')) return;
         if (nameTimeout) clearTimeout(nameTimeout);
 
         nameTimeout = setTimeout(() => {
-          const name = $($this).attr('name').replace(/'/g, '\\$&');
+          const name = $(this).attr('name').replace(/'/g, '\\$&');
           $('.model')
             .css({
               'background-image': `url('/img/wiki/close/${name} Close.png')`,
               display: '',
-              visibility: '',
+              visibility: ''
             });
         }, 300);
     })
@@ -45,18 +45,19 @@ $(() => {
 
       $('.model').css({
         display: 'none !important',
-        visibility: 'hidden',
+        visibility: 'hidden'
       });
     });
 
   $('.model').css({
     display: 'none !important',
-    visibility: 'hidden',
+    visibility: 'hidden'
   });
 });
 
+// @ts-ignore
 function showHelp () {
-  sweet({
+  return sweet({
     html: [
       '<ol style="list-style: none; padding: 0;">',
       '<li>ESC: Hide/Show Navigation</li>',
@@ -71,15 +72,16 @@ function showHelp () {
       '</ol>',
     ].join(''),
     titleText: 'Keyboard Shortcuts',
-    type: 'info',
+    type: 'info'
   });
 }
 
 function showLatest () {
-  sweet({
+  return sweet({
     html: '<a href="/latest" class="text-light" target="_blank">https://kamihimedb.thegzm.space/latest</a>',
     imageAlt: 'Latest Image',
     imageUrl: '/latest',
-    imageWidth: '100%',
+    imageWidth: 500,
+    imageHeight: 150
   });
 }

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": false,
+    "module": "none",
+    "incremental": true,
+    "target": "es2017",
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "outDir": "../../dist/static/js",
+    "removeComments": true,
+  },
+  "include": [
+    "ts/**/*.ts"
+  ]
+}

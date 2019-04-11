@@ -13,7 +13,7 @@ const fields = [
 ];
 const updateFields = fields.filter(el => el !== 'id');
 
-async function promptID (action) {
+async function promptID (action: APIAction) {
   if (!action)
     sweet({ titleText: 'Invalid action.', type: 'error' });
 
@@ -54,7 +54,7 @@ async function promptID (action) {
           width: 1024,
         })
           .then(res => {
-            if (res.dimiss) return;
+            if (res.dismiss) return;
 
             return res.value;
           });
@@ -71,7 +71,7 @@ async function promptID (action) {
           width: 1024,
         })
           .then(res => {
-            if (res.dimiss) return;
+            if (res.dismiss) return;
 
             return res.value;
           });
@@ -93,8 +93,8 @@ async function promptID (action) {
   } catch (err) { sweet({ text: err, type: 'error' }); }
 }
 
-async function submit (action, value = '', id) {
-  let method;
+async function submit (action: APIAction, value = '', id?: string) {
+  let method: string;
 
   switch (action) {
     default: method = 'PUT'; break;
@@ -104,7 +104,7 @@ async function submit (action, value = '', id) {
 
   const data = clean(value);
 
-  if (!data.id) Object.assign(data, { id: id }); // tslint:disable-line:object-literal-shorthand
+  if (!data.id) Object.assign(data, { id });
 
   const confirm = await sweet({
     cancelButtonText: 'No',
@@ -118,7 +118,7 @@ async function submit (action, value = '', id) {
 
   if (!confirm) return;
 
-  const options = {
+  const options: RequestInit = {
     body: JSON.stringify(data),
     credentials: 'include',
     headers: {
@@ -147,15 +147,15 @@ function clean (value = '') {
     catch { } // tslint:disable-line:no-empty
 
     _val = _val.trim();
-    _val = isNaN(_val) ?  _val : parseInt(_val);
+    const parsed = isNaN(Number(_val)) ?  _val : parseInt(_val);
 
-    Object.assign(result, { [key]: _val });
+    Object.assign(result, { [key]: parsed });
   }
 
-  return result;
+  return result as IKamihime;
 }
 
-function unclean (obj = {}) {
+function unclean (obj: any = {}) {
   const result = [];
 
   for (const key of updateFields) {

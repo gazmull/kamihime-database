@@ -1,7 +1,6 @@
 let jc = Cookies;
-let searchController;
-let searchTimeout;
-let settings;
+let searchController: AbortController;
+let searchTimeout: NodeJS.Timeout;
 
 $(() => {
   jc = Cookies.withConverter({
@@ -10,7 +9,7 @@ $(() => {
 
       return value.slice(0, 2) === 'j:' ? value.slice(2) : value;
     },
-    write: value => {
+    write: (value: string) => {
       try {
         const tmp = JSON.parse(value);
         if (typeof tmp !== 'object') throw undefined;
@@ -34,7 +33,7 @@ $(() => {
       trigger : 'hover',
     });
 
-    tooltips.on('click', ({ currentTarget: $this }) => $($this).tooltip('hide'));
+    tooltips.on('click', ({ currentTarget }) => $(currentTarget).tooltip('hide'));
   }
 
   if (typeof swal !== 'undefined')
@@ -46,17 +45,17 @@ $(() => {
       customClass: 'animated fadeIn faster',
     });
 
-  $('.nav-switch').on('click', ({ currentTarget: $this }) => {
+  $('.nav-switch').on('click', function () {
     const nav = $('.side-nav');
 
     if (nav.hasClass('nav-hidden')) {
       nav.removeClass('nav-hidden');
-      $($this).addClass('nav-switch-hide');
+      $(this).addClass('nav-switch-hide');
 
       saveSettings('menu', true);
     } else {
       nav.addClass('nav-hidden');
-      $($this).removeClass('nav-switch-hide');
+      $(this).removeClass('nav-switch-hide');
 
       saveSettings('menu', false);
     }
@@ -69,18 +68,18 @@ $(() => {
     }, 801);
 
   $('.navbar-toggler, #result-close').on('click', () => {
-    if (controller) controller.abort();
+    if (searchController) searchController.abort();
 
     $('#search-bar').val('');
     $('#search-bar').trigger('input');
   });
 
   $('#search-bar').on('input',  function () {
-    const query = $(this).val();
+    const query = $(this).val() as string;
 
     if (searchTimeout) {
       clearTimeout(searchTimeout);
-      controller.abort();
+      searchController.abort();
     }
     if (!query) {
       $('body')
@@ -92,8 +91,8 @@ $(() => {
     if (window.pageYOffset !== 0)
       window.scrollTo(0, 0);
 
-    controller = new AbortController();
-    const signal = controller.signal;
+    searchController = new AbortController();
+    const signal = searchController.signal;
     const oldWidth = $('body').innerWidth();
 
     $('body')
@@ -112,11 +111,12 @@ $(() => {
       try {
         const response = await fetch(`/api/search?name=${query}&approved=1`, {
           headers: { Accept: 'application/json' },
-          signal: signal, // tslint:disable-line:object-literal-shorthand
+          signal,
         });
-        const result = await response.json();
+        const result: IKamihime[] = await response.json();
+        const error = (result as any).error;
 
-        if (result.error) return $('#result-head').text(result.error.message);
+        if (error) return $('#result-head').text(error.message);
         if (!result.length) return $('#result-head').text('No match found');
 
         $('#result-head').text(`${result.length} Found`);
@@ -153,7 +153,7 @@ $(() => {
 
     if (code === 27) return $('.nav-switch').triggerHandler('click');
 
-    const toggle = id => {
+    const toggle = (id: number) => {
       const el = $(`.collapse[key='${id}']`);
 
       if (el.hasClass('show'))
@@ -165,26 +165,25 @@ $(() => {
     return toggle(code);
   });
 
-function showLoginWarning () {
-  sweet({
+async function showLoginWarning () {
+  const res = await sweet({
     html: [
       'While you are able to save your settings, accounts that are inactive for 14 days will be deleted.',
       'Click OK to continue to log in.',
     ].join('<br><br>'),
     titleText: 'Login Warning',
     type: 'warning',
-  })
-  .then(res => {
-    if (res.value)
-      location.replace('/login');
   });
+
+  if (res.value)
+    location.replace('/login');
 }
 
-async function saveSettings (key = true, obj, db = false) {
+async function saveSettings (key: string | boolean = true, obj?: {}, db = false) {
   const isBool = typeof key === 'boolean';
 
   if (!isBool) {
-    settings[key] = obj;
+    settings[key as string] = obj;
     jc.set('settings', settings);
   }
 

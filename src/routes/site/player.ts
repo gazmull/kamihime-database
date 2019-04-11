@@ -18,7 +18,7 @@ export default class PlayerRoute extends Route {
     super({
       id: 'player',
       method: 'get',
-      route: [ '/player/:id/:ep/:type' ],
+      route: [ '/player/:id/:ep/:type' ]
     });
   }
 
@@ -42,16 +42,14 @@ export default class PlayerRoute extends Route {
       scenario3: 'harem3Resource2',
       story1: 'harem1Resource1',
       story2: 'harem2Resource1',
-      story3: 'harem3Resource1',
+      story3: 'harem3Resource1'
     };
     const selected = episodes[type + ep];
 
     if (!template || !selected)
       throw { code: 422, message: 'Invalid episode or player type.' };
 
-    let fields = [ 'id', 'name', 'rarity', 'peeks' ];
-    fields = fields.concat([ selected, `harem${ep}Title` ]);
-
+    const fields = [ 'id', 'name', 'rarity', 'peeks', selected ];
     const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
       .where('id', id);
     const resource = character[selected];
@@ -59,7 +57,7 @@ export default class PlayerRoute extends Route {
     if (ep === 3 && (id.charAt(0) !== 'k' || [ 'SSR+', 'R' ].includes(character.rarity)))
       throw { code: 422, message: 'Invalid episode for this character.' };
 
-    if (!character) throw { code: 404 };
+    if (!character) throw { code: 404, message: 'Character not found.' };
     if (!resource)
       throw { code: 404, message: [ 'Episode Resource is empty.', 'Please contact the administrator!' ] };
 
@@ -67,7 +65,8 @@ export default class PlayerRoute extends Route {
 
     const { scenario = null } = await this._find('script.json', id, resource);
 
-    if (!template || !character || !scenario) throw { code: 404 };
+    if (!template || !character || !scenario)
+      throw { code: 404, message: 'Player type, character, or the scenario hash cannot be found.' };
 
     let files: string[] = null;
 
@@ -80,7 +79,7 @@ export default class PlayerRoute extends Route {
           message: [
           'Episode Resource is unexpectedly empty.',
           'Please contact the administrator!',
-        ],
+        ]
       };
     }
 
@@ -89,7 +88,7 @@ export default class PlayerRoute extends Route {
     folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
     const requested = {
       SCENARIOS: `${SCENARIOS + folder}${resource}/`,
-      script: scenario,
+      script: scenario
     };
 
     if (type === 'story')
@@ -109,7 +108,7 @@ export default class PlayerRoute extends Route {
    * @param res The Resource ID for given template
    */
   protected async _find (name: string, id: string, res: string) {
-    const filePath = path.resolve(__dirname, '../../static/scenarios', id, res, name);
+    const filePath = path.resolve(__dirname, '../../../static/scenarios', id, res, name);
 
     try {
       const file = await fs.readFile(filePath);
@@ -145,7 +144,7 @@ export default class PlayerRoute extends Route {
     }
 
     const visitorVisits = this.server.visitors.filter((timestamps, _resource) =>
-      _resource !== resource && Date.now() < (timestamps.get(usr) + COOLDOWN),
+      _resource !== resource && Date.now() < (timestamps.get(usr) + COOLDOWN)
     );
 
     const visitLimit = req.signedCookies.userId ? MAX_LOGGED_IN_VISITS : MAX_VISITS;
