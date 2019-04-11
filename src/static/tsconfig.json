@@ -7,11 +7,14 @@
     "target": "es2017",
     "moduleResolution": "node",
     "noUnusedLocals": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "outDir": "../../dist/static/js",
     "removeComments": true,
   },
   "include": [
     "ts/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }
