@@ -30,14 +30,14 @@ export default class Server {
       discord,
       exempt,
       host,
-      rootURL,
+      rootURL
     };
 
     this.util = {
       handleApiError,
       handleSiteError,
       db: knex(database),
-      logger: new Winston().logger,
+      logger: new Winston().logger
     };
 
     this.api = new Collection();
@@ -95,7 +95,7 @@ export default class Server {
 
       await processRoutes.bind(this)(
         Api,
-        { client, directory: API_METHOD_ROUTES_DIR, handler: apiHandler, routes: apiRoutes },
+        { client, directory: API_METHOD_ROUTES_DIR, handler: apiHandler, routes: apiRoutes }
       );
 
       for (const route of apiRoutes) {
@@ -123,18 +123,17 @@ export default class Server {
       .use('/api', Api);
 
     const SITE_ROUTES_DIR: string = resolve(__dirname, '../routes/site');
-    const siteRoutes: string[] = fs.readdirSync(SITE_ROUTES_DIR);
-
-    siteRoutes.splice(siteRoutes.indexOf('api'), 1);
+    let siteRoutes: string[] = fs.readdirSync(SITE_ROUTES_DIR);
+    siteRoutes = siteRoutes.filter(el => el !== 'api');
 
     await processRoutes.bind(this)(
       server,
-      { client, directory: SITE_ROUTES_DIR, handler: reAuthHandler, routes: siteRoutes },
+      { client, directory: SITE_ROUTES_DIR, handler: reAuthHandler, routes: siteRoutes }
     );
 
     this.util.logger.info('Loaded Site Routes');
 
-    server.all('*', (_, res) =>  res.render('invalids/403'));
+    server.all('*', (_, res) => handleSiteError(res, { code: 404 }));
     Api.all('*', (_, res) => handleApiError(res, { code: 404, message: 'API method not found.' }));
 
     const protocol = this.production ? 'https' : 'http';
