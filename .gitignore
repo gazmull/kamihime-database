@@ -8,10 +8,11 @@ yarn-error.log
 # Private Credentials
 *.sql
 logs/
-build/
+dist/
 provider/
 scenarios-error.log
 src/auth/auth.ts
+static/css
 static/img/wiki
 static/scenarios/
 static/scripts/

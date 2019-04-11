@@ -5,12 +5,13 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noUnusedLocals": true,
-    "outDir": "build",
+    "outDir": "dist",
     "paths": {
       "*": [
         "typings/*"
       ]
     },
+    "incremental": true,
     "removeComments": true,
     "target": "es2018"
   },
@@ -18,8 +19,6 @@
     "src/**/*.ts"
   ],
   "exclude": [
-    "src/static/**/*",
-    "build/**/*",
-    "node_modules"
+    "src/static/**/*"
   ]
 }

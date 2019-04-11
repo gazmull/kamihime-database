@@ -1,7 +1,7 @@
 {
   "verbose": true,
-  "watch": [ "build/**/*.js" ],
-  "ignore": [ "build/static" ], 
+  "watch": [ "dist/**/*.js" ],
+  "ignore": [ "dist/static" ],
   "env": { "NODE_ENV": "development" },
   "ext": "js"
 }
