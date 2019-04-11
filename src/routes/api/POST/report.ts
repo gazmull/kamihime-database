@@ -15,21 +15,11 @@ import ApiRoute from '../../../struct/ApiRoute';
  * @apiParam (Request Body) {string} message.subject The message's subject.
  * Valid options can be seen at `Message Subject Options`'s Fields.
  * @apiParam (Request Body) {string} message.content The message's content.
- * @apiParam (Request Body) {number} type The type of the report.
- * <br>0 for `Wiki Info` report<br>1 for `Episodes` report
  *
- * @apiParam (Message Subject Options - Wiki Info) ability `Wrong abilities`
- * @apiParam (Message Subject Options - Wiki Info) image `Image issues`
- * @apiParam (Message Subject Options - Wiki Info) info `Wrong brief info (first table)`
- * @apiParam (Message Subject Options - Wiki Info) internal `Info cannot be resolved`
- * @apiParam (Message Subject Options - Wiki Info) notes `Needs additional/wrong notes`
- * @apiParam (Message Subject Options - Wiki Info) others `Others`
- * @apiParam (Message Subject Options - Wiki Info) stats `Wrong stats`
- *
- * @apiParam (Message Subject Options - Episodes) internal `Cannot view story/scenario`
- * @apiParam (Message Subject Options - Episodes) others `Others`
- * @apiParam (Message Subject Options - Episodes) resource `Wrong episode story/scenario`
- * @apiParam (Message Subject Options - Episodes) title `Wrong episode title`
+ * @apiParam (Message Subject Options) internal `Cannot view story/scenario`
+ * @apiParam (Message Subject Options) others `Others`
+ * @apiParam (Message Subject Options) resource `Wrong episode story/scenario`
+ * @apiParam (Message Subject Options) title `Wrong episode title`
  *
  * @apiSuccess {string} ok JSON body of <Response.status>.ok.
  * @apiSuccessExample {json} Response:
@@ -45,7 +35,7 @@ export default class PostReportRequest extends ApiRoute {
       id: 'report',
       max: 1,
       method: 'POST',
-      route: [ '/report' ],
+      route: [ '/report' ]
     });
   }
 
@@ -66,8 +56,7 @@ export default class PostReportRequest extends ApiRoute {
     const [ recentlyReported ] = await this.util.db('reports').select('userId')
       .where({
         characterId: data.characterId,
-        type: data.type,
-        userId: usr,
+        userId: usr
       })
       .andWhereRaw('DATE_ADD(date, INTERVAL :ss HOUR) > NOW()', { ss: interval })
       .limit(1);
@@ -86,40 +75,25 @@ export default class PostReportRequest extends ApiRoute {
       .insert({
         characterId: data.characterId,
         message: JSON.stringify(data.message),
-        type: data.type,
-        userId: usr,
+        userId: usr
       });
 
     const ip = req.ip;
     const name = usr === ip ? `Anonymous User (${ip})` : `User ${user.username} (${user.userId})`;
     const character = this.server.kamihime.find(el => el.id === data.characterId);
-    const channel = data.type === 0
-      ? this.client.auth.discord.wikiReportChannel
-      : this.client.auth.discord.dbReportChannel;
-    const type = data.type === 0 ? 'Wiki Info' : 'Episodes';
-    const types = [
-      {
-        ability: 'Wrong abilities',
-        image: 'Image issues',
-        info: 'Wrong brief info (first table)',
-        internal: 'Info cannot be resolved',
-        notes: 'Needs additional/wrong notes',
-        others: 'Others',
-        stats: 'Wrong stats',
-      },
-      {
-        internal: 'Cannot view story/scenario',
-        others: 'Others',
-        resource: 'Wrong episode story/scenario',
-        title: 'Wrong episode title',
-      },
-    ];
+    const channel = this.client.auth.discord.dbReportChannel;
+    const types = {
+      internal: 'Cannot view story/scenario',
+      others: 'Others',
+      resource: 'Wrong episode story/scenario',
+      title: 'Wrong episode title'
+    };
 
     await this.util.discordSend(channel, [
-      `${name} from KamihimeDB reported that ${character.name}'s ${type} has errors. Details:`,
+      `${name} from KamihimeDB reported that ${character.name}'s Episodes has errors. Details:`,
       `Occurred at <${this.server.auth.rootURL}info/${character.id}>`,
       '```x1',
-      'Regarding: ' + types[data.type][data.message.subject],
+      'Regarding: ' + types[data.message.subject],
       data.message.content,
       '```',
     ]);

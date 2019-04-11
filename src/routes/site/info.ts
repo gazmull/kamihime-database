@@ -11,7 +11,7 @@ export default class InfoRoute extends Route {
     super({
       id: 'info',
       method: 'get',
-      route: [ '/info/:id' ],
+      route: [ '/info/:id' ]
     });
   }
 
@@ -19,24 +19,22 @@ export default class InfoRoute extends Route {
     if (!getArticle)
       getArticle = promisify(this.client.wikiaClient.getArticle.bind(this.client.wikiaClient));
 
-    const { id = null } = req.params;
+    const { id = null }: { id: string } = req.params;
 
     if (!id) throw { code: 403, message: 'ID is empty.' };
+    if (!/[resk]/.test(id.charAt(0)))
+      throw { code: 403, message: 'Only souls, eidolons, and kamihime characters are allowed.' };
 
-    const character = id === 'random' ? await this._getRandom() : this.server.kamihime.find(el => el.id === id);
+    const character = id === 'random'
+      ? await this._getRandom()
+      : this.server.kamihime
+        .filter(el => /[esk]/.test(el.id.charAt(0)))
+        .find(el => el.id === id);
 
     if (!character) throw { code: 422 };
     else if ((character as any).error) throw { code: 404 };
 
-    const requested = { character, wiki: null };
-
-    this._parseArticle(character.name)
-    .then(wiki => {
-      requested.wiki = wiki;
-
-      return res.render('info/info', requested);
-    })
-    .catch(() => res.render('info/info', requested));
+    res.render('info/info', { character });
   }
 
   // -- Util
