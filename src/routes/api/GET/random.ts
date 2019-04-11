@@ -3,12 +3,13 @@ import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
 
 /**
- * @api {get} /random/:length random
+ * @api {get} /random/:length/:includeWeapons random
  * @apiName GetRandom
  * @apiGroup Kamihime Specific
  * @apiDescription Randomly provides character objects based on length provided. Maximum of 10.
  *
  * @apiParam {number} length Number of items to be provided.
+ * @apiParam {boolean} includeWeapons Should the cherry picker pick weapons as well?
  *
  * @apiSuccessExample {json} Response:
  *  HTTP/1.1 200 OK
@@ -45,21 +46,25 @@ export default class GetRandomRequest extends ApiRoute {
       id: 'random',
       max: 3,
       method: 'GET',
-      route: [ '/random/:_length?' ],
+      route: [ '/random/:_length?/:includeWeapons?' ]
     });
   }
 
   public async exec (req: Request, res: Response) {
     const length = req.params._length ? Math.abs(Number(req.params._length)) : 1;
+    const includeWeapons = req.params.includeWeapons;
 
     if (isNaN(length)) throw { code: 403, message: 'Only numbers are allowed.' };
     if (length > 10) throw { code: 403, message: 'Request must be only up to 10 characters.' };
 
-    const roster = this.server.kamihime.filter(k => k.approved && k.avatar);
-    const cherry = (number: number) => Math.abs(Math.floor(Math.random() * roster.length) - 1);
+    const filter = (k: IKamihime) => k.approved && k.avatar
+      || (includeWeapons ? k.id.charAt(0) === 'w' : k.id.charAt(0) !== 'w');
+
+    const roster = this.server.kamihime.filter(filter);
+    const cherry = () => Math.abs(Math.floor(Math.random() * roster.length) - 1);
     const arr = Array(length) as IKamihime[];
 
-    for (let i = 0; i < arr.length;) arr[i] = roster[cherry(i++)];
+    for (let i = 0; i < arr.length; i++) arr[i] = roster[cherry()];
 
     res
       .status(200)
