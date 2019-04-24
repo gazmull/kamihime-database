@@ -176,7 +176,8 @@ export default class Extractor {
           const mainData = script
             .replace(/(.*?),\s*(\}|])/g, '$1$2')
             .replace(/;\s*?$/, '')
-            .replace(/”(?!(?:.+)?")/g, '"');
+            .replace(/"words":"(.+)"/g, (_, p1: string) => `"words":"${p1.replace(/[“”]/g, '\\"')}"`)
+            .replace(/(?<!\\)”/g, '"');
           const json: IScenarioSequence[] = JSON.parse(mainData);
 
           await this._doScenario({
@@ -268,12 +269,12 @@ export default class Extractor {
           }
 
           case 'chara_show': {
-            name = chara[attribute.name].name;
+            name = chara[attribute.name] ? chara[attribute.name].name : '';
             break;
           }
 
           case 'chara_mod': {
-            lines.push({ expression: chara[attribute.name].face[attribute.face] });
+            lines.push({ expression: chara[attribute.name] ? chara[attribute.name].face[attribute.face] : '' });
             break;
           }
 
@@ -394,8 +395,10 @@ export default class Extractor {
         }
 
         line.words = line.words
-          .replace(/[[\]"]/g, '')
-          .replace(/(\.{1,3}|…|,)(?=[^\s\W])/g, '$& ');
+          ? line.words
+              .replace(/[[\]"]/g, '')
+              .replace(/(\.{1,3}|…|,)(?=[^\s\W])/g, '$& ')
+          : '';
         line.chara = line.chara
           .replace(/(["%])/g, '\\$&');
 
