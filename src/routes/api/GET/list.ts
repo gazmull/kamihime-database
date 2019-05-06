@@ -1,12 +1,23 @@
-// -- Not actually done on stats part, but this'll work normally now per eros-bot#15's request.
 import { Request, Response } from 'express';
 import { QueryBuilder } from 'knex';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
+const defaultFields = [
+  'id', 'name',
+  'avatar', 'main', 'preview',
+  'hp', 'atk',
+  'element', 'rarity', 'type', 'tier',
+  'peeks', 'loli',
+  'harem1Title', 'harem1Resource1',
+  'harem2Title', 'harem2Resource1', 'harem2Resource2',
+  'harem3Title', 'harem3Resource1', 'harem3Resource2',
+];
 const fields = {
   eidolon: [
     'id', 'name',
     'avatar', 'main', 'preview',
+    'hp', 'atk',
     'element',
     'rarity',
     'peeks', 'loli',
@@ -16,6 +27,7 @@ const fields = {
   kamihime: [
     'id', 'name',
     'avatar', 'main', 'preview',
+    'hp', 'atk',
     'element', 'type',
     'rarity',
     'peeks', 'loli',
@@ -35,8 +47,11 @@ const fields = {
   weapon: [
     'id', 'name',
     'avatar', 'main',
+    'hp', 'atk',
     'element', 'rarity', 'type',
-  ]
+  ],
+  default: defaultFields,
+  internal: defaultFields.concat('_rowId', 'approved')
 };
 const concat = (k: string, v: any) => `${k} = ${isNaN(v) ? `'${v}'` : v}`;
 const c = {
@@ -65,6 +80,8 @@ const queries = {
 
 /* tslint:enable:object-literal-sort-keys */
 
+/* tslint:disable:max-line-length */
+
 /**
  * @api {get} /list/:options list
  * @apiName GetList
@@ -82,10 +99,14 @@ const queries = {
  *  - **Eidolon / Kamihime / Weapon Only**:
  *    - `light` / `dark` / `wind` / `thunder` / `water` / `fire` / `phantom`
  *    - `ssr+` / `ssr` / `sr` / `r` / `n`
+ * ### Sort Options
+ *  - **Sort By**: `name` / `rarity` / `tier` / `element` / `type` / `atk` / `hp`
+ *  - **Sort Type**: `asc` / `desc`
  *
- * @apiExample {html} Example: this will return items that are approved, eidolon, not a loli, and of water element.
- * https://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water
+ * @apiExample {html} Example: this will return items that are approved, eidolon, not a loli, and of water element, sorted by rarity (ascending).
+ * https://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water?sort=rarity-asc
  * @apiParam {string} [options] An array of options with `/` delimiter. See description.
+ * @apiParam (Query) {string} [sort] Sorts the list. Syntax: `sortBy-sortType` (default: `name-asc`)
  *
  * @apiSuccess {/id[]} items An array of items from `GET /id` object.
  * @apiSuccessExample {json} Response:
@@ -116,6 +137,9 @@ const queries = {
  *    }, ...items
  *  ]
  */
+
+ /* tslint:enable:max-line-length */
+
 export default class GetListRequest extends ApiRoute {
   constructor () {
     super({
@@ -134,23 +158,23 @@ export default class GetListRequest extends ApiRoute {
     const validPrimaries: string[] = [ 'soul', 'eidolon', 'kamihime', 'weapon', 'approved', 'loli', 'no-loli' ];
 
     if (length && !validPrimaries.includes(tags[0]))
-      throw {
-        code: 403,
-        message: 'Invalid first parameter. It must be one of the following: ' + validPrimaries.join(', ')
-      };
+      throw new ApiError(422, 'Invalid first parameter. It must be one of the following: ' + validPrimaries.join(', '));
 
     validPrimaries.splice(validPrimaries.indexOf('approved'), 3);
 
     if (tags.filter(el => validPrimaries.includes(el)).length > 1)
-      throw {
-        code: 403,
-        message: 'You may only select one primary variable.'
-      };
+      throw new ApiError(422, 'You may only select one primary variable.');
 
-    const [ sortBy, sortType ]: string[] = req.query.sort
+    // tslint:disable-next-line:prefer-const
+    let [ sortBy = 'name', sortType = 'asc' ]: string[] = req.query.sort
       ? req.query.sort.split('-')
-      : [ 'name', 'asc' ];
-    let query: QueryBuilder = this.util.db('kamihime').select(tags[0] ? fields[tags[0]] : '*')
+      : [];
+
+    if (![ 'name', 'rarity', 'tier', 'element', 'type', 'atk', 'hp' ].includes(sortBy))
+      sortBy = 'name';
+
+    let query: QueryBuilder = this.server.util.db('kamihime')
+      .select(tags[0] ? fields[tags[0]] : (req.query.internal ? fields.internal : fields.default))
       .orderBy(sortBy, sortType);
 
     if (length) {
