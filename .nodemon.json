@@ -1,5 +1,4 @@
 {
-  "verbose": true,
   "watch": [ "dist/**/*.js" ],
   "ignore": [ "dist/static" ],
   "env": { "NODE_ENV": "development" },

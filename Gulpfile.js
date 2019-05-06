@@ -26,13 +26,6 @@ const scssFiles = {
   src: paths.src + '/static/sass/**/*.scss'
 };
 
-const backendFiles = { dest: paths.dist };
-
-const staticFiles = {
-  dist: paths.dist + '/static/js',
-  src: paths.srcStatic + '/ts/**/*.ts'
-};
-
 const terserFiles = {
   dest: paths.dist,
   src: paths.dist + '/**/*.js'
@@ -65,13 +58,13 @@ gulp.task('lint', () => {
 gulp.task('backend-ts', () => {
   return backendTs.src()
     .pipe(backendTs())
-    .js.pipe(gulp.dest(backendFiles.dest));
+    .js.pipe(gulp.dest(backendTs.options.outDir));
 });
 
 gulp.task('static-ts', () => {
   return staticTs.src()
     .pipe(staticTs())
-    .js.pipe(gulp.dest(staticFiles.dist));
+    .js.pipe(gulp.dest(staticTs.options.outDir));
 });
 
 gulp.task('views', () => {
@@ -88,27 +81,24 @@ gulp.task('terser', () => {
     .pipe(gulp.dest(terserFiles.dest));
 });
 
-gulp.task('nodemon', done => {
+gulp.task('serve', done => {
   let started = false;
 
   return nodemon(nodemonConfig)
     .on('start', () => {
-      if (!started) {
-        started = true;
-        done();
-      }
-    })
-    .on('restart', () => setTimeout(() => browserSync.reload(), 5e3));
-});
+      if (started) return;
 
-gulp.task('serve', gulp.series('nodemon', () => {
-  browserSync.init({
-    ghostMode: true,
-    proxy: 'http://localhost:80',
-    port: 3000,
-    reloadDelay: 1e3
-  });
-}));
+      started = true;
+      browserSync.init({
+        ghostMode: true,
+        proxy: 'http://localhost:80',
+        port: 3000,
+        reloadDelay: 1e3
+      });
+
+      done();
+    });
+});
 
 const commonTasks = [ clean, 'lint', 'backend-ts', 'static-ts', 'views', 'styles' ];
 
@@ -116,20 +106,20 @@ function clean () {
   return fs.remove(paths.dist);
 }
 
-function reload (done) {
-  browserSync.reload();
-  done();
+function reload (done, ms = 500) {
+  setTimeout(() => {
+    browserSync.reload();
+    done();
+  }, ms);
 }
 
 function watch () {
-  gulp.watch(
-    [ `${paths.srcStatic}/ts/**/*.ts`, viewsFiles.src ],
-    gulp.series('static-ts', 'views', reload)
-  );
+  gulp.watch(viewsFiles.src, gulp.series('views', reload));
   gulp.watch(`${paths.srcStatic}/sass/**/*.scss`, gulp.series('styles'));
-  gulp.watch([ `${paths.src}/**/*.ts`, '!**/static*/**' ], gulp.series('backend-ts', 'nodemon', reload));
+  gulp.watch([ `${paths.src}/**/*.ts`, `!${paths.src}/static/**/*.ts` ], gulp.series('backend-ts', done => reload(done, 5e3))); // tslint:disable-line:max-line-length
+  gulp.watch(`${paths.srcStatic}/js/**/*.ts`, gulp.series('static-ts', reload));
 }
 
 gulp.task('default', gulp.series(...commonTasks, 'terser'));
-gulp.task('watch', gulp.parallel('serve', watch));
 gulp.task('build', gulp.series(...commonTasks));
+gulp.task('watch', gulp.series('build', gulp.parallel('serve', watch)));
