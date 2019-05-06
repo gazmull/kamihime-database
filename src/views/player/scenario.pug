@@ -6,8 +6,7 @@ append scripts
     let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
     const files = !{JSON.stringify(files)};
     const SCENARIOS = "#{SCENARIOS}";
-  script(src='//cdn.jsdelivr.net/npm/howler@2.1.1/dist/howler.core.min.js')
-  script(src='/js/player.js')
+  script(src='//cdn.jsdelivr.net/npm/howler@2.1.2/dist/howler.core.min.js')
   script(src='/js/player/scenario.js')
 
 block content
