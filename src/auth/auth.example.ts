@@ -1,5 +1,5 @@
-import { Api, DiscordClient, Github, GrantProvider, Host } from 'auth';
 import { Config as Database } from 'knex';
+import { Api, DiscordClient, Github, GrantProvider, Host } from '../../typings/auth';
 
 /**
  * The database configuration to use for the server

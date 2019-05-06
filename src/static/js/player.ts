@@ -66,7 +66,7 @@ async function showAudioSettings () {
     });
 
     if (!res.value) return;
-    if ([ 'iPhone', 'iPad', 'iPhone' ].some(el => new RegExp(el, 'i').test(navigator.userAgent)))
+    if ([ 'iPhone', 'iPad', 'iPod' ].some(el => new RegExp(el, 'i').test(navigator.userAgent)))
       return sweet.fire('iOS Detected', 'This action requires the page to reload. Are you sure?', 'question')
         .then(r => r.dismiss ? undefined : window.location.reload());
 
