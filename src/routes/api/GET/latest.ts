@@ -1,14 +1,18 @@
-import { Response } from 'express';
-import { IKamihime } from '../../../../typings';
+import { Request, Response } from 'express';
+import { IKamihime, IKamihimeLatest } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
-const fields = [ 'id', 'name' ];
+/* tslint:disable:max-line-length */
 
 /**
- * @api {get} /id/:id latest
+ * @api {get} /latest latest
  * @apiName GetLatest
  * @apiGroup Kamihime Specific
- * @apiDescription Retrieves latest added characters up to 3 each category.
+ * @apiDescription Retrieves latest added characters.
+ *
+ * @apiParam (Query) {string} [category] Get latest characters within the specified category only. Available: `soul` / `eidolon` / `ssr+` / `ssr` / `sr` / `r`
+ * @apiParam (Query) {number} [len] The number of latest characters to be retrieved. Default: 3 / Min-Max: 1—10
  *
  * @apiSuccess {Character[]} category Properties for each category (soul, eidolon, etc).
  * @apiSuccess {object} Character The character object.
@@ -49,6 +53,8 @@ const fields = [ 'id', 'name' ];
  *    ]
  *  }
  */
+
+ /* tslint:enable:max-line-length */
 export default class GetLatestRequest extends ApiRoute {
   constructor () {
     super({
@@ -60,34 +66,67 @@ export default class GetLatestRequest extends ApiRoute {
     });
   }
 
-  public async exec (_, res: Response) {
-    const soul: IKamihime[] = await this.util.db('kamihime').select(fields)
-      .whereRaw('id LIKE \'s%\' AND approved=1')
-      .orderBy('_rowId', 'desc')
-      .limit(3);
-    const eidolon: IKamihime[] = await this.util.db('kamihime').select(fields)
-      .whereRaw('id LIKE \'e%\' AND approved=1')
-      .orderBy('_rowId', 'desc')
-      .limit(3);
-    const ssra: IKamihime[] = await this.util.db('kamihime').select(fields)
-      .whereRaw('id LIKE \'k%\' AND rarity=\'SSR+\' AND approved=1')
-      .orderBy('_rowId', 'desc')
-      .limit(3);
-    const ssr: IKamihime[] = await this.util.db('kamihime').select(fields)
-      .whereRaw('id LIKE \'k%\' AND rarity=\'SSR\' AND approved=1')
-      .orderBy('_rowId', 'desc')
-      .limit(3);
-    const sr: IKamihime[] = await this.util.db('kamihime').select(fields)
-      .whereRaw('id LIKE \'k%\' AND rarity=\'SR\' AND approved=1')
-      .orderBy('_rowId', 'desc')
-      .limit(3);
-    const r: IKamihime[] = await this.util.db('kamihime').select(fields)
-      .whereRaw('id LIKE \'k%\' AND rarity=\'R\' AND approved=1')
-      .orderBy('_rowId', 'desc')
-      .limit(3);
+  public async exec (req: Request, res: Response) {
+    const latestLength: number = req.query.len || 3;
+    const category: string = req.query.category;
 
-    res
+    if (latestLength <= 0 || latestLength > 10)
+      throw new ApiError(422, 'Requested length should be between 1 and 10.');
+    if (!category) {
+      const categories: IKamihimeLatest = {
+        soul: this.server.kamihime.filter(v => v.id.charAt(0) === 's' && v.approved),
+        eidolon: this.server.kamihime.filter(v => v.id.charAt(0) === 'e' && v.approved),
+        'ssr+': this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'SSR+' && v.approved),
+        ssr: this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'SSR' && v.approved),
+        sr: this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'SR' && v.approved),
+        r: this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'R' && v.approved)
+      };
+
+      for (const key of Object.keys(categories)) {
+        const _category = categories[key] as IKamihime[];
+
+        categories[key] = _category
+          .sort((a, b) => b._rowId - a._rowId)
+          .map(v => ({ id: v.id, name: v.name }))
+          .slice(0, latestLength);
+      }
+
+      return res
+        .status(200)
+        .json(categories);
+    }
+
+    let selected: string = null;
+
+    switch (category) {
+      default: throw new ApiError(422, 'Invalid category.');
+      case 'ssr+':
+      case 'ssr':
+      case 'sr':
+      case 'r':
+        selected = 'k';
+        break;
+      case 'soul':
+        selected = 's';
+        break;
+      case 'eidolon':
+        selected = 'e';
+        break;
+    }
+
+    const list = this.server.kamihime
+      .filter(v =>
+        v.id.charAt(0) === selected
+        && (selected === 'k'
+          ? v.rarity === category.toUpperCase()
+          : true)
+        && v.approved)
+      .sort((a, b) => b._rowId - a._rowId)
+      .map(v => ({ id: v.id, name: v.name }))
+      .slice(0, latestLength);
+
+    return res
       .status(200)
-      .json({ soul, eidolon, 'ssr+': ssra, ssr, sr, r });
+      .json({ [category]: list });
   }
 }
