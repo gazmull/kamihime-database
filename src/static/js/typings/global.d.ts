@@ -68,4 +68,13 @@ declare global {
       words: string;
     }[];
   }
+
+  interface IAnimation {
+    'animation-name'?: string | 'play';
+    'animation-delay'?: string | '0.1s';
+    'animation-duration'?: string;
+    'animation-iteration-count'?: string | 'infinite';
+    'animation-timing-function'?: string;
+    display?: '';
+  }
 }

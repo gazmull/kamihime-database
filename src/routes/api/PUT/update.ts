@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IKamihime, ISession } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {put} /update update
@@ -53,18 +54,18 @@ export default class PutUpdateRequest extends ApiRoute {
     if (!res.locals.user.admin) {
       await this._hasData(data);
 
-      const [ session ]: ISession[] = await this.util.db('sessions').select('userId')
+      const [ session ]: ISession[] = await this.server.util.db('sessions').select('userId')
         .where({ userId: data.user, characterId: data.id });
 
-      if (!session) throw { code: 401, message: 'You must create a session before updating a character.' };
+      if (!session) throw new ApiError(401, 'You must create a session before updating a character.');
     }
 
     const fields: string[] = [ 'id', 'loli' ];
-    const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
+    const [ character ]: IKamihime[] = await this.server.util.db('kamihime').select(fields)
       .where('id', data.id)
       .limit(1);
 
-    if (!character) throw { code: 404, message: 'Character not found.' };
+    if (!character) throw new ApiError(404);
 
     const {
       harem1Resource1,
@@ -92,20 +93,20 @@ export default class PutUpdateRequest extends ApiRoute {
       rarity
     }, el => el);
 
-    if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
+    if (!Object.keys(data).length) throw new ApiError(401, 'Cannot accept empty character data.');
 
-    await this.util.db('kamihime').update(data)
+    await this.server.util.db('kamihime').update(data)
       .where('id', id);
 
     const user = data.user || req.signedCookies.userId;
 
     if (!res.locals.user.admin)
-      await this.util.db('sessions')
+      await this.server.util.db('sessions')
         .where({ userId: user, characterId: id })
         .del();
 
     if (this.client.auth.discord.dbReportChannel)
-      await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
+      await this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
         `${user} updated ${name} (${id}):\`\`\``,
         Object.entries(data).map(el => {
           const [ key, value ] = el;
@@ -115,7 +116,8 @@ export default class PutUpdateRequest extends ApiRoute {
         '```',
       ].join('\n'));
 
-    this.util.logger.info(`[U] API: Character: ${name} (${id}) | By: ${user}`);
+    this.server.util.logger.info(`[U] API: Character: ${name} (${id}) | By: ${user}`);
+    await this.server.startKamihimeCache(true);
 
     const { avatar } = this.server.kamihime.find(el => el.id === id);
 

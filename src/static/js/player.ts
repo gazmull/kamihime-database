@@ -5,7 +5,7 @@ const audioFilter = (fn: (el: string) => boolean) => Object.keys(audioPool).filt
 
 // @ts-ignore
 function showHelp () {
-  return sweet({
+  return sweet.fire({
     html: [
       '<ol style="list-style: none; padding: 0;">',
       '<li>Audio - Changes player Global/Voice/Music sound volume</li>',
@@ -20,8 +20,7 @@ function showHelp () {
       '</li>',
       '<li>Everything is saved if you are logged in, or until you exit your browser as a guest.</li>',
     ].join(''),
-    titleText: 'Player Settings',
-    type: 'info'
+    titleText: 'Player Settings'
   });
 }
 
@@ -30,7 +29,7 @@ async function showAudioSettings () {
   const bgm1 = audioPool[audioFilter(el => el.startsWith('bg'))[0]];
 
   try {
-    const res = await sweet({
+    const res = await sweet.fire({
       allowOutsideClick: () => !sweet.isLoading(),
       // tslint:disable:max-line-length
       html: `
@@ -67,6 +66,9 @@ async function showAudioSettings () {
     });
 
     if (!res.value) return;
+    if ([ 'iPhone', 'iPad', 'iPhone' ].some(el => new RegExp(el, 'i').test(navigator.userAgent)))
+      return sweet.fire('iOS Detected', 'This action requires the page to reload. Are you sure?', 'question')
+        .then(r => r.dismiss ? undefined : window.location.reload());
 
     Howler.volume(res.value[0]);
 
@@ -80,15 +82,9 @@ async function showAudioSettings () {
     for (const bgm of bgms)
       audioPool[bgm].volume(res.value[2]);
 
-    return sweet({
-      text: 'Settings saved.',
-      type: 'success'
-    });
+    return sweet.fire({ text: 'Settings saved.' });
   } catch (err) {
-    return sweet({
-      titleText: err.message,
-      type: 'error'
-    });
+    return sweet.fire({ titleText: err.message });
   }
 }
 
@@ -102,7 +98,7 @@ async function showVisualSettings () {
   const textPreviewStyle = `font-size: ${visuals.fontSize}px`;
 
   try {
-    const res = await sweet({
+    const res = await sweet.fire({
       allowOutsideClick: () => !sweet.isLoading(),
       // tslint:disable:max-line-length
       html: `
@@ -156,15 +152,9 @@ async function showVisualSettings () {
 
     [ 'bg', 'cl', 'cls', 'containDialog', 'fontSize' ].forEach((val, idx) => updateDialog(val, res.value[idx], true));
 
-    return sweet({
-      text: 'Settings saved.',
-      type: 'success'
-    });
+    return sweet.fire({ text: 'Settings saved.' });
   } catch (err) {
-    return sweet({
-      titleText: err.message,
-      type: 'error'
-    });
+    return sweet.fire({ text: err.message });
   }
 }
 
@@ -238,4 +228,32 @@ async function loadAssets (assets: IAsset[], opt?: { withSound?: boolean, update
     });
 
   return Promise.all(assets.map(load));
+}
+
+function serialiseAnimation (animation: IAnimation, { fading = false, seconds, steps }: { seconds?: number, steps?: number, fading?: boolean }) {
+  const standard = Object.assign({}, animation);
+
+  if (fading)
+    Object.assign(standard, {
+      'animation-name': 'fade',
+      'animation-delay': '',
+      'animation-duration': '1s',
+      'animation-iteration-count': '',
+      'animation-timing-function': '',
+    });
+  else
+    Object.assign(standard, {
+      'animation-duration': `${seconds}s`,
+      'animation-timing-function': `steps(${steps})`
+    });
+
+  const webkit = {};
+
+  for (const a of Object.keys(standard)) {
+    if (!a.startsWith('animation')) continue;
+
+    webkit[`-webkit-${a}`] = standard[a];
+  }
+
+  return { ...webkit, ...standard };
 }

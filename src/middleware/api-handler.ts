@@ -2,9 +2,10 @@ import { Collection } from 'discord.js';
 import { Request, RequestHandler, Response } from 'express';
 import { IRateLimitLog } from '../../typings';
 import ApiRoute from '../struct/ApiRoute';
-import { handleApiError } from '../util/handleError';
+import Server from '../struct/server';
+import ApiError from '../util/ApiError';
 
-export default function apiHandler (file: ApiRoute): RequestHandler {
+export default function apiHandler (this: Server, file: ApiRoute): RequestHandler {
   const _initialise = (req: Request, requests: Collection<string, IRateLimitLog>) => {
     const ip = req.ip;
     requests.set(ip, { address: ip, triggers: 1, timestamp: Date.now() });
@@ -44,7 +45,7 @@ export default function apiHandler (file: ApiRoute): RequestHandler {
         (req.signedCookies.userId && this.auth.exempt.includes(req.signedCookies.userId))
       ) return next();
 
-      const requests = this.rateLimits.get(file.method).get(file.id);
+      const requests = this.stores.rateLimits.get(file.method).get(file.id);
       let user = requests.find(r => r.address === ip);
 
       if (!user) {
@@ -69,18 +70,18 @@ export default function apiHandler (file: ApiRoute): RequestHandler {
       } else if (user.triggers === maxRequests && !expired) {
         const remaining = expiration - now;
 
-        throw {
-          remaining,
-          code: 429,
-          message: [
+        throw new ApiError(
+          429,
+          [
             `Maximum requests has been reached (${maxRequests}/${cooldown}s).`,
             `Please wait for ${remaining / 1000} seconds.`,
           ]
-        };
+        )
+          .setRemaining(remaining);
       }
       _update(req, requests);
 
       return next();
-    } catch (err) { handleApiError.bind(this)(res, err); }
+    } catch (err) { this.util.handleApiError.call(this, res, err); }
   };
 }

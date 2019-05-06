@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import { IAdminUser, IUser } from '../../typings';
+import Server from '../struct/server';
 
 const defaultSettings = {
   audio: { bgm: 0.1, glo: 1.0, snd: 0.5 },
@@ -14,7 +15,7 @@ const defaultSettings = {
   }
 };
 
-export default function authHandler (): RequestHandler {
+export default function authHandler (this: Server): RequestHandler {
   return async (req, res, next) => {
     if (!req.signedCookies.userId) {
       if (!req.cookies.settings) res.cookie('settings', defaultSettings);
@@ -29,7 +30,7 @@ export default function authHandler (): RequestHandler {
       const msg = `${req.signedCookies.userId}: Using invalid userId cookie; blocked.`;
 
       res.clearCookie('userId');
-      this.util.handleSiteError.bind(this)(res, { code: 404, message: 'User not found; ID cookie cleared.' });
+      this.util.handleSiteError.call(this, res, { code: 404, message: 'User not found; ID cookie cleared.' });
 
       return next(msg);
     }

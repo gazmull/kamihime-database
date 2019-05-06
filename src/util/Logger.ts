@@ -36,8 +36,12 @@ export default class Winston {
 
   protected setColour (type: string, content?: string) {
     type = type.toUpperCase();
+    const lowerType = type.toLowerCase();
 
-    switch (type.toLowerCase()) {
+    if (process.env.NODE_ENV === 'production')
+      return lowerType === 'timestamp' ? content : type;
+
+    switch (lowerType) {
       default: return chalk.cyan(type);
       case 'info': return chalk.greenBright(type);
       case 'debug': return chalk.magentaBright(type);

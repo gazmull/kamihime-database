@@ -1,12 +1,12 @@
 $(() => {
   $('.collapse')
     .on('show.bs.collapse', function () {
-      if (isNav.bind(this)()) return;
+      if (isNav.call(this)) return;
 
       $('.collapse.show').collapse('hide');
     })
     .on('shown.bs.collapse', function () {
-      if (isNav.bind(this)()) return;
+      if (isNav.call(this)) return;
 
       const currentPage = '#' + $(`.collapse.show`).attr('id');
 
@@ -16,7 +16,7 @@ $(() => {
       $(`.side-nav .nav-link[data-target='${settings.lastNav}']`).addClass('active');
     })
     .on('hide.bs.collapse', function () {
-      if (isNav.bind(this)()) return;
+      if (isNav.call(this)) return;
 
       $('.kh-list.visible-browser').attr('class', 'kh-list px-0 hidden-browser');
       $(`.side-nav .nav-link.active`).removeClass('active');
@@ -57,7 +57,7 @@ $(() => {
 
 // @ts-ignore
 function showHelp () {
-  return sweet({
+  return sweet.fire({
     html: [
       '<ol style="list-style: none; padding: 0;">',
       '<li>ESC: Hide/Show Navigation</li>',
@@ -71,13 +71,12 @@ function showHelp () {
       'Each page that has it has unique options. Watch out for that!</li>',
       '</ol>',
     ].join(''),
-    titleText: 'Keyboard Shortcuts',
-    type: 'info'
+    titleText: 'Keyboard Shortcuts'
   });
 }
 
 function showLatest () {
-  return sweet({
+  return sweet.fire({
     html: '<a href="/latest" class="text-light" target="_blank">https://kamihimedb.thegzm.space/latest</a>',
     imageAlt: 'Latest Image',
     imageUrl: '/latest',

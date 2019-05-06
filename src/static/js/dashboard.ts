@@ -15,13 +15,13 @@ const updateFields = fields.filter(el => el !== 'id');
 
 async function promptID (action: APIAction) {
   if (!action)
-    sweet({ titleText: 'Invalid action.', type: 'error' });
+    sweet.fire({ titleText: 'Invalid action.', type: 'error' });
 
   try {
     let character;
 
     if (action !== 'add') {
-      const { value, dismiss } = await sweet({
+      const { value, dismiss } = await sweet.fire({
         allowOutsideClick: () => !sweet.isLoading(),
         confirmButtonText: 'Next',
         input: 'text',
@@ -47,7 +47,7 @@ async function promptID (action: APIAction) {
     switch (action) {
       default: response = submit(action, `id=${character.id}`); break;
       case 'add':
-        response = await sweet({
+        response = await sweet.fire({
           html: 'Add an entry with: [key]=[value]; each separated by newline (\\n).',
           input: 'textarea',
           inputValue: fields.map(el => `${el}=`).join('\n'),
@@ -64,7 +64,7 @@ async function promptID (action: APIAction) {
         response = submit(action, response);
         break;
       case 'update':
-        response = await sweet({
+        response = await sweet.fire({
           input: 'textarea',
           inputValue: unclean(character),
           text: 'Each entry should be separated by newline',
@@ -85,12 +85,11 @@ async function promptID (action: APIAction) {
     response = await response;
 
     if (response)
-      sweet({
+      sweet.fire({
         text: `${action}: ${response.name} (${response.id})`,
-        titleText: 'Operation Successfull',
-        type: 'success',
+        titleText: 'Operation Successfull'
       });
-  } catch (err) { sweet({ text: err, type: 'error' }); }
+  } catch (err) { sweet.fire({ text: err }); }
 }
 
 async function submit (action: APIAction, value = '', id?: string) {
@@ -106,13 +105,12 @@ async function submit (action: APIAction, value = '', id?: string) {
 
   if (!data.id) Object.assign(data, { id });
 
-  const confirm = await sweet({
+  const confirm = await sweet.fire({
     cancelButtonText: 'No',
     confirmButtonText: 'Yes',
     showCancelButton: true,
     text: 'Are you sure about this action?',
-    titleText: `Destructive Action: ${action} (${data.id || id})`,
-    type: 'warning',
+    titleText: `Destructive Action: ${action} (${data.id || id})`
   })
     .then(res => res.dismiss ? false : true);
 

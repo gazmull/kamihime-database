@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import fetch from 'node-fetch';
 import Route from '../../struct/Route';
+import ApiError from '../../util/ApiError';
 
 export default class ConnectRoute extends Route {
   constructor () {
@@ -12,24 +13,24 @@ export default class ConnectRoute extends Route {
   }
 
   public async exec (req: Request, res: Response) {
-    if (req.signedCookies.userId) throw { code: 403 };
+    if (req.signedCookies.userId) throw new ApiError(403);
 
     const code = req.query.code;
     const state = req.query.state;
 
-    if (!code) throw { code: 403, message: 'Auth code is missing.' };
+    if (!code) throw new ApiError(401, 'Auth code is missing.');
 
     const match = state === req.signedCookies.slug;
 
-    if (!match) throw { code: 403, message: 'Invalid state ID.' };
+    if (!match) throw new ApiError(422, 'Invalid state ID.');
 
-    const slug = this.server.states.get(state);
+    const slug = this.server.stores.states.get(state);
 
-    if (!slug) throw { code: 408, message: 'You took too long to log in? Shame!' };
+    if (!slug) throw new ApiError(408, 'You took too long to log in? Shame!');
 
     const { url: slugURL } = slug;
 
-    this.server.states.delete(state);
+    this.server.stores.states.delete(state);
     res.clearCookie('slug');
 
     const discord = this.server.auth.discord;
@@ -76,7 +77,7 @@ export default class ConnectRoute extends Route {
       }
     });
 
-    await this.util.db.raw([
+    await this.server.util.db.raw([
       'INSERT INTO users',
       '(settings, userId, username)',
       'VALUES (:settings, :userId, :username)',

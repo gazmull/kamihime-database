@@ -1,15 +1,17 @@
 import * as cookieParser from 'cookie-parser';
-import * as express from 'express';
+import * as Express from 'express';
 import * as helmet from 'helmet';
 import { resolve } from 'path';
 import { cookieSecret, proxy } from './auth/auth';
 import Client from './struct/Client';
-import Server from './struct/Server';
+import Server from './struct/server';
 
-const server = express();
+const express = Express();
+// tslint:disable-next-line: no-var-requires
+const version = require('../package.json').version;
 
 if (process.env.NODE_ENV === 'production')
-  server
+  express
     .set('trust proxy', proxy)
     .use(helmet({
       contentSecurityPolicy: {
@@ -37,31 +39,31 @@ if (process.env.NODE_ENV === 'production')
       }
     }));
 else
-  server
+  express
     .disable('x-powered-by')
     .enable('trust proxy')
-    .use(express.static(__dirname + '/static'))
-    .use(express.static(__dirname + '/../static'));
+    .use('/', Express.static(__dirname + '/static'))
+    .use('/', Express.static(__dirname + '/../static'));
 
-server
-  .use(express.urlencoded({ extended: true }))
-  .use(express.json({ limit: '1mb' }))
+express
+  .use(Express.urlencoded({ extended: true }))
+  .use(Express.json({ limit: '1mb' }))
   .use(cookieParser(cookieSecret))
   .set('view engine', 'pug')
   .set('views', resolve(__dirname, './views'))
   .use((_, res, next) => {
-    res.locals.app = { version: require('../package.json').version };
+    res.locals.app = { version };
 
     next();
   });
 
-const serverStruct: Server = new Server();
-const client: Client = new Client(serverStruct);
+const server: Server = new Server();
+const client: Client = new Client(server);
 
-serverStruct
-  .init(server, client)
+server
+  .init(express, client)
   .then(() =>
-    serverStruct
+    server
       .startCleaners()
       .startKamihimeCache()
   );
@@ -73,5 +75,5 @@ client
 
 process.on(
   'unhandledRejection',
-  (err: Error) => serverStruct.util.logger.error(`Uncaught Promise Error: \n${err.stack || err}`)
+  (err: Error) => server.util.logger.error(`Uncaught Promise Error: \n${err.stack || err}`)
 );

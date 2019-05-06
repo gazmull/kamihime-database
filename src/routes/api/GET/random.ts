@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {get} /random/:length/:includeWeapons random
@@ -54,11 +55,10 @@ export default class GetRandomRequest extends ApiRoute {
     const length = req.params._length ? Math.abs(Number(req.params._length)) : 1;
     const includeWeapons = req.params.includeWeapons;
 
-    if (isNaN(length)) throw { code: 403, message: 'Only numbers are allowed.' };
-    if (length > 10) throw { code: 403, message: 'Request must be only up to 10 characters.' };
+    if (isNaN(length)) throw new ApiError(422, 'Only numbers are allowed.');
+    if (length > 10) throw new ApiError(422, 'Request must be only up to 10 characters.');
 
-    const filter = (k: IKamihime) => k.approved && k.avatar
-      || (includeWeapons ? k.id.charAt(0) === 'w' : k.id.charAt(0) !== 'w');
+    const filter = (k: IKamihime) =>  k.avatar && (includeWeapons ? !k.approved : k.approved);
 
     const roster = this.server.kamihime.filter(filter);
     const cherry = () => Math.abs(Math.floor(Math.random() * roster.length) - 1);

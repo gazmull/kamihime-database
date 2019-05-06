@@ -1,8 +1,19 @@
-import { Api as ApiAuth, DiscordClient, GrantProvider, Host } from './auth';
 import { Collection, Message } from 'discord.js';
 import { Response } from 'express';
 import * as Knex from 'knex';
 import { Logger } from 'winston';
+import apiHandler from '../src/middleware/api-handler';
+import reAuthHandler from '../src/middleware/re-auth-handler';
+import Client from '../src/struct/Client';
+import ApiError from '../src/util/ApiError';
+import { Api as ApiAuth, DiscordClient, GrantProvider, Host } from './auth';
+
+export interface IRouterData {
+  directory: string;
+  routes: string[];
+  client: Client;
+  handler?: typeof reAuthHandler | typeof apiHandler;
+}
 
 export interface IRouteOptions {
   auth?: boolean | 'admin';
@@ -30,18 +41,12 @@ export interface IClientAuth {
 }
 
 export interface IUtil {
-  collection?: () => Collection<any, any>;
+  collection?: <K, V>() => Collection<K, V>;
   db?: Knex;
   discordSend?: (channelId: string, message: any) => Logger | Promise<Message | Message[]>;
-  handleApiError?: (res: Response, err: IErrorHandlerObject) => void;
-  handleSiteError?: (res: Response, err: IErrorHandlerObject) => void;
+  handleApiError?: (res: Response, err: ApiError) => void;
+  handleSiteError?: (res: Response, err: ApiError) => void;
   logger?: Logger
-}
-
-export interface IErrorHandlerObject {
-  code: number;
-  message?: string|string[];
-  stack?: string;
 }
 
 export interface IExtractorOptions {
@@ -93,10 +98,15 @@ export interface IAdminUser extends IUser {
   _salt: string,
 }
 
+export interface IApiError {
+  message?: string;
+  code?: number;
+}
+
 export interface IKamihime {
-  _rowId: number;
-  approved: number;
-  avatar: string;
+  _rowId?: number;
+  approved?: number;
+  avatar?: string;
   element?: string;
   harem1Resource1?: string;
   harem1Resource2?: string;
@@ -107,15 +117,39 @@ export interface IKamihime {
   harem3Resource1?: string;
   harem3Resource2?: string;
   harem3Title?: string;
-  id: string;
-  loli: number;
-  main: string;
-  name: string;
+  id?: string;
+  loli?: number;
+  main?: string;
+  name?: string;
   peeks?: number;
   preview?: string;
   rarity?: string;
   tier?: string;
   type?: string;
+  atk?: number;
+  hp?: number;
+  created?: string;
+  updated?: string;
+}
+
+export interface IKamihimeWiki {
+  name?: string;
+  type?: string;
+  tier?: string;
+  rarity?: string;
+  element?: string;
+  hp_max?: number;
+  atk_max?: number;
+}
+
+export interface IKamihimeLatest {
+  error?: IApiError;
+  soul?: IKamihime[];
+  eidolon?: IKamihime[];
+  'ssr+'?: IKamihime[];
+  ssr?: IKamihime[];
+  sr?: IKamihime[];
+  r?: IKamihime[];
 }
 
 export interface IRateLimitLog {

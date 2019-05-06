@@ -5,7 +5,14 @@ $(async () => {
 
   const talkVal = parseInt($('#text').attr('data'));
   const maxScriptLength = script.length - 1;
-  let animation = 'none';
+  let animation: IAnimation = {
+    'animation-name': 'play',
+    'animation-delay': '0.1s',
+    'animation-duration': '1s',
+    'animation-iteration-count': 'infinite',
+    'animation-timing-function': 'steps(1)',
+    display: ''
+  };
   let lastImage: string;
   let lastAudio: Howl;
   let sequenceIDX = 0;
@@ -14,7 +21,7 @@ $(async () => {
   const newSeq = () => script[sequenceIDX];
   const maxSequenceTalk = () => newSeq().talk.length - 1;
 
-  sweet({
+  sweet.fire({
     allowEscapeKey: false,
     allowOutsideClick: false,
     animation: false,
@@ -52,7 +59,7 @@ $(async () => {
       }
 
     setTimeout(async () => {
-      await sweet({
+      await sweet.fire({
         html: [
           'Click OK to proceed.',
           'For navigation help, see <b>HELP</b> at the sidebar.',
@@ -67,10 +74,9 @@ $(async () => {
   } catch (err) {
     console.log(err); // tslint:disable-line:no-console
 
-    return sweet({
+    return sweet.fire({
       html: 'An error occurred while loading the assets: <br>' + err.message,
-      titleText: 'Failed to resolve assets',
-      type: 'error'
+      titleText: 'Failed to resolve assets'
     });
   }
 
@@ -79,12 +85,9 @@ $(async () => {
 
     switch (code) {
       case 'left':
-        navLeft();
-        break;
+        return navLeft();
       case 'right':
-        navRight();
-        break;
-      default: return;
+        return navRight();
     }
   });
 
@@ -93,12 +96,9 @@ $(async () => {
 
     switch (code) {
       case 37:
-        navLeft();
-        break;
+        return navLeft();
       case 39:
-        navRight();
-        break;
-      default: return;
+        return navRight();
     }
   });
 
@@ -106,7 +106,6 @@ $(async () => {
     if (sequenceIDX === 0 && talkIDX === 0) return;
     if (talkIDX === 0) {
       sequenceIDX--;
-      animation = `play ${newSeq().seconds}s steps(${newSeq().steps}) infinite`;
       talkIDX = maxSequenceTalk();
     } else
       $('#text').attr('data', --talkIDX);
@@ -119,7 +118,6 @@ $(async () => {
       return window.history.back();
     if (talkIDX === maxSequenceTalk()) {
       sequenceIDX++;
-      animation = `play ${newSeq().seconds}s steps(${newSeq().steps}) infinite`;
       talkIDX = 0;
     } else
       $('#text').attr('data', ++talkIDX);
@@ -135,74 +133,39 @@ $(async () => {
       words: newSeq().talk[talkIDX].words
     };
 
-    $('.panel')
-      .attr('sequence', sequenceIDX);
+    $('.panel').attr('sequence', sequenceIDX);
 
     const currentIMG = `#image img[id='${n.img}']`;
     const hidden = {
-      '-moz-animation': '',
-      '-ms-animation': '',
-      '-o-animation': '',
       '-webkit-animation': '',
       animation: '',
       display: 'none'
     };
 
     if (lastImage && lastImage !== n.img)
-      $(`#image img[id='${lastImage}']`)
-        .css(hidden);
+      $(`#image img[id='${lastImage}']`).css(hidden);
 
     const isC3 = lastImage && lastImage.endsWith('_c3.jpg');
 
     if (lastImage !== n.img) {
-      if (n.img === 'pink_s.jpg' && !isC3) {
-        navLeft();
-
-        return render();
-      }
-
+      if (n.img === 'pink_s.jpg' && !isC3) return navLeft();
       if (n.img === 'pink_s.jpg' && isC3) {
-        $(currentIMG)
-          .css({
-            '-moz-animation': 'fade 1s',
-            '-ms-animation': 'fade 1s',
-            '-o-animation': 'fade 1s',
-            '-webkit-animation': 'fade 1s',
-            animation: 'fade 1s',
-            display: ''
-          });
-
+        $(currentIMG).css(serialiseAnimation(animation, { fading: true }));
         setTimeout(() => {
-          $(currentIMG)
-            .css(hidden);
+          $(currentIMG).css(hidden);
 
-          navRight();
-
-          return render();
+          return navRight();
         }, 1000);
       } else
-        $(currentIMG)
-          .css({
-            '-moz-animation': animation,
-            '-ms-animation': animation,
-            '-o-animation': animation,
-            '-webkit-animation': animation,
-            animation,
-            display: '',
-            'will-change': 'transform'
-          });
+        $(currentIMG).css(serialiseAnimation(animation, { seconds: newSeq().seconds, steps: newSeq().steps }));
     }
 
     lastImage = n.img;
 
-    $('#characterName')
-      .text(n.chara);
-    $('#characterTalk')
-      .text(n.words);
+    $('#characterName').text(n.chara);
+    $('#characterTalk').text(n.words);
 
-    if (lastAudio && n.voice)
-      lastAudio.stop();
-
+    if (lastAudio && n.voice) lastAudio.stop();
     if (n.voice) {
       n.voice.play();
       lastAudio = n.voice;

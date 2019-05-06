@@ -19,7 +19,7 @@ $(async () => {
   const lastScript = () => script[lastScriptIDX];
   const currentScript = () => script[currentScriptIDX];
 
-  sweet({
+  sweet.fire({
     allowEscapeKey: false,
     allowOutsideClick: false,
     animation: false,
@@ -60,7 +60,7 @@ $(async () => {
       }
 
     setTimeout(async () => {
-      await sweet({
+      await sweet.fire({
         html: [
           'Click OK to proceed.',
           'For navigation help, see <b>HELP</b> at the sidebar.',
@@ -74,10 +74,9 @@ $(async () => {
   } catch (err) {
     console.log(err); // tslint:disable-line:no-console
 
-    return sweet({
+    return sweet.fire({
       html: 'An error occurred while loading the assets: <br>' + err.message,
-      titleText: 'Failed to resolve assets',
-      type: 'error'
+      titleText: 'Failed to resolve assets'
     });
   }
 

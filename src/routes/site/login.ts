@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import * as shortid from 'shortid';
 import { IAdminUser } from '../../../typings';
 import Route from '../../struct/Route';
+import ApiError from '../../util/ApiError';
 
 shortid.seed(11);
 
@@ -19,10 +20,10 @@ export default class LoginRoute extends Route {
     const isAdmin = req.params.admin === 'admin';
     const isVerify = isAdmin && req.params.verify === 'verify';
 
-    if (req.signedCookies.userId && !(isAdmin || isVerify)) throw { code: 403 };
+    if (req.signedCookies.userId && !(isAdmin || isVerify)) throw new ApiError(401);
     if (isVerify) {
       const mocked = req.body;
-      const [ admin ]: IAdminUser[] = await this.util.db('admin').select([
+      const [ admin ]: IAdminUser[] = await this.server.util.db('admin').select([
         'userId',
         'password',
         '_salt',
@@ -31,10 +32,10 @@ export default class LoginRoute extends Route {
         'lastLogin',
       ])
         .where({ username: mocked.username });
-      const ip = this.server.passwordAttempts.get(req.ip);
+      const ip = this.server.stores.passwordAttempts.get(req.ip);
       const registered = ip ? true : false;
       const remaining = () => 5 - (registered ? ip.attempts : 1);
-      const increment = () => this.server.passwordAttempts.set(req.ip, {
+      const increment = () => this.server.stores.passwordAttempts.set(req.ip, {
         attempts: registered ? ++ip.attempts : 1
       });
       const redirect = () => {
@@ -44,13 +45,13 @@ export default class LoginRoute extends Route {
       };
 
       if (!admin) return redirect();
-      if (registered && ip.attempts === 5) throw { code: 429 };
+      if (registered && ip.attempts === 5) throw new ApiError(403);
 
       const valid = await this._validPassword(admin.password, admin._salt, admin._iterations, mocked.password);
 
       if (!valid) return redirect();
 
-      await this.util.db('admin').update({
+      await this.server.util.db('admin').update({
           ip: req.ip,
           slug: req.signedCookies.slug
         })
@@ -70,7 +71,7 @@ export default class LoginRoute extends Route {
 
     const slug = shortid.generate();
 
-    this.server.states.set(slug, { timestamp: Date.now(), url: req.headers.referer });
+    this.server.stores.states.set(slug, { timestamp: Date.now(), url: req.headers.referer });
 
     if (isAdmin)
       return res

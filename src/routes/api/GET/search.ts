@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as Fuse from 'fuse.js';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {get} /search search
@@ -71,9 +72,9 @@ export default class GetSearchRequest extends ApiRoute {
     const rarity: string = req.query.rarity;
     const type: string = req.query.type;
 
-    if (!name) throw { code: 400, message: 'Name query is required.' };
-    if (name.length < 2) throw { code: 400, message: 'Name must be at least 2 characters.' };
-    if (name.length > 31) throw { code: 400, message: 'Name must be no longer than 31 characters.' };
+    if (!name) throw new ApiError(400, 'Name query is required.');
+    else if (name.length < 2) throw new ApiError(422, 'Name must be at least 2 characters.');
+    else if (name.length > 31) throw new ApiError(422, 'Name must be no longer than 31 characters.');
 
     switch (itemClass) {
       case 'soul':
@@ -92,13 +93,10 @@ export default class GetSearchRequest extends ApiRoute {
     }
 
     if (itemClass && typeof itemClass !== 'function')
-      throw {
-        code: 403,
-        message: [
-          'Invalid item class from [soul,eidolon,kamihime,weapon].',
-          'Perhaps you are confusing this with `type` parameter?',
-        ]
-      };
+      throw new ApiError(403, [
+        'Invalid item class from [soul,eidolon,kamihime,weapon].',
+        'Perhaps you are confusing this with `type` parameter?',
+      ]);
 
     const fuseOptions: Fuse.FuseOptions<IKamihime> = {
       distance: 100,
@@ -131,7 +129,7 @@ export default class GetSearchRequest extends ApiRoute {
     if (!isNaN(loli))
       results = results.filter(el => el.loli === loli);
 
-    if (!results.length) throw { code: 404, message: 'No item matches this query.' };
+    if (!results.length) throw new ApiError(404);
 
     res
       .status(200)

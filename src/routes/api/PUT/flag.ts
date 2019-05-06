@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {put} /flag flag
@@ -44,28 +45,28 @@ export default class PutFlagRequest extends ApiRoute {
     const { id } = data;
     const user = data.user || req.signedCookies.userId;
     const fields: string[] = [ 'name', 'id', 'loli' ];
-    const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
+    const [ character ]: IKamihime[] = await this.server.util.db('kamihime').select(fields)
       .where('id', id)
       .limit(1);
 
-    if (!character) throw { code: 404, message: 'Character not found.' };
+    if (!character) throw new ApiError(404);
 
     const name = character.name;
     const loliToggle: number = character.loli ? 0 : 1;
 
-    await this.util.db('kamihime')
+    await this.server.util.db('kamihime')
       .update('loli', loliToggle)
       .where('id', id);
 
     if (this.client.auth.discord.dbReportChannel)
-      await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
+      await this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
         user,
         loliToggle ? 'flagged' : 'unflagged',
         name,
         `(${id}).`,
       ].join(' '));
 
-    this.util.logger.info(`[F] API: Character: ${name} (${id}) | By: ${user}`);
+    this.server.util.logger.info(`[F] API: Character: ${name} (${id}) | By: ${user}`);
 
     res
       .status(200)

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as shortid from 'shortid';
 import { IKamihime, ISession } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 shortid.seed(11);
 
@@ -48,13 +49,13 @@ export default class PostSessionRequest extends ApiRoute {
     await this._hasData(data);
     const { user, id } = data;
     const characterFields: string[] = [ 'id', 'name' ];
-    const [ character ]: IKamihime[] = await this.util.db('kamihime').select(characterFields)
+    const [ character ]: IKamihime[] = await this.server.util.db('kamihime').select(characterFields)
       .where('id', id)
       .limit(1);
 
-    if (!character) throw { code: 404, message: 'Character not found.' };
+    if (!character) throw new ApiError(404, 'Character not found.');
 
-    const [ session ]: ISession[] = await this.util.db('sessions').select()
+    const [ session ]: ISession[] = await this.server.util.db('sessions').select()
       .where('userId', user)
       .andWhere('characterId', id)
       .limit(1);
@@ -73,16 +74,16 @@ export default class PostSessionRequest extends ApiRoute {
       return;
     }
 
-    const sessions: ISession[] = await this.util.db
+    const sessions: ISession[] = await this.server.util.db
       .raw('SELECT COUNT(characterId) FROM sessions WHERE userId = ?', [ user ]);
 
     if (sessions.length > 3)
-      throw { code: 429, message: `Too many sessions active. [${sessions.length} sessions active]` };
+      throw new ApiError(429, `Too many sessions active. [${sessions.length} sessions active]`);
 
     const uniqueId: string = Math.random().toString(36).substr(2, 16);
     const uniqueKey: string = Buffer.from(shortid.generate()).toString('base64');
 
-    await this.util.db('sessions')
+    await this.server.util.db('sessions')
       .insert({
         characterId: id,
         id: uniqueId,
@@ -90,17 +91,17 @@ export default class PostSessionRequest extends ApiRoute {
         userId: user
       });
 
-    const [ newSession ]: ISession[] = await this.util.db('sessions').select()
+    const [ newSession ]: ISession[] = await this.server.util.db('sessions').select()
       .where('userId', user)
       .andWhere('characterId', id)
       .limit(1);
 
-    await this.util.discordSend(
+    await this.server.util.discordSend(
       this.client.auth.discord.dbReportChannel,
       `${user}'s session for ${character.name} (${character.id}) has been created.`
     );
 
-    this.util.logger.info(`[A] API: Character-Session: ${character.name} (${id}) | By: ${user}`);
+    this.server.util.logger.info(`[A] API: Character-Session: ${character.name} (${id}) | By: ${user}`);
 
     res
       .status(200)

@@ -3,6 +3,7 @@ import { Response } from 'express';
 import * as fs from 'fs-extra';
 import fetch from 'node-fetch';
 import * as path from 'path';
+import { IKamihimeLatest } from '../../../typings';
 import Route from '../../struct/Route';
 
 export default class LatestRoute extends Route {
@@ -16,7 +17,7 @@ export default class LatestRoute extends Route {
 
   public async exec (_, res: Response) {
     const data = await fetch(this.server.auth.api.url + 'latest', { headers: { Accept: 'application/json' } });
-    let result = await data.json();
+    let result: IKamihimeLatest = await data.json();
 
     if (result.error) throw result.error;
 

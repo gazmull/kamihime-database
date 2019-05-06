@@ -166,13 +166,12 @@ $(() => {
   });
 
 async function showLoginWarning () {
-  const res = await sweet({
+  const res = await sweet.fire({
     html: [
       'While you are able to save your settings, accounts that are inactive for 14 days will be deleted.',
       'Click OK to continue to log in.',
     ].join('<br><br>'),
-    titleText: 'Login Warning',
-    type: 'warning',
+    titleText: 'Login Warning'
   });
 
   if (res.value)

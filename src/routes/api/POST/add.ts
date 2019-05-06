@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {post} /add add
@@ -50,11 +51,11 @@ export default class PostAddRequest extends ApiRoute {
     if (!res.locals.user.admin)
       await this._hasData(data);
 
-    const [ character ]: IKamihime[] = await this.util.db('kamihime').select('id')
+    const [ character ]: IKamihime[] = await this.server.util.db('kamihime').select('id')
       .where('id', data.id)
       .limit(1);
 
-    if (character) throw { code: 403, message: 'Character already exists.' };
+    if (character) throw new ApiError(401, 'Character already exists.');
 
     const {
       harem1Resource1,
@@ -84,15 +85,15 @@ export default class PostAddRequest extends ApiRoute {
       rarity
     }, el => el);
 
-    if (!Object.keys(data).length) throw { code: 403, message: 'Cannot accept empty character data.' };
+    if (!Object.keys(data).length) throw new ApiError(400, 'Cannot accept empty character data.');
 
     Object.assign(data, { loli, peeks: 0 });
-    await this.util.db('kamihime').insert(data);
+    await this.server.util.db('kamihime').insert(data);
 
     const user = data.user || req.signedCookies.userId;
 
     if (this.client.auth.discord.dbReportChannel)
-      await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
+      await this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
         `${user} added: \`\`\`py`,
         Object.entries(data).map(el => {
           const [ key, value ] = el;
@@ -102,7 +103,8 @@ export default class PostAddRequest extends ApiRoute {
         '```',
       ].join('\n'));
 
-    this.util.logger.info(`[ADD] API: Character: ${name} (${id}) | By: ${user}`);
+    this.server.util.logger.info(`[ADD] API: Character: ${name} (${id}) | By: ${user}`);
+    await this.server.startKamihimeCache(true);
 
     res
       .status(201)

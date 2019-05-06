@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IUser } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {get} /@me @me
@@ -45,14 +46,14 @@ export default class GetAtMeRequest extends ApiRoute {
   }
 
   public async exec (req: Request, res: Response) {
-    if (!req.signedCookies.userId) throw { code: 401, message: 'Unauthorised.' };
+    if (!req.signedCookies.userId) throw new ApiError(401);
 
-    const [ user ]: IUser[] = await this.util.db('users')
+    const [ user ]: IUser[] = await this.server.util.db('users')
       .select([ 'userId', 'username' ])
       .where('userId', req.signedCookies.userId)
       .limit(1);
 
-    if (!user) throw { code: 404 };
+    if (!user) throw new ApiError(404);
 
     const username = user.username;
     const settings = JSON.stringify({
@@ -74,7 +75,7 @@ export default class GetAtMeRequest extends ApiRoute {
     });
 
     if (req.query.save)
-      await this.util.db('users').where('userId', user.userId)
+      await this.server.util.db('users').where('userId', user.userId)
         .update({ settings });
 
     res

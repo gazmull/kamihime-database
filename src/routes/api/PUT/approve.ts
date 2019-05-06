@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {put} /approve approve
@@ -44,28 +45,28 @@ export default class PutApproveRequest extends ApiRoute {
     const { id } = data;
     const user = data.user || req.signedCookies.userId;
     const fields: string[] = [ 'name', 'id', 'approved' ];
-    const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
+    const [ character ]: IKamihime[] = await this.server.util.db('kamihime').select(fields)
       .where('id', id)
       .limit(1);
 
-    if (!character) throw { code: 404, message: 'Character not found.' };
+    if (!character) throw new ApiError(404);
 
     const name = character.name;
     const approveToggle: number = character.approved ? 0 : 1;
 
-    await this.util.db('kamihime')
+    await this.server.util.db('kamihime')
       .update('approved', approveToggle)
       .where('id', id);
 
     if (this.client.auth.discord.dbReportChannel)
-      await this.util.discordSend(this.client.auth.discord.dbReportChannel, [
+      await this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
         user,
         approveToggle ? 'approved' : 'disapproved',
         name,
         `(${id}).`,
       ].join(' '));
 
-    this.util.logger.info(`[A/D] API: Character: ${name} (${id}) | By: ${user}`);
+    this.server.util.logger.info(`[A/D] API: Character: ${name} (${id}) | By: ${user}`);
 
     res
       .status(200)

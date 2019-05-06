@@ -15,7 +15,7 @@ export default class BrowserRoute extends Route {
   public async exec (req: Request, res: Response) {
     const endPoint = this.server.auth.rootURL + 'api/';
 
-    const hot: IKamihime[] = await this.util.db('kamihime').select([ 'id', 'name', 'rarity', 'peeks' ])
+    const hot: IKamihime[] = await this.server.util.db('kamihime').select([ 'id', 'name', 'rarity', 'peeks' ])
       .where('approved', 1)
       .orderBy('peeks', 'desc')
       .limit(10);

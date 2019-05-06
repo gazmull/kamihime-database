@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { IKamihime } from '../../../typings';
 import Route from '../../struct/Route';
+import ApiError from '../../util/ApiError';
 
 const COOLDOWN = 1000 * 60 * 3;
 const MAX_VISITS = 5;
@@ -26,7 +27,7 @@ export default class PlayerRoute extends Route {
     const { id = null, type = null } = req.params;
     const ep = parseInt(req.params.ep);
 
-    if (!(id || ep || type )) throw { code: 422, message: 'Incomplete query was given.' };
+    if (!(id || ep || type )) throw new ApiError(400, 'Incomplete query was given.');
 
     const template = type === 'story'
       ? 'player/story'
@@ -47,26 +48,26 @@ export default class PlayerRoute extends Route {
     const selected = episodes[type + ep];
 
     if (!template || !selected)
-      throw { code: 422, message: 'Invalid episode or player type.' };
+      throw new ApiError(422, 'Invalid episode or player type.');
 
     const fields = [ 'id', 'name', 'rarity', 'peeks', selected ];
-    const [ character ]: IKamihime[] = await this.util.db('kamihime').select(fields)
+    const [ character ]: IKamihime[] = await this.server.util.db('kamihime').select(fields)
       .where('id', id);
     const resource = character[selected];
 
     if (ep === 3 && (id.charAt(0) !== 'k' || [ 'SSR+', 'R' ].includes(character.rarity)))
-      throw { code: 422, message: 'Invalid episode for this character.' };
+      throw new ApiError(422, 'Invalid episode for this character.');
 
-    if (!character) throw { code: 404, message: 'Character not found.' };
+    if (!character) throw new ApiError(404);
     if (!resource)
-      throw { code: 404, message: [ 'Episode Resource is empty.', 'Please contact the administrator!' ] };
+      throw new ApiError(501, [ 'Episode Resource is empty.', 'Please contact the administrator!' ]);
 
     await this._rateLimit(req, character, resource);
 
     const { scenario = null } = await this._find('script.json', id, resource);
 
     if (!template || !character || !scenario)
-      throw { code: 404, message: 'Player type, character, or the scenario hash cannot be found.' };
+      throw new ApiError(501, 'Player type, character, or the scenario hash cannot be found.');
 
     let files: string[] = null;
 
@@ -74,13 +75,10 @@ export default class PlayerRoute extends Route {
       files = await this._find('files.rsc', id, resource);
 
       if (!files)
-        throw {
-          code: 404,
-          message: [
+        throw new ApiError(501, [
           'Episode Resource is unexpectedly empty.',
           'Please contact the administrator!',
-        ]
-      };
+        ]);
     }
 
     let folder = resource.slice(-4);
@@ -121,7 +119,7 @@ export default class PlayerRoute extends Route {
   }
 
   protected _checkRegistered (id: string, resource: string) {
-    const _resource = this.server.visitors.get(resource);
+    const _resource = this.server.stores.visitors.get(resource);
     if (!_resource) return false;
 
     const logged = _resource.get(id);
@@ -131,10 +129,10 @@ export default class PlayerRoute extends Route {
   }
 
   protected async _rateLimit (req: Request, character: any, resource: string) {
-    const update = () => this.util.db('kamihime').update('peeks', ++character.peeks)
+    const update = () => this.server.util.db('kamihime').update('peeks', ++character.peeks)
       .where('id', character.id);
     const usr = req.signedCookies.userId || req.ip;
-    const status = () => this.util.logger.info(`[A] Peek: ${usr} visited ${character.name}`);
+    const status = () => this.server.util.logger.info(`[A] Peek: ${usr} visited ${character.name}`);
 
     if (this.server.auth.exempt.includes(req.signedCookies.userId)) {
       await update();
@@ -143,22 +141,22 @@ export default class PlayerRoute extends Route {
       return true;
     }
 
-    const visitorVisits = this.server.visitors.filter((timestamps, _resource) =>
+    const visitorVisits = this.server.stores.visitors.filter((timestamps, _resource) =>
       _resource !== resource && Date.now() < (timestamps.get(usr) + COOLDOWN)
     );
 
     const visitLimit = req.signedCookies.userId ? MAX_LOGGED_IN_VISITS : MAX_VISITS;
     if (visitorVisits.size >= visitLimit)
-      throw { code: 429, message: `You may only do ${visitLimit} visits per 3 minutes.` };
+      throw new ApiError(429, `You may only do ${visitLimit} visits per 3 minutes.`);
 
     const currentRegistered = this._checkRegistered(usr, resource);
     if (!currentRegistered) {
       await update();
 
-      const resourceLog = () => this.server.visitors.get(resource);
+      const resourceLog = () => this.server.stores.visitors.get(resource);
 
       if (!resourceLog())
-        this.server.visitors.set(resource, this.util.collection());
+        this.server.stores.visitors.set(resource, this.server.util.collection());
 
       resourceLog().set(usr, Date.now());
       status();

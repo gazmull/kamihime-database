@@ -1,15 +1,27 @@
 $(async () => {
   const images = files.filter((v, i, arr) => v && v.endsWith('.jpg') && v !== 'pink_s.jpg' && arr.indexOf(v) === i);
-  const scr = script.filter(v => v.sequence !== 'pink_s.jpg');
+  const scr = script
+    .filter((v, i, arr) => v.sequence !== 'pink_s.jpg' && arr.findIndex(sv => sv.sequence === v.sequence) === i)
+    .sort((a, b) => a.sequence > b.sequence ? 1 : -1);
+  const black = scr.pop();
+
+  scr.unshift(black);
 
   const maxScriptLength = scr.length - 1;
-  let animation = 'none';
+  let animation: IAnimation = {
+    'animation-name': 'play',
+    'animation-delay': '0.1s',
+    'animation-duration': '1s',
+    'animation-iteration-count': 'infinite',
+    'animation-timing-function': 'steps(1)',
+    display: ''
+  };
   let lastImage: string;
   let sequenceIDX = 0;
 
   const newSeq = () => scr[sequenceIDX];
 
-  sweet({
+  sweet.fire({
     allowEscapeKey: false,
     allowOutsideClick: false,
     animation: false,
@@ -43,10 +55,9 @@ $(async () => {
   } catch (err) {
     console.log(err); // tslint:disable-line:no-console
 
-    return sweet({
-      html: 'An error occurred while loading the images. <sub>(See console)</sub>',
-      titleText: 'Failed to resolve images',
-      type: 'error'
+    return sweet.fire({
+      html: 'An error occurred while loading the images: <br>' + err.message,
+      titleText: 'Failed to resolve images'
     });
   }
 
@@ -55,15 +66,10 @@ $(async () => {
 
     switch (code) {
       case 'left':
-        navLeft();
-        break;
+        return navLeft();
       case 'right':
-        navRight();
-        break;
-      default: return;
+        return navRight();
     }
-
-    render();
   });
 
   $(this).on('keyup', e => {
@@ -71,56 +77,39 @@ $(async () => {
 
     switch (code) {
       case 37:
-        navLeft();
-        break;
+        return navLeft();
       case 39:
-        navRight();
-        break;
-      default: return;
+        return navRight();
     }
-
-    render();
   });
 
   function navLeft () {
     if (sequenceIDX === 0) return;
 
     sequenceIDX--;
-    animation = `play ${newSeq().seconds}s steps(${newSeq().steps}) infinite`;
+    render();
   }
 
   function navRight () {
     if (sequenceIDX === maxScriptLength) return window.history.back();
 
     sequenceIDX++;
-    animation = `play ${newSeq().seconds}s steps(${newSeq().steps}) infinite`;
+    render();
   }
 
   function render () {
     const img = newSeq().sequence;
     const currentIMG = `#image img[id='${img}']`;
     const hidden = {
-      '-moz-animation': '',
-      '-ms-animation': '',
-      '-o-animation': '',
       '-webkit-animation': '',
       animation: '',
       display: 'none'
     };
 
-    $(currentIMG)
-      .css({
-        '-moz-animation': animation,
-        '-ms-animation': animation,
-        '-o-animation': animation,
-        '-webkit-animation': animation,
-        animation: animation, // tslint:disable-line:object-literal-shorthand
-        display: ''
-      });
-
     if (lastImage && lastImage !== img)
-      $(`#image img[id='${lastImage}`)
-        .css(hidden);
+      $(`#image img[id='${lastImage}`).css(hidden);
+
+    $(currentIMG).css(serialiseAnimation(animation, { seconds: newSeq().seconds, steps: newSeq().steps }));
 
     lastImage = img;
   }

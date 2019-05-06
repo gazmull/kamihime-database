@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IReport, IUser } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {post} /report report
@@ -21,11 +22,11 @@ import ApiRoute from '../../../struct/ApiRoute';
  * @apiParam (Message Subject Options) resource `Wrong episode story/scenario`
  * @apiParam (Message Subject Options) title `Wrong episode title`
  *
- * @apiSuccess {string} ok JSON body of <Response.status>.ok.
+ * @apiSuccess {boolean} ok JSON body of <Response.status>.ok.
  * @apiSuccessExample {json} Response:
  *  HTTP/1.1 200 OK
  *  {
- *    "ok": ""
+ *    "ok": true
  *  }
  */
 export default class PostReportRequest extends ApiRoute {
@@ -46,14 +47,14 @@ export default class PostReportRequest extends ApiRoute {
     let user: IUser;
 
     if (req.signedCookies.userId) {
-      [ user ] = await this.util.db('users').select([ 'userId', 'username' ])
+      [ user ] = await this.server.util.db('users').select([ 'userId', 'username' ])
         .where('userId', req.signedCookies.userId);
 
       if (!user)
-        throw { code: 404, message: 'Invalid user.' };
+        throw new ApiError(422, 'Invalid user.');
     }
 
-    const [ recentlyReported ] = await this.util.db('reports').select('userId')
+    const [ recentlyReported ] = await this.server.util.db('reports').select('userId')
       .where({
         characterId: data.characterId,
         userId: usr
@@ -62,16 +63,17 @@ export default class PostReportRequest extends ApiRoute {
       .limit(1);
 
     if (recentlyReported)
-      throw { code: 429, message: 'Please wait before you submit another report.' };
+      throw new ApiError(429, 'Please wait before you submit another report.')
+        .setRemaining(Date.now() - new Date(Number(recentlyReported.date) + (36e5 * interval)).valueOf());
 
-    const recentReports: IReport[] = await this.util.db('reports').select('id')
+    const recentReports: IReport[] = await this.server.util.db('reports').select('id')
       .where('userId', usr)
       .andWhereRaw('DATE_ADD(date, INTERVAL :ss HOUR) > NOW()', { ss: interval });
 
     if (recentReports.length > 5 && !this.server.auth.exempt.includes(req.signedCookies.userId))
-      throw { code: 429, message: 'You are limited from reporting.' };
+      throw new ApiError(429, 'You already reached the max reports at the moment.');
 
-    await this.util.db('reports')
+    await this.server.util.db('reports')
       .insert({
         characterId: data.characterId,
         message: JSON.stringify(data.message),
@@ -89,7 +91,7 @@ export default class PostReportRequest extends ApiRoute {
       title: 'Wrong episode title'
     };
 
-    await this.util.discordSend(channel, [
+    await this.server.util.discordSend(channel, [
       `${name} from KamihimeDB reported that ${character.name}'s Episodes has errors. Details:`,
       `Occurred at <${this.server.auth.rootURL}info/${character.id}>`,
       '```x1',
@@ -100,6 +102,6 @@ export default class PostReportRequest extends ApiRoute {
 
     res
       .status(200)
-      .json({ ok: '' });
+      .json({ ok: true });
   }
 }

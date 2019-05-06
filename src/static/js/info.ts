@@ -1,5 +1,5 @@
 async function confirmLogin (id: string) {
-  const res = await sweet({
+  const res = await sweet.fire({
     cancelButtonText: 'No, thanks',
     confirmButtonText: 'Yes, please',
     html: [
@@ -7,8 +7,7 @@ async function confirmLogin (id: string) {
       'Do you want to log in before reporting?',
     ].join('<br><br>'),
     showCancelButton: true,
-    titleText: 'Reporting as Anonymous User',
-    type: 'warning',
+    titleText: 'Reporting as Anonymous User'
   })
 
   if (res.value)
@@ -92,15 +91,13 @@ async function showReport (id: string) {
 
     if (!res.value || !res.value.length) return;
 
-    return sweet({
+    return sweet.fire({
       text: 'Now then, we will have to wait...',
-      title: 'Report submitted',
-      type: 'success',
+      title: 'Report submitted'
     });
   } catch(err) {
-    return sweet({
-      titleText: err.message,
-      type: 'error',
+    return sweet.fire({
+      titleText: err.message
     })
   }
 }

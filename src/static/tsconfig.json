@@ -8,11 +8,12 @@
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "noImplicitAny": false,
-    "outDir": "../../dist/static/js",
+    "rootDir": "../",
+    "outDir": "../../dist",
     "removeComments": true,
   },
   "include": [
-    "ts/**/*.ts"
+    "js/**/*.ts"
   ],
   "exclude": [
     "node_modules"

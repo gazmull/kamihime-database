@@ -1,11 +1,10 @@
 import { Express, RequestHandler, Router } from 'express';
-import apiHandler from '../middleware/api-handler';
-import reAuthHandler from '../middleware/re-auth-handler';
-import ApiRoute from '../struct/ApiRoute';
-import Client from '../struct/Client';
-import Route from '../struct/Route';
+import Server from '..';
+import { IRouterData } from '../../../../typings';
+import ApiRoute from '../../ApiRoute';
+import Route from '../../Route';
 
-export default async function processRoutes (router: Router | Express, data: IData) {
+export default async function processRoutes (this: Server, router: Router | Express, data: IRouterData) {
   for (const route of data.routes) {
     const file: Route = new (require(`${data.directory}/${route}`).default)();
 
@@ -17,7 +16,6 @@ export default async function processRoutes (router: Router | Express, data: IDa
 
     file.server = this;
     file.client = data.client;
-    Object.assign(file.util, { ...this.client.util });
 
     const mainHandler: RequestHandler = async (req, res, next) => {
       try {
@@ -26,8 +24,8 @@ export default async function processRoutes (router: Router | Express, data: IDa
         return true;
       } catch (err) {
         return file instanceof ApiRoute
-          ? this.util.handleApiError(res, err)
-          : this.util.handleSiteError(res, err);
+          ? this.util.handleApiError.call(this, res, err)
+          : this.util.handleSiteError.call(this, res, err);
       }
     };
 
@@ -39,14 +37,4 @@ export default async function processRoutes (router: Router | Express, data: IDa
   }
 
   return true;
-}
-
-/**
- * Data to pass on Routes
- */
-interface IData {
-  directory: string;
-  routes: string[];
-  client: Client;
-  handler?: typeof reAuthHandler | typeof apiHandler;
 }

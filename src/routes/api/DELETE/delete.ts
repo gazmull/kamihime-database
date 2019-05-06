@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {delete} /delete delete
@@ -41,18 +42,18 @@ export default class DeleteDeleteRequest extends ApiRoute {
 
     const { id } = data;
     const user = data.user || req.signedCookies.userId;
-    const [ character ]: IKamihime[] = await this.util.db('kamihime').select([ 'name', 'id' ]).where('id', id);
+    const [ character ]: IKamihime[] = await this.server.util.db('kamihime').select([ 'name', 'id' ]).where('id', id);
 
-    if (!character) throw { code: 404, message: 'Character not found.' };
+    if (!character) throw new ApiError(404);
 
     const name = character.name;
 
-    await this.util.db('kamihime').where('id', id).delete();
+    await this.server.util.db('kamihime').where('id', id).delete();
 
     if (this.client.auth.discord.dbReportChannel)
-      await this.util.discordSend(this.client.auth.discord.dbReportChannel, `${user} deleted ${name} (${id}).`);
+      await this.server.util.discordSend(this.client.auth.discord.dbReportChannel, `${user} deleted ${name} (${id}).`);
 
-    this.util.logger.info(`[D] API: Character: ${name} (${id}) | By: ${user}`);
+    this.server.util.logger.info(`[D] API: Character: ${name} (${id}) | By: ${user}`);
 
     res
       .status(200)

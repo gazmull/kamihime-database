@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import ApiRoute from '../../../struct/ApiRoute';
+import ApiError from '../../../util/ApiError';
 
 /**
  * @api {get} /id/:id id
@@ -51,11 +52,11 @@ export default class GetIdRequest extends ApiRoute {
     const validId: string[] = [ 's', 'k', 'e', 'w', 'x' ];
     const checkId: boolean = id && validId.includes(id.charAt(0)) && !isNaN(id.slice(1));
 
-    if (!checkId) throw { code: 403, message: 'Invalid id.' };
+    if (!checkId) throw new ApiError(422, 'Invalid id.');
 
     const character = this.server.kamihime.find(el => el.id === id.toLowerCase());
 
-    if (!character) throw { code: 404, message: 'Character not found.' };
+    if (!character) throw new ApiError(404);
 
     res
       .status(200)

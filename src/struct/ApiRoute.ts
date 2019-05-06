@@ -1,5 +1,5 @@
 import { IApiOptions } from '../../typings';
-import { handleApiError } from '../util/handleError';
+import ApiError from '../util/ApiError';
 import Route from './Route';
 
 export default class ApiRoute extends Route {
@@ -9,8 +9,6 @@ export default class ApiRoute extends Route {
     this.cooldown = options.cooldown || 1;
 
     this.max = options.max || 3;
-
-    this.util = { handleApiError };
   }
 
   public cooldown: number;
@@ -29,12 +27,12 @@ export default class ApiRoute extends Route {
       isExempted('id');
 
     if (!hasAll)
-      throw { code: 403, message: 'Incomplete data.' };
+      throw new ApiError(400, 'Incomplete data.');
 
     const validToken = data.token === this.server.auth.api.token;
 
     if (!validToken)
-      throw { code: 401, message: 'Invalid token.' };
+      throw new ApiError(401, 'Invalid token.');
 
     return true;
   }

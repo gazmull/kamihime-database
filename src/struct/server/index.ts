@@ -1,76 +1,67 @@
-import { Collection } from 'discord.js';
+import { Collection, TextChannel } from 'discord.js';
 import { Express, Router } from 'express';
-import * as fs from 'fs-extra';
 import * as knex from 'knex';
 import fetch from 'node-fetch';
-import { resolve } from 'path';
 // tslint:disable-next-line:max-line-length
-import { IAuth, IKamihime, IPasswordAttempts, IRateLimitLog, IReport, ISession, IState, IUser, IUtil } from '../../typings';
-import { api, database, discord, exempt, host, rootURL } from '../auth/auth';
-import apiHandler from '../middleware/api-handler';
-import authHandler from '../middleware/auth-handler';
-import reAuthHandler from '../middleware/re-auth-handler';
-import { handleApiError, handleSiteError } from '../util/handleError';
-import Winston from '../util/Logger';
-import processRoutes from '../util/processRoutes';
-import ApiRoute from './ApiRoute';
-import Client from './Client';
+import { IAuth, IKamihime, IPasswordAttempts, IRateLimitLog, IReport, ISession, IState, IUser, IUtil } from '../../../typings';
+import { api, database, discord, exempt, host, rootURL } from '../../auth/auth';
+import authHandler from '../../middleware/auth-handler';
+import { handleApiError, handleSiteError } from '../../util/handleError';
+import Winston from '../../util/Logger';
+import ApiRoute from '../ApiRoute';
+import Client from '../Client';
+import ApiController from './controllers/api';
+import SiteController from './controllers/site';
 
-let serverRefreshTimeout: NodeJS.Timeout = null;
+let serverStoresRefresh: NodeJS.Timeout = null;
+let serverKamihimeRefresh: NodeJS.Timeout = null;
 
 const GENERAL_COOLDOWN: number = 1000 * 60 * 3;
 
 export default class Server {
-  constructor () {
-    this.client = null;
-
-    this.auth = {
-      api,
-      database,
-      discord,
-      exempt,
-      host,
-      rootURL
-    };
-
-    this.util = {
-      handleApiError,
-      handleSiteError,
-      db: knex(database),
-      logger: new Winston().logger
-    };
-
-    this.api = new Collection();
-
-    this.rateLimits = new Collection();
-
-    this.states = new Collection();
-
-    this.passwordAttempts = new Collection();
-
-    this.visitors = new Collection();
-
-    this.kamihime = [];
-
-    this.status = null;
-  }
-
   public client: Client;
-  public auth: IAuth;
-  public util: IUtil;
-  public api: Collection<string, Collection<string, ApiRoute>>;
-  public rateLimits: Collection<string, Collection<string, Collection<string, IRateLimitLog>>>;
-  public states: Collection<string, IState>;
-  public passwordAttempts: Collection<string, IPasswordAttempts>;
-  public visitors: Collection<string, Collection<string, number>>;
-  public kamihime: IKamihime[];
+
+  public auth: IAuth = {
+    api,
+    database,
+    discord,
+    exempt,
+    host,
+    rootURL
+  };
+
+  public util: IUtil = {
+    handleApiError,
+    handleSiteError,
+    db: knex(database),
+    logger: new Winston().logger,
+    collection: <K, V>() => new Collection<K, V>(),
+    discordSend: (channelId, message) => {
+      const channel = this.client.discord.channels.get(channelId) as TextChannel;
+
+      if (!channel) return this.util.logger.warn(`Channel ${channelId} does not exist.`);
+
+      return channel.send(message);
+    }
+  };
+
+  public stores = {
+    api: new Collection<string, Collection<string, ApiRoute>>(),
+    rateLimits: new Collection<string, Collection<string, Collection<string, IRateLimitLog>>>(),
+    states: new Collection<string, IState>(),
+    passwordAttempts: new Collection<string, IPasswordAttempts>(),
+    visitors: new Collection<string, Collection<string, number>>()
+  };
+
+  public kamihime: IKamihime[] = [];
+
   public status: string;
 
   get production () {
     return process.env.NODE_ENV === 'production';
   }
 
-  public async init (server: Express, client: Client) {
+  public async init (express: Express, client: Client) {
     this.client = client;
 
     // Website status message
@@ -80,37 +71,15 @@ export default class Server {
       .then(([ msg ]) => this.status = msg.message || null)
       .catch(this.util.logger.error);
 
-    // Api Routes
-    const Api = Router();
-    const API_ROUTES_DIR: string = resolve(__dirname, '../routes/api');
-    const methods: string[] = fs.readdirSync(API_ROUTES_DIR);
+    // Routes
+    const Api: Router = await ApiController.init.call(this);
+    const Site: Router = await SiteController.init.call(this);
 
-    for (const method of methods) {
-      this.rateLimits.set(method, new Collection());
-      this.util.logger.info(`API: Ratelimiter: Method ${method.toUpperCase()}`);
+    // Routes Auth Handler
+    express.use(authHandler.call(this));
 
-      const API_METHOD_ROUTES_DIR = resolve(API_ROUTES_DIR, method);
-      let apiRoutes: string[] = fs.readdirSync(API_METHOD_ROUTES_DIR);
-      apiRoutes = apiRoutes.map(el => el.slice(0, el.indexOf('.js')));
-
-      await processRoutes.bind(this)(
-        Api,
-        { client, directory: API_METHOD_ROUTES_DIR, handler: apiHandler, routes: apiRoutes }
-      );
-
-      for (const route of apiRoutes) {
-        this.rateLimits.get(method).set(route, new Collection());
-        this.util.logger.info(`-- ${route} Collection is set.`);
-      }
-    }
-
-    this.util.logger.info('Loaded API Routes');
-
-    // Route Auth Handler
-    server.use(authHandler.bind(this)());
-
-    // Site Routes + Api Router
-    server
+    // Finalise routes
+    express
       .get('*', (req, res, next) => {
         if (
           !req.cookies.verified &&
@@ -120,25 +89,12 @@ export default class Server {
 
         return next();
       })
-      .use('/api', Api);
-
-    const SITE_ROUTES_DIR: string = resolve(__dirname, '../routes/site');
-    let siteRoutes: string[] = fs.readdirSync(SITE_ROUTES_DIR);
-    siteRoutes = siteRoutes.filter(el => el !== 'api');
-
-    await processRoutes.bind(this)(
-      server,
-      { client, directory: SITE_ROUTES_DIR, handler: reAuthHandler, routes: siteRoutes }
-    );
-
-    this.util.logger.info('Loaded Site Routes');
-
-    server.all('*', (_, res) => handleSiteError(res, { code: 404 }));
-    Api.all('*', (_, res) => handleApiError(res, { code: 404, message: 'API method not found.' }));
+      .use('/api', Api)
+      .use('/', Site);
 
     const protocol = this.production ? 'https' : 'http';
 
-    server.listen(host.port, () => this.util.logger.info(`Listening to ${protocol}://${host.address}:${host.port}`));
+    express.listen(host.port, () => this.util.logger.info(`Listening to ${protocol}://${host.address}:${host.port}`));
 
     return this;
   }
@@ -147,7 +103,7 @@ export default class Server {
    * Calls cleaner functions every time specified from GENERAL_COOLDOWN
    * @param forced Whether the call is forced or not [can be forced thru server API (api/refresh)]
    */
-  public startCleaners (forced: boolean = false) {
+  public startCleaners (forced = false) {
     Promise.all([
       this._cleanRateLimits(),
       this._cleanReports(),
@@ -160,36 +116,41 @@ export default class Server {
       .catch(this.util.logger.error);
 
     if (forced) {
-      clearTimeout(serverRefreshTimeout);
-      serverRefreshTimeout = setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
+      clearTimeout(serverStoresRefresh);
+      serverStoresRefresh = setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
     } else
-      serverRefreshTimeout = setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
+      serverStoresRefresh = setTimeout(() => this.startCleaners(), GENERAL_COOLDOWN);
 
     return this;
   }
 
-  public startKamihimeCache () {
-    fetch(`${this.auth.rootURL}api/list`, { headers: { Accept: 'application/json' } })
+  public startKamihimeCache (forced = false) {
+    fetch(`${this.auth.rootURL}api/list?internal=true`, { headers: { Accept: 'application/json' } })
       .then(res => res.json())
       .then(cache => {
         this.kamihime = cache;
 
         this.util.logger.info('Refreshed Kamihime Cache.');
-        setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
       })
       .catch(this.util.logger.error);
+
+    if (forced) {
+      clearTimeout(serverKamihimeRefresh);
+      serverKamihimeRefresh = setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
+    } else
+      serverKamihimeRefresh = setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
 
     return this;
   }
 
   protected async _cleanRateLimits () {
-    const methods = this.api;
+    const methods = this.stores.api;
 
     for (const method of methods.keys()) {
       const requests = methods.get(method);
 
       for (const request of requests.keys()) {
-        const users = this.rateLimits.get(method).get(request).filter(u => {
+        const users = this.stores.rateLimits.get(method).get(request).filter(u => {
           const requestInstance = methods.get(method).get(request);
           const cooldown: number = requestInstance.cooldown * 1000;
 
@@ -199,7 +160,7 @@ export default class Server {
         if (!users.size) continue;
 
         for (const user of users.keys()) {
-          const _users = this.rateLimits.get(method).get(request);
+          const _users = this.stores.rateLimits.get(method).get(request);
 
           _users.delete(user);
         }
@@ -249,10 +210,10 @@ export default class Server {
 
   protected async _cleanStates () {
     let cleaned = 0;
-    const states = this.states.filter(s => Date.now() > (s.timestamp + 18e5));
+    const states = this.stores.states.filter(s => Date.now() > (s.timestamp + 18e5));
 
     for (const state of states.keys())
-      this.states.delete(state);
+      this.stores.states.delete(state);
 
     cleaned += states.size;
 
@@ -281,7 +242,7 @@ export default class Server {
   }
 
   protected async _cleanVisitors () {
-    const resources = this.visitors;
+    const resources = this.stores.visitors;
     let cleaned = 0;
 
     for (const resource of resources.keys()) {
