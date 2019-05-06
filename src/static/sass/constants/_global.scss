@@ -37,6 +37,7 @@ input {
       width: 25px;
     }
     &::-moz-range-thumb {
+      background: $range-thumb-background;
       border-radius: 50%;
       box-shadow: $box-shadow;
       cursor: pointer;
