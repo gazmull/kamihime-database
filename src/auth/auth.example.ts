@@ -1,5 +1,7 @@
+/* tslint:disable:max-line-length */
+
 import { Config as Database } from 'knex';
-import { Api, DiscordClient, Github, GrantProvider, Host } from '../../typings/auth';
+import { Api, DiscordClient, Github, GrantProvider, Host, KamihimeGrant } from '../../typings/auth';
 
 /**
  * The database configuration to use for the server
@@ -100,4 +102,18 @@ export const discordClient: DiscordClient = {
 export const github: Github = {
   gist: '45cd187e4a476795bcef630a8018e1a6',
   token: 'ieatalotofass'
+};
+
+/**
+ * Configuration for Kamihime PROJECT user's information.
+ *
+ * This is used for logging into the game to extract all episodes.
+ * Please make sure to avoid using the game while doing this to avoid being blocked from the game.
+ *
+ * Get your credentials via Developer Tool (F12) -> Network -> Do a gem gacha roll -> Click recent request
+ * -> Click Headers
+ */
+export const grant: KamihimeGrant = {
+  session: '',
+  xsrf: ''
 };
