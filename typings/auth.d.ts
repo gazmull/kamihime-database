@@ -50,3 +50,12 @@ export interface Github {
   gist: string;
   token: string;
 }
+
+/**
+ * @property session The user's Session value.
+ * @property xsrf The user's XSRF Token value.
+ */
+export interface KamihimeGrant {
+  session: string;
+  xsrf: string;
+}

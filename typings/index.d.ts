@@ -6,7 +6,7 @@ import apiHandler from '../src/middleware/api-handler';
 import reAuthHandler from '../src/middleware/re-auth-handler';
 import Client from '../src/struct/Client';
 import ApiError from '../src/util/ApiError';
-import { Api as ApiAuth, DiscordClient, GrantProvider, Host } from './auth';
+import { Api as ApiAuth, DiscordClient, GrantProvider, Host, KamihimeGrant } from './auth';
 
 export interface IRouterData {
   directory: string;
@@ -51,17 +51,24 @@ export interface IUtil {
 
 export interface IExtractorOptions {
   logger: Logger;
+  grant: KamihimeGrant;
+  db: Knex;
   base: {
-    CHARACTERS: any[];
+    CHARACTERS: IKamihime[];
     DESTINATION: string;
-    URL: { SCENARIOS: string };
-  };
-  codes: {
-    [type: string]: {
-      get: string;
-      intro: string;
-      scene: string;
-    },
+    URL: {
+      SCENARIOS: string,
+      EPISODES: string;
+      KAMIHIMES: {
+        SCENES: string;
+      };
+      EIDOLONS: {
+        SCENES: string;
+      };
+      SOULS: {
+        INFO: string;
+      }
+    };
   };
 }
 

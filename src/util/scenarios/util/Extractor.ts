@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra';
+import * as Knex from 'knex';
 import fetch from 'node-fetch';
 import { Logger } from 'winston';
 import { IExtractorFiles, IExtractorOptions, IScenarioSequence } from '../../../../typings';
@@ -7,18 +8,19 @@ import GithubGist from './GithubGist';
 const formatErr = (message: string) => `${new Date().toLocaleString()}: ${message}`;
 
 const headers = {
-  'user-agent': [
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64)',
+  'User-Agent': [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
     'AppleWebKit/537.36 (KHTML, like Gecko)',
-    'Chrome/58.0.3029.110 Safari/537.36',
-  ].join(' ')
+    'Chrome/74.0.3729.169 Safari/537.36',
+  ].join(' '),
+  Cookie: ''
 };
 
 export default class Extractor {
   constructor (options: IExtractorOptions) {
     this.base = options.base;
 
-    this.codes = options.codes;
+    this.db = options.db;
 
     this.logger = options.logger;
 
@@ -35,10 +37,12 @@ export default class Extractor {
     this.errors = [];
 
     this.verbose = process.argv.includes('--verbose');
+
+    headers.Cookie = `XSRF-TOKEN=${options.grant.xsrf};session=${options.grant.session}`;
   }
 
   public base: IExtractorOptions['base'];
-  public codes: IExtractorOptions['codes'];
+  public db: Knex;
   public files: IExtractorFiles;
   public blacklist: string[];
   public resourcesExtracted: number;
@@ -50,13 +54,15 @@ export default class Extractor {
 
   public async exec () {
     for (const character of this.base.CHARACTERS) {
-      const { id, ..._resources } = character;
-      const resources = this._filter(_resources, el => el);
+      const { id } = character;
 
       if (!this.files[id])
         this.files[id] = {};
 
-      this.resourcesFound += Object.keys(resources).length;
+      if (this.verbose) this.logger.info(`Obtaining episodes for ${id}...`);
+
+      const resources = await this._getEpisodes(id);
+      this.resourcesFound += resources.length;
       this.resourcesExtracted += await this._extract(id, resources);
     }
 
@@ -85,6 +91,99 @@ export default class Extractor {
   }
 
   // -- Utils
+
+  private async _getEpisodes (id: string) {
+    try {
+      let res: string[];
+
+      if (id.startsWith('s')) {
+        res = await this._extractFromEpisodes(id);
+
+        return res;
+      }
+
+      const url = this.base.URL[id.startsWith('e') ? 'EIDOLONS' : 'KAMIHIMES'].SCENES + id.slice(1);
+      const request = await fetch(url, { headers });
+
+      if (!request.ok) throw new Error(`Received HTTP status: ${request.status}`);
+
+      const json = await request.json();
+
+      if (json.errors) throw new Error(json.errors[0].message);
+
+      res = await this._extractFromEpisodes(id, Number(/^(\d+)_harem/.exec(json.episode_id)[1]));
+
+      return res;
+    } catch (err) {
+      this.errors.push(formatErr(`[${id}] \n ${err.stack}`));
+
+      if (this.verbose) this.logger.warn(`Failed getting hashes for ${id} see scenario-error.log...`);
+
+      return [];
+    }
+  }
+
+  private async _extractFromEpisodes (id: string, episodeId?: number) {
+    let episodes: number[];
+    const result: {
+      harem1Resource1?: string;
+      harem2Resource1?: string;
+      harem2Resource2?: string;
+      harem3Resource1?: string;
+      harem3Resource2?: string;
+    } = {};
+
+    // -- If empty episodeId, it assumes passed ID is a soul's ID
+    if (!episodeId) {
+      const predicted = Number(id.slice(1)) * 2;
+      episodes = [ predicted - 1, predicted ];
+    } else if (this.base.CHARACTERS.find(i => i.id === id).rarity === 'R' || id.startsWith('e'))
+      episodes = [ episodeId - 1, episodeId ];
+    else
+      episodes = [ episodeId - 1, episodeId, episodeId + 1 ];
+
+    for (const episode of episodes) {
+      try {
+        const url = [
+          this.base.URL.EPISODES,
+          episode,
+          `_harem-${id.startsWith('s') ? 'job' : id.startsWith('e') ? 'summon' : 'character'}`,
+        ].join(''); console.log(url);
+        const request = await fetch(url, { headers });
+
+        if (!request.ok) throw new Error(`Received HTTP status: ${request.status}`);
+
+        const json = await request.json();
+
+        if (json.errors) throw new Error(json.errors[0].message);
+
+        const { scenarios, harem_scenes: scenes } = json.chapters[0];
+
+        if (!scenes) result.harem1Resource1 = scenarios[0].resource_directory;
+        else if (scenes && episodes.indexOf(episode) === 1) {
+          result.harem2Resource1 = scenarios[0].resource_directory;
+          result.harem2Resource2 = scenes[0].resource_directory;
+        } else {
+          result.harem3Resource1 = scenarios[0].resource_directory;
+          result.harem3Resource2 = scenes[0].resource_directory;
+        }
+      } catch (err) {
+        this.errors.push(formatErr(`[${id}] \n ${err.stack}`));
+
+        if (this.verbose) this.logger.warn(`Failed getting hashes for ${id} see scenario-error.log...`);
+
+        continue;
+      }
+    }
+
+    await this.db('kamihime').update(result).where('id', id);
+    const resValues = Object.values(result);
+
+    for (const resource of resValues)
+      this.files[id] = { [resource]: [] };
+
+    return resValues;
+  }
 
   private async _download () {
     for (const chara in this.files) {
@@ -125,40 +224,21 @@ export default class Extractor {
     return true;
   }
 
-  private async _extract (id: string, resources: { [column: string]: string}) {
-    let extracted = Object.keys(resources).length;
+  private async _extract (id: string, resources: string[]) {
+    let extracted = resources.length;
 
-    for (const r in resources) {
-      // tslint:disable-next-line:forin
-      // tf...
-      if (!resources[r]) {
-        extracted--;
+    for (const resource of resources) {
+      if (this.verbose) this.logger.warn(`Extracting ${id} resource script ${resource}...`);
 
-        continue;
-      }
-
-      if (this.verbose) this.logger.warn(`Extracting ${id} resource script ${resources[r]}...`);
-
-      const resource = resources[r];
-      const prefix = id.charAt(0);
-      const type = this.codes[prefix];
-      const foldersFlat = Object.values(type).map(el => el.split('/').join(''));
-      const resourceLastFour = resource.slice(-4);
-      const file = foldersFlat.filter(el => el !== type.scene.split('/').join('')).includes(resourceLastFour)
+      const file = [ 0, 1, 3 ].includes(resources.indexOf(resource))
         ? '/scenario/first.ks'
         : '/scenario.json';
-      let folder = foldersFlat.find(el => el === resourceLastFour);
+      const resourceLastFour = resource.slice(-4).split('');
+
+      resourceLastFour.splice(2, 0, '/');
+      const folder = resourceLastFour.join('') + '/';
 
       try {
-        if (!folder)
-          throw new Error([
-            'Cannot resolve resource parent folder.',
-            'Looks like wrong resource directory for this character.',
-          ].join(' '));
-
-        const fLen = folder.length / 2;
-        folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
-
         const data = await fetch(this.base.URL.SCENARIOS + folder + resource + file, { headers });
         const script = await data.text();
 
@@ -175,8 +255,7 @@ export default class Extractor {
           await this._doStory({
             id,
             resource,
-            script,
-            type
+            script
           });
         else {
           const mainData = script
@@ -188,7 +267,6 @@ export default class Extractor {
           await this._doScenario({
             id,
             resource,
-            type,
             script: json
           });
         }
@@ -206,8 +284,8 @@ export default class Extractor {
   }
 
   private async _doStory (
-    { id, resource, script, type }:
-    { id: string, resource: string, script: string, type: IExtractorOptions['codes']['type'] }
+    { id, resource, script }:
+    { id: string, resource: string, script: string }
   ) {
     const chara = {};
     let lines = [];
@@ -358,8 +436,8 @@ export default class Extractor {
   }
 
   private async _doScenario (
-    { id, resource, script, type }:
-    { id: string, resource: string, script: IScenarioSequence[], type: IExtractorOptions['codes']['type'] }
+    { id, resource, script }:
+    { id: string, resource: string, script: IScenarioSequence[] }
   ) {
     const lines = [];
 
@@ -400,10 +478,14 @@ export default class Extractor {
         }
 
         line.words = line.words
-          .replace(/[[\]"]/g, '')
-          .replace(/(\.{1,3}|…|,)(?=[^\s\W])/g, '$& ');
+          ? line.words
+            .replace(/[[\]"]/g, '')
+            .replace(/(\.{1,3}|…|,)(?=[^\s\W])/g, '$& ')
+          : ' ';
         line.chara = line.chara
-          .replace(/(["%])/g, '\\$&');
+          ? line.chara
+            .replace(/(["%])/g, '\\$&')
+          : ' ';
 
         Object.assign(talkEntry, { chara: line.chara, words: line.words });
 
@@ -428,16 +510,5 @@ export default class Extractor {
     );
 
     return true;
-  }
-
-  /**
-   * Filters an object.
-   * @param obj Object to filter
-   * @param fn Function to use as filter
-   */
-  public _filter (obj: object, fn: (el: any) => any) {
-    return Object.keys(obj)
-      .filter(el => fn(obj[el]))
-      .reduce((prev, cur) => Object.assign(prev, { [cur]: obj[cur] }), {});
   }
 }

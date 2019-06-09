@@ -9,13 +9,13 @@
     "compile": "tsc -p .",
     "dev:build": "gulp build",
     "dev:watch": "gulp watch",
-    "dev:start": "yarn dev:build && yarn dev:watch",
+    "dev:tsc:watch": "tsc -p . --watch",
     "docs:build": "apidoc -f .ts -i src/routes/api/ -o ../kamihime-database-docs",
     "lint-fix": "gulp lint --fix",
     "lint": "gulp lint",
     "pm2": "pm2 start .pm2.yml --env production",
     "scenarios-v": "yarn run scenarios --verbose",
-    "scenarios": "node build/util/scenarios"
+    "scenarios": "node dist/util/scenarios"
   },
   "engine": {
     "node": ">=10"
