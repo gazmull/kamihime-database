@@ -77,7 +77,8 @@ export default class Extractor {
       );
 
     this.logger.info([
-      `Extracted ${this.resourcesExtracted} resources. (Expected: ${this.resourcesFound})`,
+      // tslint:disable-next-line: max-line-length
+      `Extracted ${this.resourcesExtracted} resources from ${this.base.CHARACTERS.length} characters. (Expected: ${this.resourcesFound})`,
       `Files Found: ${this.filesFound}`,
       this.errors.length
         ? [
@@ -137,18 +138,18 @@ export default class Extractor {
     if (!episodeId) {
       const predicted = Number(id.slice(1)) * 2;
       episodes = [ predicted - 1, predicted ];
-    } else if (this.base.CHARACTERS.find(i => i.id === id).rarity === 'R' || id.startsWith('e'))
+    } else if ([ 'SSR+', 'R' ].includes(this.base.CHARACTERS.find(i => i.id === id).rarity) || id.startsWith('e'))
       episodes = [ episodeId - 1, episodeId ];
     else
       episodes = [ episodeId - 1, episodeId, episodeId + 1 ];
 
-    for (const episode of episodes) {
+    for (const episode of episodes)
       try {
         const url = [
           this.base.URL.EPISODES,
           episode,
           `_harem-${id.startsWith('s') ? 'job' : id.startsWith('e') ? 'summon' : 'character'}`,
-        ].join(''); console.log(url);
+        ].join('');
         const request = await fetch(url, { headers });
 
         if (!request.ok) throw new Error(`Received HTTP status: ${request.status}`);
@@ -174,7 +175,6 @@ export default class Extractor {
 
         continue;
       }
-    }
 
     await this.db('kamihime').update(result).where('id', id);
     const resValues = Object.values(result);

@@ -116,7 +116,6 @@ export interface IKamihime {
   avatar?: string;
   element?: string;
   harem1Resource1?: string;
-  harem1Resource2?: string;
   harem1Title?: string;
   harem2Resource1?: string;
   harem2Resource2?: string;
