@@ -4,13 +4,13 @@ import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
 
 /**
- * @api {get} /random/:length/:includeWeapons random
+ * @api {get} /random/:length/:includeAll random
  * @apiName GetRandom
  * @apiGroup Kamihime Specific
  * @apiDescription Randomly provides character objects based on length provided. Maximum of 10.
  *
  * @apiParam {number} length Number of items to be provided.
- * @apiParam {boolean} includeWeapons Should the cherry picker pick weapons as well?
+ * @apiParam {boolean} includeAll Whether to include weapons and generic eidolons in the cherry picking pool as well
  *
  * @apiSuccessExample {json} Response:
  *  HTTP/1.1 200 OK
@@ -47,18 +47,20 @@ export default class GetRandomRequest extends ApiRoute {
       id: 'random',
       max: 3,
       method: 'GET',
-      route: [ '/random/:_length?/:includeWeapons?' ]
+      route: [ '/random/:_length?/:includeAll?' ]
     });
   }
 
   public async exec (req: Request, res: Response) {
     const length = req.params._length ? Math.abs(Number(req.params._length)) : 1;
-    const includeWeapons = req.params.includeWeapons;
+    const includeAll = req.params.includeAll;
 
     if (isNaN(length)) throw new ApiError(422, 'Only numbers are allowed.');
     if (length > 10) throw new ApiError(422, 'Request must be only up to 10 characters.');
 
-    const filter = (k: IKamihime) =>  k.avatar && (includeWeapons ? !k.approved : k.approved);
+    const filter = (k: IKamihime) => includeAll
+      ? k.avatar
+      : k.avatar && k.approved;
 
     const roster = this.server.kamihime.filter(filter);
     const cherry = () => Math.abs(Math.floor(Math.random() * roster.length) - 1);
