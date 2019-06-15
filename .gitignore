@@ -1,5 +1,5 @@
 # NPM
-node_modules/
+node_modules
 package-lock.json
 
 # Yarn
@@ -7,17 +7,17 @@ yarn-error.log
 
 # Private Credentials
 *.sql
-logs/
-dist/
-provider/
+logs
+dist
+provider
 scenarios-error.log
 src/auth/auth.ts
-static/css
 static/img/wiki
-static/scenarios/
-static/scripts/
+static/scenarios
 test.js
-test/
+test
 
-# Compilers / Transpilers
-*.map
+concept_site_layout*
+
+# Compilers
+*.tsbuildinfo
