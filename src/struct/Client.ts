@@ -70,6 +70,17 @@ export default class Client {
       'VOICE_STATE_UPDATE',
       'TYPING_START',
       'WEBHOOKS_UPDATE',
+      'VOICE_SERVER_UPDATE',
+      'MESSAGE_REACTION_ADD',
+      'GUILD_ROLE_UPDATE',
+      'GUILD_ROLE_CREATE',
+      'GUILD_MEMBER_UPDATE',
+      'GUILD_MEMBER_ADD',
+      'GUILD_EMOJIS_UPDATE',
+      'GUILD_DELETE',
+      'GUILD_BAN_REMOVE',
+      'GUILD_BAN_ADD',
+      'CHANNEL_PINS_UPDATE',
     ];
     const rootURL = this.server.auth.rootURL;
     const hostname = rootURL.slice(rootURL.indexOf(':') + 3).slice(0, -1);

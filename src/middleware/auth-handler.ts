@@ -4,7 +4,6 @@ import Server from '../struct/server';
 
 const defaultSettings = {
   audio: { bgm: 0.1, glo: 1.0, snd: 0.5 },
-  lastNav: '#all',
   menu: 'true',
   visual: {
     bg: '#997777',

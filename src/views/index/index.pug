@@ -1,0 +1,50 @@
+extends ../_templates/main
+
+mixin appendPanelBtn(name, index)
+  a(href='javascript:void(0);')
+    .btn(data-toggle = 'collapse', data-target = `#t${index}`)
+      h3 #{name}
+
+append styles
+  link(rel='stylesheet', href='/css/index.css')
+
+append scripts
+  script(src='/js/index.js')
+
+block title
+  title Kamihime Database
+
+block content
+  .container-fluid.my-1
+    .row
+      - if(status)
+        div.col-12
+          div(class='alert alert-dismissable alert-dark fade show')
+            button.close.text-white(data-dismiss='alert')
+              span &times;
+            h4.alert-heading Announcement
+            p.name(style='white-space: pre-wrap') !{status}
+      .col-sm-12.col-md-6
+        .tile.big
+          a(href = 'javascript:void(0);', data-char = 'random', data-toggle = 'modal', data-target = '.modal')
+          img(data-src='/img/wiki/close/(Holy Night Wind) Kamadeva Close.png')
+          h2 Random Character
+      .col-sm-12.col-md-6
+        .tile.big
+          a(href = '/browse')
+          img(data-src='/img/wiki/close/Sati Close.png')
+          h2 Browse Characters
+    .row
+      .col-sm-12.col-md-6
+        .tile-container
+          h2 Latest Characters
+          .latest-panel
+            each t, i  in [ 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R' ]
+              +appendPanelBtn(t, i)
+          #latest-parent
+            include assets/latest
+      .col-sm-12.col-md-6
+        .tile-container
+          h2 Top Characters
+          ul.tile-list
+            include assets/hot

@@ -40,6 +40,7 @@ export interface DiscordClient {
   dbReportChannel: string;
   token: string;
   wikiReportChannel: string;
+  donorID: string;
 }
 
 /**

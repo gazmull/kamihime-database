@@ -1,7 +1,7 @@
 include util
 
 doctype html
-html
+html(lang='en')
   head
     block head
       include meta
@@ -13,12 +13,10 @@ html
       block scripts
         include vendors/scripts
   body
-    block top-nav
-      include top-nav
-    block side-nav
-      include side-nav
+    block navigation
+      include navigation
     content
       block content
     footer
-      block foot
-        include foot
+      block footer
+        include footer

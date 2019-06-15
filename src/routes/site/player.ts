@@ -1,3 +1,4 @@
+import { TextChannel } from 'discord.js';
 import { Request, Response } from 'express';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -86,7 +87,8 @@ export default class PlayerRoute extends Route {
     folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
     const requested = {
       SCENARIOS: `${SCENARIOS + folder}${resource}/`,
-      script: scenario
+      script: scenario,
+      character: { id: character.id }
     };
 
     if (type === 'story')
@@ -133,8 +135,14 @@ export default class PlayerRoute extends Route {
       .where('id', character.id);
     const usr = req.signedCookies.userId || req.ip;
     const status = () => this.server.util.logger.info(`[A] Peek: ${usr} visited ${character.name}`);
+    const fetchedDiscord = await this.client.discord.users.fetch(req.signedCookies.userId);
+    const channel = await this.client.discord.channels.fetch(this.client.auth.discord.channel) as TextChannel;
+    const guild = channel ? channel.guild : null;
+    const guildMember = guild ? await guild.members.fetch(fetchedDiscord.id) : null;
+    const isDonor = fetchedDiscord && guild && guildMember &&
+      guildMember.roles.has(this.client.auth.discord.donorID);
 
-    if (this.server.auth.exempt.includes(req.signedCookies.userId)) {
+    if (this.server.auth.exempt.includes(req.signedCookies.userId) || isDonor) {
       await update();
       status();
 

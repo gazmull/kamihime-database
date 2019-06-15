@@ -24,7 +24,6 @@ import ApiError from '../../../util/ApiError';
  *        "glo": 1.0,
  *        "snd": 0.5,
  *      },
- *      "lastNav": "#all",
  *      "menu": "true",
  *      "visual": {
  *        "bg": "rgb(255, 183, 183)",
@@ -62,7 +61,6 @@ export default class GetAtMeRequest extends ApiRoute {
         glo: 1.0,
         snd: 0.5
       },
-      lastNav: req.cookies.settings.lastNav || '#all',
       menu: req.cookies.settings.menu || true,
       updatedAt: req.cookies.settings.updatedAt || Date.now(),
       visual: req.cookies.settings.visual || {

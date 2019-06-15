@@ -1,8 +1,7 @@
 extends ../_templates/player
-include assets/side-nav-content
 
 append head
-  meta(name='viewport', content='width=450, initial-scale=0.8, maximum-scale=1.0, user-scalable=0')
+  meta(name='viewport', content='width=device-width, initial-scale=0.8, maximum-scale=1.0, user-scalable=0')
   script.
     let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
     const SCENARIOS = "#{SCENARIOS}";
@@ -12,14 +11,15 @@ append head
   script(src='//cdn.jsdelivr.net/npm/howler@2.1.2/dist/howler.core.min.js')
   script(src='/js/player/story.js')
 
-block content
-  div.panel-wrapper
-    div.panel
+block subcontent
+  +playerSettings
+  .panel-wrapper
+    .panel
       button(class='invi leftNav', nav='left')
       |
       button(class='invi rightNav', nav='right')
-      div#image
-      div#dialog
-        div#text
-          div#characterName
-          div#characterTalk
+      #image
+      #dialog
+        #text
+          #characterName
+          #characterTalk

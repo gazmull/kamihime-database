@@ -7,13 +7,13 @@ append scripts
   script(src='/js/dashboard.js')
 
 append content
-  div.container-fluid
+  .container-fluid
     h3 Admin Dashboard
     h4 Last login: #{user.lastLogin}
     h4 Last IP Address: #{user.ip}
-    div.row
-      div.col-1
-      div(class='col-sm-12 col-md-4')
+    .row
+      .col-1
+      .col-sm-12.col-md-4
         h3 Admin actions
         ul.list-group
           li(class='list-group-item list-group-item-action list-group-item-dark')

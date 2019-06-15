@@ -1,0 +1,57 @@
+nav(class='top-nav navbar navbar-expand-md navbar-dark')
+  b(class='navbar-text text-uppercase d-block d-md-none') Menu
+  button.navbar-toggler(type='button', data-toggle='collapse', data-target='#top-nav-content')
+    span.navbar-toggler-icon
+
+  #top-nav-content(class='collapse navbar-collapse')
+    block top-nav-content
+      ul(class='navbar-nav mr-auto')
+        li.nav-item
+          +link('/', 'Home')
+        li.nav-item
+          +link('/browse', 'Browse')
+        li.nav-item
+          +donateLink
+        - if (user)
+          li.nav-item
+            a(href='/logout')
+              | Logout (
+              - if (user.admin)
+                span.admin #{user.username}
+              - else
+                | #{user.username}
+              | )
+        - else
+          li.nav-item
+            a.logbutton(
+              data-toggle='tooltip',
+              data-placement='bottom',
+              title='Hello there! Connect an account via Discord.',
+              href='javascript:void(0);',
+              onclick='showLoginWarning();',
+            ) Log in
+    form(class='form-inline', onsubmit='return event.preventDefault();')
+      .input-group
+        .input-group-prepend
+          span.input-group-text
+            i(class='fa fa-search')
+        input#search-bar(class='form-control mr-sm-2', type='text', placeholder='Search character...')
+
+#result-wrapper(class='col-sm-12 col-md-5')
+  a#result-head
+  i#result-close(class='fa fa-2x fa-times')
+  ul#result.list-group
+
+.modal.fade(tabindex='-1', role='dialog')
+  .modal-dialog.modal-dialog-centered(role='document')
+    .modal-content.aero.bg-transparent
+      .modal-header
+        h4.modal-title
+        button.close.text-white(data-dismiss='modal')
+          span &times;
+      .modal-body.bg-dark
+        .modal-background
+          img.img-fluid(alt='char banner')
+        .col
+          p
+          p.modal-body-episodes-list

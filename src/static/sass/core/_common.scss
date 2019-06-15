@@ -1,0 +1,25 @@
+body {
+  background-color: $core-background;
+  color: $core-text;
+  font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  & a {
+    color: $core-link;
+    &:hover {
+      color: $core-text;
+    }
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Raleway Light', Arial, Helvetica, sans-serif;
+  }
+  overflow-x: hidden;
+  & .close {
+    padding: 0.4em 0.32em !important;
+    margin: -1.2rem -0.5rem -1rem auto !important;
+    border-top-right-radius: 5% !important;
+    border-top-left-radius: 5% !important;
+    font-weight: normal !important;
+    opacity: 1 !important;
+    box-shadow: $core-shadow-style !important;
+    background-color: $core-background-danger !important;
+  }
+}

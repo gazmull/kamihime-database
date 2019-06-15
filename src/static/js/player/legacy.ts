@@ -25,7 +25,7 @@ $(async () => {
     allowEscapeKey: false,
     allowOutsideClick: false,
     animation: false,
-    customClass: 'animated zoomIn',
+    customClass: 'animated popOut',
     showConfirmButton: false,
     titleText: 'Resolving images...'
   });
@@ -107,7 +107,7 @@ $(async () => {
     };
 
     if (lastImage && lastImage !== img)
-      $(`#image img[id='${lastImage}`).css(hidden);
+      $(`#image img[id='${lastImage}']`).css(hidden);
 
     $(currentIMG).css(serialiseAnimation(animation, { seconds: newSeq().seconds, steps: newSeq().steps }));
 

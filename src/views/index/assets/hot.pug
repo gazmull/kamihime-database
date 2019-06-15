@@ -1,0 +1,15 @@
+- const type = id => id.startsWith('k') ? 'KAMIHIME' : id.startsWith('e') ? 'EIDOLON' : 'SOUL';
+
+each c in hot
+  li.tile.small
+    a(href = 'javascript:void(0);', data-char = c.id, data-toggle = 'modal', data-target = '.modal')
+    img(data-src =`/img/wiki/portrait/${encodeURI(c.name).replace(/'/g, '%27')} Portrait.png`)
+    span #{c.name}
+    |
+    span.badge.badge-primary #{Number(c.peeks).toLocaleString('en')} VIEWS
+    |
+    |
+    span.badge.badge-secondary #{(c.tier || c.rarity).toUpperCase()}
+    |
+    |
+    span.badge.badge-secondary #{type(c.id)}

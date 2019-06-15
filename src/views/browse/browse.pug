@@ -1,0 +1,38 @@
+extends ../_templates/main
+
+mixin appendPanelBtn(name, index)
+  a(href='javascript:void(0);')
+    .btn(data-toggle = 'collapse', data-target = `#t${index}`)
+      h3 #{name}
+
+mixin appendCharacterList(characters)
+  each c in characters
+    li
+      a(href = 'javascript:void(0);', data-char = c.id, data-toggle = 'modal', data-target = '.modal') #{c.name}
+
+append styles
+  link(rel = 'stylesheet', href = '/css/browse.css')
+
+append scripts
+  script(src = '/js/browse.js')
+
+block title
+  title Kamihime Database - Browse
+
+block content
+  .container-fluid.my-1
+    .row
+      .col
+        .browse-panel
+          each t, i in [ 'ALL', 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R' ]
+            +appendPanelBtn(t, i)
+          #browse-parent
+            each t, i in [ 'all', 'soul', 'eidolon', 'ssr+', 'ssr', 'sr', 'r' ]
+              .collapse(id = `t${i}`, data-parent = '#browse-parent')
+                ul
+                  -
+                    const selector = [ 'soul', 'eidolon' ].includes(t)
+                      ? e => e.id.startsWith(t.charAt(0))
+                      : e => e.id.startsWith('k') && e.rarity.toLowerCase() === t
+                    const selected = t === 'all' ? characters : characters.filter(selector)
+                  +appendCharacterList(selected)

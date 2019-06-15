@@ -1,11 +1,13 @@
 import SweetAlert2 from 'sweetalert2';
 import * as JSCookie from 'js-cookie';
 import { IKamihime as IK } from '../../../../typings/index';
+import { ModalEventHandler as meh} from 'bootstrap';
 
 declare global {
   var swal: typeof SweetAlert2;
   var sweet: typeof SweetAlert2;
   var Cookies: typeof JSCookie;
+  type ModalEventHandler = meh<HTMLElement>;
 
   const FG_IMAGE: string;
   const BG_IMAGE: string;
@@ -14,7 +16,7 @@ declare global {
   const script: IScript[];
   const files: string[];
 
-  var settings: any;
+  var settings: ISettings;
   var audioPool: IHowlPool;
 
   type APIAction = 'add' | 'update' | 'delete' | 'flag' | 'approve';
@@ -30,7 +32,6 @@ declare global {
       glo: number;
       snd: number;
     };
-    lastNav: string;
     menu: boolean;
     updatedAt: number;
     visual: {

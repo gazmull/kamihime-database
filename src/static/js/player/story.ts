@@ -23,7 +23,7 @@ $(async () => {
     allowEscapeKey: false,
     allowOutsideClick: false,
     animation: false,
-    customClass: 'animated zoomIn',
+    customClass: 'animated popOut',
     showConfirmButton: false,
     titleText: 'Resolving assets...'
   });
@@ -61,10 +61,7 @@ $(async () => {
 
     setTimeout(async () => {
       await sweet.fire({
-        html: [
-          'Click OK to proceed.',
-          'For navigation help, see <b>HELP</b> at the sidebar.',
-        ].join('<br><br>'),
+        text: 'Click OK to proceed.',
         titleText: 'Assets loaded!'
       });
       $('.panel').addClass('animated faster fadeIn');

@@ -65,7 +65,6 @@ export default class ConnectRoute extends Route {
         glo: 1.0,
         snd: 0.5
       },
-      lastNav: req.cookies.settings.lastNav || '#all',
       menu: req.cookies.settings.menu || true,
       updatedAt: req.cookies.settings.updatedAt || Date.now(),
       visual: req.cookies.settings.visual || {

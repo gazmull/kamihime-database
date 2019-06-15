@@ -7,12 +7,10 @@ append scripts
     const SCENARIOS = "#{SCENARIOS}";
   script(src='/js/player/legacy.js')
 
-block side-nav
-
-block content
-  div(class='scenario panel-wrapper')
-    div.panel
+block subcontent
+  .scenario.panel-wrapper
+    .panel
       button(class='invi leftNav', nav='left')
       |
       button(class='invi rightNav', nav='right')
-      div#image.animate
+      #image.animate

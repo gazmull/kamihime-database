@@ -1,0 +1,14 @@
+.list-group-item {
+  background-color: $core-tile;
+  opacity: 0.5;
+  transition: opacity $core-transition-simple;
+  will-change: opacity;
+  &:hover {
+    opacity: 1.0;
+  }
+  & a {
+    color: $core-text;
+    display: block;
+    text-decoration: none;
+  }
+}

@@ -80,16 +80,13 @@ export default class Server {
 
     // Finalise routes
     express
+      .use('/api', Api)
       .get('*', (req, res, next) => {
-        if (
-          !req.cookies.verified &&
-          !(req.xhr || req.headers.accept && req.headers.accept.includes('application/json'))
-        )
+        if (!/latest$/i.test(req.originalUrl) && !req.cookies.verified)
           return res.render('invalids/disclaimer', { redirected: true });
 
         return next();
       })
-      .use('/api', Api)
       .use('/', Site);
 
     const protocol = this.production ? 'https' : 'http';

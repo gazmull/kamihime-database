@@ -29,7 +29,7 @@ export default async function processRoutes (this: Server, router: Router | Expr
       }
     };
 
-    router[file.method.toLowerCase()](file.route, data.handler.bind(this, file)(), mainHandler);
+    router[file.method.toLowerCase()](file.route, data.handler.call(this, file), mainHandler);
 
     this.util.logger.info(
       `Loaded Route ${file.method.toUpperCase()} /${route} (id: ${file.id}, routes: ${file.route})`

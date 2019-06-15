@@ -1,29 +1,34 @@
-$core-transition: 0.8s cubic-bezier(0.01, 1, 0.22, 0.99) 0s;
-$core-background: #333333;
-$core-hover: #ff00ff;
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Raleway');
+
+$core-transition-style: cubic-bezier(0.01, 1, 0.22, 0.99);
+$core-transition: 0.8s $core-transition-style 0s;
+$core-transition-simple: 0.25s ease 0s;
+$core-background: #333;
+$core-background-danger: rgb(150, 0, 0);
+$core-nav-background: #111;
+$core-tile: $core-nav-background;
+$core-modal: #555;
 $core-text: #fff;
-$text-active: #fff;
-$text-header: #ddd;
-$text-hover: $core-hover;
-$text-link-header: #ffafe6;
-$text-link: #c40086;
+$core-link: #dd44ff;
+$core-shadow: #000;
+$core-shadow-style: 0px 0px 10px rgb(30, 30, 30);
+$core-margin: 10px;
+$core-opacity: 0.5;
+$title-text-size: 2em;
+$item-text-size: 1.5em;
+$nav-text-size: 1em;
+$footer-text-size: 0.75em;
+
+$tile-list-background: #444;
+
 $text-shadow: #dd55ff;
-$text: $core-text;
 $transition: all $core-transition;
-$background-active: #222;
-$background-hover: $background-active;
-$background: #333;
-$border: 2px solid $text-hover;
 $box-shadow: 1px 1px 1px #7c2962, 0px 0px 1px #7c2962;
 $input-color-background: #500c34;
 $dialog-background: #997777;
 $list-background: #292929;
 $range-thumb-background: #a8227e;
-$scroll-background-hover: $core-hover;
-$scroll-background: #7c2962;
-$scroll-track-background: #DBDBDB;
-$table-background: #3a152e;
-$tooltip-background: $scroll-background;
+$tooltip-background: $core-nav-background;
 
 @mixin prepareTransform ($willChange: '', $transition: $transition) {
   transform: none;
@@ -33,9 +38,4 @@ $tooltip-background: $scroll-background;
 
 @mixin doTransform ($transform...) {
   transform: $transform translateZ(0);
-}
-
-@mixin doActiveBorder () {
-  border-left: $border;
-  border-right: $border;
 }

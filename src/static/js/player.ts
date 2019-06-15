@@ -3,27 +3,6 @@ $(() => sweet = sweet.mixin({ heightAuto: false }));
 audioPool = {};
 const audioFilter = (fn: (el: string) => boolean) => Object.keys(audioPool).filter(fn);
 
-// @ts-ignore
-function showHelp () {
-  return sweet.fire({
-    html: [
-      '<ol style="list-style: none; padding: 0;">',
-      '<li>Audio - Changes player Global/Voice/Music sound volume</li>',
-      '<li>Visual - Changes player frame properties</li>',
-      '</ol><br><br>',
-      'Additional Help:',
-      '<ol style="text-align: justify;">',
-      '<li>',
-      'You can navigate through the player by:',
-      '<br>- Pressing ← and → cursor keys',
-      '<br>- Clicking a portion of the image',
-      '</li>',
-      '<li>Everything is saved if you are logged in, or until you exit your browser as a guest.</li>',
-    ].join(''),
-    titleText: 'Player Settings'
-  });
-}
-
 async function showAudioSettings () {
   const snd1 = audioPool[audioFilter(el => !el.startsWith('bg'))[0]];
   const bgm1 = audioPool[audioFilter(el => el.startsWith('bg'))[0]];
@@ -48,7 +27,7 @@ async function showAudioSettings () {
         const arr = [ glo, snd, bgm ];
 
         if (Howler.volume() === glo && snd1.volume() === snd && bgm1.volume() === bgm)
-          throw new Error('Nothing changed.');
+          return new Error('Nothing changed.');
 
         try {
           const valid = arr.every(el => el >= 0.00 && el <= 1.00);
@@ -66,6 +45,7 @@ async function showAudioSettings () {
     });
 
     if (!res.value) return;
+    if (res.value instanceof Error) throw res.value;
     if ([ 'iPhone', 'iPad', 'iPod' ].some(el => new RegExp(el, 'i').test(navigator.userAgent)))
       return sweet.fire('iOS Detected', 'This action requires the page to reload. Are you sure?', 'question')
         .then(r => r.dismiss ? undefined : window.location.reload());
@@ -131,7 +111,7 @@ async function showVisualSettings () {
           visuals.cls === cls && visuals.containDialog === containDialog &&
           visuals.fontSize === fontSize
         )
-          throw new Error('Nothing changed.');
+          return new Error('Nothing changed.');
 
         try {
           const valid = arr.slice(0, 3).every(el => /^#\w{6}$/.test(el as string)) && !isNaN(arr[4] as number);
@@ -149,6 +129,7 @@ async function showVisualSettings () {
     });
 
     if (!res.value) return;
+    if (res.value instanceof Error) throw res.value;
 
     [ 'bg', 'cl', 'cls', 'containDialog', 'fontSize' ].forEach((val, idx) => updateDialog(val, res.value[idx], true));
 
@@ -199,11 +180,6 @@ function updateDialog (type: string, obj: string, actual = false) {
 }
 
 async function loadAssets (assets: IAsset[], opt?: { withSound?: boolean, updateVisuals?: boolean }) {
-  if (opt.withSound) Howler.volume(settings.audio.glo !== undefined ? settings.audio.glo : 1.0);
-  if (opt.updateVisuals)
-    for (const vSetting of [ 'bg', 'cl', 'cls', 'containDialog', 'fontSize' ])
-      updateDialog(vSetting, settings.visual[vSetting], true);
-
   const load: (_asset: IAsset) => Promise<IAsset> = ({ src, name, type }) =>
     new Promise((resolve, reject) => {
       const isBGM = type === 'bgm';
@@ -227,7 +203,14 @@ async function loadAssets (assets: IAsset[], opt?: { withSound?: boolean, update
       }
     });
 
-  return Promise.all(assets.map(load));
+  const res = await Promise.all(assets.map(load));
+
+  if (opt.withSound) Howler.volume(settings.audio.glo !== undefined ? settings.audio.glo : 1.0);
+  if (opt.updateVisuals)
+    for (const vSetting of [ 'bg', 'cl', 'cls', 'containDialog', 'fontSize' ])
+      updateDialog(vSetting, settings.visual[vSetting], true);
+
+  return res;
 }
 
 function serialiseAnimation (animation: IAnimation, { fading = false, seconds, steps }: { seconds?: number, steps?: number, fading?: boolean }) {
@@ -256,4 +239,106 @@ function serialiseAnimation (animation: IAnimation, { fading = false, seconds, s
   }
 
   return { ...webkit, ...standard };
+}
+
+async function confirmLogin (id: string) {
+  const res = await sweet.fire({
+    cancelButtonText: 'No. Thanks',
+    confirmButtonText: 'Yes, please',
+    html: [
+      'There is no way to contact you if this needs to contact you back.',
+      'Do you want to log in before reporting?',
+    ].join('<br><br>'),
+    showCancelButton: true,
+    titleText: 'Reporting as Anonymous User'
+  })
+
+  if (res.value)
+    return location.replace('/login');
+  else if (res.dismiss === sweet.DismissReason.cancel)
+    return showReport(id);
+}
+
+async function showReport (id: string) {
+  const types = {
+    resource: 'Wrong episode story/scenario',
+    internal: 'Cannot view story/scenario',
+    others: 'Others',
+  };
+  const postBody = {
+    characterId: id,
+    message: {
+      content: null as string,
+      subject: null as string,
+    }
+  };
+
+  try {
+    const res = await sweet
+      .mixin({
+        allowOutsideClick: () => !sweet.isLoading(),
+        progressSteps: [ '1', '2' ],
+        showCancelButton: true,
+        titleText: 'Reporting Errors...',
+      })
+      .queue([
+        {
+          input: 'select',
+          inputOptions: types,
+          inputPlaceholder: 'Select an issue...',
+          inputValidator: value => {
+            return new Promise(resolve => {
+              if (!value) resolve('Please select an issue.');
+
+              postBody.message.subject = value;
+              resolve();
+            });
+          },
+          text: 'What is the concern of this report?',
+        },
+        {
+          html: [
+            '(Optional) To help us resolve the issue quicker, please describe the issue.',
+            'Links are welcome.',
+          ].join('<br>'),
+          input: 'textarea',
+          inputPlaceholder: 'Further specify the issue...',
+          preConfirm: async content => {
+            try {
+              postBody.message.content = content;
+
+              const res = await fetch('/api/report', {
+                body: JSON.stringify(postBody),
+                credentials: 'include',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                method: 'POST',
+              });
+              const json = await res.json();
+
+              if (json.error) throw json.error.message;
+
+              return true;
+            } catch (err) { sweet.showValidationMessage('Report failed: ' + err); }
+          },
+          showLoaderOnConfirm: true,
+        },
+      ])
+
+    if (!res.value || !res.value.length) return;
+
+    return sweet.fire({
+      html: [
+        'Now then, we will have to wait...',
+        'Follow-up this issue at the <a href="http://erosdev.thegzm.space">Discord Server</a>'
+      ].join('<br>'),
+      title: 'Report submitted'
+    });
+  } catch(err) {
+    return sweet.fire({
+      titleText: err.message
+    })
+  }
 }

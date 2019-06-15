@@ -20,7 +20,6 @@ import ApiError from '../../../util/ApiError';
  * @apiParam (Message Subject Options) internal `Cannot view story/scenario`
  * @apiParam (Message Subject Options) others `Others`
  * @apiParam (Message Subject Options) resource `Wrong episode story/scenario`
- * @apiParam (Message Subject Options) title `Wrong episode title`
  *
  * @apiSuccess {boolean} ok JSON body of <Response.status>.ok.
  * @apiSuccessExample {json} Response:
@@ -87,8 +86,7 @@ export default class PostReportRequest extends ApiRoute {
     const types = {
       internal: 'Cannot view story/scenario',
       others: 'Others',
-      resource: 'Wrong episode story/scenario',
-      title: 'Wrong episode title'
+      resource: 'Wrong episode story/scenario'
     };
 
     await this.server.util.discordSend(channel, [

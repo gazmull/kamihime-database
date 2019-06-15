@@ -1,8 +1,8 @@
-let jc = Cookies;
+let jc: Cookies.CookiesStatic<ISettings> = Cookies;
 let searchController: AbortController;
 let searchTimeout: NodeJS.Timeout;
 
-$(() => {
+$(async () => {
   jc = Cookies.withConverter({
     read: value => {
       value = value.replace(/(%[0-9A-Z]{2})+/g, decodeURIComponent);
@@ -19,7 +19,7 @@ $(() => {
 
       return encodeURIComponent(String(value))
         .replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent);
-    },
+    }
   });
   settings = jc.getJSON('settings');
 
@@ -34,6 +34,10 @@ $(() => {
     });
 
     tooltips.on('click', ({ currentTarget }) => $(currentTarget).tooltip('hide'));
+
+    $('.modal')
+      .on('show.bs.modal', handleModalShow())
+      .on('hide.bs.modal', handleModalHide());
   }
 
   if (typeof swal !== 'undefined')
@@ -42,7 +46,11 @@ $(() => {
       animation: false,
       background: '#333',
       buttonsStyling: false,
-      customClass: 'animated fadeIn faster',
+      customClass: {
+        popup: 'animated popOut',
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger',
+      },
     });
 
   $('.nav-switch').on('click', function () {
@@ -61,12 +69,6 @@ $(() => {
     }
   });
 
-  if ($('.side-nav').length && settings.menu)
-    setTimeout(() => {
-      $('.side-nav').removeClass('nav-hidden');
-      $('.nav-switch').addClass('nav-switch-hide');
-    }, 801);
-
   $('.navbar-toggler, #result-close').on('click', () => {
     if (searchController) searchController.abort();
 
@@ -82,9 +84,7 @@ $(() => {
       searchController.abort();
     }
     if (!query) {
-      $('body')
-        .removeClass('modal-open')
-        .width('auto');
+      $('body').removeClass('modal-open');
 
       return $('#result-wrapper').css('transform', '');
     }
@@ -93,12 +93,10 @@ $(() => {
 
     searchController = new AbortController();
     const signal = searchController.signal;
-    const oldWidth = $('body').innerWidth();
 
-    $('body')
-      .addClass('modal-open')
-      .width(oldWidth);
+    $('body').addClass('modal-open');
     $('#result li').remove();
+    $('#result.list-group').removeClass('animated popOut');
     $('#result-wrapper').css('transform', 'none');
 
     if (query.length < 2) return $('#result-head').text('I need 2 or more characters');
@@ -123,55 +121,42 @@ $(() => {
         result.map(el =>
           $('<li>')
             .html([
-              `<a href='/info/${el.id}'>`,
-                `<img src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
-                el.name,
-                ` <span class='badge badge-secondary'>${el.tier || el.rarity}</span> `,
-                `<span class='badge badge-secondary'>${
-                  el.id.startsWith('k')
-                    ? 'KAMIHIME'
-                    : el.id.startsWith('e')
-                      ? 'EIDOLON'
-                      : 'SOUL'
-                }</span>`,
-              '</a>',
+              `<a href='javascript:void(0);' data-char='${el.id}' data-toggle='modal' data-target='.modal'></a>`,
+              `<img src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
+              `<span>${el.name}</span>`,
+              ` <span class='badge badge-secondary'>${(el.tier || el.rarity).toUpperCase()}</span> `,
+              `<span class='badge badge-secondary'>${
+                el.id.startsWith('k')
+                  ? 'KAMIHIME'
+                  : el.id.startsWith('e')
+                    ? 'EIDOLON'
+                    : 'SOUL'
+              }</span>`,
             ].join(''))
             .appendTo('#result'),
         );
+
+        await readyImages($('#result.list-group img'));
+        $('#result.list-group').addClass('animated popOut');
       } catch (e) { if (e.name !== 'AbortError') return $('#result-head').text(e); }
     }, 1000);
   });
 
-})
-  .on('keyup', e => {
-    if (
-      $('#search-bar').length && $('#search-bar').is(':focus') ||
-      $('.swal2-container').length
-      ) return;
-
-    const code = e.keyCode || e.which || e.charCode;
-
-    if (code === 27) return $('.nav-switch').triggerHandler('click');
-
-    const toggle = (id: number) => {
-      const el = $(`.collapse[key='${id}']`);
-
-      if (el.hasClass('show'))
-        el.collapse('hide');
-      else if (el)
-        el.collapse('show');
-    };
-
-    return toggle(code);
-  });
+  await readyImages($('img'));
+  $('.container-fluid').addClass('animated popOut');
+});
 
 async function showLoginWarning () {
   const res = await sweet.fire({
     html: [
-      'While you are able to save your settings, accounts that are inactive for 14 days will be deleted.',
-      'Click OK to continue to log in.',
-    ].join('<br><br>'),
-    titleText: 'Login Warning'
+      'By logging in, you will have the benefits of:',
+      '- Higher episode visits limit (5 => 10)',
+      '- Player settings saved remotely',
+      '- Custom Device Successor name (Discord username)',
+      '<br>While you are able to save your settings, accounts that are inactive for 14 days will be deleted.',
+      '<br>Click OK to continue to log in.',
+    ].join('<br>'),
+    titleText: 'Login'
   });
 
   if (res.value)
@@ -202,4 +187,89 @@ async function saveSettings (key: string | boolean = true, obj?: {}, db = false)
 
 function isNav () {
   return [ 'nav', 'result' ].some(el => new RegExp(el, 'i').test(this.className));
+}
+
+function readyImages (images: JQuery<HTMLElement>) {
+  return Promise.all(images.map(
+    function () {
+      return new Promise(res => {
+        const src = this.getAttribute('data-src');
+
+        if (!src) return res(true);
+
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+          this.setAttribute('src', src);
+
+          return res(true);
+        };
+        img.onerror = () => {
+          this.setAttribute('alt', 'Could not load the image.');
+
+          return res(true);
+        };
+      });
+    }
+  ));
+}
+
+function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
+  return async function (e) {
+    const modal = $(this);
+    const char = $(e.relatedTarget).data('char');
+    const handleFancyModal = async () => {
+      const sleep = () => new Promise(res => setTimeout(res, 256));
+
+      await sleep();
+
+      return modal.find('.modal-dialog')
+          .attr('class', 'modal-dialog modal-dialog-centered animated popOut')
+    };
+    const url = `/api/${char === 'random' ? 'random': `id/${char}`}`;
+    const request = await fetch (url, {
+      headers: { Accept: 'application/json' }
+    });
+
+    if (!request.ok) return modal.find('.modal-title').text('Failed to retrieve character');
+
+    let data = await request.json() as IKamihime;
+
+    if (char === 'random') data = data[0];
+
+    const src = `/img/wiki/${data.preview}`;
+    const type = data.id.startsWith('s') ? 'SOUL' : data.id.startsWith('e') ? 'EIDOLON' : 'KAMIHIME';
+    const linkify = (episode: number) => [
+      `<h5>Episode ${episode}</h5>`,
+      '<ul>',
+      [ 'Story', episode === 1 ? '' : 'Scenario', episode === 1 ? '' : 'Legacy' ]
+        .filter(v => v)
+        .map(v => `<li><a href="/player/${data.id}/${episode}/${v.toLowerCase()}">${v}</a></li>`)
+        .join(''),
+      '</ul>',
+    ].join('');
+    const episodes = [ 'R', 'SSR+' ].includes(data.rarity) || [ 'e', 's' ].includes(data.id.charAt(0))
+      ? [ 1, 2 ]
+      : [ 1, 2, 3 ];
+
+    modal.find('.modal-title').text(data.name);
+    modal.find('.modal-background img').attr({ src });
+    modal.find('.modal-body p').html([
+      `<span class="badge badge-primary">${Number(data.peeks).toLocaleString('en')} VIEWS</span>`,
+      [ data.tier || data.rarity, type ].map(v => `<span class="badge badge-secondary">${v}</span>`).join(' '),
+    ].join(' '));
+    modal.find('.modal-body-episodes-list').html(episodes.map(linkify).join(''));
+    modal.find('.modal-dialog').addClass('invisible');
+
+    await handleFancyModal();
+  };
+}
+
+function handleModalHide (): (this: HTMLElement, e: ModalEventHandler) => void {
+  return function () {
+    const modal = $(this);
+
+    modal.find('.modal-dialog')
+      .attr('class', 'modal-dialog modal-dialog-centered animated popIn');
+  };
 }
