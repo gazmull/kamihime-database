@@ -23,6 +23,8 @@ Website + REST (JSON) API for Kamihime Database
 - **NGINX Config**: Have this under your NGINX config (`/etc/nginx/sites-enabled/[your domain name]`): [Sample Template](https://gist.github.com/gazmull/85ea4cacc30647d8afc8ef910b2291a7). Texts wrapped with `[]` should be replaced.
 - **App Config**: Please configure `auth.ts`. Get its template from `auth.example.ts`
     - It can be found at `src/auth` folder.
+    - For generating episode resources, you need your Kamihime account's credentials (please use a dummy instead for safety) such as XSRF and Session tokens.
+      - They can be found at browser cookies (`cf.[r/g].kamihimeproject.dmmgames.com` domain)
 - **MariaDB**: Import database schema to your created database (default: `kamihimedb`) with `utf8_unicode_ci` collation.
     - The `db.zip` file will not be updated for every new character release. It only serves as a starting kit for running the website.
 - **Util/Scenario**: If you found non-existent files that causes error on any story/scenario, please report [here](https://gist.github.com/gazmull/45cd187e4a476795bcef630a8018e1a6).
@@ -53,7 +55,7 @@ Website + REST (JSON) API for Kamihime Database
     - Fork this repository, clone to your machine, and follow the project's development configuration [e.g. TSLint]
         - `$ yarn --production=false` to install.
     - Compilation:
-      - `$ yarn dev:start` for compile-and-serve process.
+      - `$ yarn dev:watch` for compile-and-serve process.
     - Run `$ yarn test` to verify if your build is passing.
         - Failing build will be rejected at default.
 
