@@ -36,7 +36,7 @@ $(async () => {
     tooltips.on('click', ({ currentTarget }) => $(currentTarget).tooltip('hide'));
 
     $('.modal')
-      .on('show.bs.modal', handleModalShow())
+      .on('show.bs.modal', async function (e) { await handleModalShow().call(this, e); })
       .on('hide.bs.modal', handleModalHide());
   }
 
@@ -122,7 +122,7 @@ $(async () => {
           $('<li>')
             .html([
               `<a href='javascript:void(0);' data-char='${el.id}' data-toggle='modal' data-target='.modal'></a>`,
-              `<img src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
+              `<img data-src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
               `<span>${el.name}</span>`,
               ` <span class='badge badge-secondary'>${(el.tier || el.rarity).toUpperCase()}</span> `,
               `<span class='badge badge-secondary'>${
@@ -217,10 +217,13 @@ function readyImages (images: JQuery<HTMLElement>) {
 function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
   return async function (e) {
     const modal = $(this);
+    modal.find('.modal-dialog').addClass('invisible');
+
     const char = $(e.relatedTarget).data('char');
     const handleFancyModal = async () => {
       const sleep = () => new Promise(res => setTimeout(res, 256));
 
+      await readyImages($('.modal-background img'));
       await sleep();
 
       return modal.find('.modal-dialog')
@@ -253,13 +256,12 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
       : [ 1, 2, 3 ];
 
     modal.find('.modal-title').text(data.name);
-    modal.find('.modal-background img').attr({ src });
+    modal.find('.modal-background img').attr('data-src', src);
     modal.find('.modal-body p').html([
       `<span class="badge badge-primary">${Number(data.peeks).toLocaleString('en')} VIEWS</span>`,
       [ data.tier || data.rarity, type ].map(v => `<span class="badge badge-secondary">${v}</span>`).join(' '),
     ].join(' '));
     modal.find('.modal-body-episodes-list').html(episodes.map(linkify).join(''));
-    modal.find('.modal-dialog').addClass('invisible');
 
     await handleFancyModal();
   };
