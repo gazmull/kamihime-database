@@ -17,12 +17,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/GET/version.ts",
-    "groupTitle": "API_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/version"
-      }
-    ]
+    "groupTitle": "API_Specific"
   },
   {
     "type": "delete",
@@ -92,12 +87,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/DELETE/delete.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/delete"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "get",
@@ -130,20 +120,35 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/GET/id.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/id/:id"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "get",
-    "url": "/id/:id",
+    "url": "/latest",
     "title": "latest",
     "name": "GetLatest",
     "group": "Kamihime_Specific",
-    "description": "<p>Retrieves latest added characters up to 3 each category.</p>",
+    "description": "<p>Retrieves latest added characters.</p>",
+    "parameter": {
+      "fields": {
+        "Query": [
+          {
+            "group": "Query",
+            "type": "string",
+            "optional": true,
+            "field": "category",
+            "description": "<p>Get latest characters within the specified category only. Available: <code>soul</code> / <code>eidolon</code> / <code>ssr+</code> / <code>ssr</code> / <code>sr</code> / <code>r</code></p>"
+          },
+          {
+            "group": "Query",
+            "type": "number",
+            "optional": true,
+            "field": "len",
+            "description": "<p>The number of latest characters to be retrieved. Default: 3 / Min-Max: 1—10</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "fields": {
         "Success 200": [
@@ -187,12 +192,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/GET/latest.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/id/:id"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "get",
@@ -200,11 +200,11 @@ define({ "api": [
     "title": "list",
     "name": "GetList",
     "group": "Kamihime_Specific",
-    "description": "<p>Retrieves a list of items. <code>:options</code> available:</p> <h3>Primary Options</h3> <blockquote> <p>A must before any other options.</p> </blockquote> <ul> <li><code>soul</code> / <code>eidolon</code> / <code>kamihime</code> / <code>weapon</code></li> <li><code>approved</code> / <code>loli</code> / <code>no-loli</code></li> </ul> <h3>Secondary Options</h3> <ul> <li><strong>Soul Only</strong>: <code>legendary</code> / <code>elite</code> / <code>standard</code></li> <li><strong>Kamihime Only</strong>: <code>healer</code> / <code>offense</code> / <code>tricky</code> / <code>balance</code> / <code>defense</code></li> <li><strong>Weapon Only</strong>: <code>hammer</code> / <code>lance</code> / <code>glaive</code> / <code>arcane</code> / <code>staff</code> / <code>axe</code> / <code>gun</code> / <code>bow</code> / <code>sword</code></li> <li><strong>Eidolon / Kamihime / Weapon Only</strong>: <ul> <li><code>light</code> / <code>dark</code> / <code>wind</code> / <code>thunder</code> / <code>water</code> / <code>fire</code> / <code>phantom</code></li> <li><code>ssr+</code> / <code>ssr</code> / <code>sr</code> / <code>r</code> / <code>n</code></li> </ul> </li> </ul>",
+    "description": "<p>Retrieves a list of items. <code>:options</code> available:</p> <h3>Primary Options</h3> <blockquote> <p>A must before any other options.</p> </blockquote> <ul> <li><code>soul</code> / <code>eidolon</code> / <code>kamihime</code> / <code>weapon</code></li> <li><code>approved</code> / <code>loli</code> / <code>no-loli</code></li> </ul> <h3>Secondary Options</h3> <ul> <li><strong>Soul Only</strong>: <code>legendary</code> / <code>elite</code> / <code>standard</code></li> <li><strong>Kamihime Only</strong>: <code>healer</code> / <code>offense</code> / <code>tricky</code> / <code>balance</code> / <code>defense</code></li> <li><strong>Weapon Only</strong>: <code>hammer</code> / <code>lance</code> / <code>glaive</code> / <code>arcane</code> / <code>staff</code> / <code>axe</code> / <code>gun</code> / <code>bow</code> / <code>sword</code></li> <li><strong>Eidolon / Kamihime / Weapon Only</strong>: <ul> <li><code>light</code> / <code>dark</code> / <code>wind</code> / <code>thunder</code> / <code>water</code> / <code>fire</code> / <code>phantom</code></li> <li><code>ssr+</code> / <code>ssr</code> / <code>sr</code> / <code>r</code> / <code>n</code></li> </ul> </li> </ul> <h3>Sort Options</h3> <ul> <li><strong>Sort By</strong>: <code>name</code> / <code>rarity</code> / <code>tier</code> / <code>element</code> / <code>type</code> / <code>atk</code> / <code>hp</code></li> <li><strong>Sort Type</strong>: <code>asc</code> / <code>desc</code></li> </ul>",
     "examples": [
       {
-        "title": "Example: this will return items that are approved, eidolon, not a loli, and of water element.",
-        "content": "https://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water",
+        "title": "Example: this will return items that are approved, eidolon, not a loli, and of water element, sorted by rarity (ascending).",
+        "content": "https://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water?sort=rarity-asc",
         "type": "html"
       }
     ],
@@ -217,6 +217,15 @@ define({ "api": [
             "optional": true,
             "field": "options",
             "description": "<p>An array of options with <code>/</code> delimiter. See description.</p>"
+          }
+        ],
+        "Query": [
+          {
+            "group": "Query",
+            "type": "string",
+            "optional": true,
+            "field": "sort",
+            "description": "<p>Sorts the list. Syntax: <code>sortBy-sortType</code> (default: <code>name-asc</code>)</p>"
           }
         ]
       }
@@ -243,16 +252,11 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/GET/list.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/list/:options"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "get",
-    "url": "/random/:length",
+    "url": "/random/:length/:includeAll",
     "title": "random",
     "name": "GetRandom",
     "group": "Kamihime_Specific",
@@ -266,6 +270,13 @@ define({ "api": [
             "optional": false,
             "field": "length",
             "description": "<p>Number of items to be provided.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": false,
+            "field": "includeAll",
+            "description": "<p>Whether to include weapons and generic eidolons in the cherry picking pool as well</p>"
           }
         ]
       }
@@ -281,12 +292,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/GET/random.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/random/:length"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "get",
@@ -372,12 +378,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/GET/search.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/search"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "post",
@@ -534,12 +535,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/POST/add.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/add"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "post",
@@ -630,12 +626,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/POST/session.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/session"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "put",
@@ -712,12 +703,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/PUT/approve.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/approve"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "put",
@@ -794,12 +780,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/PUT/flag.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/flag"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "put",
@@ -946,12 +927,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/routes/api/PUT/update.ts",
-    "groupTitle": "Kamihime_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/update"
-      }
-    ]
+    "groupTitle": "Kamihime_Specific"
   },
   {
     "type": "get",
@@ -996,19 +972,14 @@ define({ "api": [
       "examples": [
         {
           "title": "Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"settings\": {\n    \"audio\": {\n      \"bgm\": 0.1,\n      \"glo\": 1.0,\n      \"snd\": 0.5,\n    },\n    \"info-lastNav\": \"#info\",\n    \"lastNav\": \"#all\",\n    \"menu\": \"true\",\n    \"visual\": {\n      \"bg\": \"rgb(255, 183, 183)\",\n      \"cl\": \"rgb(190, 50, 74)\",\n    }\n  },\n  \"username\": \"Euni\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"settings\": {\n    \"audio\": {\n      \"bgm\": 0.1,\n      \"glo\": 1.0,\n      \"snd\": 0.5,\n    },\n    \"menu\": \"true\",\n    \"visual\": {\n      \"bg\": \"rgb(255, 183, 183)\",\n      \"cl\": \"rgb(190, 50, 74)\",\n    }\n  },\n  \"username\": \"Euni\"\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
     "filename": "src/routes/api/GET/@me.ts",
-    "groupTitle": "Site_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/@me"
-      }
-    ]
+    "groupTitle": "Site_Specific"
   },
   {
     "type": "post",
@@ -1047,83 +1018,26 @@ define({ "api": [
             "optional": false,
             "field": "message.content",
             "description": "<p>The message's content.</p>"
-          },
-          {
-            "group": "Request Body",
-            "type": "number",
-            "optional": false,
-            "field": "type",
-            "description": "<p>The type of the report. <br>0 for <code>Wiki Info</code> report<br>1 for <code>Episodes</code> report</p>"
           }
         ],
-        "Message Subject Options - Wiki Info": [
+        "Message Subject Options": [
           {
-            "group": "Message Subject Options - Wiki Info",
-            "optional": false,
-            "field": "ability",
-            "description": "<p><code>Wrong abilities</code></p>"
-          },
-          {
-            "group": "Message Subject Options - Wiki Info",
-            "optional": false,
-            "field": "image",
-            "description": "<p><code>Image issues</code></p>"
-          },
-          {
-            "group": "Message Subject Options - Wiki Info",
-            "optional": false,
-            "field": "info",
-            "description": "<p><code>Wrong brief info (first table)</code></p>"
-          },
-          {
-            "group": "Message Subject Options - Wiki Info",
-            "optional": false,
-            "field": "internal",
-            "description": "<p><code>Info cannot be resolved</code></p>"
-          },
-          {
-            "group": "Message Subject Options - Wiki Info",
-            "optional": false,
-            "field": "notes",
-            "description": "<p><code>Needs additional/wrong notes</code></p>"
-          },
-          {
-            "group": "Message Subject Options - Wiki Info",
-            "optional": false,
-            "field": "others",
-            "description": "<p><code>Others</code></p>"
-          },
-          {
-            "group": "Message Subject Options - Wiki Info",
-            "optional": false,
-            "field": "stats",
-            "description": "<p><code>Wrong stats</code></p>"
-          }
-        ],
-        "Message Subject Options - Episodes": [
-          {
-            "group": "Message Subject Options - Episodes",
+            "group": "Message Subject Options",
             "optional": false,
             "field": "internal",
             "description": "<p><code>Cannot view story/scenario</code></p>"
           },
           {
-            "group": "Message Subject Options - Episodes",
+            "group": "Message Subject Options",
             "optional": false,
             "field": "others",
             "description": "<p><code>Others</code></p>"
           },
           {
-            "group": "Message Subject Options - Episodes",
+            "group": "Message Subject Options",
             "optional": false,
             "field": "resource",
             "description": "<p><code>Wrong episode story/scenario</code></p>"
-          },
-          {
-            "group": "Message Subject Options - Episodes",
-            "optional": false,
-            "field": "title",
-            "description": "<p><code>Wrong episode title</code></p>"
           }
         ]
       }
@@ -1133,7 +1047,7 @@ define({ "api": [
         "Success 200": [
           {
             "group": "Success 200",
-            "type": "string",
+            "type": "boolean",
             "optional": false,
             "field": "ok",
             "description": "<p>JSON body of &lt;Response.status&gt;.ok.</p>"
@@ -1143,18 +1057,13 @@ define({ "api": [
       "examples": [
         {
           "title": "Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"ok\": \"\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"ok\": true\n}",
           "type": "json"
         }
       ]
     },
     "version": "0.0.0",
     "filename": "src/routes/api/POST/report.ts",
-    "groupTitle": "Site_Specific",
-    "sampleRequest": [
-      {
-        "url": "https://kamihimedb.thegzm.space/api/report"
-      }
-    ]
+    "groupTitle": "Site_Specific"
   }
 ] });
