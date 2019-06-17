@@ -135,12 +135,16 @@ export default class PlayerRoute extends Route {
       .where('id', character.id);
     const usr = req.signedCookies.userId || req.ip;
     const status = () => this.server.util.logger.info(`[A] Peek: ${usr} visited ${character.name}`);
-    const fetchedDiscord = await this.client.discord.users.fetch(req.signedCookies.userId);
-    const channel = await this.client.discord.channels.fetch(this.client.auth.discord.channel) as TextChannel;
-    const guild = channel ? channel.guild : null;
-    const guildMember = guild ? await guild.members.fetch(fetchedDiscord.id) : null;
-    const isDonor = fetchedDiscord && guild && guildMember &&
-      guildMember.roles.has(this.client.auth.discord.donorID);
+    let isDonor: boolean;
+
+    try {
+      const fetchedDiscord = await this.client.discord.users.fetch(req.signedCookies.userId);
+      const channel = await this.client.discord.channels.fetch(this.client.auth.discord.channel) as TextChannel;
+      const guild = channel ? channel.guild : null;
+      const guildMember = guild ? await guild.members.fetch(fetchedDiscord.id) : null;
+      isDonor = fetchedDiscord && guild && guildMember &&
+        guildMember.roles.has(this.client.auth.discord.donorID);
+    } catch { isDonor = false; }
 
     if (this.server.auth.exempt.includes(req.signedCookies.userId) || isDonor) {
       await update();
