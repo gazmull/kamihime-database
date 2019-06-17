@@ -93,6 +93,7 @@ $(async () => {
 
     searchController = new AbortController();
     const signal = searchController.signal;
+    const loader = $('.loader-search').hide();
 
     $('body').addClass('modal-open');
     $('#result li').remove();
@@ -107,6 +108,8 @@ $(async () => {
       $('#result-head').text('Searching...');
 
       try {
+        loader.show();
+
         const response = await fetch(`/api/search?name=${query}&approved=1`, {
           headers: { Accept: 'application/json' },
           signal,
@@ -137,12 +140,14 @@ $(async () => {
         );
 
         await readyImages($('#result.list-group img'));
+        loader.hide();
         $('#result.list-group').addClass('animated popOut');
       } catch (e) { if (e.name !== 'AbortError') return $('#result-head').text(e); }
     }, 1000);
   });
 
   await readyImages($('img'));
+  $('.loader').hide();
   $('.container-fluid').addClass('animated popOut');
 });
 
@@ -214,6 +219,8 @@ function readyImages (images: JQuery<HTMLElement>) {
   ));
 }
 
+let lastChar: string;
+
 function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
   return async function (e) {
     const modal = $(this);
@@ -229,6 +236,14 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
       return modal.find('.modal-dialog')
           .attr('class', 'modal-dialog modal-dialog-centered animated popOut')
     };
+
+    if (lastChar && lastChar === char) {
+      await handleFancyModal();
+
+      return;
+    }
+
+    lastChar = char;
     const url = `/api/${char === 'random' ? 'random': `id/${char}`}`;
     const request = await fetch (url, {
       headers: { Accept: 'application/json' }
