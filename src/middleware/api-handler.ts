@@ -82,6 +82,11 @@ export default function apiHandler (this: Server, file: ApiRoute): RequestHandle
       _update(req, requests);
 
       return next();
-    } catch (err) { this.util.handleApiError.call(this, res, err); }
+    } catch (err) {
+      if (!(err instanceof ApiError))
+        err = new ApiError();
+
+      this.util.handleApiError.call(this, res, err);
+    }
   };
 }

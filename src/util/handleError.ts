@@ -23,5 +23,5 @@ export function handleApiError (this: Server, res: Response, err: ApiError) {
 export function handleSiteError (this: Server, res: Response, err: ApiError) {
   if (err.stack && err.code >= 500) this.util.logger.error(err.stack);
 
-  res.render('invalids/' + err.code, { message: err.message });
+  res.render('invalids/' + (err.code || 500), { message: err.message });
 }

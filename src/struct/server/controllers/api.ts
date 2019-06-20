@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 import { resolve } from 'path';
 import Server from '..';
 import apiHandler from '../../../middleware/api-handler';
+import ApiError from '../../../util/ApiError';
 import processRoutes from '../helpers/processRoutes';
 
 export default {
@@ -33,7 +34,7 @@ export default {
       }
 
     router.all('*', (_, res) =>
-      this.util.handleApiError.call(this, res, { code: 404, message: 'API method not found.' })
+      this.util.handleApiError.call(this, res, new ApiError(404, 'API method not found.'))
     );
     this.util.logger.info('Loaded API Routes');
 
