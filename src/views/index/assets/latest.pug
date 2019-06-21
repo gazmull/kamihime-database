@@ -4,7 +4,7 @@ mixin appendCharacterList(characters)
       a(href = 'javascript:void(0);', data-char = c.id, data-toggle = 'modal', data-target = '.modal')
       img(data-src=`/img/wiki/portrait/${encodeURI(c.name).replace(/'/g, '%27')} Portrait.png`)
       span #{c.name}
-      - if (new Date(c.created).valueOf() <= 6048e5)
+      - if (Date.now() - new Date(c.created).valueOf() <= 6048e5)
         |
         span.badge.badge-secondary NEW!
 
