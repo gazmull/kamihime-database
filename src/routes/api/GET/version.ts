@@ -13,7 +13,7 @@ import ApiRoute from '../../../struct/ApiRoute';
  *    "version": "2.0.0"
  *  }
  */
-export default class GetRandomRequest extends ApiRoute {
+export default class GetVersionRequest extends ApiRoute {
   constructor () {
     super({
       cooldown: 5,
