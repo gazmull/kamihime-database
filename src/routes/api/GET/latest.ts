@@ -18,6 +18,7 @@ import ApiError from '../../../util/ApiError';
  * @apiSuccess {object} Character The character object.
  * @apiSuccess {string} Character.id The character ID.
  * @apiSuccess {string} Character.name The character name.
+ * @apiSuccess {string} Characer.created The character's data creation date.
  * @apiSuccessExample {json} Response:
  *  HTTP/1.1 200 OK
  *  {
@@ -87,7 +88,7 @@ export default class GetLatestRequest extends ApiRoute {
 
         categories[key] = _category
           .sort((a, b) => b._rowId - a._rowId)
-          .map(v => ({ id: v.id, name: v.name }))
+          .map(v => ({ id: v.id, name: v.name, created: v.created }))
           .slice(0, latestLength);
       }
 
@@ -122,7 +123,7 @@ export default class GetLatestRequest extends ApiRoute {
           : true)
         && v.approved)
       .sort((a, b) => b._rowId - a._rowId)
-      .map(v => ({ id: v.id, name: v.name }))
+      .map(v => ({ id: v.id, name: v.name, created: v.created }))
       .slice(0, latestLength);
 
     return res

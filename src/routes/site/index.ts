@@ -16,7 +16,7 @@ export default class IndexRoute extends Route {
     const endPoint = this.server.auth.rootURL + 'api/';
 
     const hot: IKamihime[] = await this.server.util.db('kamihime')
-      .select([ 'id', 'name', 'tier', 'rarity', 'peeks', 'created' ])
+      .select([ 'id', 'name', 'tier', 'rarity', 'peeks' ])
       .where('approved', 1)
       .orderBy('peeks', 'desc')
       .limit(10);

@@ -12,6 +12,7 @@ const defaultFields = [
   'harem1Title', 'harem1Resource1',
   'harem2Title', 'harem2Resource1', 'harem2Resource2',
   'harem3Title', 'harem3Resource1', 'harem3Resource2',
+  'created',
 ];
 const fields = {
   eidolon: [
@@ -23,6 +24,7 @@ const fields = {
     'peeks', 'loli',
     'harem1Title', 'harem1Resource1',
     'harem2Title', 'harem2Resource1', 'harem2Resource2',
+    'created',
   ],
   kamihime: [
     'id', 'name',
@@ -34,6 +36,7 @@ const fields = {
     'harem1Title', 'harem1Resource1',
     'harem2Title', 'harem2Resource1', 'harem2Resource2',
     'harem3Title', 'harem3Resource1', 'harem3Resource2',
+    'created',
   ],
   soul: [
     'id', 'name',
@@ -43,12 +46,14 @@ const fields = {
     'peeks', 'loli',
     'harem1Title', 'harem1Resource1',
     'harem2Title', 'harem2Resource1', 'harem2Resource2',
+    'created',
   ],
   weapon: [
     'id', 'name',
     'avatar', 'main',
     'hp', 'atk',
     'element', 'rarity', 'type',
+    'created',
   ],
   default: defaultFields,
   internal: defaultFields.concat('_rowId', 'approved')
@@ -113,10 +118,8 @@ const queries = {
  *  HTTP/1.1 200 OK
  *  [
  *    {
- *    "_rowId": 204,
  *    "id": "e6021",
  *    "name": "Jack Frost",
- *    "approved": 1,
  *    "avatar": "portrait/Jack Frost Portrait.png",
  *    "main": "main/Jack Frost.png",
  *    "preview": "close/Jack Frost Close.png",
