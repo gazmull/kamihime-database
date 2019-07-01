@@ -13,17 +13,18 @@ block head
     script(src='/js/player.js')
 
 block content
-  .container-fluid.my-3
-    p
-      i(class='fa fa-exclamation-triangle text-light')
-      a(
-        data-toggle='tooltip',
-        data-placement='bottom',
-        title='Reports errors on the episodes to the KamihimeDB Discord',
-        href='javascript:void(0);',
-        onclick=user ? `showReport('${character.id}', 1)` : `confirmLogin('${character.id}', 1)`,
-      )  Report Error
-    h5 Help
-    p Navigate by pressing ← and → cursor keys or clicking a portion of the image
-    hr
+  .container-fluid.my-3.px-0
+    .px-3
+      p
+        i(class='fa fa-exclamation-triangle text-light')
+        a(
+          data-toggle='tooltip',
+          data-placement='bottom',
+          title='Reports errors on the episodes to the KamihimeDB Discord',
+          href='javascript:void(0);',
+          onclick=user ? `showReport('${character.id}', 1)` : `confirmLogin('${character.id}', 1)`,
+        )  Report Error
+      h5 Help
+      p Navigate by pressing ← and → cursor keys or clicking a portion of the image
+      hr
     block subcontent
