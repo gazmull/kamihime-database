@@ -17,6 +17,7 @@ $(async () => {
   let lastAudio: Howl;
   let sequenceIDX = 0;
   let talkIDX = talkVal;
+  let autoDialogTimeout: NodeJS.Timeout;
 
   const newSeq = () => script[sequenceIDX];
   const maxSequenceTalk = () => newSeq().talk.length - 1;
@@ -165,7 +166,21 @@ $(async () => {
     if (lastAudio && n.voice) lastAudio.stop();
     if (n.voice) {
       n.voice.play();
+
+      if (settings.visual.autoDialog) {
+        if (lastAudio) lastAudio.off('end');
+        if (autoDialogTimeout) clearTimeout(autoDialogTimeout);
+
+        n.voice.once('end', navRight);
+      }
+
       lastAudio = n.voice;
+    }
+    if (!n.voice && settings.visual.autoDialog) {
+      if (lastAudio) lastAudio.off('end');
+      if (autoDialogTimeout) clearTimeout(autoDialogTimeout);
+
+      autoDialogTimeout = setTimeout(navRight, getTextShowTime(n.words));
     }
   }
 });

@@ -72,6 +72,7 @@ export default class ConnectRoute extends Route {
         cl: '#ffffff',
         cls: '#dd55ff',
         containDialog: true,
+        autoDialog: false,
         fontSize: 18
       }
     });

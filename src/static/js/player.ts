@@ -95,6 +95,8 @@ async function showVisualSettings () {
             <hr>
             <label><input id="containDialog" type="checkbox"${visuals.containDialog ? ' checked' : ''}> Dialog Within Image</label>
             <br>
+            <label><input id="autoDialog" type="checkbox"${visuals.autoDialog ? ' checked' : ''}> Auto Next</label>
+            <br>
             <label>Text Size <input id="fontSize" type="text" value="${visuals.fontSize}" oninput="updateDialog('fontSize', this);"></label>
           `,
       // tslint:enable:max-line-length
@@ -103,13 +105,14 @@ async function showVisualSettings () {
         const cl = $('#cl').val();
         const cls = $('#cls').val();
         const containDialog = $('#containDialog').is(':checked');
+        const autoDialog = $('#autoDialog').is(':checked');
         const fontSize = $('#fontSize').val();
         const arr = [ bg, cl, cls, containDialog, fontSize ];
 
         if (
           visuals.bg === bg && visuals.cl === cl &&
           visuals.cls === cls && visuals.containDialog === containDialog &&
-          visuals.fontSize === fontSize
+          visuals.autoDialog === autoDialog && visuals.fontSize === fontSize
         )
           return new Error('Nothing changed.');
 
@@ -119,7 +122,7 @@ async function showVisualSettings () {
           if (!valid)
             throw new Error('Settings is invalid.');
 
-          await saveSettings('visual', { bg, cl, cls, containDialog, fontSize }, true);
+          await saveSettings('visual', { bg, cl, cls, autoDialog, containDialog, fontSize }, true);
 
           return arr;
         } catch (err) { sweet.showValidationMessage('Saving failed: ' + err); }
@@ -341,4 +344,19 @@ async function showReport (id: string) {
       titleText: err.message
     })
   }
+}
+
+// Derived from: https://ux.stackexchange.com/a/61976
+function getTextShowTime (text: string = '') {
+  text = text.trim();
+
+  if (!text.length) return 2200;
+
+  const averageWPM = 180;
+  const averageWordLength = 5;
+  const words = text.length / averageWordLength;
+  const wordsTime = ((words / averageWPM) * 60) * 1e3;
+  const bonus = 1e3;
+
+  return wordsTime + bonus;
 }

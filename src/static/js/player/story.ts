@@ -15,6 +15,7 @@ $(async () => {
   const maxScriptLength = script.length - 1;
   let lastScriptIDX = -1;
   let currentScriptIDX = 0;
+  let autoDialogTimeout: NodeJS.Timeout;
 
   const lastScript = () => script[lastScriptIDX];
   const currentScript = () => script[currentScriptIDX];
@@ -184,7 +185,21 @@ $(async () => {
     if (last.voice)
       last.voice.stop();
 
-    if (current.voice)
+    if (current.voice) {
       current.voice.play();
+
+      if (settings.visual.autoDialog) {
+        if (last.voice) last.voice.off('end');
+        if (autoDialogTimeout) clearTimeout(autoDialogTimeout);
+
+        current.voice.once('end', navRight);
+      }
+    }
+    if (!current.voice && settings.visual.autoDialog) {
+      if (last.voice) last.voice.off('end');
+      if (autoDialogTimeout) clearTimeout(autoDialogTimeout);
+
+      autoDialogTimeout = setTimeout(navRight, getTextShowTime(current.words));
+    }
   }
 });

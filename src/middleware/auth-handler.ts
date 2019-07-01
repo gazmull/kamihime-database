@@ -10,6 +10,7 @@ const defaultSettings = {
     cl: '#ffffff',
     cls: '#dd55ff',
     containDialog: true,
+    autoDialog: false,
     fontSize: 18
   }
 };

@@ -39,6 +39,7 @@ declare global {
       cl: string;
       cls: string;
       containDialog: boolean;
+      autoDialog: boolean;
       fontSize: number;
     };
   }
