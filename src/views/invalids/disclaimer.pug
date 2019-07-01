@@ -6,7 +6,7 @@ append styles
 
 append scripts
   script.
-    function verified() {
+    function verified () {
       document.cookie = "verified=true;path=/;max-age=604800";
       location.reload(true);
     }
@@ -57,17 +57,12 @@ block content
             td Browser only
             td Required; clear cookies
           tr
-            td Episodes player settings
-            td After you close the browser
-            td
-              b Logged in users
-              | : User database
-              br
-              b Anonymous users
-              | : Browser only
-            td Stay as anonymous user
+            td Announcement Read
+            td 7 days
+            td Browser only
+            td Required; clear cookies
           tr
-            td Last navigation settings
+            td Episodes player settings
             td After you close the browser
             td
               b Logged in users

@@ -55,7 +55,10 @@ export default class Server {
 
   public kamihime: IKamihime[] = [];
 
-  public status: string;
+  public status: {
+    date: number,
+    content: string
+  };
 
   get production () {
     return process.env.NODE_ENV === 'production';
@@ -65,10 +68,10 @@ export default class Server {
     this.client = client;
 
     // Website status message
-    this.util.db('status').select('message')
+    this.util.db('status').select('message', 'date')
       .orderBy('date', 'desc')
       .limit(1)
-      .then(([ msg ]) => this.status = msg.message || null)
+      .then(([ msg ]) => this.status = msg ? { content: msg.message, date: new Date(msg.date).valueOf() } : null)
       .catch(this.util.logger.error);
 
     // Routes

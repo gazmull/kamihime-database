@@ -110,7 +110,10 @@ export default class Client {
           message: msg
         });
 
-        this.server.status = msg;
+        this.server.status = {
+          content: msg,
+          date: message.createdTimestamp
+        };
       } catch (e) { this.server.util.logger.error(e); }
 
       this.server.util.logger.info('Discord Bot: New announcement has been saved.');

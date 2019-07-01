@@ -10,6 +10,10 @@ append styles
 
 append scripts
   script(src='/js/index.js')
+  script.
+    function dismissed (date) {
+      document.cookie = `lastRead=${date};path=/;max-age=604800`;
+    }
 
 block title
   title Kamihime Database
@@ -18,12 +22,13 @@ block content
   .container-fluid.my-1
     .row
       - if(status)
-        div.col-12
+        div.col-12#ann(hidden)
           div(class='alert alert-dismissable alert-dark fade show')
-            button.close.text-white(data-dismiss='alert')
+            button.close.text-white(data-dismiss='alert', onclick=`dismissed(${status.date});`)
               span &times;
             h4.alert-heading Announcement
-            p.name(style='white-space: pre-wrap') !{status}
+            p#annDate(hidden) #{status.date}
+            p.name(style='white-space: pre-wrap') !{status.content}
       .col-sm-12.col-md-6
         .tile.big
           a(href = 'javascript:void(0);', data-char = 'random', data-toggle = 'modal', data-target = '.modal')
