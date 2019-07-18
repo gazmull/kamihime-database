@@ -73,6 +73,7 @@ export default class ConnectRoute extends Route {
         cls: '#dd55ff',
         containDialog: true,
         autoDialog: false,
+        name: user.username,
         fontSize: 18
       }
     });

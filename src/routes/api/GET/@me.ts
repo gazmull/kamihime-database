@@ -69,6 +69,7 @@ export default class GetAtMeRequest extends ApiRoute {
         cls: '#dd55ff',
         containDialog: true,
         autoDialog: false,
+        name: username,
         fontSize: 18
       }
     });

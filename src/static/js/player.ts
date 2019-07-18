@@ -97,6 +97,8 @@ async function showVisualSettings () {
             <br>
             <label><input id="autoDialog" type="checkbox"${visuals.autoDialog ? ' checked' : ''}> Auto Next</label>
             <br>
+            <label>Successor Name <input id="name" type="text" value="${visuals.name}"></label>
+            <br>
             <label>Text Size <input id="fontSize" type="text" value="${visuals.fontSize}" oninput="updateDialog('fontSize', this);"></label>
           `,
       // tslint:enable:max-line-length
@@ -106,13 +108,15 @@ async function showVisualSettings () {
         const cls = $('#cls').val();
         const containDialog = $('#containDialog').is(':checked');
         const autoDialog = $('#autoDialog').is(':checked');
+        const name = $('#name').val();
         const fontSize = $('#fontSize').val();
         const arr = [ bg, cl, cls, containDialog, fontSize ];
 
         if (
           visuals.bg === bg && visuals.cl === cl &&
           visuals.cls === cls && visuals.containDialog === containDialog &&
-          visuals.autoDialog === autoDialog && visuals.fontSize === fontSize
+          visuals.autoDialog === autoDialog && visuals.name === name &&
+          visuals.fontSize === fontSize
         )
           return new Error('Nothing changed.');
 
@@ -122,7 +126,9 @@ async function showVisualSettings () {
           if (!valid)
             throw new Error('Settings is invalid.');
 
-          await saveSettings('visual', { bg, cl, cls, autoDialog, containDialog, fontSize }, true);
+          await saveSettings('visual', { bg, cl, cls, autoDialog, containDialog, name, fontSize }, true);
+
+          if (visuals.name !== name) return 'name';
 
           return arr;
         } catch (err) { sweet.showValidationMessage('Saving failed: ' + err); }
@@ -270,6 +276,7 @@ async function showReport (id: string) {
   };
   const postBody = {
     characterId: id,
+    episode: window.location.pathname.split('/').slice(-2).join('/'),
     message: {
       content: null as string,
       subject: null as string,

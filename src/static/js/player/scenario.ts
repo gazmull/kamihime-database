@@ -161,7 +161,7 @@ $(async () => {
     lastImage = n.img;
 
     $('#characterName').text(n.chara);
-    $('#characterTalk').text(n.words);
+    $('#characterTalk').text(n.words.replace(/\{\{主人公\}\}/g, (settings.visual.name)));
 
     if (lastAudio && n.voice) lastAudio.stop();
     if (n.voice) {

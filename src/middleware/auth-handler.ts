@@ -11,6 +11,7 @@ const defaultSettings = {
     cls: '#dd55ff',
     containDialog: true,
     autoDialog: false,
+    name: 'Master',
     fontSize: 18
   }
 };

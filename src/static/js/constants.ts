@@ -23,6 +23,8 @@ $(async () => {
   });
   settings = jc.getJSON('settings');
 
+  if (!settings.visual.name) settings.visual.name = 'Master';
+
   saveSettings();
 
   if (typeof $().modal !== 'undefined') {
@@ -124,7 +126,7 @@ $(async () => {
         result.map(el =>
           $('<li>')
             .html([
-              `<a href='javascript:void(0);' data-char='${el.id}' data-toggle='modal' data-target='.modal'></a>`,
+              `<div class="char-button" data-char='${el.id}' data-toggle='modal' data-target='.modal'></a>`,
               `<img data-src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
               `<span>${el.name}</span>`,
               ` <span class='badge badge-secondary'>${(el.tier || el.rarity).toUpperCase()}</span> `,
@@ -157,7 +159,6 @@ async function showLoginWarning () {
       'By logging in, you will have the benefits of:',
       '- Higher episode visits limit (5 => 10)',
       '- Player settings saved remotely',
-      '- Custom Device Successor name (Discord username)',
       '<br>While you are able to save your settings, accounts that are inactive for 14 days will be deleted.',
       '<br>Click OK to continue to log in.',
     ].join('<br>'),
@@ -166,6 +167,23 @@ async function showLoginWarning () {
 
   if (res.value)
     location.replace('/login');
+}
+
+async function showDonateWarning () {
+  const res = await sweet.fire({
+    html: [
+      'By donating you will have the benefits of:',
+      '- Unlimited episodes visit',
+      '- Access to Donor Role and Channel (potential exclusive contents) at Discord Server',
+      '- A token to support the site and related projects',
+      '<br> To receive the benefits, you must login!',
+      'If you have yet to receive the benefits, please contact Euni#0011 (Discord) with your Transaction ID'
+    ].join('<br>'),
+    titleText: 'Donate'
+  });
+
+  if (res.value)
+    location.replace($('#donate').attr('data-donate'));
 }
 
 async function saveSettings (key: string | boolean = true, obj?: {}, db = false) {
@@ -237,7 +255,7 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
           .attr('class', 'modal-dialog modal-dialog-centered animated popOut')
     };
 
-    if (lastChar && lastChar === char) {
+    if (char !== 'random' && lastChar && lastChar === char) {
       await handleFancyModal();
 
       return;

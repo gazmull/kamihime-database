@@ -13,7 +13,7 @@ declare global {
   const BG_IMAGE: string;
   const SCENARIOS: string;
   const BGM: string;
-  const script: IScript[];
+  let script: IScript[];
   const files: string[];
 
   var settings: ISettings;
@@ -39,6 +39,7 @@ declare global {
       cl: string;
       cls: string;
       containDialog: boolean;
+      name: string;
       autoDialog: boolean;
       fontSize: number;
     };

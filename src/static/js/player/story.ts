@@ -172,7 +172,7 @@ $(async () => {
     $('#characterName')
       .text(current.chara);
     $('#characterTalk')
-      .text(current.words);
+      .text(current.words.replace(/\{\{主人公\}\}/g, (settings.visual.name)));
 
     if (last.expression)
       $(`#image div[id='${last.expression}']`)

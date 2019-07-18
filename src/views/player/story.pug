@@ -3,7 +3,7 @@ extends ../_templates/player
 append head
   meta(name='viewport', content='width=device-width, initial-scale=0.8, maximum-scale=1.0, user-scalable=0')
   script.
-    let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
+    let script = !{JSON.stringify(script)};
     const SCENARIOS = "#{SCENARIOS}";
     const BG_IMAGE = "#{BG_IMAGE}";
     const BGM = "#{BGM}";

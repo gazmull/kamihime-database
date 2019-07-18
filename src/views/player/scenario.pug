@@ -2,7 +2,7 @@ extends ../_templates/player
 
 append scripts
   script.
-    let script = !{JSON.stringify(script).replace(/\{\{主人公\}\}/g, (user ? user.username : 'Master'))};
+    let script = !{JSON.stringify(script)};
     const files = !{JSON.stringify(files)};
     const SCENARIOS = "#{SCENARIOS}";
   script(src='//cdn.jsdelivr.net/npm/howler@2.1.2/dist/howler.core.min.js')
