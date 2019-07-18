@@ -34,6 +34,7 @@ export interface GrantProvider {
  * @property dbReportChannel The channel where to send KamihimeDB reports
  * @property token The client token
  * @property wikiReportChannel The channel where to send Wiki reports
+ * @property donorID The donor role ID
  */
 export interface DiscordClient {
   channel: string;
