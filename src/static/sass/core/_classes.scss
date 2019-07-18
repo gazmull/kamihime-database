@@ -101,13 +101,14 @@
   &:hover {
     opacity: 1;
   }
-  & a {
+  & .char-button {
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
     z-index: 5;
+    cursor: pointer;
   }
   height: 50px;
   margin: 5px 0;
@@ -166,12 +167,6 @@
 .modal-open {
   & .modal {
     overflow-y: visible !important;
-  }
-}
-
-.modal-backdrop {
-  &.show {
-    opacity: 0;
   }
 }
 

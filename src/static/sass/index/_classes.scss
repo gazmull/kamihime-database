@@ -28,13 +28,14 @@
   &:hover {
     opacity: 1;
   }
-  & a {
+  & .char-button, & a {
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
     z-index: 5;
+    cursor: pointer;
   }
   &.big {
     height: 80px;

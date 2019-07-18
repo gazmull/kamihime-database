@@ -2,7 +2,7 @@
 
 each c in hot
   li.tile.small
-    a(href = 'javascript:void(0);', data-char = c.id, data-toggle = 'modal', data-target = '.modal')
+    .char-button(data-char = c.id, data-toggle = 'modal', data-target = '.modal')
     img(data-src =`/img/wiki/portrait/${encodeURI(c.name).replace(/'/g, '%27')} Portrait.png`)
     span #{c.name}
     |

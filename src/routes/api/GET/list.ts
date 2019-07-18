@@ -186,10 +186,8 @@ export default class GetListRequest extends ApiRoute {
       query = query.whereRaw(rawQuery);
     }
 
-    query = await query;
-
     res
       .status(200)
-      .json(query);
+      .json(await query);
   }
 }
