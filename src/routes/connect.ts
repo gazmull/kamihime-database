@@ -43,22 +43,21 @@ export default class ConnectRoute extends Route {
         '&scope=identify',
       ].join('');
 
-      const _response = await fetch(url, {
+      const _response = await (await fetch(url, {
         headers: {
           Accept: 'application/json',
           Authorization: 'Basic ' + credentials,
         },
         method: 'POST',
-      });
-      const response = await _response.json();
+      })).json();
 
-      const _user = await fetch('https://discordapp.com/api/users/@me', {
+      const user = await (await fetch('https://discordapp.com/api/users/@me', {
         headers: {
           Accept: 'application/json',
           Authorization: 'Bearer ' + response.access_token,
         },
-      });
-      const user = await _user.json();
+      })).json();
+
       const settings = JSON.stringify({
         audio: req.cookies.settings.audio || {
           bgm: 0.1,
