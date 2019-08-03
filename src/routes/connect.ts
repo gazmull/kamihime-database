@@ -43,7 +43,7 @@ export default class ConnectRoute extends Route {
         '&scope=identify',
       ].join('');
 
-      const _response = await (await fetch(url, {
+      const response = await (await fetch(url, {
         headers: {
           Accept: 'application/json',
           Authorization: 'Basic ' + credentials,
