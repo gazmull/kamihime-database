@@ -49,14 +49,14 @@ export default class ConnectRoute extends Route {
         Authorization: 'Basic ' + credentials
       },
       method: 'POST'
-    })).json;
+    })).json();
 
     const user = await(await fetch('https://discordapp.com/api/users/@me', {
       headers: {
         Accept: 'application/json',
         Authorization: 'Bearer ' + response.access_token
       }
-    })).json;
+    })).json();
 
     const settings = JSON.stringify({
       audio: req.cookies.settings.audio || {
