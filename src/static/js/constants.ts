@@ -55,22 +55,6 @@ $(async () => {
       },
     });
 
-  $('.nav-switch').on('click', function () {
-    const nav = $('.side-nav');
-
-    if (nav.hasClass('nav-hidden')) {
-      nav.removeClass('nav-hidden');
-      $(this).addClass('nav-switch-hide');
-
-      saveSettings('menu', true);
-    } else {
-      nav.addClass('nav-hidden');
-      $(this).removeClass('nav-switch-hide');
-
-      saveSettings('menu', false);
-    }
-  });
-
   $('.navbar-toggler, #result-close').on('click', () => {
     if (searchController) searchController.abort();
 
@@ -172,6 +156,7 @@ async function showLoginWarning () {
 async function showDonateWarning () {
   const res = await sweet.fire({
     html: [
+      'There is no forever— unless I get some people to help me keep this site alive via donation!',
       'By donating you will have the benefits of:',
       '- Unlimited episodes visit',
       '- Access to Donor Role and Channel (potential exclusive contents) at Discord Server',
