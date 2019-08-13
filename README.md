@@ -12,7 +12,7 @@ Website + REST (JSON) API for Kamihime Database
 
 ## Requirements
 - [NGINX (skip to NGINX section)](http://blog.danyll.com/setting-up-express-with-nginx-and-pm2/)
-- [Node](https://nodejs.org) 10 or 11
+- [Node](https://nodejs.org) 12
 - [MariaDB](https://mariadb.org) 10
 - [Discord App + Bot Account](https://discordapp.com/developers/applications/me)
 - [Github Personal Access Token](https://github.com/settings/tokens)
