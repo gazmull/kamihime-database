@@ -9,7 +9,7 @@ Your request headers must at least contain:
 |    Accept    | `application/json`                                      |
 | Content-Type | `application/json`, `application/x-www-form-urlencoded` |
 
-All requests must be sent to [__https__://kamihimedb.thegzm.space/api](https://kamihimedb.thegzm.space/api)
+All requests must be sent to [__https__://kamihimedb.winspace/api](https://kamihimedb.winspace/api)
 
 ## Responses
 All responses contain HTTP status code for partial check.

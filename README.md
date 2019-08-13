@@ -4,7 +4,7 @@ Website + REST (JSON) API for Kamihime Database
 <br> Character statistics are provided by [Kamihime Project Fandom (Nutaku)](https://kamihime-project.fandom.com)
 
 ## Links
-- [Site](https://kamihimedb.thegzm.space)
+- [Site](https://kamihimedb.winspace)
 - [Support](http://support.thegzm.space)
 - [API Documentation](https://docs.thegzm.space/kamihime-database)
 - [Changelog](/CHANGELOG.md)

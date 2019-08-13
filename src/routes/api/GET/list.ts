@@ -109,7 +109,7 @@ const queries = {
  *  - **Sort Type**: `asc` / `desc`
  *
  * @apiExample {html} Example: this will return items that are approved, eidolon, not a loli, and of water element, sorted by rarity (ascending).
- * https://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water?sort=rarity-asc
+ * https://kamihimedb.winspace/api/list/approved/eidolon/no-loli/water?sort=rarity-asc
  * @apiParam {string} [options] An array of options with `/` delimiter. See description.
  * @apiParam (Query) {string} [sort] Sorts the list. Syntax: `sortBy-sortType` (default: `name-asc`)
  *
