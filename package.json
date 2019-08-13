@@ -18,7 +18,7 @@
     "scenarios": "node dist/util/scenarios"
   },
   "engine": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "author": "gazmull",
   "repository": {
@@ -31,12 +31,12 @@
   "homepage": "https://github.com/gazmull/kamihime-database#readme",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/uws": "11.149.1",
     "anchorme": "^1.1.2",
+    "bufferutil": "^4.0.1",
     "canvas": "2.4.1",
     "chalk": "^2.4.2",
     "cookie-parser": "^1.4.4",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "github:discordjs/discord.js#f79f0243438a89c4d8a910461800b1adff2fe6e5",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
     "fuse.js": "^3.4.5",
