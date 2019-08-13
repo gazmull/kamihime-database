@@ -33,7 +33,7 @@
   "dependencies": {
     "anchorme": "^1.1.2",
     "bufferutil": "^4.0.1",
-    "canvas": "2.4.1",
+    "canvas": "2.5.0",
     "chalk": "^2.4.2",
     "cookie-parser": "^1.4.4",
     "discord.js": "github:discordjs/discord.js#f79f0243438a89c4d8a910461800b1adff2fe6e5",
