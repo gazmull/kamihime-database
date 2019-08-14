@@ -1,6 +1,31 @@
 define({ "api": [
   {
     "type": "get",
+    "url": "/refresh",
+    "title": "refresh",
+    "name": "GetRefresh",
+    "group": "API_Specific",
+    "description": "<p>Forcefully refreshes server cache (Character list)</p>",
+    "permission": [
+      {
+        "name": "Owner Only"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"ok\": true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "src/routes/api/GET/refresh.ts",
+    "groupTitle": "API_Specific"
+  },
+  {
+    "type": "get",
     "url": "/version",
     "title": "version",
     "name": "GetVersion",
@@ -179,6 +204,13 @@ define({ "api": [
             "optional": false,
             "field": "Character.name",
             "description": "<p>The character name.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "Characer.created",
+            "description": "<p>The character's data creation date.</p>"
           }
         ]
       },
@@ -204,7 +236,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example: this will return items that are approved, eidolon, not a loli, and of water element, sorted by rarity (ascending).",
-        "content": "https://kamihimedb.thegzm.space/api/list/approved/eidolon/no-loli/water?sort=rarity-asc",
+        "content": "https://kamihimedb.winspace/api/list/approved/eidolon/no-loli/water?sort=rarity-asc",
         "type": "html"
       }
     ],
@@ -245,7 +277,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response:",
-          "content": "HTTP/1.1 200 OK\n[\n  {\n  \"_rowId\": 204,\n  \"id\": \"e6021\",\n  \"name\": \"Jack Frost\",\n  \"approved\": 1,\n  \"avatar\": \"portrait/Jack Frost Portrait.png\",\n  \"main\": \"main/Jack Frost.png\",\n  \"preview\": \"close/Jack Frost Close.png\",\n  \"loli\": 1,\n  \"peeks\": \"1715\",\n  \"harem1Title\": \"Clinking Head and Hands\",\n  \"harem1Resource1\": \"1e3a94a3d3d8348f86482b055d2dd8db4a70cac361bc9f51\",\n  \"harem2Title\": \"Chilled Hands and Feet, Burning Desire\",\n  \"harem2Resource1\": \"1e3a94a3d3d8348f35658ab6e49a6d134a70cac361bc9f51\",\n  \"harem2Resource2\": \"1e3a94a3d3d8348f79b2217040cc025206f12ba16f14d7ad\",\n  \"harem3Title\": null,\n  \"harem3Resource1\": null,\n  \"harem3Resource2\": null,\n  \"element\": \"Water\",\n  \"type\": null,\n  \"rarity\": \"SSR\",\n  \"tier\": null\n  }, ...items\n]",
+          "content": "HTTP/1.1 200 OK\n[\n  {\n  \"id\": \"e6021\",\n  \"name\": \"Jack Frost\",\n  \"avatar\": \"portrait/Jack Frost Portrait.png\",\n  \"main\": \"main/Jack Frost.png\",\n  \"preview\": \"close/Jack Frost Close.png\",\n  \"loli\": 1,\n  \"peeks\": \"1715\",\n  \"harem1Title\": \"Clinking Head and Hands\",\n  \"harem1Resource1\": \"1e3a94a3d3d8348f86482b055d2dd8db4a70cac361bc9f51\",\n  \"harem2Title\": \"Chilled Hands and Feet, Burning Desire\",\n  \"harem2Resource1\": \"1e3a94a3d3d8348f35658ab6e49a6d134a70cac361bc9f51\",\n  \"harem2Resource2\": \"1e3a94a3d3d8348f79b2217040cc025206f12ba16f14d7ad\",\n  \"harem3Title\": null,\n  \"harem3Resource1\": null,\n  \"harem3Resource2\": null,\n  \"element\": \"Water\",\n  \"type\": null,\n  \"rarity\": \"SSR\",\n  \"tier\": null\n  }, ...items\n]",
           "type": "json"
         }
       ]
