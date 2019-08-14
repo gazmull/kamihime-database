@@ -236,7 +236,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example: this will return items that are approved, eidolon, not a loli, and of water element, sorted by rarity (ascending).",
-        "content": "https://kamihimedb.winspace/api/list/approved/eidolon/no-loli/water?sort=rarity-asc",
+        "content": "https://kamihimedb.win/api/list/approved/eidolon/no-loli/water?sort=rarity-asc",
         "type": "html"
       }
     ],
