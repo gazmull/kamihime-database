@@ -3,7 +3,7 @@
   "version": "2.3.0",
   "description": "Documentation for Kamihime Database API",
   "title": "Kamihime Database - API Documentation",
-  "url": "https://kamihimedb.winspace/api",
+  "url": "https://kamihimedb.win/api",
   "header": {
     "title": "Guide",
     "filename": "GUIDE.md"
