@@ -31,25 +31,22 @@
   "homepage": "https://github.com/gazmull/kamihime-database#readme",
   "license": "MIT",
   "dependencies": {
+    "@gazmull/logger": "github:gazmull/logger",
     "anchorme": "^1.1.2",
     "bufferutil": "^4.0.1",
     "canvas": "2.5.0",
-    "chalk": "^2.4.2",
     "cookie-parser": "^1.4.4",
     "discord.js": "github:discordjs/discord.js#f79f0243438a89c4d8a910461800b1adff2fe6e5",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
     "fuse.js": "^3.4.5",
     "helmet": "^3.19.0",
-    "infobox-parser": "^3.2.0",
     "knex": "^0.19.0",
     "mysql2": "^1.6.5",
     "node-fetch": "^2.6.0",
     "nodemw": "gazmull/nodemw#7a41bd4",
     "pug": "^2.0.4",
-    "shortid": "^2.2.14",
-    "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^3.10.0"
+    "shortid": "^2.2.14"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.3.1",
