@@ -12,7 +12,7 @@ const version = require('../package.json').version;
 
 if (process.env.NODE_ENV === 'production')
   express
-    .set('trust proxy', proxy)
+    .set('trust proxy', [ 'loopback', ...proxy ])
     .use(helmet({
       contentSecurityPolicy: {
         directives: {
@@ -20,18 +20,20 @@ if (process.env.NODE_ENV === 'production')
             '\'self\'',
             'www.w3.org',
             'cf.static.r.kamihimeproject.dmmgames.com',
+            'cdn.kamihimedb.win',
           ],
           fontSrc: [ '\'self\'', 'fonts.gstatic.com', 'cdn.jsdelivr.net' ],
           imgSrc: [
             '\'self\'',
             'data:',
             'cf.static.r.kamihimeproject.dmmgames.com',
+            'cdn.kamihimedb.win',
           ],
           scriptSrc: [ '\'self\'', '\'unsafe-inline\'', 'cdn.jsdelivr.net' ],
           styleSrc: [ '\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com', 'cdn.jsdelivr.net' ]
         }
       },
-      hidePoweredBy: { setTo: 'cream3.14' },
+      hidePoweredBy: true,
       hsts: {
         includeSubDomains: true,
         maxAge: 31536000,
