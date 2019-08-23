@@ -1,12 +1,12 @@
+import Winston from '@gazmull/logger';
 import * as Knex from 'knex';
 import { resolve } from 'path';
 import { IKamihime } from '../../../typings';
 import { database, grant } from '../../auth/auth';
-import Winston from '../Logger';
 import Extractor from './util/Extractor';
 
 let code = 0;
-const logger = new Winston().logger;
+const logger = new Winston('snek').logger;
 
 start();
 

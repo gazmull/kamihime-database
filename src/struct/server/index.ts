@@ -1,3 +1,4 @@
+import Winston from '@gazmull/logger';
 import { Collection, TextChannel } from 'discord.js';
 import { Express, Router } from 'express';
 import * as knex from 'knex';
@@ -7,7 +8,6 @@ import { IAuth, IKamihime, IPasswordAttempts, IRateLimitLog, IReport, ISession, 
 import { api, database, discord, exempt, host, rootURL } from '../../auth/auth';
 import authHandler from '../../middleware/auth-handler';
 import { handleApiError, handleSiteError } from '../../util/handleError';
-import Winston from '../../util/Logger';
 import ApiRoute from '../ApiRoute';
 import Client from '../Client';
 import ApiController from './controllers/api';
@@ -34,7 +34,7 @@ export default class Server {
     handleApiError,
     handleSiteError,
     db: knex(database),
-    logger: new Winston().logger,
+    logger: new Winston('khdb').logger,
     collection: <K, V>() => new Collection<K, V>(),
     discordSend: (channelId, message) => {
       const channel = this.client.discord.channels.get(channelId) as TextChannel;
