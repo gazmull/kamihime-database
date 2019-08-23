@@ -157,12 +157,13 @@ async function showDonateWarning () {
   const res = await sweet.fire({
     html: [
       'There is no forever— unless I get some people to help me keep this site alive via donation!',
+      '',
       'By donating you will have the benefits of:',
       '- Unlimited episodes visit',
       '- Access to Donor Role and Channel (potential exclusive contents) at Discord Server',
       '- A token to support the site and related projects',
       '<br> To receive the benefits, you must login!',
-      'If you have yet to receive the benefits, please contact Euni#0011 (Discord) with your Transaction ID'
+      'If you have yet to receive the benefits, please contact Euni#1200 (Discord) with your Transaction ID'
     ].join('<br>'),
     titleText: 'Donate'
   });
@@ -214,6 +215,7 @@ function readyImages (images: JQuery<HTMLElement>) {
         };
         img.onerror = () => {
           this.setAttribute('alt', 'Could not load the image.');
+          this.removeAttribute('src');
 
           return res(true);
         };
