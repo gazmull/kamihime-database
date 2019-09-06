@@ -10,7 +10,7 @@
     "noImplicitAny": false,
     "rootDir": "../",
     "outDir": "../../dist",
-    "removeComments": true,
+    "removeComments": true
   },
   "include": [
     "js/**/*.ts"
