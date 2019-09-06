@@ -1,7 +1,6 @@
 import { TextChannel } from 'discord.js';
 import { Request, Response } from 'express';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import fetch from 'node-fetch';
 import { IKamihime } from '../../../typings';
 import Route from '../../struct/Route';
 import ApiError from '../../util/ApiError';
@@ -10,10 +9,8 @@ const COOLDOWN = 1000 * 60 * 3;
 const MAX_VISITS = 5;
 const MAX_LOGGED_IN_VISITS = 10;
 
-const SCENARIOS = 'https://cf.static.r.kamihimeproject.dmmgames.com/scenarios/';
-const BG_IMAGE = SCENARIOS + 'bgimage/';
-const BGM = SCENARIOS + 'bgm/';
-const FG_IMAGE = SCENARIOS + 'fgimage/';
+const SCENARIOS = 'https://device.kamihimedb.win/scenarios/';
+const MISC = SCENARIOS + 'misc/';
 
 export default class PlayerRoute extends Route {
   constructor () {
@@ -73,7 +70,7 @@ export default class PlayerRoute extends Route {
     let files: string[] = null;
 
     if (type !== 'story') {
-      files = await this._find('files.rsc', id, resource);
+      files = await this._find('files.rsc', id, resource, selected);
 
       if (!files)
         throw new ApiError(501, [
@@ -82,17 +79,14 @@ export default class PlayerRoute extends Route {
         ]);
     }
 
-    let folder = resource.slice(-4);
-    const fLen = folder.length / 2;
-    folder = `${folder.slice(0, fLen)}/${folder.slice(fLen)}/`;
     const requested = {
-      SCENARIOS: `${SCENARIOS + folder}${resource}/`,
+      SCENARIOS: `${SCENARIOS}${character.id}/${resource}/`,
       script: scenario,
       character: { id: character.id }
     };
 
     if (type === 'story')
-      Object.assign(requested, { BG_IMAGE, BGM, FG_IMAGE });
+      Object.assign(requested, { MISC });
     else
       Object.assign(requested, { files });
 
@@ -107,16 +101,20 @@ export default class PlayerRoute extends Route {
    * @param id The character ID
    * @param res The Resource ID for given template
    */
-  protected async _find (name: string, id: string, res: string) {
-    const filePath = path.resolve(__dirname, '../../../static/scenarios', id, res, name);
+  protected async _find (name: string, id: string, res: string, rscKey?: string) {
+    const filePath = `${SCENARIOS}${id}/${rscKey || res}/${name}`;
 
     try {
-      const file = await fs.readFile(filePath);
+      const fetched = await fetch(filePath);
+
+      if (!fetched.ok) throw false;
+
+      const text = await fetched.text();
 
       if (name === 'files.rsc')
-        return file.toString().split(',');
+        return text.split(',');
 
-      return JSON.parse(file.toString());
+      return JSON.parse(text);
     } catch (err) { return false; }
   }
 

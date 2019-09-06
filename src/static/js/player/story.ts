@@ -31,13 +31,13 @@ $(async () => {
 
   const _assets = [
     ...expressions
-      .map(expression => ({ src: FG_IMAGE + expression, name: expression, type: 'img' })),
+      .map(expression => ({ src: MISC + expression, name: expression, type: 'img' })),
     ...bgs
-      .map(bg => ({ src: BG_IMAGE + bg, name: bg, type: 'bg' })),
+      .map(bg => ({ src: MISC + bg, name: bg, type: 'bg' })),
     ...audios
-      .map(audio => ({ src: SCENARIOS + `sound/${audio}`, name: audio, type: 'snd' })),
+      .map(audio => ({ src: SCENARIOS + audio, name: audio, type: 'snd' })),
     ...bgms
-      .map(bgm => ({ src: BGM + bgm, name: bgm, type: 'bgm' })),
+      .map(bgm => ({ src: MISC + bgm, name: bgm, type: 'bgm' })),
   ] as IAsset[];
 
   try {

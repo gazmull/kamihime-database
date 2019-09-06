@@ -9,10 +9,8 @@ declare global {
   var Cookies: typeof JSCookie;
   type ModalEventHandler = meh<HTMLElement>;
 
-  const FG_IMAGE: string;
-  const BG_IMAGE: string;
+  const MISC: string;
   const SCENARIOS: string;
-  const BGM: string;
   let script: IScript[];
   const files: string[];
 
