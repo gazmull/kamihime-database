@@ -1,4 +1,3 @@
-import { TextChannel } from 'discord.js';
 import { Request, Response } from 'express';
 import fetch from 'node-fetch';
 import { IKamihime } from '../../../typings';
@@ -60,7 +59,7 @@ export default class PlayerRoute extends Route {
     if (!resource)
       throw new ApiError(501, [ 'Episode Resource is empty.', 'Please contact the administrator!' ]);
 
-    await this._rateLimit(req, character, resource);
+    await this._rateLimit(req, res, character, resource);
 
     const { scenario = null } = await this._find('script.json', id, resource);
 
@@ -128,23 +127,13 @@ export default class PlayerRoute extends Route {
     return true;
   }
 
-  protected async _rateLimit (req: Request, character: any, resource: string) {
+  protected async _rateLimit (req: Request, res: Response, character: any, resource: string) {
     const update = () => this.server.util.db('kamihime').update('peeks', ++character.peeks)
       .where('id', character.id);
     const usr = req.signedCookies.userId || req.ip;
     const status = () => this.server.util.logger.info(`[A] Peek: ${usr} visited ${character.name}`);
-    let isDonor: boolean;
 
-    try {
-      const fetchedDiscord = await this.client.discord.users.fetch(req.signedCookies.userId);
-      const channel = await this.client.discord.channels.fetch(this.client.auth.discord.channel) as TextChannel;
-      const guild = channel ? channel.guild : null;
-      const guildMember = guild ? await guild.members.fetch(fetchedDiscord.id) : null;
-      isDonor = fetchedDiscord && guild && guildMember &&
-        guildMember.roles.has(this.client.auth.discord.donorID);
-    } catch { isDonor = false; }
-
-    if (this.server.auth.exempt.includes(req.signedCookies.userId) || isDonor) {
+    if (this.server.auth.exempt.includes(req.signedCookies.userId) || res.locals.user.donor) {
       await update();
       status();
 

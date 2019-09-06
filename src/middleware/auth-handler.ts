@@ -1,3 +1,4 @@
+import { TextChannel } from 'discord.js';
 import { RequestHandler } from 'express';
 import { IAdminUser, IUser } from '../../typings';
 import Server from '../struct/server';
@@ -39,6 +40,18 @@ export default function authHandler (this: Server): RequestHandler {
     const { userId, username, lastLogin } = user;
     res.locals.user = { lastLogin, userId, username };
 
+    let isDonor: boolean;
+
+    try {
+      const fetchedDiscord = await this.client.discord.users.fetch(req.signedCookies.userId);
+      const channel = await this.client.discord.channels.fetch(this.client.auth.discord.channel) as TextChannel;
+      const guild = channel ? channel.guild : null;
+      const guildMember = guild ? await guild.members.fetch(fetchedDiscord.id) : null;
+      isDonor = fetchedDiscord && guild && guildMember &&
+        guildMember.roles.has(this.client.auth.discord.donorID);
+    } catch { isDonor = false; }
+
+    if (isDonor) Object.assign(res.locals.user, { donor: true });
     if (req.signedCookies.slug) {
       const [ admin ]: IAdminUser[] = await this.util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
         .where({
