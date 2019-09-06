@@ -1,3 +1,5 @@
+import * as Knex from 'knex';
+
 /**
  * @property token The token to pass to the API
  * @property url The API endpoint
@@ -22,7 +24,7 @@ export interface Host {
  * @property scope Scopes of authorization
  * @property secret Client Secret/Token
  */
-export interface GrantProvider {
+export interface DiscordGrant {
   callback: string;
   key: string;
   scope: string[];
@@ -44,20 +46,14 @@ export interface DiscordClient {
   donorID: string;
 }
 
-/**
- * @property gist The Github Gist ID.
- * @property token The Github user's personal access token.
- */
-export interface Github {
-  gist: string;
-  token: string;
-}
-
-/**
- * @property session The user's Session value.
- * @property xsrf The user's XSRF Token value.
- */
-export interface KamihimeGrant {
-  session: string;
-  xsrf: string;
+export interface Auth {
+  database: Knex.Config;
+  proxy: string[];
+  host: Host;
+  exempt?: string[];
+  rootURL: string;
+  api: Api;
+  cookieSecret: string;
+  discord: DiscordGrant;
+  discordClient: DiscordClient;
 }

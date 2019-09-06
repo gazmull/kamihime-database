@@ -1,12 +1,9 @@
 /* tslint:disable:max-line-length */
 
-import { Config as Database } from 'knex';
-import { Api, DiscordClient, Github, GrantProvider, Host, KamihimeGrant } from '../../typings/auth';
-
 /**
  * The database configuration to use for the server
  */
-export const database: Database = {
+exports.database = {
   acquireConnectionTimeout: 10000,
   client: 'mysql2',
   connection: {
@@ -24,12 +21,12 @@ export const database: Database = {
 /**
  * List of IP Addresses from trusted proxy (Production ENV only)
  */
-export const proxy: string[] = [ 'i.love.turtles' ];
+exports.proxy = [ 'i.love.turtles' ];
 
 /**
  * The host configuration to use for the server
  */
-export const host: Host = {
+exports.host = {
   address: '127.0.0.1',
   port: 80
 };
@@ -42,19 +39,19 @@ export const host: Host = {
  * WATCH OUT:
  * This is also used for authorized user messages (announcements for the site status) to be read by the Discord Bot.
  */
-export const exempt: string[] = [
+exports.exempt = [
   '319102712383799296',
 ];
 
 /**
  * The server's root URL
  */
-export const rootURL = 'http://localhost/';
+exports.rootURL = 'http://localhost/';
 
 /**
  * Configuration for this server's API
  */
-export const api: Api = {
+exports.api = {
   token: 'null',
   url: 'http://localhost/api/'
 };
@@ -62,12 +59,12 @@ export const api: Api = {
 /**
  * Secret to use for express-cookieParser
  */
-export const cookieSecret = 'your cookie secret';
+exports.cookieSecret = 'your cookie secret';
 
 /**
  * Discord provider OAuth2 Grant configuration
  */
-export const discord: GrantProvider = {
+exports.discord = {
   callback: 'connect',
   key: 'blah',
   scope: [ 'identify' ],
@@ -79,42 +76,10 @@ export const discord: GrantProvider = {
  *
  * This only serves as a website status message scraper and reports (KamihimeDB/Wikia) sender
  */
-export const discordClient: DiscordClient = {
+exports.discordClient = {
   channel: '319102712383799296',
   dbReportChannel: '319102712383799296',
   token: 'FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD',
   wikiReportChannel: '319102712383799296',
   donorID: '589516127491719169'
-};
-
-/**
- * Configuration for Github.
- *
- * This serves as your auth to access the blacklist for Scenarios Util.
- *
- * Warning: Only change the gist if you have your own blacklist, and the blacklist's filename must be `.blacklist`.
- *
- * -
- *
- * Get your personal access token at https://github.com/settings/tokens
- *
- * Create a token with no scope, since the util will only need to read the gist.
- */
-export const github: Github = {
-  gist: '45cd187e4a476795bcef630a8018e1a6',
-  token: 'ieatalotofass'
-};
-
-/**
- * Configuration for Kamihime PROJECT user's information.
- *
- * This is used for logging into the game to extract all episodes.
- * Please make sure to avoid using the game while doing this to avoid being blocked from the game.
- *
- * Get your credentials via Developer Tool (F12) -> Network -> Do a gem gacha roll -> Click recent request
- * -> Click Headers
- */
-export const grant: KamihimeGrant = {
-  session: '',
-  xsrf: ''
 };

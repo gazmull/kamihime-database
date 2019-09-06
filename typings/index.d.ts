@@ -6,7 +6,7 @@ import apiHandler from '../src/middleware/api-handler';
 import reAuthHandler from '../src/middleware/re-auth-handler';
 import Client from '../src/struct/Client';
 import ApiError from '../src/util/ApiError';
-import { Api as ApiAuth, DiscordClient, GrantProvider, Host, KamihimeGrant } from './auth';
+import { Api as ApiAuth, DiscordClient, DiscordGrant, Host } from './auth';
 
 export interface IRouterData {
   directory: string;
@@ -30,7 +30,7 @@ export interface IApiOptions extends IRouteOptions {
 export interface IAuth {
   api: ApiAuth;
   database: Knex.Config;
-  discord: GrantProvider;
+  discord: DiscordGrant;
   exempt: string[];
   host: Host;
   rootURL: string;
@@ -47,47 +47,6 @@ export interface IUtil {
   handleApiError?: (res: Response, err: ApiError) => void;
   handleSiteError?: (res: Response, err: ApiError) => void;
   logger?: Logger
-}
-
-export interface IExtractorOptions {
-  logger: Logger;
-  grant: KamihimeGrant;
-  db: Knex;
-  base: {
-    CHARACTERS: IKamihime[];
-    DESTINATION: string;
-    URL: {
-      SCENARIOS: string,
-      EPISODES: string;
-      KAMIHIMES: {
-        SCENES: string;
-      };
-      EIDOLONS: {
-        SCENES: string;
-      };
-      SOULS: {
-        INFO: string;
-      }
-    };
-  };
-}
-
-export interface IExtractorFiles {
-  [key: string]: {
-    [key: string]: string[],
-  };
-}
-
-export interface IScenarioSequence {
-  auto?: boolean;
-  bgm: string;
-  film: string;
-  fps?: number;
-  talk: Array<{
-    chara: string;
-    voice: string;
-    words: string;
-  }>;
 }
 
 export interface IUser {

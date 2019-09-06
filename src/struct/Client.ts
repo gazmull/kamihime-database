@@ -8,8 +8,10 @@ import * as Wiki from 'nodemw';
 import { resolve } from 'path';
 import { promisify } from 'util';
 import { IClientAuth, IKamihime, IKamihimeWiki } from '../../typings';
-import { discordClient as discordAuth } from '../auth/auth';
+import { Auth } from '../../typings/auth';
 import Server from './server';
+// tslint:disable-next-line: no-var-requires
+const { discordClient: discordAuth } = require('../../auth') as Auth;
 
 let getImageInfo: (...args: any[]) => any = null;
 let getArticle: (...args: any[]) => string = null;

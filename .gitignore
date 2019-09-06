@@ -11,7 +11,7 @@ logs
 dist
 provider
 scenarios-error.log
-src/auth/auth.ts
+auth.js
 static/img/wiki
 static/scenarios
 test.js

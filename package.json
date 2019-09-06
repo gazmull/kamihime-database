@@ -13,9 +13,7 @@
     "docs:build": "apidoc -f .ts -i src/routes/api/ -o ../kamihime-database-docs",
     "lint-fix": "gulp lint --fix",
     "lint": "gulp lint",
-    "pm2": "pm2 start .pm2.yml --env production",
-    "scenarios-v": "yarn run scenarios --verbose",
-    "scenarios": "node dist/util/scenarios"
+    "pm2": "pm2 start .pm2.yml --env production"
   },
   "engine": {
     "node": ">=12"

@@ -2,9 +2,11 @@ import * as cookieParser from 'cookie-parser';
 import * as Express from 'express';
 import * as helmet from 'helmet';
 import { resolve } from 'path';
-import { cookieSecret, proxy } from './auth/auth';
+import { Auth } from '../typings/auth';
 import Client from './struct/Client';
 import Server from './struct/server';
+// tslint:disable-next-line: no-var-requires
+const { cookieSecret, proxy } = require('../auth') as Auth;
 
 const express = Express();
 // tslint:disable-next-line: no-var-requires

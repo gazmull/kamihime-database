@@ -5,13 +5,15 @@ import * as knex from 'knex';
 import fetch from 'node-fetch';
 // tslint:disable-next-line:max-line-length
 import { IAuth, IKamihime, IPasswordAttempts, IRateLimitLog, IReport, ISession, IState, IUser, IUtil } from '../../../typings';
-import { api, database, discord, exempt, host, rootURL } from '../../auth/auth';
+import { Auth } from '../../../typings/auth';
 import authHandler from '../../middleware/auth-handler';
 import { handleApiError, handleSiteError } from '../../util/handleError';
 import ApiRoute from '../ApiRoute';
 import Client from '../Client';
 import ApiController from './controllers/api';
 import SiteController from './controllers/site';
+// tslint:disable-next-line: no-var-requires
+const { api, database, discord, exempt, host, rootURL } = require('../../../auth') as Auth;
 
 let serverStoresRefresh: NodeJS.Timeout = null;
 let serverKamihimeRefresh: NodeJS.Timeout = null;
