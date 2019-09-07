@@ -133,7 +133,7 @@ export default class PlayerRoute extends Route {
     const usr = req.signedCookies.userId || req.ip;
     const status = () => this.server.util.logger.info(`[A] Peek: ${usr} visited ${character.name}`);
 
-    if (this.server.auth.exempt.includes(req.signedCookies.userId) || res.locals.user.donor) {
+    if (this.server.auth.exempt.includes(req.signedCookies.userId) || (res.locals.user && res.locals.user.donor)) {
       await update();
       status();
 
