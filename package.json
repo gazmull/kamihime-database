@@ -44,6 +44,7 @@
     "node-fetch": "^2.6.0",
     "nodemw": "gazmull/nodemw#7a41bd4",
     "pug": "^2.0.4",
+    "request": "^2.88.0",
     "shortid": "^2.2.14"
   },
   "devDependencies": {
@@ -58,6 +59,7 @@
     "@types/js-cookie": "^2.2.2",
     "@types/node": "^12.6.8",
     "@types/node-fetch": "^2.3.7",
+    "@types/request": "^2.48.2",
     "@types/serve-favicon": "^2.2.30",
     "@types/shortid": "^0.0.29",
     "apidoc": "^0.17.7",

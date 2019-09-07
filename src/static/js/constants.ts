@@ -269,6 +269,7 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
         .filter(v => v)
         .map(v => `<li><a href="/player/${data.id}/${episode}/${v.toLowerCase()}">${v}</a></li>`)
         .join(''),
+      episode === 1 ? '' : `<li><a href="/api/dgif/${data.id}/${episode}" target="_blank">Legacy (Download)</a></li>`,
       '</ul>',
     ].join('');
     const episodes = [ 'R', 'SSR+' ].includes(data.rarity) || [ 'e', 's' ].includes(data.id.charAt(0))
@@ -279,7 +280,9 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
     modal.find('.modal-background img').attr('data-src', src);
     modal.find('.modal-body p').html([
       `<span class="badge badge-primary">${Number(data.peeks).toLocaleString('en')} VIEWS</span>`,
-      [ data.tier || data.rarity, type ].map(v => `<span class="badge badge-secondary">${v}</span>`).join(' '),
+      [ data.tier || data.rarity, type, data.loli ? 'Flagged as loli' : '' ]
+        .filter(e => e)
+        .map(v => `<span class="badge badge-secondary">${v}</span>`).join(' '),
     ].join(' '));
     modal.find('.modal-body-episodes-list').html(episodes.map(linkify).join(''));
 
