@@ -8,6 +8,7 @@ import ApiError from './ApiError';
  * @param err The Error interface
  */
 export function handleApiError (this: Server, res: Response, err: ApiError) {
+  if (!(err instanceof ApiError)) err = new ApiError(500, (err as Error).message);
   if (err.stack && err.code >= 500) this.util.logger.error(err.stack);
 
   res
