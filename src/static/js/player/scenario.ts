@@ -36,7 +36,7 @@ $(async () => {
       .map(image => ({ src: SCENARIOS + image, name: image, type: 'img' })),
     ...audios
       .map(audio => ({ src: SCENARIOS + audio, name: audio, type: 'snd' })),
-    { src: SCENARIOS + bgm, name: bgm, type: 'bgm' }
+    { src: MISC + bgm, name: bgm, type: 'bgm' }
   ] as IAsset[];
 
   try {

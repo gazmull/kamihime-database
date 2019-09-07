@@ -69,7 +69,7 @@ export default class PlayerRoute extends Route {
     let files: string[] = null;
 
     if (type !== 'story') {
-      files = await this._find('files.rsc', id, resource, selected);
+      files = await this._find('files.rsc', id, resource);
 
       if (!files)
         throw new ApiError(501, [
@@ -86,6 +86,8 @@ export default class PlayerRoute extends Route {
 
     if (type === 'story')
       Object.assign(requested, { MISC });
+    else if (type === 'scenario')
+      Object.assign(requested, { MISC, files });
     else
       Object.assign(requested, { files });
 
@@ -100,8 +102,8 @@ export default class PlayerRoute extends Route {
    * @param id The character ID
    * @param res The Resource ID for given template
    */
-  protected async _find (name: string, id: string, res: string, rscKey?: string) {
-    const filePath = `${SCENARIOS}${id}/${rscKey || res}/${name}`;
+  protected async _find (name: string, id: string, res: string) {
+    const filePath = `${SCENARIOS}${id}/${res}/${name}`;
 
     try {
       const fetched = await fetch(filePath);
