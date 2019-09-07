@@ -21,15 +21,13 @@ if (process.env.NODE_ENV === 'production')
           defaultSrc: [
             '\'self\'',
             'www.w3.org',
-            'cf.static.r.kamihimeproject.dmmgames.com',
-            'cdn.kamihimedb.win',
+            'device.kamihimedb.win',
           ],
           fontSrc: [ '\'self\'', 'fonts.gstatic.com', 'cdn.jsdelivr.net' ],
           imgSrc: [
             '\'self\'',
             'data:',
-            'cf.static.r.kamihimeproject.dmmgames.com',
-            'cdn.kamihimedb.win',
+            'device.kamihimedb.win',
           ],
           scriptSrc: [ '\'self\'', '\'unsafe-inline\'', 'cdn.jsdelivr.net' ],
           styleSrc: [ '\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com', 'cdn.jsdelivr.net' ]
