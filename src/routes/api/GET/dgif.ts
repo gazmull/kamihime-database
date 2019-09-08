@@ -24,7 +24,7 @@ export default class GetDgifRequest extends ApiRoute {
 
   public async exec (req: Request, res: Response) {
     if (!res.locals.user || !res.locals.user.donor)
-      throw new ApiError(401);
+      throw new ApiError(403, 'This, currently, is a donor-only feature.');
 
     const id = req.params.id;
     const ep = parseInt(req.params.ep);
