@@ -29,7 +29,7 @@
   "homepage": "https://github.com/gazmull/kamihime-database#readme",
   "license": "MIT",
   "dependencies": {
-    "@gazmull/logger": "github:gazmull/logger",
+    "@gazmull/logger": "github:gazmull/logger#de48e83",
     "anchorme": "^1.1.2",
     "bufferutil": "^4.0.1",
     "canvas": "2.5.0",

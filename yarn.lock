@@ -18,9 +18,9 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@gazmull/logger@github:gazmull/logger":
-  version "1.0.0"
-  resolved "https://codeload.github.com/gazmull/logger/tar.gz/d5c2dddf19bfe2ea33071af5cbb195724dd2c1f9"
+"@gazmull/logger@github:gazmull/logger#de48e83":
+  version "1.1.0"
+  resolved "https://codeload.github.com/gazmull/logger/tar.gz/de48e8313042159de11c7b14c34cfc28caf13bd7"
   dependencies:
     chalk "^2.4.2"
     winston "^3.2.1"
