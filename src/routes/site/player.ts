@@ -109,13 +109,10 @@ export default class PlayerRoute extends Route {
       const fetched = await fetch(filePath);
 
       if (!fetched.ok) throw false;
+      if (name === 'script.json')
+        return fetched.json();
 
-      const text = await fetched.text();
-
-      if (name === 'files.rsc')
-        return text.split(',');
-
-      return JSON.parse(text);
+      return (await fetched.text()).split(',');
     } catch (err) { return false; }
   }
 
