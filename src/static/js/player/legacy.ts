@@ -91,7 +91,7 @@ $(async () => {
   }
 
   function navRight () {
-    if (sequenceIDX === maxScriptLength) return window.history.back();
+    if (sequenceIDX === maxScriptLength) return;
 
     sequenceIDX++;
     render();

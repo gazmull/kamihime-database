@@ -113,7 +113,7 @@ $(async () => {
 
   function navRight () {
     if (sequenceIDX === maxScriptLength && talkIDX === maxSequenceTalk())
-      return window.history.back();
+      return;
     if (talkIDX === maxSequenceTalk()) {
       sequenceIDX++;
       talkIDX = 0;

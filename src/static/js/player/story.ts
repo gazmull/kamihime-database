@@ -114,8 +114,7 @@ $(async () => {
   }
 
   function navRight () {
-    if (currentScriptIDX === maxScriptLength)
-      return window.history.back();
+    if (currentScriptIDX === maxScriptLength) return;
 
     lastScriptIDX = currentScriptIDX;
     currentScriptIDX++;
