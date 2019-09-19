@@ -93,7 +93,7 @@ export default class ConnectRoute extends Route {
     res
       .cookie('userId', user.id, {
         httpOnly: true,
-        maxAge: 6048e5,
+        maxAge: 31536e6,
         secure: this.server.production,
         signed: true
       })

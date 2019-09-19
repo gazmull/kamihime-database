@@ -91,8 +91,8 @@ export default function authHandler (this: Server): RequestHandler {
     }
 
     res
-      .cookie('userId', user.userId, { maxAge: 6048e5, httpOnly: true, secure: production, signed: true })
-      .cookie('isUser', 'true', { maxAge: 6048e5 })
+      .cookie('userId', user.userId, { maxAge: 31536e6, httpOnly: true, secure: production, signed: true })
+      .cookie('isUser', 'true', { maxAge: 31536e6 })
       .cookie('settings', settings);
 
     next();
