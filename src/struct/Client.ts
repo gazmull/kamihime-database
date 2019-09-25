@@ -500,6 +500,7 @@ export default class Client {
     if (!data) throw new Error(`API returned no item name ${item} found.`);
 
     return JSON.parse(data
+      .trim()
       .replace(/.+\s.+?= {/, '[')
       .replace(/,?\s+?}\s+?.+$/, ']')
       .replace(/({|,\s?)([\w]+?)(=["\d])/g, '$1"$2"$3')
