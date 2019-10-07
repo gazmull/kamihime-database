@@ -143,7 +143,7 @@ async function showLoginWarning () {
       'By logging in, you will have the benefits of:',
       '- Higher episode visits limit (5 => 10)',
       '- Player settings saved remotely',
-      '<br>While you are able to save your settings, accounts that are inactive for 14 days will be deleted.',
+      '<br>While you are able to save your settings, accounts that are inactive for 1 year will be deleted.',
       '<br>Click OK to continue to log in.',
     ].join('<br>'),
     titleText: 'Login'

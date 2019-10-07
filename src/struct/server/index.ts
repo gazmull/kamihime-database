@@ -227,7 +227,7 @@ export default class Server {
 
   protected async _cleanUsers () {
     try {
-      const EXPIRED = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 14 DAY)';
+      const EXPIRED = 'lastLogin <= DATE_SUB(NOW(), INTERVAL 365 DAY)';
       const users: IUser[] = await this.util.db('users').select('userId')
         .whereRaw(EXPIRED);
 
