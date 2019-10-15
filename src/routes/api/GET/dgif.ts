@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as request from 'request';
+import fetch from 'node-fetch';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
@@ -49,8 +49,10 @@ export default class GetDgifRequest extends ApiRoute {
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${character.name} Episode ${ep}.zip"`);
 
-    return request
-      .get(url)
+    const fetched = await fetch(url);
+
+    return fetched
+      .body
       .once('error', () => res.end())
       .pipe(res);
   }
