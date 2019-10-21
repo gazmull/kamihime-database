@@ -44,7 +44,7 @@
     "fuzzy": "^0.1.3",
     "helmet": "^3.15.0",
     "infobox-parser": "^3.0.3",
-    "knex": "^0.16.3",
+    "knex": "^0.19.5",
     "mysql2": "^1.6.4",
     "node-fetch": "^2.3.0",
     "nodemw": "gazmull/nodemw#7a41bd4",
