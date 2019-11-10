@@ -19,7 +19,7 @@ export default class GetPrevRequest extends ApiRoute {
     super({
       cooldown: 5,
       id: 'prev',
-      max: 1,
+      max: 4,
       method: 'GET',
       route: [ '/prev/:id/:ep' ]
     });
