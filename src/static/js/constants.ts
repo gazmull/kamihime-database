@@ -243,19 +243,32 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
 
     const src = `/img/wiki/${data.preview}`;
     const type = data.id.startsWith('s') ? 'SOUL' : data.id.startsWith('e') ? 'EIDOLON' : 'KAMIHIME';
-    const linkify = (episode: number) => [
-      `<h5>Episode ${episode}</h5>`,
-      '<ul>',
-      [ 'Story', episode === 1 ? '' : 'Scenario', episode === 1 ? '' : 'Legacy' ]
-        .filter(v => v)
-        .map(v => `<li><a href="/player/${data.id}/${episode}/${v.toLowerCase()}">${v}</a></li>`)
-        .join(''),
-      episode === 1 ? '' : `<li><a href="/api/dgif/${data.id}/${episode}" target="_blank">Legacy (Download)</a></li>`,
-      '</ul>',
-    ].join('');
+    const linkify = async (episode: number) => {
+      let url: string;
+
+      if (episode !== 1) {
+        const res = await fetch(`/api/prev/${data.id}/${episode}`);
+
+        if (!res.ok) return `Error Loading Episode ${episode}`;
+
+        url = (await res.json()).url;
+      }
+
+      return [
+        `<h5 ${url ? `data-toggle="tooltip" data-type="info" data-html="true" title='<img src=${url} class="scene-preview"/>'` : ''}>Episode ${episode} ${url ? '[🔎]' : ''}</h5>`,
+        '<ul>',
+        [ 'Story', episode === 1 ? '' : 'Scenario', episode === 1 ? '' : 'Legacy' ]
+          .filter(v => v)
+          .map(v => `<li><a href="/player/${data.id}/${episode}/${v.toLowerCase()}">${v}</a></li>`)
+          .join(''),
+        episode === 1 ? '' : `<li><a href="/api/dgif/${data.id}/${episode}" target="_blank">Legacy (Download)</a></li>`,
+        '</ul>',
+      ].join('')
+    };
     const episodes = [ 'R', 'SSR+' ].includes(data.rarity) || [ 'e', 's' ].includes(data.id.charAt(0))
       ? [ 1, 2 ]
       : [ 1, 2, 3 ];
+    const linkified = await Promise.all(episodes.map(linkify));
 
     modal.find('.modal-title').text(data.name);
     modal.find('.modal-background img').attr('data-src', src);
@@ -265,7 +278,16 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
         .filter(e => e)
         .map(v => `<span class="badge badge-secondary">${v}</span>`).join(' '),
     ].join(' '));
-    modal.find('.modal-body-episodes-list').html(episodes.map(linkify).join(''));
+    modal.find('.modal-body-episodes-list').html(linkified.join(''));
+
+    const tooltips = $('.modal h5[data-toggle="tooltip"]')
+      .css('cursor', 'pointer');
+
+    tooltips.tooltip({
+      container: 'body',
+      trigger : 'hover',
+      template: '<div class="tooltip" role="tooltip"><div class="arrow bg-transparent"></div><div class="tooltip-inner bg-transparent"></div></div>'
+    });
 
     await handleFancyModal();
   };

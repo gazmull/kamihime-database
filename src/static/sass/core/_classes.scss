@@ -151,6 +151,9 @@
       padding: 5px;
     }
   }
+  & .modal-header {
+    background-color: $core-background;
+  }
   & .modal-background {
     z-index: 1050;
     overflow: hidden;
@@ -170,8 +173,10 @@
   }
 }
 
-.bg-transparent {
-  background-color: $core-background !important;
+.scene-preview {
+  max-width: 135%;
+  height: auto;
+  transform: rotate(-90deg);
 }
 
 .aero {
