@@ -245,6 +245,7 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
     const type = data.id.startsWith('s') ? 'SOUL' : data.id.startsWith('e') ? 'EIDOLON' : 'KAMIHIME';
     const linkify = async (episode: number) => {
       let url: string;
+      const episode1AndExists = episode === 1 && data.harem1Resource1;
       const notEpisode1AndExists = (episode === 2 && data.harem2Resource2) || (episode === 3 && data.harem3Resource2);
 
       if (notEpisode1AndExists) {
@@ -256,9 +257,11 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
       }
 
       return [
-        `<h5 ${url ? `onclick='sweet.fire({ html: "<img src=${url} class=scene-preview />" })' style='cursor:pointer'` : ''}>Episode ${episode} ${url ? '[🔎]' : ''}</h5>`,
+        episode1AndExists || notEpisode1AndExists
+          ? `<h5 ${url ? `onclick='sweet.fire({ html: "<img src=${url} class=scene-preview />" })' style='cursor:pointer'` : ''}>Episode ${episode} ${url ? '[🔎]' : ''}</h5>`
+          : '',
         '<ul>',
-        [ 'Story', notEpisode1AndExists ? 'Scenario' : '', notEpisode1AndExists ? 'Legacy' : '' ]
+        [ episode1AndExists ? 'Story' : '', notEpisode1AndExists ? 'Scenario' : '', notEpisode1AndExists ? 'Legacy' : '' ]
           .filter(v => v)
           .map(v => `<li><a href="/player/${data.id}/${episode}/${v.toLowerCase()}">${v}</a></li>`)
           .join(''),

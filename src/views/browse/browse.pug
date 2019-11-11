@@ -32,14 +32,14 @@ block content
     .row
       .col
         .browse-panel
-          each t, i in [ 'ALL', 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R' ]
+          each t, i in [ 'ALL', 'MAIN', 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R' ]
             +appendPanelBtn(t, i)
           #browse-parent
-            each t, i in [ 'all', 'soul', 'eidolon', 'ssr+', 'ssr', 'sr', 'r' ]
+            each t, i in [ 'all', 'main', 'soul', 'eidolon', 'ssr+', 'ssr', 'sr', 'r' ]
               .collapse(id = `t${i}`, data-parent = '#browse-parent')
                 ul
                   -
-                    const selector = [ 'soul', 'eidolon' ].includes(t)
+                    const selector = [ 'main', 'soul', 'eidolon' ].includes(t)
                       ? e => e.id.startsWith(t.charAt(0))
                       : e => e.id.startsWith('k') && e.rarity.toLowerCase() === t
                     const selected = t === 'all' ? characters : characters.filter(selector)
