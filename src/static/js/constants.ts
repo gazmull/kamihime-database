@@ -245,8 +245,9 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
     const type = data.id.startsWith('s') ? 'SOUL' : data.id.startsWith('e') ? 'EIDOLON' : 'KAMIHIME';
     const linkify = async (episode: number) => {
       let url: string;
+      const notEpisode1AndExists = (episode === 2 && data.harem2Resource2) || (episode === 3 && data.harem3Resource2);
 
-      if (episode !== 1) {
+      if (notEpisode1AndExists) {
         const res = await fetch(`/api/prev/${data.id}/${episode}`);
 
         if (!res.ok) return `Error Loading Episode ${episode}`;
@@ -255,13 +256,13 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
       }
 
       return [
-        `<h5 ${url ? `data-toggle="tooltip" data-type="info" data-html="true" title='<img src=${url} class="scene-preview"/>'` : ''}>Episode ${episode} ${url ? '[🔎]' : ''}</h5>`,
+        `<h5 ${url ? `onclick='sweet.fire({ html: "<img src=${url} class=scene-preview />" })' style='cursor:pointer'` : ''}>Episode ${episode} ${url ? '[🔎]' : ''}</h5>`,
         '<ul>',
-        [ 'Story', episode === 1 ? '' : 'Scenario', episode === 1 ? '' : 'Legacy' ]
+        [ 'Story', notEpisode1AndExists ? 'Scenario' : '', notEpisode1AndExists ? 'Legacy' : '' ]
           .filter(v => v)
           .map(v => `<li><a href="/player/${data.id}/${episode}/${v.toLowerCase()}">${v}</a></li>`)
           .join(''),
-        episode === 1 ? '' : `<li><a href="/api/dgif/${data.id}/${episode}" target="_blank">Legacy (Download)</a></li>`,
+          notEpisode1AndExists ? `<li><a href="/api/dgif/${data.id}/${episode}" target="_blank">Legacy (Download)</a></li>` : '',
         '</ul>',
       ].join('')
     };
@@ -279,15 +280,6 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
         .map(v => `<span class="badge badge-secondary">${v}</span>`).join(' '),
     ].join(' '));
     modal.find('.modal-body-episodes-list').html(linkified.join(''));
-
-    const tooltips = $('.modal h5[data-toggle="tooltip"]')
-      .css('cursor', 'pointer');
-
-    tooltips.tooltip({
-      container: 'body',
-      trigger : 'hover',
-      template: '<div class="tooltip" role="tooltip"><div class="arrow bg-transparent"></div><div class="tooltip-inner bg-transparent"></div></div>'
-    });
 
     await handleFancyModal();
   };
