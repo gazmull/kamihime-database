@@ -245,10 +245,10 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
     const type = data.id.startsWith('s') ? 'SOUL' : data.id.startsWith('e') ? 'EIDOLON' : 'KAMIHIME';
     const linkify = async (episode: number) => {
       let url: string;
-      const episode1AndExists = episode === 1 && data.harem1Resource1;
-      const notEpisode1AndExists = (episode === 2 && data.harem2Resource2) || (episode === 3 && data.harem3Resource2);
+      const introExists = Boolean(data[`harem${episode}Resource1`]);
+      const scenarioExists = Boolean(data[`harem${episode}Resource2`]);
 
-      if (notEpisode1AndExists) {
+      if (scenarioExists) {
         const res = await fetch(`/api/prev/${data.id}/${episode}`);
 
         if (!res.ok) return `Error Loading Episode ${episode}`;
@@ -257,15 +257,15 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
       }
 
       return [
-        episode1AndExists || notEpisode1AndExists
+        introExists || scenarioExists
           ? `<h5 ${url ? `onclick='sweet.fire({ html: "<img src=${url} class=scene-preview />" })' style='cursor:pointer'` : ''}>Episode ${episode} ${url ? '[🔎]' : ''}</h5>`
           : '',
         '<ul>',
-        [ episode1AndExists ? 'Story' : '', notEpisode1AndExists ? 'Scenario' : '', notEpisode1AndExists ? 'Legacy' : '' ]
+        [ introExists ? 'Story' : '', scenarioExists ? 'Scenario' : '', scenarioExists ? 'Legacy' : '' ]
           .filter(v => v)
           .map(v => `<li><a href="/player/${data.id}/${episode}/${v.toLowerCase()}">${v}</a></li>`)
           .join(''),
-          notEpisode1AndExists ? `<li><a href="/api/dgif/${data.id}/${episode}" target="_blank">Legacy (Download)</a></li>` : '',
+          scenarioExists ? `<li><a href="/api/dgif/${data.id}/${episode}" target="_blank">Legacy (Download)</a></li>` : '',
         '</ul>',
       ].join('')
     };
