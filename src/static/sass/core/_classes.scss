@@ -119,12 +119,12 @@
     top: -30px;
   }
   & span {
-    &.badge {
-      position: relative;
-      top: -41px;
+    &.badge-container {
+      position: absolute;
+      top: -3px;
       z-index: 0;
     }
-    &:not(.badge) {
+    &:not(.badge-container):not(.badge) {
       color: $core-text;
       font-size: $item-text-size;
       position: absolute;

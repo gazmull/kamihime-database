@@ -6,7 +6,8 @@ mixin appendCharacterList(characters)
       span #{c.name}
       - if (Date.now() - new Date(c.created).valueOf() <= 6048e5)
         |
-        span.badge.badge-primary NEW
+        span.badge-container
+          span.badge.badge-primary NEW
 
 each t, i in [ 'soul', 'eidolon', 'ssr+', 'ssr', 'sr', 'r' ]
   .collapse(id = `t${i}`, data-parent='#latest-parent')

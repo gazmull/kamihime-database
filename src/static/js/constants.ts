@@ -113,14 +113,14 @@ $(async () => {
               `<div class="char-button" data-char='${el.id}' data-toggle='modal' data-target='.modal'></a>`,
               `<img data-src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
               `<span>${el.name}</span>`,
-              ` <span class='badge badge-secondary'>${(el.tier || el.rarity).toUpperCase()}</span> `,
+              ` <span class='badge-container'><span class='badge badge-secondary'>${(el.tier || el.rarity).toUpperCase()}</span> `,
               `<span class='badge badge-secondary'>${
                 el.id.startsWith('k')
                   ? 'KAMIHIME'
                   : el.id.startsWith('e')
                     ? 'EIDOLON'
                     : 'SOUL'
-              }</span>`,
+              }</span></span>`,
             ].join(''))
             .appendTo('#result'),
         );
