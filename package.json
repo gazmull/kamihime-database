@@ -1,6 +1,6 @@
 {
   "name": "kamihime-database",
-  "version": "3.0.0-beta.8",
+  "version": "3.0.0-beta.9",
   "description": "Website + API for Kamihime Database (Eros)",
   "main": "./dist/index.js",
   "typings": "./typings",
