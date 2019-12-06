@@ -122,4 +122,5 @@ function watch () {
 
 gulp.task('default', gulp.series(...commonTasks, 'terser'));
 gulp.task('build', gulp.series(...commonTasks));
+gulp.task('buildpp', gulp.series(...commonTasks.slice(1)));
 gulp.task('watch', gulp.series('build', gulp.parallel('serve', watch)));
