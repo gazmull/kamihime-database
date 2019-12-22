@@ -13,7 +13,7 @@ export default class IndexRoute extends Route {
   }
 
   public async exec (_, res: Response) {
-    const endPoint = this.server.auth.rootURL + 'api/';
+    const endPoint = this.server.auth.urls.root + 'api/';
 
     const hot: IKamihime[] = await this.server.util.db('kamihime')
       .select([ 'id', 'name', 'tier', 'rarity', 'peeks' ])

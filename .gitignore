@@ -14,6 +14,7 @@ scenarios-error.log
 auth.js
 static/img/wiki
 static/scenarios
+static/css
 test.js
 test
 

@@ -44,7 +44,7 @@ export default class GetDgifRequest extends ApiRoute {
       throw new ApiError(501, [ 'Episode Resource is empty.', 'Please contact the administrator!' ]);
 
     const fileName = encodeURIComponent(`${character.name}_${character[epKey]}.zip`);
-    const url = `https://device.kamihimedb.win/zips/${id}/${fileName}`;
+    const url = `${this.server.auth.urls.h}zips/${id}/${fileName}`;
 
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${character.name} Episode ${ep}.zip"`);

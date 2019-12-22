@@ -1,7 +1,7 @@
 extends ../_templates/error
 
 block image
-  img(src='/img/S.png', alt='Sorry...')
+  img(src=`${app.urls.g}S.png`, alt='Sorry...')
 
 append message
   - else

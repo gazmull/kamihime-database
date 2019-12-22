@@ -8,9 +8,6 @@ const COOLDOWN = 1000 * 60 * 3;
 const MAX_VISITS = 5;
 const MAX_LOGGED_IN_VISITS = 10;
 
-const SCENARIOS = 'https://device.kamihimedb.win/scenarios/';
-const MISC = SCENARIOS + 'misc/';
-
 export default class PlayerRoute extends Route {
   constructor () {
     super({
@@ -19,6 +16,10 @@ export default class PlayerRoute extends Route {
       route: [ '/player/:id/:ep/:type' ]
     });
   }
+
+  public SCENARIOS = this.server.auth.urls.h + 'scenarios/';
+
+  public MISC = this.SCENARIOS + 'misc/';
 
   public async exec (req: Request, res: Response) {
     const { id = null, type = null } = req.params;
@@ -79,15 +80,15 @@ export default class PlayerRoute extends Route {
     }
 
     const requested = {
-      SCENARIOS: `${SCENARIOS}${character.id}/${resource}/`,
+      SCENARIOS: `${this.SCENARIOS}${character.id}/${resource}/`,
       script: scenario,
       character: { id: character.id }
     };
 
     if (type === 'story')
-      Object.assign(requested, { MISC });
+      Object.assign(requested, { MISC: this.MISC });
     else if (type === 'scenario')
-      Object.assign(requested, { MISC, files });
+      Object.assign(requested, { MISC: this.MISC, files });
     else
       Object.assign(requested, { files });
 
@@ -103,7 +104,7 @@ export default class PlayerRoute extends Route {
    * @param res The Resource ID for given template
    */
   protected async _find (name: string, id: string, res: string) {
-    const filePath = `${SCENARIOS}${id}/${res}/${name}`;
+    const filePath = `${this.SCENARIOS}${id}/${res}/${name}`;
 
     try {
       const fetched = await fetch(filePath);

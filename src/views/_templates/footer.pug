@@ -1,25 +1,15 @@
 .row.mx-0.my-2
   .col-sm-12.col-md-6
-    | Eros' Big Sister —
-    +link(
-      'https://github.com/gazmull/kamihime-database/releases/tag/' + app.version,
-      ' version ' + app.version,
-      true
-    )
+    | Pikan! — #{app.version}
     |
     |
-    | made with ❤ & 💦 by
-    |
-    +link('https://github.com/gazmull', 'gazmull', true)
-    |  |
-    |
-    +donateLink('Keep this site alive!', true)
+    +donateLink('Keep the party alive!', true)
     <br>
-    +link('https://github.com/gazmull/kamihime-database', 'Source Code')
-    |  |
-    |
-    +link('https://thegzm.space/discord', 'Feedbacks & Contact (Discord)', true)
+    +link(app.urls.root, 'Feedbacks & Contact (Discord)', true)
     |  |
     |
     +link('/disclaimer', 'Disclaimer & Privacy')
+    |  |
+    |
+    +link('/credits', 'Credits')
 

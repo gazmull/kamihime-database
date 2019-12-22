@@ -51,9 +51,15 @@ export interface Auth {
   proxy: string[];
   host: Host;
   exempt?: string[];
-  rootURL: string;
+  urls: URLS;
   api: Api;
   cookieSecret: string;
   discord: DiscordGrant;
   discordClient: DiscordClient;
+}
+
+export interface URLS {
+  root: string;
+  g: string;
+  h: string;
 }

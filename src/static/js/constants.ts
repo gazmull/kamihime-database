@@ -111,7 +111,7 @@ $(async () => {
           $('<li>')
             .html([
               `<div class="char-button" data-char='${el.id}' data-toggle='modal' data-target='.modal'></a>`,
-              `<img data-src='/img/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
+              `<img data-src='https://g.pikan.party/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
               `<span>${el.name}</span>`,
               ` <span class='badge-container'><span class='badge badge-secondary'>${(el.tier || el.rarity).toUpperCase()}</span> `,
               `<span class='badge badge-secondary'>${
@@ -241,7 +241,7 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
 
     if (char === 'random') data = data[0];
 
-    const src = `/img/wiki/${data.preview}`;
+    const src = `https://g.pikan.party/wiki/${data.preview}`;
     const type = data.id.startsWith('s') ? 'SOUL' : data.id.startsWith('e') ? 'EIDOLON' : 'KAMIHIME';
     const linkify = async (episode: number) => {
       let url: string;

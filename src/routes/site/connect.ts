@@ -39,7 +39,7 @@ export default class ConnectRoute extends Route {
       'https://discordapp.com/api/oauth2/token?',
       'grant_type=authorization_code',
       '&code=' + code,
-      `&redirect_uri=${this.server.auth.rootURL + discord.callback}`,
+      `&redirect_uri=${this.server.auth.urls.root + discord.callback}`,
       '&scope=identify',
     ].join('');
 

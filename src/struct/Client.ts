@@ -82,7 +82,7 @@ export default class Client {
       'GUILD_BAN_ADD',
       'CHANNEL_PINS_UPDATE',
     ];
-    const rootURL = this.server.auth.rootURL;
+    const rootURL = this.server.auth.urls.root;
     const hostname = rootURL.slice(rootURL.indexOf(':') + 3).slice(0, -1);
 
     this.discord = new DiscordClient({

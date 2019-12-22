@@ -84,7 +84,7 @@ export default class LoginRoute extends Route {
         'https://discordapp.com/oauth2/authorize?',
         'client_id=' + this.server.auth.discord.key,
         '&response_type=code',
-        `&redirect_uri=${this.server.auth.rootURL + this.server.auth.discord.callback}`,
+        `&redirect_uri=${this.server.auth.urls.root + this.server.auth.discord.callback}`,
         '&scope=identify',
         '&state=' + slug,
       ].join(''));

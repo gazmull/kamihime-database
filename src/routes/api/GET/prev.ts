@@ -43,7 +43,7 @@ export default class GetPrevRequest extends ApiRoute {
     if (!character[epKey])
       throw new ApiError(501, [ 'Episode Resource is empty.', 'Please contact the administrator!' ]);
 
-    const url = `https://device.kamihimedb.win/scenarios/${id}/${character[epKey]}/${id.slice(1)}-${ep}-2_a.jpg`;
+    const url = `${this.server.auth.urls.h}scenarios/${id}/${character[epKey]}/${id.slice(1)}-${ep}-2_a.jpg`;
 
     return res
       .status(200)

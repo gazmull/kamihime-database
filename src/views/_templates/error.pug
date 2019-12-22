@@ -3,7 +3,7 @@ extends main
 block content
   .container-fluid.text-center.my-5
     block image
-      img(src='/img/LME.png', alt='Let Me Explain...')
+      img(src=`${app.urls.g}LME.png`, alt='Let Me Explain...')
     block message
       - if (message)
         h1 #{message}

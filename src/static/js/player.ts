@@ -315,7 +315,7 @@ async function showReport (id: string) {
           inputPlaceholder: 'Further specify the issue...',
           preConfirm: async content => {
             try {
-              postBody.message.content = content;
+              postBody.message.content = content + `\n\nUserAgent: ${navigator.userAgent}`;
 
               const res = await fetch('/api/report', {
                 body: JSON.stringify(postBody),

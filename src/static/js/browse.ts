@@ -24,7 +24,7 @@ $(() => {
             .tooltip({
               animation: false,
               html: true,
-              title: `<img src="/img/wiki/close/${name} Close.png" />`,
+              title: `<img src="https://g.pikan.party/wiki/close/${name} Close.png" />`,
               placement: "auto",
               trigger: 'manual'
             })

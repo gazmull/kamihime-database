@@ -6,7 +6,7 @@ import { Auth } from '../typings/auth';
 import Client from './struct/Client';
 import Server from './struct/server';
 // tslint:disable-next-line: no-var-requires
-const { cookieSecret, proxy } = require('../auth') as Auth;
+const { cookieSecret, proxy, urls } = require('../auth') as Auth;
 
 const express = Express();
 // tslint:disable-next-line: no-var-requires
@@ -21,13 +21,15 @@ if (process.env.NODE_ENV === 'production')
           defaultSrc: [
             '\'self\'',
             'www.w3.org',
-            'device.kamihimedb.win',
+            urls.g,
+            urls.h,
           ],
           fontSrc: [ '\'self\'', 'fonts.gstatic.com', 'cdn.jsdelivr.net' ],
           imgSrc: [
             '\'self\'',
             'data:',
-            'device.kamihimedb.win',
+            urls.g,
+            urls.h,
           ],
           scriptSrc: [ '\'self\'', '\'unsafe-inline\'', 'cdn.jsdelivr.net' ],
           styleSrc: [ '\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com', 'cdn.jsdelivr.net' ]
@@ -54,7 +56,10 @@ express
   .set('view engine', 'pug')
   .set('views', resolve(__dirname, './views'))
   .use((_, res, next) => {
-    res.locals.app = { version };
+    res.locals.app = {
+      version,
+      urls
+    };
 
     next();
   });

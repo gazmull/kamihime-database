@@ -91,7 +91,7 @@ export default class PostReportRequest extends ApiRoute {
 
     await this.server.util.discordSend(channel, [
       `${name} from KamihimeDB reported that ${character.name}'s Episode has errors. Details:`,
-      `Occurred at <${this.server.auth.rootURL}player/${character.id}/${data.episode}>`,
+      `Occurred at <${this.server.auth.urls.root}player/${character.id}/${data.episode}>`,
       '```x1',
       'Regarding: ' + types[data.message.subject],
       data.message.content,

@@ -6,7 +6,7 @@ import apiHandler from '../src/middleware/api-handler';
 import reAuthHandler from '../src/middleware/re-auth-handler';
 import Client from '../src/struct/Client';
 import ApiError from '../src/util/ApiError';
-import { Api as ApiAuth, DiscordClient, DiscordGrant, Host } from './auth';
+import { Api as ApiAuth, DiscordClient, DiscordGrant, Host, URLS } from './auth';
 
 export interface IRouterData {
   directory: string;
@@ -33,7 +33,7 @@ export interface IAuth {
   discord: DiscordGrant;
   exempt: string[];
   host: Host;
-  rootURL: string;
+  urls: URLS;
 }
 
 export interface IClientAuth {
