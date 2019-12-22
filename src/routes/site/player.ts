@@ -17,11 +17,16 @@ export default class PlayerRoute extends Route {
     });
   }
 
-  public SCENARIOS = this.server.auth.urls.h + 'scenarios/';
+  public SCENARIOS: string;
 
-  public MISC = this.SCENARIOS + 'misc/';
+  public MISC: string;
 
   public async exec (req: Request, res: Response) {
+    if (!this.SCENARIOS) {
+      this.SCENARIOS = this.server.auth.urls.h + 'scenarios/';
+      this.MISC = this.SCENARIOS + 'misc/';
+    }
+
     const { id = null, type = null } = req.params;
     const ep = parseInt(req.params.ep);
 
