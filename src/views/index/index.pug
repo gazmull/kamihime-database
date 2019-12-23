@@ -16,10 +16,11 @@ append scripts
     }
 
 block title
-  title Kamihime Database
+  title Pikan! Party
 
 block content
   .container-fluid.my-1
+    - const type = id => id.startsWith('k') ? 'KAMIHIME' : id.startsWith('e') ? 'EIDOLON' : 'SOUL';
     .row
       - if(status)
         div.col-12#ann(hidden)
@@ -39,6 +40,12 @@ block content
           a(href = '/browse')
           img(data-src=`${app.urls.g}wiki/close/Sol Close.png`)
           h2 Browse Characters
+    .row
+      .col-sm-12
+        .tile-container
+          h2 Always Sol
+          ul.tile-list
+            include assets/sol
     .row
       .col-sm-12.col-md-6
         .tile-container

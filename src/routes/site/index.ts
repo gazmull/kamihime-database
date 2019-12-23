@@ -20,11 +20,16 @@ export default class IndexRoute extends Route {
       .where('approved', 1)
       .orderBy('peeks', 'desc')
       .limit(10);
+    const sols: IKamihime[] = await this.server.util.db('kamihime')
+      .select([ 'id', 'name', 'tier', 'rarity', 'peeks' ])
+      .where('approved', 1)
+      .andWhere('name', 'like', '%sol')
+      .orderBy('name');
 
     const latestRequest = await fetch(endPoint + 'latest?len=10', { headers: { Accept: 'application/json' } });
     const latest = await latestRequest.json();
     const status = this.server.status;
-    const requested = { latest, hot, status };
+    const requested = { latest, hot, status, sols };
 
     res.render('index', requested);
   }
