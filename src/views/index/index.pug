@@ -23,7 +23,7 @@ block content
     .row
       - if(status)
         div.col-12#ann(hidden)
-          div(class='alert alert-dismissable alert-dark fade show')
+          div(class='alert alert-dismissable alert-primary fade show')
             button.close.text-white(data-dismiss='alert', onclick=`dismissed(${status.date});`)
               span &times;
             h4.alert-heading Announcement

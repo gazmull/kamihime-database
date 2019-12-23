@@ -46,11 +46,11 @@ $(async () => {
     sweet = swal.mixin({
       allowEscapeKey: false,
       animation: false,
-      background: '#333',
+      background: '#c27a37',
       buttonsStyling: false,
       customClass: {
         popup: 'animated popOut',
-        confirmButton: 'btn btn-success',
+        confirmButton: 'btn btn-primary',
         cancelButton: 'btn btn-danger',
       },
     });

@@ -67,9 +67,9 @@ export default class ConnectRoute extends Route {
       menu: req.cookies.settings.menu || true,
       updatedAt: req.cookies.settings.updatedAt || Date.now(),
       visual: req.cookies.settings.visual || {
-        bg: '#997777',
+        bg: '#fc9252',
         cl: '#ffffff',
-        cls: '#dd55ff',
+        cls: '#be5e05',
         containDialog: true,
         autoDialog: false,
         name: user.username,

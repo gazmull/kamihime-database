@@ -1346,27 +1346,27 @@ body.swal2-no-backdrop .swal2-shown.swal2-bottom-end, body.swal2-no-backdrop .sw
   width: 2em;
   height: 2em;
   border-radius: 2em;
-  background: #990069;
+  background: #993800;
   color: #fff;
   line-height: 2em;
   text-align: center;
 }
 .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step {
-  background: #d40292;
+  background: #d43d02;
 }
 .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step ~ .swal2-progress-step {
-  background: #990069;
+  background: #993800;
   color: #fff;
 }
 .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step ~ .swal2-progress-step-line {
-  background: #990069;
+  background: #993800;
 }
 .swal2-progress-steps .swal2-progress-step-line {
   z-index: 10;
   width: 2.5em;
   height: 0.4em;
   margin: 0 -1px;
-  background: #990069;
+  background: #993800;
 }
 
 [class^=swal2] {

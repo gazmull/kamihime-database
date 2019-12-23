@@ -3,13 +3,13 @@
 $core-transition-style: cubic-bezier(0.01, 1, 0.22, 0.99);
 $core-transition: 0.8s $core-transition-style 0s;
 $core-transition-simple: 0.25s ease 0s;
-$core-background: #333;
+$core-background: rgb(85, 58, 41);
 $core-background-danger: rgb(150, 0, 0);
-$core-nav-background: #111;
+$core-nav-background: #faa04b;
 $core-tile: $core-nav-background;
-$core-modal: #555;
+$core-modal: #e7b172;
 $core-text: #fff;
-$core-link: #dd44ff;
+$core-link: var(--primary);
 $core-shadow: #000;
 $core-shadow-style: 0px 0px 10px rgb(30, 30, 30);
 $core-margin: 10px;
@@ -19,15 +19,15 @@ $item-text-size: 1.5em;
 $nav-text-size: 1em;
 $footer-text-size: 0.75em;
 
-$tile-list-background: #444;
+$tile-list-background: rgb(48, 30, 19);
 
-$text-shadow: #dd55ff;
+$text-shadow: #be5e05;
 $transition: all $core-transition;
-$box-shadow: 1px 1px 1px #7c2962, 0px 0px 1px #7c2962;
+$box-shadow: 1px 1px 1px #7c4329, 0px 0px 1px #7c4329;
 $input-color-background: #500c34;
-$dialog-background: #997777;
+$dialog-background: #fc9252;
 $list-background: #292929;
-$range-thumb-background: #a8227e;
+$range-thumb-background: #e45d3b;
 $tooltip-background: $core-nav-background;
 
 @mixin prepareTransform ($willChange: '', $transition: $transition) {
