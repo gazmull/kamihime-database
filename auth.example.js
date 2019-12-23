@@ -44,9 +44,13 @@ exports.exempt = [
 ];
 
 /**
- * The server's root URL
+ * The server(s) URLs
  */
-exports.rootURL = 'http://localhost/';
+exports.urls = {
+  root: 'http://localhost/', // Site
+  g: 'http://localhost/g/', // CG server
+  h: 'http://localhost/h/' // HCG server
+};
 
 /**
  * Configuration for this server's API
