@@ -7,9 +7,9 @@ const defaultSettings = {
   audio: { bgm: 0.1, glo: 1.0, snd: 0.5 },
   menu: 'true',
   visual: {
-    bg: '#997777',
+    bg: '#fc9252',
     cl: '#ffffff',
-    cls: '#dd55ff',
+    cls: '#be5e05',
     containDialog: true,
     autoDialog: false,
     name: 'Master',
