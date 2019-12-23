@@ -23,7 +23,7 @@ export default class IndexRoute extends Route {
     const sols: IKamihime[] = await this.server.util.db('kamihime')
       .select([ 'id', 'name', 'tier', 'rarity', 'peeks' ])
       .where('approved', 1)
-      .andWhere('name', 'like', '%sol')
+      .andWhere('name', 'rlike', '[[:<:]]sol[[:>:]]')
       .orderBy('name');
 
     const latestRequest = await fetch(endPoint + 'latest?len=10', { headers: { Accept: 'application/json' } });
