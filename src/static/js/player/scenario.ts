@@ -1,7 +1,7 @@
 $(async () => {
   const images = files.filter((v, i, arr) => v && v.endsWith('.jpg') && arr.indexOf(v) === i);
-  const audios = files.filter((v, i, arr) => v && !v.startsWith('bgm_h') && v.endsWith('.mp3') && arr.indexOf(v) === i);
-  const bgm = files.find(i => i.startsWith('bgm_h'));
+  const audios = files.filter((v, i, arr) => v && !v.startsWith('bgm') && v.endsWith('.mp3') && arr.indexOf(v) === i);
+  const bgm = files.find(i => i.startsWith('bgm'));
 
   const talkVal = parseInt($('#text').attr('data'));
   const maxScriptLength = script.length - 1;
