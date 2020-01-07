@@ -1,6 +1,6 @@
 $(async () => {
   const images = files.filter((v, i, arr) => v && v.endsWith('.jpg') && arr.indexOf(v) === i);
-  const audios = files.filter((v, i, arr) => v && !v.startsWith('bgm') && v.endsWith('.mp3') && arr.indexOf(v) === i);
+  const audios = files.filter((v, i, arr) => v && !v.startsWith('bgm') && (v.endsWith('.mp3') || v.endsWith('.wav')) && arr.indexOf(v) === i);
   const bgm = files.find(i => i.startsWith('bgm'));
 
   const talkVal = parseInt($('#text').attr('data'));
