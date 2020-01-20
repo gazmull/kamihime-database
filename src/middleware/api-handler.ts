@@ -41,7 +41,7 @@ export default function apiHandler (this: Server, file: ApiRoute): RequestHandle
       const ip = req.ip;
 
       if (
-        ip.includes(this.auth.host.address) ||
+        ip.includes('127.0.0.1') || ip.includes(this.auth.host.address) ||
         (req.signedCookies.userId && this.auth.exempt.includes(req.signedCookies.userId))
       ) return next();
 
