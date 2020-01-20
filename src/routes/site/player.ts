@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import fetch from 'node-fetch';
+import * as fs from 'fs-extra';
 import { IKamihime } from '../../../typings';
 import Route from '../../struct/Route';
 import ApiError from '../../util/ApiError';
@@ -109,16 +109,16 @@ export default class PlayerRoute extends Route {
    * @param res The Resource ID for given template
    */
   protected async _find (name: string, id: string, res: string) {
-    const filePath = `${this.SCENARIOS}${id}/${res}/${name}`;
+    const filePath = `${this.server.auth.dirs.h.scenarios}${id}/${res}/${name}`;
 
     try {
-      const fetched = await fetch(filePath);
+      const buffer = await fs.readFile(filePath);
+      const text = buffer.toString();
 
-      if (!fetched.ok) throw false;
       if (name === 'script.json')
-        return fetched.json();
+        return JSON.parse(text);
 
-      return (await fetched.text()).split(',');
+      return text.split(',');
     } catch (err) { return false; }
   }
 

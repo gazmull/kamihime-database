@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import fetch from 'node-fetch';
+import * as fs from 'fs-extra';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
@@ -44,15 +44,14 @@ export default class GetDgifRequest extends ApiRoute {
       throw new ApiError(501, [ 'Episode Resource is empty.', 'Please contact the administrator!' ]);
 
     const fileName = encodeURIComponent(`${character.name}_${character[epKey]}.zip`);
-    const url = `${this.server.auth.urls.h}zips/${id}/${fileName}`;
+    const filePath = `${this.server.auth.dirs.h.zips}${id}/${fileName}`;
 
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${character.name} Episode ${ep}.zip"`);
 
-    const fetched = await fetch(url);
+    const stream = fs.createReadStream(filePath);
 
-    return fetched
-      .body
+    return stream
       .once('error', () => res.end())
       .pipe(res);
   }

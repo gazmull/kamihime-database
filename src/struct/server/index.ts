@@ -13,7 +13,7 @@ import Client from '../Client';
 import ApiController from './controllers/api';
 import SiteController from './controllers/site';
 // tslint:disable-next-line: no-var-requires
-const { api, database, discord, exempt, host, urls } = require('../../../auth') as Auth;
+const { api, database, discord, exempt, host, urls, dirs } = require('../../../auth') as Auth;
 
 let serverStoresRefresh: NodeJS.Timeout = null;
 let serverKamihimeRefresh: NodeJS.Timeout = null;
@@ -29,7 +29,8 @@ export default class Server {
     discord,
     exempt,
     host,
-    urls
+    urls,
+    dirs
   };
 
   public util: IUtil = {
@@ -127,7 +128,7 @@ export default class Server {
   }
 
   public startKamihimeCache (forced = false) {
-    fetch(`${this.auth.urls.root}api/list?internal=true`, { headers: { Accept: 'application/json' } })
+    fetch(`http://localhost:${this.auth.host.port}/api/list?internal=true`, { headers: { Accept: 'application/json' } })
       .then(res => res.json())
       .then(cache => {
         this.kamihime = cache;

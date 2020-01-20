@@ -52,6 +52,7 @@ export interface Auth {
   host: Host;
   exempt?: string[];
   urls: URLS;
+  dirs: Directories;
   api: Api;
   cookieSecret: string;
   discord: DiscordGrant;
@@ -62,4 +63,11 @@ export interface URLS {
   root: string;
   g: string;
   h: string;
+}
+
+export interface Directories {
+  h: {
+    scenarios: string;
+    zips: string;
+  };
 }

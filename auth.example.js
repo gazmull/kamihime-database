@@ -53,6 +53,16 @@ exports.urls = {
 };
 
 /**
+ * The local directories
+ */
+exports.dirs = {
+  h: {
+    scenarios: '/dh/scenarios/',
+    zips: '/dh/tgz/'
+  }
+};
+
+/**
  * Configuration for this server's API
  */
 exports.api = {

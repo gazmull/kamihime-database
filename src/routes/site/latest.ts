@@ -16,7 +16,7 @@ export default class LatestRoute extends Route {
   }
 
   public async exec (_, res: Response) {
-    const data = await fetch(this.server.auth.api.url + 'latest', { headers: { Accept: 'application/json' } });
+    const data = await fetch( `http://localhost:${this.server.auth.host.port}/latest`, { headers: { Accept: 'application/json' } });
     let result: IKamihimeLatest = await data.json();
 
     if (result.error) throw result.error;
