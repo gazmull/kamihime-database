@@ -43,7 +43,7 @@ export default class GetDgifRequest extends ApiRoute {
     if (!character[epKey])
       throw new ApiError(501, [ 'Episode Resource is empty.', 'Please contact the administrator!' ]);
 
-    const fileName = encodeURIComponent(`${character.name}_${character[epKey]}.zip`);
+    const fileName = `${character.name}_${character[epKey]}.zip`;
     const filePath = `${this.server.auth.dirs.h.zips}${id}/${fileName}`;
     const fileStats = await fs.stat(filePath);
 
