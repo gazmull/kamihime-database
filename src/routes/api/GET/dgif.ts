@@ -45,14 +45,16 @@ export default class GetDgifRequest extends ApiRoute {
 
     const fileName = encodeURIComponent(`${character.name}_${character[epKey]}.zip`);
     const filePath = `${this.server.auth.dirs.h.zips}${id}/${fileName}`;
+    const fileStats = await fs.stat(filePath);
 
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename="${character.name} Episode ${ep}.zip"`);
+    res.writeHead(200, {
+      'Content-Type': 'application/zip',
+      'Content-Disposition': `attachment; filename="${character.name} Episode ${ep}.zip"`,
+      'Content-Length': fileStats.size
+    });
 
-    const stream = fs.createReadStream(filePath, { highWaterMark: 256 * 1024 });
+    const stream = fs.createReadStream(filePath);
 
-    return stream
-      .once('error', () => res.end())
-      .pipe(res);
+    return stream.pipe(res);
   }
 }
