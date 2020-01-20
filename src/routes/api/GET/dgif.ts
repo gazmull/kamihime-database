@@ -49,7 +49,7 @@ export default class GetDgifRequest extends ApiRoute {
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${character.name} Episode ${ep}.zip"`);
 
-    const stream = fs.createReadStream(filePath);
+    const stream = fs.createReadStream(filePath, { highWaterMark: 256 * 1024 });
 
     return stream
       .once('error', () => res.end())
