@@ -1,0 +1,55 @@
+extends ../_templates/main
+
+block title
+  title Pikan! Party - Donate
+
+block content
+  .container-fluid.my-1
+    .row
+      .col
+        h1 “There is No [Free] Forever”
+        p(style = 'white-space:pre-wrap')
+          | Hello visitor!
+          |
+          | I started this project as a laboratory and personal collection to uh— and then I finally shared it to public as a good will.
+          | As you know, reality can be a pain in the ass... which I am currently in such situation (aren't you as well?).
+          |
+          | There is no free forever.
+          | I've decided to shut down the project before since I've been running it with my own funds but I have other higher priorities than it these days.
+          | For such a small project like this, I even only expected the visitors count will not be more than 10, but right now it's thousands! And I'm moved by this, so I stopped with the decision.
+          |
+          | As the last resort to keep this alive for the people: you, the visitor, if you've been enjoying the content here and is in a good mood to support this site's health, please consider donating [at least for the server costs]...
+          | At least 1.00 USD will help!
+
+        h3 But why don't you place ads for revenue?
+        p Trust me, you wouldn't want that in a small project such as this but sure I'll consider it once the site is serving to over 9000 visitors.
+
+        h3 Okay... so why don't you give it up already?
+        p(style = 'white-space:pre-wrap')
+          | Primarily, the purpose of this site is to preserve the character episodes online even after the game shuts down eventually (with the history of DMM's games shutting down at Nutaku for many times now, who wouldn't think of this?), but I guess you can call it spoilers site as well...
+          | As for me, I don't mind... as for the people relying to this site? I'd like to give them the chance.
+
+        hr.border-white
+        p
+          | By donating you will have the benefits of:
+          ul
+            li Unlimited episodes visit
+            li Access to Donor role and channel (potential exclusive/beta contents) at <a href="http://erosdev.thegzm.space" target="_blank">Discord Server</a>
+            li A "thank you" token for supporting the project [and related projects]
+          |
+          | To receive the benefits, you must login!
+          | If you have yet to receive the benefits, please contact <b>Euni#1200</b> (<a href="http://erosdev.thegzm.space" target="_blank">Discord</a>) with your <b>Transaction ID</b>.
+        h3 Agreement
+        p
+          ul
+            li <strong>Under any circumstances</strong>, donations are non-refundable. Filing "unauthorised payment" or charge back will get you blocked from the site/"donating" indefinitely.
+            li Donors are treated as normal users outside the benefits listed.
+            li You may donate for another user by selecting their username at <strong>Reward Username</strong>.
+        h4
+          strong
+            +donateLink('Click here to donate', true)
+
+        hr.border-white
+        h2 Without these donors, the site could've been history. We thank you
+        p #{knownDonors.join(', ')}#{anonDonors ? `, ${anonDonors} anonymous donors` : ''}
+

@@ -6,8 +6,9 @@ const RULES = {
   curly: [ true, 'as-needed' ],
   eofline: true,
   indent: [ true, 'spaces', 2 ],
+  'linebreak-style': [ true, 'LF' ],
   'member-ordering': [ true, {
-    order: [ 'constructor', 'instance-field', 'instance-method', 'static-field', 'static-method' ],
+    order: [ 'constructor', 'instance-field', 'instance-method', 'static-field', 'static-method' ]
   } ],
   'newline-before-return': true,
   'no-angle-bracket-type-assertion': false,
@@ -21,8 +22,9 @@ const RULES = {
   'object-curly-spacing': [ true, 'always' ],
   'object-literal-key-quotes': [ true, 'as-needed' ],
   'object-literal-shorthand': true,
-  'object-literal-sort-keys': [ true, 'ignore-case', 'shorthand-first' ],
+  'object-literal-sort-keys': false,
   'one-line': [ true, 'check-open-brace', 'check-whitespace' ],
+  'only-arrow-functions': false,
   'prefer-template': [ true, 'allow-single-concat' ],
   quotemark: [ true, 'single' ],
   radix: false,
@@ -30,7 +32,19 @@ const RULES = {
   'space-before-function-paren': [ true, 'always' ],
   'ter-arrow-spacing': [ true ],
   'ter-func-call-spacing': [ false ],
-  'trailing-comma': [ true, { multiline: 'always', singleline: 'never' } ],
+  'trailing-comma': [
+    true,
+    {
+      esSpecCompliant: true,
+      multiline: {
+        arrays: 'always',
+        functions: 'never',
+        objects: 'never',
+        typeLiterals: 'ignore'
+      },
+      singleline: 'never'
+    },
+  ],
   'triple-equals': [ true, 'allow-null-check' ],
   'variable-name': [
     true,
@@ -39,7 +53,7 @@ const RULES = {
     'allow-leading-underscore',
     'allow-trailing-underscore',
   ],
-  whitespace: [ true, 'check-branch', 'check-decl', 'check-operator', 'check-separator', 'check-type' ],
+  whitespace: [ true, 'check-branch', 'check-decl', 'check-operator', 'check-separator', 'check-type' ]
 };
 
 module.exports = {
@@ -57,7 +71,7 @@ module.exports = {
       'index-signature': 'nospace',
       parameter: 'nospace',
       'property-declaration': 'nospace',
-      'variable-declaration': 'nospace',
-    } ],
-  },
+      'variable-declaration': 'nospace'
+    } ]
+  }
 };

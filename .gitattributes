@@ -27,4 +27,5 @@ LICENSE text
 *.ts text eol=lf
 
 # Linguist
-static/lib/* linguist-vendored
+static/**/* linguist-vendored
+Gulpfile.js linguist-vendored

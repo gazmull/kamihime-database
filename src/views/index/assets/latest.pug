@@ -1,0 +1,15 @@
+mixin appendCharacterList(characters)
+  each c in characters
+    li.tile.small
+      .char-button(data-char = c.id, data-toggle = 'modal', data-target = '.modal')
+      img(data-src=`${app.urls.g}wiki/portrait/${encodeURI(c.name).replace(/'/g, '%27')} Portrait.png`)
+      span #{c.name}
+      - if (Date.now() - new Date(c.created).valueOf() <= 6048e5)
+        |
+        span.badge-container
+          span.badge.badge-primary NEW
+
+each t, i in [ 'soul', 'eidolon', 'ssr+', 'ssr', 'sr', 'r' ]
+  .collapse(id = `t${i}`, data-parent='#latest-parent')
+    ul.tile-list
+      +appendCharacterList(latest[t])

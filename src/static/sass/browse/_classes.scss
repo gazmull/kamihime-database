@@ -1,0 +1,26 @@
+.browse-panel {
+  background-color: $tile-list-background;
+  padding: 5px;
+  & .btn {
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: 0 0 3px rgb(255, 72, 0);
+    width: 90px;
+    color: $core-text;
+    padding: 0px 3px;
+    margin: 5px;
+    h3 {
+      position: relative;
+      top: 3px;
+    }
+    &:hover, &.active {
+      background-color: $core-nav-background;
+    }
+  }
+  & ul {
+    list-style-type: square;
+    & li a {
+      font-size: 1.15em;
+    }
+  }
+}

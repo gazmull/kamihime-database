@@ -1,20 +1,23 @@
+import { TextChannel } from 'discord.js';
 import { RequestHandler } from 'express';
+import { IAdminUser, IUser } from '../../typings';
+import Server from '../struct/server';
 
 const defaultSettings = {
   audio: { bgm: 0.1, glo: 1.0, snd: 0.5 },
-  'info-lastNav': '#info',
-  lastNav: '#all',
   menu: 'true',
   visual: {
-    bg: '#997777',
+    bg: '#fc9252',
     cl: '#ffffff',
-    cls: '#dd55ff',
+    cls: '#be5e05',
     containDialog: true,
-    fontSize: 18,
-  },
+    autoDialog: false,
+    name: 'Master',
+    fontSize: 18
+  }
 };
 
-export default function authHandler (util: IUtil): RequestHandler {
+export default function authHandler (this: Server): RequestHandler {
   return async (req, res, next) => {
     if (!req.signedCookies.userId) {
       if (!req.cookies.settings) res.cookie('settings', defaultSettings);
@@ -22,14 +25,14 @@ export default function authHandler (util: IUtil): RequestHandler {
       return next();
     }
 
-    const [ user ]: IUser[] = await util.db('users').select()
+    const [ user ]: IUser[] = await this.util.db('users').select()
       .where('userId', req.signedCookies.userId);
 
     if (!user) {
       const msg = `${req.signedCookies.userId}: Using invalid userId cookie; blocked.`;
 
       res.clearCookie('userId');
-      util.handleSiteError(res, { code: 404, message: 'User not found; ID cookie cleared.' });
+      this.util.handleSiteError.call(this, res, { code: 404, message: 'User not found; ID cookie cleared.' });
 
       return next(msg);
     }
@@ -37,11 +40,23 @@ export default function authHandler (util: IUtil): RequestHandler {
     const { userId, username, lastLogin } = user;
     res.locals.user = { lastLogin, userId, username };
 
+    let isDonor: boolean;
+
+    try {
+      const fetchedDiscord = await this.client.discord.users.fetch(req.signedCookies.userId);
+      const channel = await this.client.discord.channels.fetch(this.client.auth.discord.channel) as TextChannel;
+      const guild = channel ? channel.guild : null;
+      const guildMember = guild ? await guild.members.fetch(fetchedDiscord.id) : null;
+      isDonor = fetchedDiscord && guild && guildMember &&
+        guildMember.roles.has(this.client.auth.discord.donorID);
+    } catch { isDonor = false; }
+
+    if (isDonor) Object.assign(res.locals.user, { donor: true });
     if (req.signedCookies.slug) {
-      const [ admin ]: IAdminUser[] = await util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
+      const [ admin ]: IAdminUser[] = await this.util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
         .where({
           userId,
-          slug: req.signedCookies.slug,
+          slug: req.signedCookies.slug
         });
 
       if (admin) {
@@ -49,7 +64,7 @@ export default function authHandler (util: IUtil): RequestHandler {
           admin: true,
           ip: req.cookies.ip,
           lastLogin: req.cookies.lastLogin,
-          username: admin.username,
+          username: admin.username
         };
 
         Object.assign(res.locals.user, toPass);
@@ -59,9 +74,9 @@ export default function authHandler (util: IUtil): RequestHandler {
     const eligible = Date.now() > (new Date(lastLogin).getTime() + 18e5);
 
     if (eligible)
-      await util.db.raw(
+      await this.util.db.raw(
         'UPDATE users SET lastLogin = now() WHERE userId = ?',
-        [ req.signedCookies.userId ],
+        [ req.signedCookies.userId ]
       );
 
     let settings = JSON.parse(user.settings);
@@ -71,13 +86,13 @@ export default function authHandler (util: IUtil): RequestHandler {
     if (hasUpdatedAt && settings.updatedAt < req.cookies.settings.updatedAt) {
       settings = req.cookies.settings;
 
-      await util.db('users').where('userId', user.userId)
+      await this.util.db('users').where('userId', user.userId)
         .update('settings', JSON.stringify(req.cookies.settings));
     }
 
     res
-      .cookie('userId', user.userId, { maxAge: 6048e5, httpOnly: true, secure: production, signed: true })
-      .cookie('isUser', 'true', { maxAge: 6048e5 })
+      .cookie('userId', user.userId, { maxAge: 31536e6, httpOnly: true, secure: production, signed: true })
+      .cookie('isUser', 'true', { maxAge: 31536e6 })
       .cookie('settings', settings);
 
     next();

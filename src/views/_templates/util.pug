@@ -3,3 +3,30 @@ mixin link(url, text, newTab = false)
     href=url,
     target=newTab ? '_blank' : '_self',
   ) !{text}
+
+mixin donateLink(text = 'Donate', newTab = false)
+  +link(`https://donatebot.io/checkout/545588880129130496${user && user.userId ? `?buyer=${user.userId}` : ''}`, text, newTab)
+
+mixin playerSettings()
+  .panel-settings
+    i.fa.fa-lg.fa-cogs.text-light#indicator(
+      data-toggle='tooltip',
+      data-placement='top',
+      title='To the right: Options for Player\'s settings'
+    )
+    .btn(
+      data-toggle='tooltip',
+      data-placement='top',
+      title='Visual Settings',
+      href='javascript:void(0);',
+      onclick='showVisualSettings();',
+    )
+      i.fa.fa-lg.fa-picture-o.text-light
+    .btn(
+      data-toggle='tooltip',
+      data-placement='top',
+      title='Audio Settings',
+      href='javascript:void(0);',
+      onclick='showAudioSettings();',
+    )
+      i.fa.fa-lg.fa-music.text-light

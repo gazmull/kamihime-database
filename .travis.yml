@@ -1,23 +1,9 @@
 language: node_js
 node_js:
-  - 11
-  - 10
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - libcairo2-dev
-      - libpango1.0-dev
-      - g++-4.9
-env:
-  - CXX=g++-4.9
+  - "12"
 sudo: false
+before_install: cp auth.example.js auth.js
 install: npm install
-jobs:
-  include:
-    - stage: build
-      script: npm run build
 cache:
   directories:
     - node_modules

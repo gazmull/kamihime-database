@@ -3,9 +3,29 @@ extends main
 block head
   include meta
   block title
-    title Kamihime Database - Player
+    title Pikan! Party - Player
   block styles
     include vendors/styles
     link(rel='stylesheet', href='/css/player.css')
+
   block scripts
     include vendors/scripts
+    script(src='/js/player.js')
+
+block content
+  .container-fluid.my-3.px-0
+    .px-3
+      p
+        i(class='fa fa-exclamation-triangle text-light')
+        a(
+          data-toggle='tooltip',
+          data-placement='bottom',
+          title='Reports errors on the episodes to the KamihimeDB Discord',
+          href='javascript:void(0);',
+          onclick=user ? `showReport('${character.id}')` : `confirmLogin('${character.id}')`,
+        )  Report Error
+      h5 Help
+      p Navigate by pressing ← and → cursor keys or clicking a portion of the image.
+      p <strong> Please make sure that you have enabled Javascript and disabled adblocker(s) in this page to avoid player issues. </strong>
+      hr
+    block subcontent

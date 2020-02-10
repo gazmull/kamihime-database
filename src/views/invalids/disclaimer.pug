@@ -1,42 +1,51 @@
-extends ../_templates/main-no-side-nav
+extends ../_templates/main
 
 append styles
-  link(rel='stylesheet', href='/css/info.css')
   style.
     .container-fluid .name a { font-size: 22px !important; }
 
 append scripts
   script.
-    function verified() {
+    function verified () {
       document.cookie = "verified=true;path=/;max-age=604800";
       location.reload(true);
     }
 
 block title
-  title Kamihime Database - Warning
+  title Pikan! Party - Warning
 
 block content
-  div.container-fluid
+  .container-fluid
     br
     h1 Disclaimer
+    p
+      | Yes, this site is worshipping Sol.
     p
       | For clarification, this project is established under
       span.name
         a(href='https://github.com/gazmull/kamihime-database/blob/master/LICENSE', target='_blank')  MIT License
       | . To summarise, this site's owner will not be held responsible for any events that might occur
-      |  while using the site. 
+      |  while using the site.
       sub Of course bugs and suggestions are welcome.
+      br
+      br
+      | Characters images, sounds, and stories are properties of DMM Games (games.dmm.co.jp).
+      br
+      | This site does not claim ownership of the properties mentioned above and only serves as a site for information purposes.
+      br
+      | All properties above were obtained via playing through the game
+      |  and/or acquired from the <a href="https://kamihime-project.fandom.com" target="_blank">wiki</a>.
       br
       br
       u Use this site at your own discretion.
       br
       br
-      u By entering this site means you are over 18 years old and not offended to sexual content.
+      u By entering this site means you are 18+ years old and not offended to sexual content.
       br
     hr.border-white
     h1 Privacy
     p
-      | This site only stores your Discord snowflake and username (when logged in), and cookies.
+      | This site only stores your Discord snowflake and username (when logged in), cookies, and IP address (for throttling purposes).
       | Your visit count to episodes are added anonymously.
     hr.border-white
     h1 Cookies
@@ -58,6 +67,11 @@ block content
             td Browser only
             td Required; clear cookies
           tr
+            td Announcement Read
+            td 7 days
+            td Browser only
+            td Clear cookies
+          tr
             td Episodes player settings
             td After you close the browser
             td
@@ -68,18 +82,8 @@ block content
               | : Browser only
             td Stay as anonymous user
           tr
-            td Last navigation settings
-            td After you close the browser
-            td
-              b Logged in users
-              | : User database
-              br
-              b Anonymous users
-              | : Browser only
-            td Stay as anonymous user 
-          tr
             td User session (logged in users only)
-            td 7 days
+            td 365 days
             td
               b Logged in users
               | : User database
@@ -89,8 +93,8 @@ block content
       p.text-center
         b And your response is?
         br
-        div.row
-          div(class='d-none d-md-block col-md-4')
+        .row
+          .d-none.d-md-block.col-md-4
           table(class='sm-col-8 col-md-4 table table-borderless info-table text-center')
             thead
               tr
@@ -98,4 +102,3 @@ block content
                   +link('https://google.com', 'Let me the fuck out')
                 th.name
                   a(href='javascript:void(0);', onclick='verified();') Alright, I'm in
-  div.model(class='d-none d-md-block', style='background-image: url("/img/wiki/close/(Eclipse%20Princess)%20Amaterasu%20Close.png")')
