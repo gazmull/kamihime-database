@@ -10,13 +10,6 @@ nav(class='top-nav navbar navbar-expand-md navbar-dark')
           +link('/', 'Home')
         li.nav-item
           +link('/browse', 'Browse')
-        li.nav-item
-          a(
-            data-toggle='tooltip',
-            data-placement='bottom',
-            title='Keep the site alive and receive benefits!',
-            href='/donate'
-          ) Donate
         - if (user)
           li.nav-item
             a(href='/logout')

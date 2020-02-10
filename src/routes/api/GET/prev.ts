@@ -26,6 +26,8 @@ export default class GetPrevRequest extends ApiRoute {
   }
 
   public async exec (req: Request, res: Response) {
+    if (!res.locals.user || !res.locals.user.donor) throw new ApiError(403);
+
     const id: string = req.params.id;
     const ep: number = parseInt(req.params.ep);
 
