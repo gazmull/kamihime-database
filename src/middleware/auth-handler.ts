@@ -52,6 +52,7 @@ export default function authHandler (this: Server): RequestHandler {
     } catch { isDonor = false; }
 
     if (isDonor) Object.assign(res.locals.user, { donor: true });
+    if (this.stores.heroes.has(req.signedCookies.userId)) Object.assign(res.locals.user, { hero: true });
     if (req.signedCookies.slug) {
       const [ admin ]: IAdminUser[] = await this.util.db('admin').select([ 'username', 'ip', 'lastLogin' ])
         .where({

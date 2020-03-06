@@ -3,7 +3,7 @@ import Route from '../struct/Route';
 
 export default function reAuthHandler (file: Route): RequestHandler {
   return async (req, res, next) => {
-    const isAdminOrDonor = res.locals.user && (res.locals.user.admin || res.locals.user.donor);
+    const isAdminOrDonor = res.locals.user && (res.locals.user.admin || res.locals.user.donor || res.locals.user.hero);
 
     if (isAdminOrDonor) {
       if (file.auth === 'admin' && !res.locals.user.admin)
@@ -14,7 +14,7 @@ export default function reAuthHandler (file: Route): RequestHandler {
 
     const isNotLoginOrAdmin = !/^\/(?:log(?:in|out)|connect|admin)/.test(req.originalUrl);
 
-    if (isNotLoginOrAdmin && (!res.locals.user || !res.locals.user.donor))
+    if (isNotLoginOrAdmin && (!res.locals.user || !res.locals.user.donor || !res.locals.user.hero))
       return res.render('invalids/shutdown', { redirected: true });
 
     if (file.auth && !res.locals.user)

@@ -1,6 +1,7 @@
 import Winston from '@gazmull/logger';
 import { Collection, TextChannel } from 'discord.js';
 import { Express, Router } from 'express';
+import * as fs from 'fs-extra';
 import * as knex from 'knex';
 import fetch from 'node-fetch';
 // tslint:disable-next-line:max-line-length
@@ -17,6 +18,7 @@ const { api, database, discord, exempt, host, urls, dirs } = require('../../../a
 
 let serverStoresRefresh: NodeJS.Timeout = null;
 let serverKamihimeRefresh: NodeJS.Timeout = null;
+let serverHeroesRefresh: NodeJS.Timeout = null;
 
 const GENERAL_COOLDOWN: number = 1000 * 60 * 3;
 
@@ -53,7 +55,8 @@ export default class Server {
     rateLimits: new Collection<string, Collection<string, Collection<string, IRateLimitLog>>>(),
     states: new Collection<string, IState>(),
     passwordAttempts: new Collection<string, IPasswordAttempts>(),
-    visitors: new Collection<string, Collection<string, number>>()
+    visitors: new Collection<string, Collection<string, number>>(),
+    heroes: new Collection<string, true>()
   };
 
   public kamihime: IKamihime[] = [];
@@ -142,6 +145,30 @@ export default class Server {
       serverKamihimeRefresh = setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
     } else
       serverKamihimeRefresh = setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
+
+    return this;
+  }
+
+  public startHeroSummons () {
+    (async () => {
+      const heroesPath = `${process.cwd()}/.heroes`;
+
+      try {
+        await fs.stat(heroesPath);
+
+        const listBuffer = await fs.readFile(heroesPath);
+        const listText = listBuffer.toString();
+        const list = listText.trim().split('\n').filter(e => e);
+
+        for (const hero of list)
+          this.stores.heroes.set(hero, true);
+
+        this.util.logger.info(`Successfully summoned ${this.stores.heroes.size} heroes.`);
+      } catch { return this.util.logger.warn('Heroes summoning skipped: No file exists.'); }
+    })();
+
+    clearTimeout(serverHeroesRefresh);
+    serverHeroesRefresh = setTimeout(() => this.startHeroSummons(), GENERAL_COOLDOWN);
 
     return this;
   }

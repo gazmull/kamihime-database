@@ -12,6 +12,7 @@ dist
 provider
 scenarios-error.log
 auth.js
+.heroes
 static/img/wiki
 static/scenarios
 static/css/*

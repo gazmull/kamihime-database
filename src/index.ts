@@ -73,6 +73,7 @@ server
     server
       .startCleaners()
       .startKamihimeCache()
+      .startHeroSummons()
   );
 
 client
