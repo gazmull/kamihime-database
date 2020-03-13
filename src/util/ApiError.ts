@@ -32,7 +32,7 @@ export default class ApiError extends Error {
 
 const errors = {
   400: 'Bad Request',
-  401: 'Unauthorizsed',
+  401: 'Unauthorised',
   403: 'Forbidden',
   404: 'Not Found',
   408: 'Request Timeout',
