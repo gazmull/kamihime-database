@@ -150,7 +150,7 @@ export default class Server {
   }
 
   public startHeroSummons () {
-    if (!this.client.discord.readyAt) return setTimeout(() => this.startHeroSummons(), 2500);
+    if (!this.client.discord.readyAt) return setTimeout(() => this.startHeroSummons(), 600e3);
 
     (async () => {
       const heroesPath = `${process.cwd()}/.heroes`;
