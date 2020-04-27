@@ -223,7 +223,7 @@ export default class Server {
         this.util.logger.info(
           `Successfully summoned ${this.stores.heroes.size} and returned ${heroesReturned} heroes.`
         );
-      } catch { return this.util.logger.warn('Heroes summoning skipped: No file exists.'); }
+      } catch (err) { return this.util.logger.warn(`Heroes summoning skipped: ${err.message}`); }
     })();
 
     clearTimeout(serverHeroesRefresh);
