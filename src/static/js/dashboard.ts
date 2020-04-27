@@ -2,6 +2,7 @@ const fields = [
   'id',
   'name',
   'rarity',
+  'tier',
   'harem1Title',
   'harem1Resource1',
   'harem2Title',
@@ -18,9 +19,9 @@ async function promptID (action: APIAction) {
     sweet.fire({ titleText: 'Invalid action.', type: 'error' });
 
   try {
-    let character;
+    let character: Character;
 
-    if (action !== 'add') {
+    if (![ 'add', 'hero', 'refresh' ].includes(action)) {
       const { value, dismiss } = await sweet.fire({
         allowOutsideClick: () => !sweet.isLoading(),
         confirmButtonText: 'Next',
@@ -42,10 +43,11 @@ async function promptID (action: APIAction) {
       character = value;
     }
 
-    let response;
+    let response: string | (Character & { added: number }) | Promise<any>;
 
     switch (action) {
       default: response = submit(action, `id=${character.id}`); break;
+      case 'refresh': response = submit(action); break;
       case 'add':
         response = await sweet.fire({
           html: 'Add an entry with: [key]=[value]; each separated by newline (\\n).',
@@ -61,13 +63,14 @@ async function promptID (action: APIAction) {
 
         if (!response) return;
 
-        response = submit(action, response);
+        response = submit(action, response as string);
         break;
       case 'update':
+      case 'hero':
         response = await sweet.fire({
           input: 'textarea',
-          inputValue: unclean(character),
-          text: 'Each entry should be separated by newline',
+          inputValue: action === 'update' ? unclean(character) : '',
+          text: `Each entry should be separated by newline${action === 'hero' ? ' | Adding heroes syntax: "ID,comment/username"' : ''}`,
           width: 1024,
         })
           .then(res => {
@@ -78,15 +81,15 @@ async function promptID (action: APIAction) {
 
         if (!response) return;
 
-        response = submit(action, response, character.id);
+        response = submit(action, response as string, action === 'update' ? character.id : undefined);
         break;
     }
 
-    response = await response;
+    response = await response as APIResponse;
 
     if (response)
       sweet.fire({
-        text: `${action}: ${response.name} (${response.id})`,
+        text: `${action}${response.id ? `: ${response.name} (${response.id})` : action === 'hero' ? `: ${response.added} heroes` : ''}`,
         titleText: 'Operation Successfull'
       });
   } catch (err) { sweet.fire({ text: err }); }
@@ -99,25 +102,30 @@ async function submit (action: APIAction, value = '', id?: string) {
     default: method = 'PUT'; break;
     case 'add': method = 'POST'; break;
     case 'delete': method = 'DELETE'; break;
+    case 'refresh': method = 'GET'; break;
   }
 
-  const data = clean(value);
+  let data: { heroes: string[] } | IKamihime;
 
-  if (!data.id) Object.assign(data, { id });
+  if (action !== 'refresh')
+    data = action === 'hero' ? { heroes: value.split('\n') } : clean(value);
+  if (data) {
+    if (!(data as IKamihime).id) Object.assign(data, { id });
 
-  const confirm = await sweet.fire({
-    cancelButtonText: 'No',
-    confirmButtonText: 'Yes',
-    showCancelButton: true,
-    text: 'Are you sure about this action?',
-    titleText: `Destructive Action: ${action} (${data.id || id})`
-  })
-    .then(res => res.dismiss ? false : true);
+    const confirm = await sweet.fire({
+      cancelButtonText: 'No',
+      confirmButtonText: 'Yes',
+      showCancelButton: true,
+      text: 'Are you sure about this action?',
+      titleText: `Destructive Action: ${action} (${(data as IKamihime).id || id || value.split('\n').length})`
+    })
+      .then(res => res.dismiss ? false : true);
 
-  if (!confirm) return;
+    if (!confirm) return;
+  }
 
   const options: RequestInit = {
-    body: JSON.stringify(data),
+    body: method === 'GET' ? undefined : JSON.stringify(data),
     credentials: 'include',
     headers: {
       Accept: 'application/json',

@@ -93,7 +93,9 @@ exports.discord = {
 exports.discordClient = {
   channel: '319102712383799296',
   dbReportChannel: '319102712383799296',
+  heroReportChannel: '319102712383799296',
   token: 'FfxhTJH6jt1Neve4LoR_8nXKqqjFQQ1ahShlzfszmuXhunK7AT6xsV3ZRzs6vdAts4YD',
   wikiReportChannel: '319102712383799296',
-  donorID: '589516127491719169'
+  donorID: '589516127491719169',
+  heroID: '589516127491719169'
 };

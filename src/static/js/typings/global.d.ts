@@ -17,7 +17,9 @@ declare global {
   var settings: ISettings;
   var audioPool: IHowlPool;
 
-  type APIAction = 'add' | 'update' | 'delete' | 'flag' | 'approve';
+  type APIAction = 'add' | 'update' | 'delete' | 'flag' | 'approve' | 'hero' | 'refresh';
+  type Character = { id: string, name?: string };
+  type APIResponse = Character & { added: number };
   type IKamihime = IK;
 
   interface IHowlPool {

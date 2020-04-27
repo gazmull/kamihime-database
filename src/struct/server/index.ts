@@ -42,7 +42,7 @@ export default class Server {
     logger: new Winston('khdb').logger,
     collection: <K, V>() => new Collection<K, V>(),
     discordSend: (channelId, message) => {
-      const channel = this.client.discord.channels.get(channelId) as TextChannel;
+      const channel = this.client.discord.channels.cache.get(channelId) as TextChannel;
 
       if (!channel) return this.util.logger.warn(`Channel ${channelId} does not exist.`);
 
@@ -150,6 +150,8 @@ export default class Server {
   }
 
   public startHeroSummons () {
+    if (!this.client.discord.readyAt) return setTimeout(() => this.startHeroSummons(), 2500);
+
     (async () => {
       const heroesPath = `${process.cwd()}/.heroes`;
 
@@ -157,13 +159,70 @@ export default class Server {
         await fs.stat(heroesPath);
 
         const listBuffer = await fs.readFile(heroesPath);
-        const listText = listBuffer.toString();
-        const list = listText.trim().split('\n').filter(e => e);
+        const list = listBuffer.toString().trim().split('\n').filter(e => e);
+        const cleanedList = list.map(e => e.split(',').shift());
+        const channel = await this.client.discord.channels
+          .fetch(this.client.auth.discord.heroReportChannel) as TextChannel;
 
-        for (const hero of list)
+        let heroesReturned = 0;
+        const failRevokes = [];
+        const successRevokes = [];
+        const failAdds = [];
+        const successAdds = [];
+
+        for (const hero of this.stores.heroes.keys())
+          if (!cleanedList.includes(hero)) {
+            this.stores.heroes.delete(hero);
+            heroesReturned++;
+
+            if (!channel) continue;
+
+            const member = await channel.guild.members.fetch(hero);
+            const heroID = this.client.auth.discord.heroID;
+            const hasRole = member && member.roles.cache.has(heroID);
+
+            if (!member || !hasRole) {
+              failRevokes.push(hero);
+
+              continue;
+            }
+
+            await member.roles.remove(heroID);
+
+            successRevokes.push(hero);
+          }
+
+        if (failRevokes.length)
+          this.util.logger.warn(`Failed to revoke role on heroes ${failRevokes.join(', ')}`);
+
+        for (const hero of cleanedList) {
           this.stores.heroes.set(hero, true);
 
-        this.util.logger.info(`Successfully summoned ${this.stores.heroes.size} heroes.`);
+          if (!channel) continue;
+
+          const member = await channel.guild.members.fetch(hero);
+          const heroID = this.client.auth.discord.heroID;
+          const hasRole = member && member.roles.cache.has(heroID);
+
+          if (!member) {
+            failAdds.push(hero);
+
+            continue;
+          }
+
+          if (hasRole) continue;
+
+          await member.roles.add(heroID);
+
+          successAdds.push(hero);
+        }
+
+        if (failAdds.length)
+          this.util.logger.warn(`Failed to add role on heroes ${failAdds.join(', ')}`);
+
+        this.util.logger.info(
+          `Successfully summoned ${this.stores.heroes.size} and returned ${heroesReturned} heroes.`
+        );
       } catch { return this.util.logger.warn('Heroes summoning skipped: No file exists.'); }
     })();
 

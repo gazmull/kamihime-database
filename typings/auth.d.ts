@@ -41,9 +41,11 @@ export interface DiscordGrant {
 export interface DiscordClient {
   channel: string;
   dbReportChannel: string;
+  heroReportChannel: string;
   token: string;
   wikiReportChannel: string;
   donorID: string;
+  heroID: string;
 }
 
 export interface Auth {
