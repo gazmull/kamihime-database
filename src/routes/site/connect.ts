@@ -24,13 +24,13 @@ export default class ConnectRoute extends Route {
 
     if (!match) throw new ApiError(422, 'Invalid state ID.');
 
-    const slug = this.server.stores.states.get(state);
+    const slug = this.server.stores.states.get(state as string);
 
     if (!slug) throw new ApiError(408, 'You took too long to log in? Shame!');
 
     const { url: slugURL } = slug;
 
-    this.server.stores.states.delete(state);
+    this.server.stores.states.delete(state as string);
     res.clearCookie('slug');
 
     const discord = this.server.auth.discord;

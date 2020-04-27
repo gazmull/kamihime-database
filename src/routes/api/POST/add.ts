@@ -24,6 +24,7 @@ import ApiError from '../../../util/ApiError';
  * @apiParam (Request Body) {string} [harem3Resource2=null] The Episode 3 Scenario Resource ID.
  * @apiParam (Request Body) {number} [loli=0] `1 / 0 only`: Whether the character is a loli or not.
  * @apiParam (Request Body) {string} [rarity=null] The item's rarity if it ever has one.
+ * @apiParam (Request Body) {string} [tier=null] For Soul character.
  *
  * @apiSuccess {string} id The item's ID.
  * @apiSuccess {string} name The item's name.
@@ -69,7 +70,8 @@ export default class PostAddRequest extends ApiRoute {
       id,
       loli = 0,
       name,
-      rarity
+      rarity,
+      tier
     } = data;
     data = this._filter({
       harem1Resource1,
@@ -82,7 +84,8 @@ export default class PostAddRequest extends ApiRoute {
       harem3Title,
       id,
       name,
-      rarity
+      rarity,
+      tier
     }, el => el);
 
     if (!Object.keys(data).length) throw new ApiError(400, 'Cannot accept empty character data.');

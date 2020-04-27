@@ -72,7 +72,7 @@ const c = {
 const queries = {
   soul: c.id('s'), eidolon: `(${c.id('e')} or ${c.id('x')})`, kamihime: c.id('k'), weapon: c.id('w'),
   'ssr+': c.rarity('SSR+'), ssr: c.rarity('SSR'), sr: c.rarity('SR'), r: c.rarity('R'), n: c.rarity('N'),
-  legendary: c.tier('Legendary'), elite: c.tier('Elite'), standard: c.tier('Standard'),
+  supreme: c.tier('S'), legendary: c.tier('A'), elite: c.tier('B'), standard: c.tier('C'),
   healer: c.type('Healer'), offense: c.type('Offense'), tricky: c.type('Tricky'), balance: c.type('Balance'),
     defense: c.type('Defense'),
   hammer: c.type('Hammer'), lance: c.type('Lance'), glaive: c.type('Glaive'), arcane: c.type('Arcane'),
@@ -98,7 +98,7 @@ const queries = {
  *  - `soul` / `eidolon` / `kamihime` / `weapon`
  *  - `approved` / `loli` / `no-loli`
  * ### Secondary Options
- *  - **Soul Only**: `legendary` / `elite` / `standard`
+ *  - **Soul Only**: `s` / `a` / `b` / `c`
  *  - **Kamihime Only**: `healer` / `offense` / `tricky` / `balance` / `defense`
  *  - **Weapon Only**: `hammer` / `lance` / `glaive` / `arcane` / `staff` / `axe` / `gun` / `bow` / `sword`
  *  - **Eidolon / Kamihime / Weapon Only**:
@@ -170,7 +170,7 @@ export default class GetListRequest extends ApiRoute {
 
     // tslint:disable-next-line:prefer-const
     let [ sortBy = 'name', sortType = 'asc' ]: string[] = req.query.sort
-      ? req.query.sort.split('-')
+      ? (req.query.sort as string).split('-')
       : [];
 
     if (![ 'name', 'rarity', 'tier', 'element', 'type', 'atk', 'hp' ].includes(sortBy))

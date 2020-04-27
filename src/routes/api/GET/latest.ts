@@ -68,8 +68,8 @@ export default class GetLatestRequest extends ApiRoute {
   }
 
   public async exec (req: Request, res: Response) {
-    const latestLength: number = req.query.len || 3;
-    const category: string = req.query.category;
+    const latestLength: number = req.query.len ? Number(req.query.len) : 3;
+    const category: string = req.query.category as string;
 
     if (latestLength <= 0 || latestLength > 10)
       throw new ApiError(422, 'Requested length should be between 1 and 10.');

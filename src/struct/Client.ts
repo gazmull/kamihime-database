@@ -1,6 +1,5 @@
 import anchorme from 'anchorme';
-import { each } from 'bluebird';
-import { Client as DiscordClient, Message, WSEventType } from 'discord.js';
+import { Client as DiscordClient, Message, Util } from 'discord.js';
 import { createWriteStream } from 'fs-extra';
 import { QueryBuilder } from 'knex';
 import fetch from 'node-fetch';
@@ -62,29 +61,13 @@ export default class Client {
   public startDiscordClient () {
     if (!(discordAuth.channel || discordAuth.token)) return;
 
-    const events: WSEventType[] = [
-      'GUILD_UPDATE',
-      'GUILD_INTEGRATIONS_UPDATE',
-      'CHANNEL_CREATE',
-      'CHANNEL_UPDATE',
-      'USER_UPDATE',
-      'VOICE_STATE_UPDATE',
-      'TYPING_START',
-      'WEBHOOKS_UPDATE',
-      'VOICE_SERVER_UPDATE',
-      'MESSAGE_REACTION_ADD',
-      'GUILD_ROLE_UPDATE',
-      'GUILD_ROLE_CREATE',
-      'GUILD_MEMBER_ADD',
-      'GUILD_EMOJIS_UPDATE',
-      'GUILD_DELETE',
-      'GUILD_BAN_REMOVE',
-      'GUILD_BAN_ADD',
-      'CHANNEL_PINS_UPDATE',
-    ];
-
     this.discord = new DiscordClient({
-      disabledEvents: events,
+      ws: {
+        intents: [
+          'GUILDS',
+          'GUILD_MEMBERS',
+        ]
+      },
       messageCacheMaxSize: 10,
       presence: {
         status: 'online'
@@ -95,7 +78,14 @@ export default class Client {
       if (message.channel.id !== discordAuth.channel) return;
       if (!this.server.auth.exempt.includes(message.author.id)) return;
 
-      const msg = anchorme(message.content, { attributes: [ { name: 'target', value: '_blank' } ] });
+      const msg = anchorme({
+        input: Util.cleanContent(message.content, message),
+        options: {
+          truncate: 10,
+          middleTruncation: false,
+          attributes: { target: '_blank' }
+        }
+      });
 
       try {
         await this.server.util.db('status').del();
@@ -117,7 +107,7 @@ export default class Client {
       .on('ready', () => this.server.util.logger.info('Discord Bot: logged in.'))
       .on('error', err => this.server.util.logger.error(err))
       .on('message', handleMessage)
-      .on('messageUpdate', (_, newMessage) => handleMessage(newMessage))
+      .on('messageUpdate', (_, newMessage) => handleMessage(newMessage as Message))
       .login(discordAuth.token);
 
     return this;
@@ -129,12 +119,12 @@ export default class Client {
    */
   public startKamihimeDatabase (forced: boolean = false) {
     this.server.util.logger.info('Kamihime Database: [ADD] Start');
-    each([ 'x', 'w' ], this._add.bind(this))
+    this._each([ 'x', 'w' ], this._add.bind(this))
       .then(() => {
         this.server.util.logger.info('Kamihime Database: [ADD] End');
         this.server.util.logger.info('Kamihime Database: [UPDATE] Start');
 
-        return each([ 's', 'e', 'k', 'w' ], this._update.bind(this));
+        return this._each([ 's', 'e', 'k', 'w' ], this._update.bind(this));
       })
       .then(() => {
         this.server.util.logger.info('Kamihime Database: [UPDATE] End');
@@ -150,6 +140,18 @@ export default class Client {
       khTimeout = setTimeout(() => this.startKamihimeDatabase(), COOLDOWN);
 
     return this;
+  }
+
+  protected async _each<T> (arr: T[], fn: (arg: T) => PromiseLike<any>) {
+    const resolvedArr: T[] = [];
+
+    for (const v of arr) {
+      const resolved = await fn(v);
+
+      resolvedArr.push(resolved);
+    }
+
+    return resolvedArr;
   }
 
   /**
@@ -275,7 +277,7 @@ export default class Client {
             avatar,
             main,
             preview,
-            element: el.element,
+            element: el.element.includes(';') ? 'All' : el.element,
             id: newId,
             name: clean(el.name),
             peeks: 0,
@@ -436,8 +438,8 @@ export default class Client {
         if (el.tier && info.tier !== el.tier)
           updateFields.tier = el.tier;
 
-        if (el.element && !el.tier && info.element !== 'Varies' && info.element !== el.element)
-          updateFields.element = el.element.includes(';') ? 'Varies' : el.element;
+        if (el.element && !el.tier && info.element !== 'All' && info.element !== el.element)
+          updateFields.element = el.element.includes(';') ? 'All' : el.element;
 
         if (el.type && info.type !== el.type)
           updateFields.type = el.type;

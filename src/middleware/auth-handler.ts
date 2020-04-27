@@ -48,7 +48,7 @@ export default function authHandler (this: Server): RequestHandler {
       const guild = channel ? channel.guild : null;
       const guildMember = guild ? await guild.members.fetch(fetchedDiscord.id) : null;
       isDonor = fetchedDiscord && guild && guildMember &&
-        guildMember.roles.has(this.client.auth.discord.donorID);
+        guildMember.roles.cache.has(this.client.auth.discord.donorID);
     } catch { isDonor = false; }
 
     if (isDonor) Object.assign(res.locals.user, { donor: true });

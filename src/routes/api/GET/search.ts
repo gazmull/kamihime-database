@@ -64,13 +64,13 @@ export default class GetSearchRequest extends ApiRoute {
 
   public async exec (req: Request, res: Response) {
     let itemClass: any = req.query.class;
-    const name: string = decodeURI(req.query.name);
-    const accurate: number = parseInt(req.query.accurate);
-    const approved: number = parseInt(req.query.approved);
-    const loli: number = parseInt(req.query.loli);
-    const element: string = req.query.element;
-    const rarity: string = req.query.rarity;
-    const type: string = req.query.type;
+    const name: string = decodeURI(req.query.name as string);
+    const accurate: number = parseInt(req.query.accurate as string);
+    const approved: number = parseInt(req.query.approved as string);
+    const loli: number = parseInt(req.query.loli as string);
+    const element: string = req.query.element as string;
+    const rarity: string = req.query.rarity as string;
+    const type: string = req.query.type as string;
 
     if (!name) throw new ApiError(400, 'Name query is required.');
     else if (name.length < 2) throw new ApiError(422, 'Name must be at least 2 characters.');
@@ -109,7 +109,7 @@ export default class GetSearchRequest extends ApiRoute {
     };
     let results: IKamihime[] = !isNaN(accurate) && accurate
         ? this.server.kamihime.filter(el => el.name.toLowerCase() === name.toLowerCase())
-        : new Fuse(this.server.kamihime, fuseOptions).search(name);
+        : new Fuse(this.server.kamihime, fuseOptions).search(name) as IKamihime[];
 
     if (typeof itemClass === 'function')
       results = results.filter(itemClass);
