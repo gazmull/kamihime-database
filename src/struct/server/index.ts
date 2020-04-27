@@ -177,19 +177,25 @@ export default class Server {
 
             if (!channel) continue;
 
-            const member = await channel.guild.members.fetch(hero);
-            const heroID = this.client.auth.discord.heroID;
-            const hasRole = member && member.roles.cache.has(heroID);
+            try {
+              const member = await channel.guild.members.fetch(hero);
+              const heroID = this.client.auth.discord.heroID;
+              const hasRole = member && member.roles.cache.has(heroID);
 
-            if (!member || !hasRole) {
+              if (!member || !hasRole) {
+                failRevokes.push(hero);
+
+                continue;
+              }
+
+              await member.roles.remove(heroID);
+
+              successRevokes.push(hero);
+            } catch {
               failRevokes.push(hero);
 
               continue;
             }
-
-            await member.roles.remove(heroID);
-
-            successRevokes.push(hero);
           }
 
         if (failRevokes.length)
@@ -200,21 +206,27 @@ export default class Server {
 
           if (!channel) continue;
 
-          const member = await channel.guild.members.fetch(hero);
-          const heroID = this.client.auth.discord.heroID;
-          const hasRole = member && member.roles.cache.has(heroID);
+          try {
+            const member = await channel.guild.members.fetch(hero);
+            const heroID = this.client.auth.discord.heroID;
+            const hasRole = member && member.roles.cache.has(heroID);
 
-          if (!member) {
+            if (!member) {
+              failAdds.push(hero);
+
+              continue;
+            }
+
+            if (hasRole) continue;
+
+            await member.roles.add(heroID);
+
+            successAdds.push(hero);
+          } catch {
             failAdds.push(hero);
 
             continue;
           }
-
-          if (hasRole) continue;
-
-          await member.roles.add(heroID);
-
-          successAdds.push(hero);
         }
 
         if (failAdds.length)
