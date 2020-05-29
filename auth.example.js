@@ -79,6 +79,7 @@ exports.cookieSecret = 'your cookie secret';
  * Discord provider OAuth2 Grant configuration
  */
 exports.discord = {
+  endpoint: 'https://discord.com/api/v6/',
   callback: 'connect',
   key: 'blah',
   scope: [ 'identify' ],

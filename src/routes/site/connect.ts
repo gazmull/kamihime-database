@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import fetch from 'node-fetch';
 import Route from '../../struct/Route';
 import ApiError from '../../util/ApiError';
+import { URL } from 'url';
 
 export default class ConnectRoute extends Route {
   constructor () {
@@ -34,24 +35,28 @@ export default class ConnectRoute extends Route {
     res.clearCookie('slug');
 
     const discord = this.server.auth.discord;
-    const credentials = Buffer.from(`${discord.key}:${discord.secret}`).toString('base64');
-    const url = [
-      'https://discordapp.com/api/oauth2/token?',
-      'grant_type=authorization_code',
-      '&code=' + code,
-      `&redirect_uri=${this.server.auth.urls.root + discord.callback}`,
-      '&scope=identify',
-    ].join('');
 
-    const response = await(await fetch(url, {
+    const tokenURL = new URL('oauth2/token', discord.endpoint);
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: code as string,
+      redirect_uri: this.server.auth.urls.root + discord.callback,
+      scope: 'identify'
+    });
+    tokenURL.username = discord.key;
+    tokenURL.password = discord.secret;
+
+    const response = await(await fetch(tokenURL, {
+      body: params,
       headers: {
-        Accept: 'application/json',
-        Authorization: 'Basic ' + credentials
+        Accept: 'application/json'
       },
       method: 'POST'
     })).json();
 
-    const user = await(await fetch('https://discordapp.com/api/users/@me', {
+    if (response.error) throw new ApiError(500, `[${response.error}] ${response.error_description}`);
+
+    const user = await(await fetch(discord.endpoint + 'users/@me', {
       headers: {
         Accept: 'application/json',
         Authorization: 'Bearer ' + response.access_token

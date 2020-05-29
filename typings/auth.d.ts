@@ -19,12 +19,14 @@ export interface Host {
 }
 
 /**
+ * @property endpoint Discord API's endpoint
  * @property callback Path to redirect (rootURL/[callback path])
  * @property key Client ID
  * @property scope Scopes of authorization
  * @property secret Client Secret/Token
  */
 export interface DiscordGrant {
+  endpoint: string;
   callback: string;
   key: string;
   scope: string[];

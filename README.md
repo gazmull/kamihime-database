@@ -14,7 +14,7 @@ Website + REST (JSON) API for Kamihime Database
 - [NGINX (skip to NGINX section)](http://blog.danyll.com/setting-up-express-with-nginx-and-pm2/)
 - [Node](https://nodejs.org) 12
 - [MariaDB](https://mariadb.org) 10
-- [Discord App + Bot Account](https://discordapp.com/developers/applications/me)
+- [Discord App + Bot Account](https://discord.com/developers/applications/me)
 - [Build Tools (**Windows**)](https://github.com/felixrieseberg/windows-build-tools) | [Build Tools (**Linux**)](https://superuser.com/questions/352000/whats-a-good-way-to-install-build-essentials-all-common-useful-commands-on)
 
 ## ⚠ Notice

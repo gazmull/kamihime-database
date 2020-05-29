@@ -1,6 +1,7 @@
 import { pbkdf2 } from 'crypto';
 import { Request, Response } from 'express';
 import * as shortid from 'shortid';
+import { URL, URLSearchParams } from 'url';
 import { IAdminUser } from '../../../typings';
 import Route from '../../struct/Route';
 import ApiError from '../../util/ApiError';
@@ -78,16 +79,21 @@ export default class LoginRoute extends Route {
         .cookie('slug', slug, { httpOnly: true, secure: this.server.production, signed: true })
         .render('admin/login');
 
+    const discord = this.server.auth.discord;
+
+    const url = new URL('oauth2/authorize', discord.endpoint);
+    const params = new URLSearchParams({
+      client_id: discord.key,
+      response_type: 'code',
+      redirect_uri: this.server.auth.urls.root + discord.callback,
+      scope: discord.scope.join(' '),
+      state: slug
+    });
+    url.search = params.toString();
+
     res
       .cookie('slug', slug, { maxAge: 18e5, httpOnly: true, secure: this.server.production, signed: true })
-      .redirect([
-        'https://discordapp.com/oauth2/authorize?',
-        'client_id=' + this.server.auth.discord.key,
-        '&response_type=code',
-        `&redirect_uri=${this.server.auth.urls.root + this.server.auth.discord.callback}`,
-        '&scope=identify',
-        '&state=' + slug,
-      ].join(''));
+      .redirect(url.toString());
   }
 
   /**
