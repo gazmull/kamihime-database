@@ -74,7 +74,7 @@ export default class GetSearchRequest extends ApiRoute {
 
     if (!name) throw new ApiError(400, 'Name query is required.');
     else if (name.length < 2) throw new ApiError(422, 'Name must be at least 2 characters.');
-    else if (name.length > 31) throw new ApiError(422, 'Name must be no longer than 31 characters.');
+    else if (name.length > 35) throw new ApiError(422, 'Name must be no longer than 35 characters.');
 
     switch (itemClass) {
       case 'soul':
