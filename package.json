@@ -48,7 +48,7 @@
     "mysql2": "^1.6.4",
     "node-fetch": "^2.3.0",
     "nodemw": "gazmull/nodemw#7a41bd4",
-    "pug": "^2.0.3",
+    "pug": "^3.0.1",
     "shortid": "^2.2.14"
   },
   "devDependencies": {
