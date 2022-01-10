@@ -16,12 +16,12 @@ export default class IndexRoute extends Route {
     const endPoint = `http://localhost:${this.server.auth.host.port}/api/`;
 
     const hot: IKamihime[] = await this.server.util.db('kamihime')
-      .select([ 'id', 'name', 'tier', 'rarity', 'peeks' ])
+      .select([ 'id', 'name', 'tier', 'rarity', 'peeks', 'avatar' ])
       .where('approved', 1)
       .orderBy('peeks', 'desc')
       .limit(10);
     const sols: IKamihime[] = await this.server.util.db('kamihime')
-      .select([ 'id', 'name', 'tier', 'rarity', 'peeks' ])
+      .select([ 'id', 'name', 'tier', 'rarity', 'peeks', 'avatar' ])
       .where('approved', 1)
       .andWhere('name', 'rlike', '[[:<:]]sol[[:>:]]')
       .orderBy('name');
