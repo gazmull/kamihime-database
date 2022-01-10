@@ -109,7 +109,7 @@ $(async () => {
     } else
       $('#text').attr('data', --talkIDX);
 
-    pressedLeft = true;
+    // pressedLeft = true;
 
     render();
   }
@@ -146,13 +146,11 @@ $(async () => {
     if (lastImage && lastImage !== n.img)
       $(`#image img[id='${lastImage}']`).css(hidden);
 
-    if (lastImage !== n.img) {
-      if (n.img === 'pink_s.jpg' && pressedLeft) {
-        pressedLeft = false;
+    const isC3 = lastImage && lastImage.endsWith('_c3.jpg');
 
-        return navLeft();
-      }
-      else if (n.img === 'pink_s.jpg' && !pressedLeft) {
+    if (lastImage !== n.img) {
+      if (n.img === 'pink_s.jpg' && !isC3) return navLeft();
+      else if (n.img === 'pink_s.jpg' && isC3) {
         $(currentIMG).css(serialiseAnimation(animation, { fading: true }));
         setTimeout(() => {
           $(currentIMG).css(hidden);
