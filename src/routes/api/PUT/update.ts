@@ -140,7 +140,7 @@ export default class PutUpdateRequest extends ApiRoute {
   private async __updateAssets (character: IKamihime) {
     const sceneZipsDir = this.server.auth.dirs.h.zips;
     const updatedZips = [];
-    let zips = await fs.readdir(sceneZipsDir);
+    let zips = await fs.readdir(`${sceneZipsDir}${character.id}`);
 
     if (!zips.length) return;
 
