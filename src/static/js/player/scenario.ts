@@ -14,7 +14,7 @@ $(async () => {
     display: ''
   };
   let lastImage: string;
-  let pressedLeft: boolean = false;
+  // let pressedLeft: boolean = false;
   let lastAudio: typeof Howl;
   let sequenceIDX = 0;
   let talkIDX = talkVal;
