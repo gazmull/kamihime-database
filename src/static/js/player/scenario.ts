@@ -152,7 +152,7 @@ $(async () => {
 
         return navLeft();
       }
-      if (n.img === 'pink_s.jpg') {
+      else if (n.img === 'pink_s.jpg' && !pressedLeft) {
         $(currentIMG).css(serialiseAnimation(animation, { fading: true }));
         setTimeout(() => {
           $(currentIMG).css(hidden);
