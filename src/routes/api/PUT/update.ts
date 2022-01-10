@@ -164,10 +164,7 @@ export default class PutUpdateRequest extends ApiRoute {
     return this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
       `**${name}** (**${id}**)'s zips has been updated:`,
       '```diff',
-      updatedZips.map(e => [
-        `- ${e[0]}`,
-        `+ ${e[1]}`,
-      ].join('\n')),
+      updatedZips.map(e => `- ${e[0]}\n+ ${e[1]}`).join('\n\n'),
       '```',
     ].join('\n'));
   }
