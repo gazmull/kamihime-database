@@ -2,7 +2,7 @@ mixin appendCharacterList(characters)
   each c in characters
     li.tile.small
       .char-button(data-char = c.id, data-toggle = 'modal', data-target = '.modal')
-      img(data-src=`${app.urls.g}wiki/${c.avatar}`)
+      img(src=`${app.urls.g}wiki/${c.avatar}`)
       span #{c.name}
       - if (Date.now() - new Date(c.latestUpdated).valueOf() <= 6048e5)
         |

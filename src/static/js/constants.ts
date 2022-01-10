@@ -111,7 +111,7 @@ $(async () => {
           $('<li>')
             .html([
               `<div class="char-button" data-char='${el.id}' data-toggle='modal' data-target='.modal'></a>`,
-              `<img data-src='https://g.pikan.party/wiki/${el.avatar}'>`,
+              `<img src='https://g.pikan.party/wiki/${el.avatar}'>`,
               `<span>${el.name}</span>`,
               ` <span class='badge-container'><span class='badge badge-secondary'>${(el.tier || el.rarity).toUpperCase()}</span> `,
               `<span class='badge badge-secondary'>${
@@ -272,7 +272,7 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
     const linkified = await Promise.all(episodes.map(linkify));
 
     modal.find('.modal-title').text(data.name);
-    modal.find('.modal-background img').attr('data-src', src);
+    modal.find('.modal-background img').attr('src', src);
     modal.find('.modal-body p').html([
       `<span class="badge badge-primary">${Number(data.peeks).toLocaleString('en')} VIEWS</span>`,
       [ data.tier || data.rarity, type, data.loli ? 'Flagged as loli' : '' ]
