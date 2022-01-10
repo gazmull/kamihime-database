@@ -111,7 +111,7 @@ export default class PutUpdateRequest extends ApiRoute {
         .del();
 
     if (manual) {
-      await this.__updateAssets(data);
+      await this.__updateAssets(data, character.id);
       await this.server.util.db('kamihime').update({ mUpdated: new Date().toISOString().slice(0, 19).replace('T', ' ') })
         .where({ id });
     }
@@ -137,10 +137,10 @@ export default class PutUpdateRequest extends ApiRoute {
       .json({ name, id, avatar });
   }
 
-  private async __updateAssets (character: IKamihime) {
+  private async __updateAssets (character: IKamihime, id: string) {
     const sceneZipsDir = this.server.auth.dirs.h.zips;
     const updatedZips = [];
-    let zips = await fs.readdir(`${sceneZipsDir}${character.id}`);
+    let zips = await fs.readdir(`${sceneZipsDir}${id}`);
 
     if (!zips.length) return;
 
@@ -160,10 +160,8 @@ export default class PutUpdateRequest extends ApiRoute {
       }
     }
 
-    const { name, id } = character;
-
     return this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
-      `**${name}** (**${id}**)'s zips has been updated:\`\`\`diff`,
+      `**${character.name}** (**${id}**)'s zips has been updated:\`\`\`diff`,
       updatedZips.map(e => `- ${e[0]}\n+ ${e[1]}`).join('\n\n'),
       '```',
     ].join('\n'));
