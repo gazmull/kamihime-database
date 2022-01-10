@@ -141,7 +141,8 @@ export default class PutUpdateRequest extends ApiRoute {
     const sceneZipsDir = this.server.auth.dirs.h.zips;
     const updatedZips = [];
     let zips = await fs.readdir(sceneZipsDir);
-    zips = zips.map(e => e.trim());
+
+    if (!zips.length) return;
 
     for (const zip of zips) {
       const nameRegex = /(.+)(_\w+\.zip)/i;
@@ -153,17 +154,16 @@ export default class PutUpdateRequest extends ApiRoute {
         const oldPath = `${sceneZipsDir}${zip}`;
         const newPath = `${sceneZipsDir}${newZip}`
 
-        await fs.rename(oldPath, newPath);
+        await fs.rename(oldPath, newPath.trim());
 
-        updatedZips.push([ oldPath, newPath ]);
+        updatedZips.push([ zip, newZip ]);
       }
     }
 
     const { name, id } = character;
 
     return this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
-      `**${name}** (**${id}**)'s zips has been updated:`,
-      '```diff',
+      `**${name}** (**${id}**)'s zips has been updated:\`\`\`diff`,
       updatedZips.map(e => `- ${e[0]}\n+ ${e[1]}`).join('\n\n'),
       '```',
     ].join('\n'));
