@@ -151,8 +151,8 @@ export default class PutUpdateRequest extends ApiRoute {
 
       if ( !name || (name && name[1] !== updatedName) ) {
         const newZip = zip.replace(nameRegex, `${updatedName}$2`);
-        const oldPath = `${sceneZipsDir}${zip}`;
-        const newPath = `${sceneZipsDir}${newZip}`
+        const oldPath = `${sceneZipsDir}${id}/${zip}`;
+        const newPath = `${sceneZipsDir}${id}/${newZip}`
 
         await fs.rename(oldPath, newPath.trim());
 
