@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IKamihime, ISession } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
+import * as fs from 'fs-extra';
 
 /**
  * @api {put} /update update
@@ -51,6 +52,7 @@ export default class PutUpdateRequest extends ApiRoute {
 
   public async exec (req: Request, res: Response) {
     let data = req.body;
+    const manual: boolean = Boolean(req.query.manual as string);
 
     if (!res.locals.user.admin) {
       await this._hasData(data);
@@ -99,7 +101,7 @@ export default class PutUpdateRequest extends ApiRoute {
     if (!Object.keys(data).length) throw new ApiError(401, 'Cannot accept empty character data.');
 
     await this.server.util.db('kamihime').update(data)
-      .where('id', id);
+      .where({ id });
 
     const user = data.user || req.signedCookies.userId;
 
@@ -108,9 +110,15 @@ export default class PutUpdateRequest extends ApiRoute {
         .where({ userId: user, characterId: id })
         .del();
 
+    if (manual) {
+      await this.__updateAssets(data);
+      await this.server.util.db('kamihime').update({ mUpdated: new Date().toISOString().slice(0, 19).replace('T', ' ') })
+        .where({ id });
+    }
+
     if (this.client.auth.discord.dbReportChannel)
       await this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
-        `${user} updated ${name} (${id}):\`\`\``,
+        `**${user}** ${manual ? '__significantly__ ' : ''}updated **${name}** (**${id}**):\`\`\``,
         Object.entries(data).map(el => {
           const [ key, value ] = el;
 
@@ -127,5 +135,40 @@ export default class PutUpdateRequest extends ApiRoute {
     res
       .status(200)
       .json({ name, id, avatar });
+  }
+
+  private async __updateAssets (character: IKamihime) {
+    const sceneZipsDir = this.server.auth.dirs.h.zips;
+    const updatedZips = [];
+    let zips = await fs.readdir(sceneZipsDir);
+    zips = zips.map(e => e.trim());
+
+    for (const zip of zips) {
+      const nameRegex = /(.+)(_\w+\.zip)/i;
+      const name = nameRegex.exec(zip);
+      const updatedName = character.name;
+
+      if ( !name || (name && name[1] !== updatedName) ) {
+        const newZip = zip.replace(nameRegex, `${updatedName}$2`);
+        const oldPath = `${sceneZipsDir}${zip}`;
+        const newPath = `${sceneZipsDir}${newZip}`
+
+        await fs.rename(oldPath, newPath);
+
+        updatedZips.push([ oldPath, newPath ]);
+      }
+    }
+
+    const { name, id } = character;
+
+    return this.server.util.discordSend(this.client.auth.discord.dbReportChannel, [
+      `**${name}** (**${id}**)'s zips has been updated:`,
+      updatedZips.map(e => [
+        '```diff',
+        `- ${e[0]}`,
+        `+ ${e[1]}`,
+        '```',
+      ].join('\n')),
+    ].join('\n'));
   }
 }

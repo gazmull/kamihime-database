@@ -69,10 +69,10 @@ const client: Client = new Client(server);
 
 server
   .init(express, client)
+  .then(() => server.startKamihimeCache())
   .then(() =>
     server
       .startCleaners()
-      .startKamihimeCache()
       .startHeroSummons()
   );
 

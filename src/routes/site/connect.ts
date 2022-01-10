@@ -46,7 +46,7 @@ export default class ConnectRoute extends Route {
     tokenURL.username = discord.key;
     tokenURL.password = discord.secret;
 
-    const response = await(await fetch(tokenURL, {
+    const response: any = await(await fetch(tokenURL.toString(), {
       body: params,
       headers: {
         Accept: 'application/json'
@@ -54,9 +54,9 @@ export default class ConnectRoute extends Route {
       method: 'POST'
     })).json();
 
-    if (response.error) throw new ApiError(500, `[${response.error}] ${response.error_description}`);
+    if (response.errors) throw new ApiError(500, `[${response.code}] ${response.message}`);
 
-    const user = await(await fetch(discord.endpoint + 'users/@me', {
+    const user: any = await(await fetch(discord.endpoint + 'users/@me', {
       headers: {
         Accept: 'application/json',
         Authorization: 'Bearer ' + response.access_token

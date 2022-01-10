@@ -26,10 +26,12 @@ export default class IndexRoute extends Route {
       .andWhere('name', 'rlike', '[[:<:]]sol[[:>:]]')
       .orderBy('name');
 
-    const latestRequest = await fetch(endPoint + 'latest?len=10', { headers: { Accept: 'application/json' } });
-    const latest = await latestRequest.json();
+    const latestCreated = await fetch(endPoint + 'latest?len=10', { headers: { Accept: 'application/json' } })
+      .then(res => res.json());
+    const latestUpdated = await fetch(endPoint + 'latest?len=10&updatedat=true', { headers: { Accept: 'application/json' } })
+      .then(res => res.json());
     const status = this.server.status;
-    const requested = { latest, hot, status, sols };
+    const requested = { latestCreated, latestUpdated, hot, status, sols };
 
     res.render('index', requested);
   }

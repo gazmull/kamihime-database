@@ -12,7 +12,7 @@ export default function reAuthHandler (file: Route): RequestHandler {
       return next();
     }
 
-    const isNotLoginOrAdmin = !/^\/(?:log(?:in|out)|connect|admin)/.test(req.originalUrl);
+    const isNotLoginOrAdmin = !/^\/(?:log(?:in|out)|connect|admin|donate)/.test(req.originalUrl);
 
     if (isNotLoginOrAdmin && (!res.locals.user || !res.locals.user.donor || !res.locals.user.hero))
       return res.render('invalids/shutdown', { redirected: true });

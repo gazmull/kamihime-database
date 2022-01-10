@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
 
@@ -56,7 +56,7 @@ const fields = {
     'created',
   ],
   default: defaultFields,
-  internal: defaultFields.concat('_rowId', 'approved')
+  internal: defaultFields.concat('_rowId', 'approved', 'mUpdated')
 };
 const concat = (k: string, v: any) => `${k} = ${isNaN(v) ? `'${v}'` : v}`;
 const c = {
@@ -176,7 +176,7 @@ export default class GetListRequest extends ApiRoute {
     if (![ 'name', 'rarity', 'tier', 'element', 'type', 'atk', 'hp' ].includes(sortBy))
       sortBy = 'name';
 
-    let query: QueryBuilder = this.server.util.db('kamihime')
+    let query: Knex.QueryBuilder = this.server.util.db('kamihime')
       .select(tags[0] ? fields[tags[0]] : (req.query.internal ? fields.internal : fields.default))
       .orderBy(sortBy, sortType);
 

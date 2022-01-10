@@ -2,7 +2,7 @@ import Winston from '@gazmull/logger';
 import { Collection, TextChannel } from 'discord.js';
 import { Express, Router } from 'express';
 import * as fs from 'fs-extra';
-import * as knex from 'knex';
+import { knex } from 'knex';
 import fetch from 'node-fetch';
 // tslint:disable-next-line:max-line-length
 import { IAuth, IKamihime, IPasswordAttempts, IRateLimitLog, IReport, ISession, IState, IUser, IUtil } from '../../../typings';
@@ -130,23 +130,22 @@ export default class Server {
     return this;
   }
 
-  public startKamihimeCache (forced = false) {
-    fetch(`http://localhost:${this.auth.host.port}/api/list?internal=true`, { headers: { Accept: 'application/json' } })
+  public async startKamihimeCache (forced = false) {
+    return fetch(`http://localhost:${this.auth.host.port}/api/list?internal=true`, { headers: { Accept: 'application/json' } })
       .then(res => res.json())
       .then(cache => {
-        this.kamihime = cache;
+        this.kamihime = cache as IKamihime[];
 
-        this.util.logger.info('Refreshed Kamihime Cache.');
+        return this.util.logger.info('Refreshed Kamihime Cache.');
       })
-      .catch(this.util.logger.error);
-
-    if (forced) {
-      clearTimeout(serverKamihimeRefresh);
-      serverKamihimeRefresh = setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
-    } else
-      serverKamihimeRefresh = setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
-
-    return this;
+      .catch(err => this.util.logger.error(`Kamihime Cache Error: ${err}`))
+      .finally(() => {
+        if (forced) {
+          clearTimeout(serverKamihimeRefresh);
+          serverKamihimeRefresh = setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
+        } else
+          serverKamihimeRefresh = setTimeout(() => this.startKamihimeCache(), GENERAL_COOLDOWN);
+      });
   }
 
   public startHeroSummons () {
@@ -175,7 +174,7 @@ export default class Server {
             this.stores.heroes.delete(hero);
             heroesReturned++;
 
-            if (!channel) continue;
+            if (!channel) break;
 
             try {
               const member = await channel.guild.members.fetch(hero);

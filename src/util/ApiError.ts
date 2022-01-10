@@ -1,10 +1,9 @@
-import { Util } from 'discord.js';
-
 export default class ApiError extends Error {
   constructor (code = 500, message?: string | string[]) {
     if (!message) message = errors[code];
+    else message = Array.isArray(message) ? message.join('\n') : message;
 
-    super(Util.resolveString(message));
+    super(message as string);
 
     this.name = this.constructor.name;
 

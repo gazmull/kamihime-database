@@ -29,7 +29,7 @@ export default class GetCredits extends ApiRoute {
         '\n',
         'Modules used:',
         'anchorme, bufferutil, canvas, cookie-parser, discord.js, express, fs-extra, fuse.js, helmet, knex, mysql2, node-fetch, nodemw,'
-        + 'pug, shortid, bootstrap, howler, jquery, js-cookie, serve-favicon, apidoc, autoprefixer, browser-sync, gulp, nodemon, pstcss, sass, terser, tslint, typescript, sweetalert2',
+        + 'pug, nanoid, bootstrap, howler, jquery, js-cookie, apidoc, autoprefixer, browser-sync, gulp, nodemon, postcss, sass, terser, tslint, typescript, sweetalert2',
         '</pre>',
       ].join('\n'));
   }

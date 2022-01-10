@@ -1,5 +1,4 @@
 .animate {
-  backface-visibility: hidden;
   overflow: hidden;
   height: 900px;
   width: 640px;
@@ -123,6 +122,7 @@
 @keyframes play {
   from {
     transform: translate3d(0, 0, 0);
+    z-index: 1;
   }
 
   to {

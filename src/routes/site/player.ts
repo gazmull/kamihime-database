@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
-import * as fs from 'fs-extra';
-import { IKamihime } from '../../../typings';
+import { IKamihime, IScript } from '../../../typings';
 import Route from '../../struct/Route';
 import ApiError from '../../util/ApiError';
 
 const COOLDOWN = 1000 * 60 * 3;
 const MAX_VISITS = 5;
-const MAX_LOGGED_IN_VISITS = 10;
+const MAX_LOGGED_IN_VISITS = 25;
 
 export default class PlayerRoute extends Route {
   constructor () {
@@ -67,7 +66,7 @@ export default class PlayerRoute extends Route {
 
     await this._rateLimit(req, res, character, resource);
 
-    const { scenario = null } = await this._find('script.json', id, resource);
+    const { scenario = null } = await this._find('script.json', id, resource) as IScript;
 
     if (!template || !character || !scenario)
       throw new ApiError(501, 'Player type, character, or the scenario hash cannot be found.');
@@ -75,7 +74,7 @@ export default class PlayerRoute extends Route {
     let files: string[] = null;
 
     if (type !== 'story') {
-      files = await this._find('files.rsc', id, resource);
+      files = await this._find('files.rsc', id, resource) as string[];
 
       if (!files)
         throw new ApiError(501, [
@@ -101,26 +100,6 @@ export default class PlayerRoute extends Route {
   }
 
   // -- Util
-
-  /**
-   * Finds the file for requested episode.
-   * @param name The name of the file
-   * @param id The character ID
-   * @param res The Resource ID for given template
-   */
-  protected async _find (name: string, id: string, res: string) {
-    const filePath = `${this.server.auth.dirs.h.scenarios}${id}/${res}/${name}`;
-
-    try {
-      const buffer = await fs.readFile(filePath);
-      const text = buffer.toString();
-
-      if (name === 'script.json')
-        return JSON.parse(text);
-
-      return text.split(',');
-    } catch (err) { return false; }
-  }
 
   protected _checkRegistered (id: string, resource: string) {
     const _resource = this.server.stores.visitors.get(resource);

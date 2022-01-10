@@ -1,12 +1,10 @@
 import { pbkdf2 } from 'crypto';
 import { Request, Response } from 'express';
-import * as shortid from 'shortid';
+import { nanoid } from 'nanoid/async';
 import { URL, URLSearchParams } from 'url';
 import { IAdminUser } from '../../../typings';
 import Route from '../../struct/Route';
 import ApiError from '../../util/ApiError';
-
-shortid.seed(11);
 
 export default class LoginRoute extends Route {
   constructor () {
@@ -70,7 +68,7 @@ export default class LoginRoute extends Route {
         .redirect('/admin');
     }
 
-    const slug = shortid.generate();
+    const slug = await nanoid();
 
     this.server.stores.states.set(slug, { timestamp: Date.now(), url: req.headers.referer });
 

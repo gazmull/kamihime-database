@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import * as Fuse from 'fuse.js';
+import * as fuse from 'fuse.js';
+import Fuse from 'fuse.js';
 import { IKamihime } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
@@ -98,18 +99,18 @@ export default class GetSearchRequest extends ApiRoute {
         'Perhaps you are confusing this with `type` parameter?',
       ]);
 
-    const fuseOptions: Fuse.FuseOptions<IKamihime> = {
-      distance: 100,
+    const fuseOptions: Fuse.IFuseOptions<IKamihime> = {
       keys: [ 'name' ],
       location: 0,
-      maxPatternLength: 31,
       minMatchCharLength: 2,
-      shouldSort: true,
       threshold: 0.35
     };
     let results: IKamihime[] = !isNaN(accurate) && accurate
         ? this.server.kamihime.filter(el => el.name.toLowerCase() === name.toLowerCase())
-        : new Fuse(this.server.kamihime, fuseOptions).search(name) as IKamihime[];
+        // @ts-ignore
+        // TS compilation apparent bug
+        // Breaking change with tampered search result... srsly?
+        : (new fuse(this.server.kamihime, fuseOptions)).search(name).map(e => e.item) as IKamihime[];
 
     if (typeof itemClass === 'function')
       results = results.filter(itemClass);

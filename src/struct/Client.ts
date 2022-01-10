@@ -1,7 +1,8 @@
 import anchorme from 'anchorme';
-import { Client as DiscordClient, Message, Util } from 'discord.js';
+import { Client as DiscordClient, Message, Options } from 'discord.js';
 import { createWriteStream } from 'fs-extra';
-import { QueryBuilder } from 'knex';
+import { pipeline } from 'stream/promises';
+import { Knex } from 'knex';
 import fetch from 'node-fetch';
 import * as Wiki from 'nodemw';
 import { resolve } from 'path';
@@ -62,13 +63,12 @@ export default class Client {
     if (!(discordAuth.channel || discordAuth.token)) return;
 
     this.discord = new DiscordClient({
-      ws: {
-        intents: [
-          'GUILDS',
-          'GUILD_MEMBERS',
-        ]
-      },
-      messageCacheMaxSize: 10,
+      intents: [
+        'GUILDS',
+        'GUILD_MEMBERS',
+        'GUILD_MESSAGES',
+      ],
+      makeCache: Options.cacheWithLimits({ MessageManager: 10 }),
       presence: {
         status: 'online'
       }
@@ -79,7 +79,7 @@ export default class Client {
       if (!this.server.auth.exempt.includes(message.author.id)) return;
 
       const msg = anchorme({
-        input: Util.cleanContent(message.content, message),
+        input: message.cleanContent,
         options: {
           truncate: 10,
           middleTruncation: false,
@@ -104,8 +104,9 @@ export default class Client {
     };
 
     this.discord
-      .on('ready', () => this.server.util.logger.info('Discord Bot: logged in.'))
-      .on('error', err => this.server.util.logger.error(err))
+      // Doesn't like Winston instance for some reason
+      .on('ready', () => { this.server.util.logger.info(`Discord Bot: logged in as ${this.discord.user.tag}.`); })
+      .on('error', err => { this.server.util.logger.error(err); })
       .on('message', handleMessage)
       .on('messageUpdate', (_, newMessage) => handleMessage(newMessage as Message))
       .login(discordAuth.token);
@@ -209,68 +210,58 @@ export default class Client {
         // -- Portrait
 
         const portraitName = `File:${el.name} Portrait${fileNameSuffix}`;
-        let avatar = await getImageInfo(portraitName);
+        let avatar: string = null;
+        const avatarInfo = await getImageInfo(portraitName);
 
-        if (avatar && avatar.url) {
-          avatar = await fetch(clean(avatar.url));
-          avatar = await avatar.buffer();
+        if (avatarInfo && avatarInfo.url) {
+          const avatarFetch = await fetch(clean(avatarInfo.url));
+
+          if (!avatarFetch.ok) throw new Error(`${portraitName} returns ${avatarFetch.status}`);
+
           const path = `portrait/${el.name} Portrait${fileNameSuffix}`;
 
-          const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
-
-          stream.write(avatar, err => {
-            if (err) this.server.util.logger.error(err.message);
-          });
-          stream.end();
+          await pipeline(avatarFetch.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
           avatar = path;
         }
-        else avatar = null;
 
         // -- Close
 
-        let preview = null;
+        let preview: string = null;
         if (idPrefix !== 'w') {
           const previewName = `File:${el.name} Close.png`;
-          preview = await getImageInfo(previewName);
+          const previewInfo = await getImageInfo(previewName);
 
-          if (preview && preview.url) {
-            preview = await fetch(clean(preview.url));
-            preview = await preview.buffer();
+          if (previewInfo && previewInfo.url) {
+            const previewFetch = await fetch(clean(previewInfo.url));
+
+            if (!previewFetch.ok) throw new Error(`${previewName} returns ${previewFetch.status}`);
+
             const path = `close/${el.name} Close.png`;
 
-            const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
-
-            stream.write(preview, err => {
-              if (err) this.server.util.logger.error(err.message);
-            });
-            stream.end();
+            await pipeline(previewFetch.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
             preview = path;
           }
-          else preview = null;
         }
 
         // -- Main
 
         const mainName = `File:${el.name}.png`;
-        let main = await getImageInfo(mainName);
+        let main: string = null;
+        const mainInfo = await getImageInfo(mainName);
 
-        if (main && main.url) {
-          main = await fetch(clean(main.url));
-          main = await main.buffer();
+        if (mainInfo && mainInfo.url) {
+          const mainFetch = await fetch(clean(mainInfo.url));
+
+          if (!mainFetch.ok) throw new Error(`${mainName} returns ${mainFetch.status}`);
+
           const path = `main/${el.name}.png`;
 
-          const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
-
-          stream.write(main, err => {
-            if (err) this.server.util.logger.error(err.message);
-          });
-          stream.end();
+          await pipeline(mainFetch.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
           main = path;
         }
-        else main = null;
 
         await this.server.util.db('kamihime')
           .insert({
@@ -313,7 +304,7 @@ export default class Client {
    */
   protected async _update (idPrefix: string) {
     try {
-      let query: QueryBuilder = this.server.util.db('kamihime').select(this.fields)
+      let query: Knex.QueryBuilder = this.server.util.db('kamihime').select(this.fields)
         .whereRaw(`id LIKE '${idPrefix}%'`);
       query = idPrefix === 'e' ? query.orWhereRaw('id LIKE \'x%\'') : query;
 
@@ -367,19 +358,17 @@ export default class Client {
 
         if (!info.avatar) {
           const name = `File:${el.name} Portrait${fileNameSuffix}`;
-          let avatar = await getImageInfo(name);
+          let avatar: string = null;
+          const info = await getImageInfo(name);
 
-          if (avatar && avatar.url) {
-            avatar = await fetch(clean(avatar.url));
-            avatar = await avatar.buffer();
+          if (info && info.url) {
+            const fetched = await fetch(clean(info.url));
+
+            if (!fetched.ok) throw new Error(`${name} returns ${fetched.status}`);
+
             const path = `portrait/${el.name} Portrait${fileNameSuffix}`;
 
-            const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
-
-            stream.write(avatar, err => {
-              if (err) this.server.util.logger.error(err.message);
-            });
-            stream.end();
+            await pipeline(fetched.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
             avatar = path;
             updateFields.avatar = avatar;
@@ -390,19 +379,17 @@ export default class Client {
 
         if (!info.preview && idPrefix !== 'w') {
           const name = `File:${el.name} Close.png`;
-          let preview = await getImageInfo(name);
+          let preview: string = null;
+          const info = await getImageInfo(name);
 
-          if (preview && preview.url) {
-            preview = await fetch(clean(preview.url));
-            preview = await preview.buffer();
+          if (info && info.url) {
+            const fetched = await fetch(clean(info.url));
+
+            if (!fetched.ok) throw new Error(`${name} returns ${fetched.status}`);
+
             const path = `close/${el.name} Close.png`;
 
-            const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
-
-            stream.write(preview, err => {
-              if (err) this.server.util.logger.error(err.message);
-            });
-            stream.end();
+            await pipeline(fetched.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
             preview = path;
             updateFields.preview = preview;
@@ -413,19 +400,17 @@ export default class Client {
 
         if (!info.main) {
           const name = `File:${el.name}.png`;
-          let main = await getImageInfo(name);
+          let main: string = null;
+          const info = await getImageInfo(name);
 
-          if (main && main.url) {
-            main = await fetch(clean(main.url));
-            main = await main.buffer();
+          if (info && info.url) {
+            const fetched = await fetch(clean(info.url));
+
+            if (!fetched.ok) throw new Error(`${name} returns ${fetched.status}`);
+
             const path = `main/${el.name}.png`;
 
-            const stream = createWriteStream(IMAGES_PATH + path, { encoding: 'binary' });
-
-            stream.write(main, err => {
-              if (err) this.server.util.logger.error(err.message);
-            });
-            stream.end();
+            await pipeline(fetched.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
             main = path;
             updateFields.main = main;

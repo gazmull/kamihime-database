@@ -14,7 +14,8 @@ $(async () => {
     display: ''
   };
   let lastImage: string;
-  let lastAudio: Howl;
+  let pressedLeft: boolean = false;
+  let lastAudio: typeof Howl;
   let sequenceIDX = 0;
   let talkIDX = talkVal;
   let autoDialogTimeout: NodeJS.Timeout;
@@ -108,6 +109,8 @@ $(async () => {
     } else
       $('#text').attr('data', --talkIDX);
 
+    pressedLeft = true;
+
     render();
   }
 
@@ -143,11 +146,13 @@ $(async () => {
     if (lastImage && lastImage !== n.img)
       $(`#image img[id='${lastImage}']`).css(hidden);
 
-    const isC3 = lastImage && lastImage.endsWith('_c3.jpg');
-
     if (lastImage !== n.img) {
-      if (n.img === 'pink_s.jpg' && !isC3) return navLeft();
-      if (n.img === 'pink_s.jpg' && isC3) {
+      if (n.img === 'pink_s.jpg' && pressedLeft) {
+        pressedLeft = false;
+
+        return navLeft();
+      }
+      if (n.img === 'pink_s.jpg') {
         $(currentIMG).css(serialiseAnimation(animation, { fading: true }));
         setTimeout(() => {
           $(currentIMG).css(hidden);

@@ -1,8 +1,8 @@
 extends ../_templates/main
 
-mixin appendPanelBtn(name, index)
+mixin appendPanelBtn(name, index, type)
   a(href='javascript:void(0);')
-    .btn(data-toggle = 'collapse', data-target = `#t${index}`)
+    .btn(data-toggle = 'collapse', data-target = `#${type}${index}`)
       h3 #{name}
 
 append styles
@@ -49,13 +49,22 @@ block content
     .row
       .col-sm-12.col-md-6
         .tile-container
-          h2 Latest Characters
+          h2 Latest Added Characters
           .latest-panel
             each t, i  in [ 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R' ]
-              +appendPanelBtn(t, i)
-          #latest-parent
-            include assets/latest
+              +appendPanelBtn(t, i, 'c')
+          #latest-created-parent
+            include assets/latestCreated
       .col-sm-12.col-md-6
+        .tile-container
+          h2 Latest Updated Characters
+          .latest-panel
+            each t, i in [ 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R' ]
+              +appendPanelBtn(t, i, 'u')
+          #latest-updated-parent
+            include assets/latestUpdated
+    .row
+      .col-sm-12
         .tile-container
           h2 Top Characters
           ul.tile-list

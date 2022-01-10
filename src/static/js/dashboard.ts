@@ -133,7 +133,7 @@ async function submit (action: APIAction, value = '', id?: string) {
     },
     method: method, // tslint:disable-line:object-literal-shorthand
   };
-  const response = await fetch(`/api/${action}`, options);
+  const response = await fetch(`/api/${action}${action === 'update' ? '?manual=true' : ''}`, options);
   const json = await response.json();
 
   if (json.error) throw json.error.message;

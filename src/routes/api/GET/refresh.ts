@@ -30,7 +30,7 @@ export default class GetRefreshRequest extends ApiRoute {
     if (!res.locals.user.admin)
       throw new ApiError(401);
 
-    this.server.startKamihimeCache(true);
+    await this.server.startKamihimeCache(true);
 
     res
       .status(200)

@@ -69,6 +69,7 @@ export default class GetLatestRequest extends ApiRoute {
 
   public async exec (req: Request, res: Response) {
     const latestLength: number = req.query.len ? Number(req.query.len) : 3;
+    const updatedAt: boolean = req.query.updatedat ? Boolean(req.query.updatedat) : undefined;
     const category: string = req.query.category as string;
 
     if (latestLength <= 0 || latestLength > 10)
@@ -87,8 +88,13 @@ export default class GetLatestRequest extends ApiRoute {
         const _category = categories[key] as IKamihime[];
 
         categories[key] = _category
-          .sort((a, b) => b._rowId - a._rowId)
-          .map(v => ({ id: v.id, name: v.name, created: v.created }))
+          .sort((a, b) => {
+            const aMU = a.mUpdated || a.created;
+            const bMU = b.mUpdated || b.created;
+
+            return updatedAt ? new Date(bMU).valueOf() - new Date(aMU).valueOf() : b._rowId - a._rowId;
+          })
+          .map(v => ({ id: v.id, name: v.name, created: v.created, mUpdated: v.mUpdated, avatar: v.avatar }))
           .slice(0, latestLength);
       }
 
@@ -123,7 +129,7 @@ export default class GetLatestRequest extends ApiRoute {
           : true)
         && v.approved)
       .sort((a, b) => b._rowId - a._rowId)
-      .map(v => ({ id: v.id, name: v.name, created: v.created }))
+      .map(v => ({ id: v.id, name: v.name, avatar: v.avatar, created: v.created }))
       .slice(0, latestLength);
 
     return res

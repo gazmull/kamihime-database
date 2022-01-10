@@ -1,0 +1,15 @@
+mixin appendCharacterList(characters)
+  each c in characters
+    li.tile.small
+      .char-button(data-char = c.id, data-toggle = 'modal', data-target = '.modal')
+      img(data-src=`${app.urls.g}wiki/${c.avatar}`)
+      span #{c.name}
+      - if (Date.now() - new Date(c.latestUpdated).valueOf() <= 6048e5)
+        |
+        span.badge-container
+          span.badge.badge-primary RECENT
+
+each t, i in [ 'soul', 'eidolon', 'ssr+', 'ssr', 'sr', 'r' ]
+  .collapse(id = `u${i}`, data-parent='#latest-updated-parent')
+    ul.tile-list
+      +appendCharacterList(latestUpdated[t])

@@ -28,6 +28,8 @@ nav(class='top-nav navbar navbar-expand-md navbar-dark')
               href='javascript:void(0);',
               onclick='showLoginWarning();',
             ) Log in
+        li.nav-item
+          +link('/donate', 'Donate')
     form(class='form-inline', onsubmit='return event.preventDefault();')
       .input-group
         .input-group-prepend

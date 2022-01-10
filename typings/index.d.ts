@@ -1,6 +1,6 @@
 import { Collection, Message } from 'discord.js';
 import { Response } from 'express';
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import { Logger } from 'winston';
 import apiHandler from '../src/middleware/api-handler';
 import reAuthHandler from '../src/middleware/re-auth-handler';
@@ -95,7 +95,7 @@ export interface IKamihime {
   atk?: number;
   hp?: number;
   created?: string;
-  updated?: string;
+  mUpdated?: string;
 }
 
 export interface IKamihimeWiki {
@@ -117,6 +117,8 @@ export interface IKamihimeLatest {
   sr?: IKamihime[];
   r?: IKamihime[];
 }
+
+export type IScript = { scenario: any };
 
 export interface IRateLimitLog {
   address: string;

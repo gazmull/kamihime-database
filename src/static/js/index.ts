@@ -9,9 +9,13 @@ $(() => {
     newBtn.addClass('active');
   });
 
-  const target = $('.latest-panel .btn').first().addClass('active').data('target');
+  for (const panel of $('.latest-panel')) {
+    const target = $(panel).find('.btn').first()
+      .addClass('active')
+      .data('target');
 
-  $(target).collapse('show');
+      $(target).collapse('show');
+  }
 
   const lastRead = jc.get('lastRead');
 

@@ -111,7 +111,7 @@ $(async () => {
           $('<li>')
             .html([
               `<div class="char-button" data-char='${el.id}' data-toggle='modal' data-target='.modal'></a>`,
-              `<img data-src='https://g.pikan.party/wiki/portrait/${encodeURI(el.name).replace(/'/g, '%27')} Portrait.png'>`,
+              `<img data-src='https://g.pikan.party/wiki/${el.avatar}'>`,
               `<span>${el.name}</span>`,
               ` <span class='badge-container'><span class='badge badge-secondary'>${(el.tier || el.rarity).toUpperCase()}</span> `,
               `<span class='badge badge-secondary'>${
@@ -125,14 +125,12 @@ $(async () => {
             .appendTo('#result'),
         );
 
-        await readyImages($('#result.list-group img'));
         loader.hide();
         $('#result.list-group').addClass('animated popOut');
       } catch (e) { if (e.name !== 'AbortError') return $('#result-head').text(e); }
     }, 1000);
   });
 
-  await readyImages($('img'));
   $('.loader').hide();
   $('.container-fluid').addClass('animated popOut');
 });
@@ -141,7 +139,7 @@ async function showLoginWarning () {
   const res = await sweet.fire({
     html: [
       'By logging in, you will have the benefits of:',
-      '- Higher episode visits limit (5 => 10)',
+      '- Higher episode visits limit (5 => 25)',
       '- Player settings saved remotely',
       '<br>While you are able to save your settings, accounts that are inactive for 1 year will be deleted.',
       '<br>Click OK to continue to log in.',
@@ -216,7 +214,6 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
     const handleFancyModal = async () => {
       const sleep = () => new Promise(res => setTimeout(res, 256));
 
-      await readyImages($('.modal-background img'));
       await sleep();
 
       return modal.find('.modal-dialog')

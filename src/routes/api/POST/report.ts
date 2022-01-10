@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IReport, IUser } from '../../../../typings';
+import { IUser } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
 
@@ -42,7 +42,6 @@ export default class PostReportRequest extends ApiRoute {
   public async exec (req: Request, res: Response) {
     const data = req.body;
     const usr = req.signedCookies.userId ? req.signedCookies.userId : req.ip;
-    const interval = usr === req.ip ? 24 : 3;
     let user: IUser;
 
     if (req.signedCookies.userId) {
@@ -52,32 +51,6 @@ export default class PostReportRequest extends ApiRoute {
       if (!user)
         throw new ApiError(422, 'Invalid user.');
     }
-
-    const [ recentlyReported ] = await this.server.util.db('reports').select('userId')
-      .where({
-        characterId: data.characterId,
-        userId: usr
-      })
-      .andWhereRaw('DATE_ADD(date, INTERVAL :ss HOUR) > NOW()', { ss: interval })
-      .limit(1);
-
-    if (recentlyReported)
-      throw new ApiError(429, 'Please wait before you submit another report.')
-        .setRemaining(Date.now() - new Date(Number(recentlyReported.date) + (36e5 * interval)).valueOf());
-
-    const recentReports: IReport[] = await this.server.util.db('reports').select('id')
-      .where('userId', usr)
-      .andWhereRaw('DATE_ADD(date, INTERVAL :ss HOUR) > NOW()', { ss: interval });
-
-    if (recentReports.length > 5 && !this.server.auth.exempt.includes(req.signedCookies.userId))
-      throw new ApiError(429, 'You already reached the max reports at the moment.');
-
-    await this.server.util.db('reports')
-      .insert({
-        characterId: data.characterId,
-        message: JSON.stringify(data.message),
-        userId: usr
-      });
 
     const ip = req.ip;
     const name = usr === ip ? `Anonymous User (${ip})` : `User ${user.username} (${user.userId})`;

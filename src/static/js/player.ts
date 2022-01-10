@@ -192,11 +192,12 @@ async function loadAssets (assets: IAsset[], opt?: { withSound?: boolean, update
   const load: (_asset: IAsset) => Promise<IAsset> = ({ src, name, type }) =>
     new Promise((resolve, reject) => {
       const isBGM = type === 'bgm';
-      const asset: HTMLImageElement | Howl = type === 'img' || type === 'bg'
+      const asset: HTMLImageElement | typeof Howl = type === 'img' || type === 'bg'
         ? new Image()
+        // @ts-ignore
         : new Howl({
           loop: isBGM ? true : false,
-          onload: () => resolve({ obj: asset as Howl, src, name, type }),
+          onload: () => resolve({ obj: asset as typeof Howl, src, name, type }),
           onloaderror: (_, err) => reject(new Error(err + ` [type: ${type}, name: ${name}]`)),
           preload: true,
           src: [ src ],
@@ -301,7 +302,7 @@ async function showReport (id: string) {
               if (!value) resolve('Please select an issue.');
 
               postBody.message.subject = value;
-              resolve();
+              resolve(undefined);
             });
           },
           text: 'What is the concern of this report?',

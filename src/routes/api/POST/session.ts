@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import * as shortid from 'shortid';
+import { nanoid } from 'nanoid/async';
 import { IKamihime, ISession } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
 
-shortid.seed(11);
+nanoid(6);
 
 /**
  * @api {post} /session session
@@ -81,7 +81,7 @@ export default class PostSessionRequest extends ApiRoute {
       throw new ApiError(429, `Too many sessions active. [${sessions.length} sessions active]`);
 
     const uniqueId: string = Math.random().toString(36).substr(2, 16);
-    const uniqueKey: string = Buffer.from(shortid.generate()).toString('base64');
+    const uniqueKey: string = Buffer.from(await nanoid()).toString('base64');
 
     await this.server.util.db('sessions')
       .insert({

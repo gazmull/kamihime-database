@@ -2,11 +2,15 @@ import SweetAlert2 from 'sweetalert2';
 import * as JSCookie from 'js-cookie';
 import { IKamihime as IK } from '../../../../typings/index';
 import { ModalEventHandler as meh} from 'bootstrap';
+import { Howler, Howl } from 'howler';
 
 declare global {
   var swal: typeof SweetAlert2;
   var sweet: typeof SweetAlert2;
   var Cookies: typeof JSCookie;
+  var Howl: Howl;
+  var Howler: Howler;
+
   type ModalEventHandler = meh<HTMLElement>;
 
   const MISC: string;

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IKamihime } from '../../../../typings';
+import { IKamihime, IScript } from '../../../../typings';
 import ApiRoute from '../../../struct/ApiRoute';
 import ApiError from '../../../util/ApiError';
 
@@ -47,7 +47,13 @@ export default class GetPrevRequest extends ApiRoute {
     if (!character[epKey])
       throw new ApiError(501, [ 'Episode Resource is empty.', 'Please contact the administrator!' ]);
 
-    const url = `${this.server.auth.urls.h}scenarios/${id}/${character[epKey]}/${id.slice(1)}-${ep}-2_a.jpg`;
+    const resource = character[epKey];
+    const { scenario = null } = await this._find('script.json', id, resource) as IScript;
+
+    if (!scenario) throw new ApiError(501, 'Cannot find script.json.');
+
+    const entry = scenario.find(s => s.sequence.endsWith('a.jpg'));
+    const url = `${this.server.auth.urls.h}scenarios/${id}/${resource}/${entry.sequence}`;
 
     return res
       .status(200)
