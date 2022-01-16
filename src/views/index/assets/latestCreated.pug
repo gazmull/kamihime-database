@@ -4,7 +4,7 @@ mixin appendCharacterList(characters)
       .char-button(data-char = c.id, data-toggle = 'modal', data-target = '.modal')
       img(src=`${app.urls.g}wiki/${c.avatar}`)
       span #{c.name}
-      - if (Date.now() - new Date(c.latestCreated).valueOf() <= 6048e5)
+      - if (Date.now() - new Date(c.created).valueOf() <= 6048e5)
         |
         span.badge-container
           span.badge.badge-primary NEW
