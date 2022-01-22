@@ -46,7 +46,7 @@
     "infobox-parser": "^3.0.3",
     "knex": "^0.16.3",
     "mysql2": "^1.6.4",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^3.1.1",
     "nodemw": "gazmull/nodemw#7a41bd4",
     "pug": "^2.0.3",
     "shortid": "^2.2.14"
