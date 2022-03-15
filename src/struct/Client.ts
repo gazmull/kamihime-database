@@ -483,7 +483,7 @@ export default class Client {
     return JSON.parse(data
       .trim()
       .replace(/.+\s.+?= {/, '[')
-      .replace(/,?\s+?}\s+?.+$/, ']')
+      .replace(/,?\s+?}\s+?.+\s+$/, ']')
       .replace(/({|,\s?)([\w]+?)(=["\d])/g, '$1"$2"$3')
       .replace(/=/g, ':')) as IKamihimeWiki[];
   }
