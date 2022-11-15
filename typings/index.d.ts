@@ -116,6 +116,7 @@ export interface IKamihimeLatest {
   ssr?: IKamihime[];
   sr?: IKamihime[];
   r?: IKamihime[];
+  skin?: IKamihime[];
 }
 
 export type IScript = { scenario: any };

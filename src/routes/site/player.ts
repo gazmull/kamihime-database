@@ -57,7 +57,10 @@ export default class PlayerRoute extends Route {
       .where('id', id);
     const resource = character[selected];
 
-    if (ep === 3 && (id.charAt(0) !== 'k' || [ 'SSR+', 'R' ].includes(character.rarity)))
+    if (
+      (ep === 1 && character.rarity === 'SKIN')
+      || (ep === 3 && (id.charAt(0) !== 'k' || [ 'SSR+', 'R', 'SKIN' ].includes(character.rarity)))
+    )
       throw new ApiError(422, 'Invalid episode for this character.');
 
     if (!character) throw new ApiError(404);

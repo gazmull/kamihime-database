@@ -22,25 +22,29 @@ async function promptID (action: APIAction) {
     let character: Character;
 
     if (![ 'add', 'hero', 'refresh' ].includes(action)) {
-      const { value, dismiss } = await sweet.fire({
-        allowOutsideClick: () => !sweet.isLoading(),
-        confirmButtonText: 'Next',
-        input: 'text',
-        inputPlaceholder: 'Character ID',
-        preConfirm: async id => {
-          const _response = await fetch(`/api/id/${id.toLowerCase()}`, { headers: { Accept: 'application/json' } });
-          const _json = await _response.json();
-          if (_json.error) throw _json.error.message;
+      try {
+        const { value, dismiss } = await sweet.fire({
+          allowOutsideClick: () => !sweet.isLoading(),
+          confirmButtonText: 'Next',
+          input: 'text',
+          inputPlaceholder: 'Character ID',
+          preConfirm: async id => {
+            const _response = await fetch(`/api/id/${id.toLowerCase()}`, { headers: { Accept: 'application/json' } });
+            const _json = await _response.json();
+            if (_json.error) throw _json.error.message;
 
-          return _json;
-        },
-        showLoaderOnConfirm: true,
-        titleText: action.toUpperCase(),
-      });
+            return _json;
+          },
+          showLoaderOnConfirm: true,
+          titleText: action.toUpperCase(),
+        });
 
-      if (dismiss) return;
+        if (dismiss) return;
 
-      character = value;
+        character = value;
+      } catch (err) {
+        sweet.fire('An Error Occurred', err, 'error');
+      }
     }
 
     let response: string | (Character & { added: number }) | Promise<any>;

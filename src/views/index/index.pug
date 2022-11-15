@@ -51,7 +51,7 @@ block content
         .tile-container
           h2 Latest Added Characters
           .latest-panel
-            each t, i  in [ 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R' ]
+            each t, i  in [ 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R', 'SKIN' ]
               +appendPanelBtn(t, i, 'c')
           #latest-created-parent
             include assets/latestCreated
@@ -59,7 +59,7 @@ block content
         .tile-container
           h2 Latest Updated Characters
           .latest-panel
-            each t, i in [ 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R' ]
+            each t, i in [ 'SOUL', 'EIDO', 'SSR+', 'SSR', 'SR', 'R', 'SKIN' ]
               +appendPanelBtn(t, i, 'u')
           #latest-updated-parent
             include assets/latestUpdated

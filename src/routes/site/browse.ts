@@ -13,7 +13,7 @@ export default class BrowseRoute extends Route {
   public exec (_, res: Response) {
     const characters = this.server.kamihime
       .filter(el => el.approved)
-      .map(el => ({ id: el.id, name: el.name, rarity: el.rarity }));
+      .map(el => ({ id: el.id, name: el.name, rarity: el.rarity, avatar: el.avatar, loli: el.loli }));
 
     res.render('browse/browse', { characters });
   }

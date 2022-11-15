@@ -9,7 +9,7 @@ mixin appendCharacterList(characters)
         span.badge-container
           span.badge.badge-primary NEW
 
-each t, i in [ 'soul', 'eidolon', 'ssr+', 'ssr', 'sr', 'r' ]
+each t, i in [ 'soul', 'eidolon', 'ssr+', 'ssr', 'sr', 'r', 'skin' ]
   .collapse(id = `c${i}`, data-parent='#latest-created-parent')
     ul.tile-list
       +appendCharacterList(latestCreated[t])

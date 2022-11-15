@@ -42,7 +42,10 @@ export default class GetPrevRequest extends ApiRoute {
       .where('id', id);
 
     if (!character) throw new ApiError(404);
-    if (ep === 3 && (id.charAt(0) !== 'k' || [ 'SSR+', 'R' ].includes(character.rarity)))
+    if (
+      (ep === 1 && character.rarity === 'SKIN')
+      || (ep === 3 && (id.charAt(0) !== 'k' || [ 'SSR+', 'R', 'SKIN' ].includes(character.rarity)))
+    )
       throw new ApiError(422, 'Invalid episode for this character.');
     if (!character[epKey])
       throw new ApiError(501, [ 'Episode Resource is empty.', 'Please contact the administrator!' ]);

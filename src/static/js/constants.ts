@@ -266,9 +266,11 @@ function handleModalShow (): (this: HTMLElement, e: ModalEventHandler) => void {
         '</ul>',
       ].join('')
     };
-    const episodes = [ 'R', 'SSR+' ].includes(data.rarity) || [ 'e', 's' ].includes(data.id.charAt(0))
-      ? [ 1, 2 ]
-      : [ 1, 2, 3 ];
+    const episodes = data.rarity === 'SKIN'
+      ? [ 2 ]
+      : [ 'R', 'SSR+' ].includes(data.rarity) || [ 'e', 's' ].includes(data.id.charAt(0))
+        ? [ 1, 2 ]
+        : [ 1, 2, 3 ];
     const linkified = await Promise.all(episodes.map(linkify));
 
     modal.find('.modal-title').text(data.name);

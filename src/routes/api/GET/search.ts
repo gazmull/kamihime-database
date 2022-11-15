@@ -18,7 +18,7 @@ import ApiError from '../../../util/ApiError';
  * @apiParam (Query) {number} [loli] `1 / 0 only`: Search `lolis` / `not lolis` only.
  * @apiParam (Query) {string} [element] Search `light` / `dark` / `wind` / `thunder` / `water` / `fire` / `phantom`
  *  only.
- * @apiParam (Query) {string} [rarity] Search `ssr+` / `ssr` / `sr` / `r` / `n` only.
+ * @apiParam (Query) {string} [rarity] Search `ssr+` / `ssr` / `sr` / `r` / `n` / `skin` only.
  * @apiParam (Query) {string} [type] Search with only:
  *  <br>- **Kamihime Only**: `healer` / `offense` / `tricky` / `balance` / `defense`
  *  <br>- **Weapon Only**: `hammer` / `lance` / `glaive` / `arcane` / `staff` / `axe` / `gun` / `bow` / `sword`

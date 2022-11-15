@@ -71,7 +71,7 @@ const c = {
 
 const queries = {
   soul: c.id('s'), eidolon: `(${c.id('e')} or ${c.id('x')})`, kamihime: c.id('k'), weapon: c.id('w'),
-  'ssr+': c.rarity('SSR+'), ssr: c.rarity('SSR'), sr: c.rarity('SR'), r: c.rarity('R'), n: c.rarity('N'),
+  'ssr+': c.rarity('SSR+'), ssr: c.rarity('SSR'), sr: c.rarity('SR'), r: c.rarity('R'), n: c.rarity('N'), skin: c.rarity('SKIN'),
   supreme: c.tier('S'), legendary: c.tier('A'), elite: c.tier('B'), standard: c.tier('C'),
   healer: c.type('Healer'), offense: c.type('Offense'), tricky: c.type('Tricky'), balance: c.type('Balance'),
     defense: c.type('Defense'),
@@ -103,7 +103,7 @@ const queries = {
  *  - **Weapon Only**: `hammer` / `lance` / `glaive` / `arcane` / `staff` / `axe` / `gun` / `bow` / `sword`
  *  - **Eidolon / Kamihime / Weapon Only**:
  *    - `light` / `dark` / `wind` / `thunder` / `water` / `fire` / `phantom`
- *    - `ssr+` / `ssr` / `sr` / `r` / `n`
+ *    - `ssr+` / `ssr` / `sr` / `r` / `n` / `skin`
  * ### Sort Options
  *  - **Sort By**: `name` / `rarity` / `tier` / `element` / `type` / `atk` / `hp`
  *  - **Sort Type**: `asc` / `desc`

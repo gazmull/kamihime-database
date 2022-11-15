@@ -11,7 +11,7 @@ import ApiError from '../../../util/ApiError';
  * @apiGroup Kamihime Specific
  * @apiDescription Retrieves latest added characters.
  *
- * @apiParam (Query) {string} [category] Get latest characters within the specified category only. Available: `soul` / `eidolon` / `ssr+` / `ssr` / `sr` / `r`
+ * @apiParam (Query) {string} [category] Get latest characters within the specified category only. Available: `soul` / `eidolon` / `ssr+` / `ssr` / `sr` / `r` / `skin`
  * @apiParam (Query) {number} [len] The number of latest characters to be retrieved. Default: 3 / Min-Max: 1—10
  *
  * @apiSuccess {Character[]} category Properties for each category (soul, eidolon, etc).
@@ -51,7 +51,10 @@ import ApiError from '../../../util/ApiError';
  *      { "id": "k7055", "name": "Mato" },
  *      { "id": "k7054", "name": "(Holy Night Wind) Kamadeva" },
  *      { "id": "k7053", "name": "Dark Kushinada" }
- *    ]
+ *    ],
+ *    "skin": [
+ *      { "id": "k8001", "name": "(Girl's Illusion) Amon" }
+ *    ],
  *  }
  */
 
@@ -81,7 +84,8 @@ export default class GetLatestRequest extends ApiRoute {
         'ssr+': this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'SSR+' && v.approved),
         ssr: this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'SSR' && v.approved),
         sr: this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'SR' && v.approved),
-        r: this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'R' && v.approved)
+        r: this.server.kamihime.filter(v => v.id.charAt(0) === 'k' && v.rarity === 'R' && v.approved),
+        skin: this.server.kamihime.filter(v => v.rarity === 'SKIN' && v.approved)
       };
 
       for (const key of Object.keys(categories)) {
@@ -111,6 +115,7 @@ export default class GetLatestRequest extends ApiRoute {
       case 'ssr':
       case 'sr':
       case 'r':
+      case 'skin':
         selected = 'k';
         break;
       case 'soul':
