@@ -39,7 +39,7 @@
     "canvas": "2.2.0",
     "cookie-parser": "^1.4.3",
     "discord.js": "github:discordjs/discord.js",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "fs-extra": "^7.0.1",
     "fuzzy": "^0.1.3",
     "helmet": "^3.15.0",
