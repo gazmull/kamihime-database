@@ -22,7 +22,7 @@ const COOLDOWN = 1000 * 60 * 60;
 const API_MAX_CALLS = 50;
 
 const ROOT_PATH = resolve(__dirname, '../../');
-const IMAGES_PATH = resolve(__dirname, 'static/img/wiki') + '/';
+const IMAGES_PATH = resolve(ROOT_PATH, 'static/img/wiki') + '/';
 
 const slicedEntries = el => `+ ${el}`.slice(0, 68) + (el.length > 68 ? '...' : '');
 const clean = url => url.split('/').slice(0, 8).join('/');
