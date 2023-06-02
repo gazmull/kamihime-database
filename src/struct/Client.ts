@@ -1,6 +1,6 @@
 import anchorme from 'anchorme';
 import { Client as DiscordClient, Message, Options } from 'discord.js';
-import { createWriteStream } from 'fs-extra';
+import { createWriteStream, readJSON } from 'fs-extra';
 import { pipeline } from 'stream/promises';
 import { Knex } from 'knex';
 import fetch from 'node-fetch';
@@ -21,7 +21,8 @@ let khTimeout: NodeJS.Timeout = null;
 const COOLDOWN = 1000 * 60 * 60;
 const API_MAX_CALLS = 50;
 
-const IMAGES_PATH = resolve(__dirname, '../../static/img/wiki') + '/';
+const ROOT_PATH = resolve(__dirname, '../../');
+const IMAGES_PATH = resolve(__dirname, 'static/img/wiki') + '/';
 
 const slicedEntries = el => `+ ${el}`.slice(0, 68) + (el.length > 68 ? '...' : '');
 const clean = url => url.split('/').slice(0, 8).join('/');
@@ -30,6 +31,10 @@ const escape = (name: string) => name.replace(/'/g, '\'\'');
 export default class Client {
   constructor (server: Server) {
     this.server = server;
+  }
+
+  private get escapeNames () {
+    return readJSON(resolve(ROOT_PATH, 'escapeNames.json'));
   }
 
   public server: Server;
@@ -206,10 +211,11 @@ export default class Client {
         };
 
         const newId = `${idPrefix}${++fromIndex}`;
+        const name = (await this.escapeNames)[el.name] || el.name;
 
         // -- Portrait
 
-        const portraitName = `File:${el.name} Portrait${fileNameSuffix}`;
+        const portraitName = `File:${name} Portrait${fileNameSuffix}`;
         let avatar: string = null;
         const avatarInfo = await getImageInfo(portraitName);
 
@@ -218,7 +224,7 @@ export default class Client {
 
           if (!avatarFetch.ok) throw new Error(`${portraitName} returns ${avatarFetch.status}`);
 
-          const path = `portrait/${el.name} Portrait${fileNameSuffix}`;
+          const path = `portrait/${name} Portrait${fileNameSuffix}`;
 
           await pipeline(avatarFetch.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
@@ -229,7 +235,7 @@ export default class Client {
 
         let preview: string = null;
         if (idPrefix !== 'w') {
-          const previewName = `File:${el.name} Close.png`;
+          const previewName = `File:${name} Close.png`;
           const previewInfo = await getImageInfo(previewName);
 
           if (previewInfo && previewInfo.url) {
@@ -237,7 +243,7 @@ export default class Client {
 
             if (!previewFetch.ok) throw new Error(`${previewName} returns ${previewFetch.status}`);
 
-            const path = `close/${el.name} Close.png`;
+            const path = `close/${name} Close.png`;
 
             await pipeline(previewFetch.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
@@ -247,7 +253,7 @@ export default class Client {
 
         // -- Main
 
-        const mainName = `File:${el.name}.png`;
+        const mainName = `File:${name}.png`;
         let main: string = null;
         const mainInfo = await getImageInfo(mainName);
 
@@ -256,7 +262,7 @@ export default class Client {
 
           if (!mainFetch.ok) throw new Error(`${mainName} returns ${mainFetch.status}`);
 
-          const path = `main/${el.name}.png`;
+          const path = `main/${name}.png`;
 
           await pipeline(mainFetch.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
@@ -353,20 +359,21 @@ export default class Client {
         };
 
         const updateFields: IKamihime = {};
+        const name = (await this.escapeNames)[el.name] || el.name;
 
         // -- Portrait
 
         if (!info.avatar) {
-          const name = `File:${el.name} Portrait${fileNameSuffix}`;
+          const portraitName = `File:${name} Portrait${fileNameSuffix}`;
           let avatar: string = null;
-          const info = await getImageInfo(name);
+          const info = await getImageInfo(portraitName);
 
           if (info && info.url) {
             const fetched = await fetch(clean(info.url));
 
-            if (!fetched.ok) throw new Error(`${name} returns ${fetched.status}`);
+            if (!fetched.ok) throw new Error(`${portraitName} returns ${fetched.status}`);
 
-            const path = `portrait/${el.name} Portrait${fileNameSuffix}`;
+            const path = `portrait/${name} Portrait${fileNameSuffix}`;
 
             await pipeline(fetched.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
@@ -378,16 +385,16 @@ export default class Client {
         // -- Close
 
         if (!info.preview && idPrefix !== 'w') {
-          const name = `File:${el.name} Close.png`;
+          const closeName = `File:${name} Close.png`;
           let preview: string = null;
-          const info = await getImageInfo(name);
+          const info = await getImageInfo(closeName);
 
           if (info && info.url) {
             const fetched = await fetch(clean(info.url));
 
-            if (!fetched.ok) throw new Error(`${name} returns ${fetched.status}`);
+            if (!fetched.ok) throw new Error(`${closeName} returns ${fetched.status}`);
 
-            const path = `close/${el.name} Close.png`;
+            const path = `close/${name} Close.png`;
 
             await pipeline(fetched.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
@@ -399,16 +406,16 @@ export default class Client {
         // -- Main
 
         if (!info.main) {
-          const name = `File:${el.name}.png`;
+          const mainName = `File:${name}.png`;
           let main: string = null;
-          const info = await getImageInfo(name);
+          const info = await getImageInfo(mainName);
 
           if (info && info.url) {
             const fetched = await fetch(clean(info.url));
 
-            if (!fetched.ok) throw new Error(`${name} returns ${fetched.status}`);
+            if (!fetched.ok) throw new Error(`${mainName} returns ${fetched.status}`);
 
-            const path = `main/${el.name}.png`;
+            const path = `main/${name}.png`;
 
             await pipeline(fetched.body, createWriteStream(IMAGES_PATH + path, { encoding: 'binary' }));
 
